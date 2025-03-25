@@ -1,0 +1,54 @@
+.usertable {
+    padding: 20px;
+    background-color: #f0f4e3;
+    border-radius: 30px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+  }
+  
+  th, td {
+    padding: 12px;
+    border: 1px solid #b5c99a;
+  }
+  
+  th {
+    background-color: #c5d8a4;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .view-btn {
+    background-color: #6da34d;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .view-btn:hover {
+    background-color: #5c8a3e;
+  }
+  
+  .delete-btn {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-left: 5px;
+    font-weight: bold;
+    border-radius: 5px;
+  }
+  
+  .delete-btn:hover {
+    background-color: darkred;
+  }
+  

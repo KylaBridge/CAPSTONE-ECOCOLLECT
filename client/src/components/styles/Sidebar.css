@@ -1,0 +1,99 @@
+nav img {
+    width: 160%;
+    margin-top: 50px;
+    margin-left: -80px;
+}
+
+.navShown {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 250px;
+    z-index: 999;
+    background-color: #8dd7b4;
+    transition: 0.5s;
+    border-right: 2px solid rgba(0, 0, 0, 0.3)
+}
+
+.navHidden {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 0%;
+    z-index: 999;
+    background-color: #8dd7b4;
+    overflow: hidden;
+    transition: 0.5s;
+}
+
+.toggleBtn {
+    cursor: pointer;
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin-left: 20px;
+    margin-top: 20px;
+    font-size: 2.5rem;
+    color:  #70cf00;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+.divider {
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    margin: 0 20px;
+    margin-top: -30px;
+}
+
+ul {
+    width: 100%;
+    margin-top: 20px;
+    border-bottom: 2px solid gray;
+    transition: 0.5s;
+}
+
+a li {
+    width: 100%;
+    padding: 10px 0 10px 20px;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    border-top: 2px solid gray;
+}
+
+a li:hover {
+    background-color: #3abc7d;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+a:visited {
+    color: black;
+}
+
+nav button {
+    position: relative;
+    top: 25%;
+    bottom: 75%;
+    left: 0;
+    width: 80%;
+    height: 40px;
+    margin: 0 25px;
+    font-size: 20px;
+    font-weight: bolder;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    background-color: #47e498;
+    cursor: pointer;
+    border: 2px solid rgba(0, 0, 0, 0.25);
+}
+
+nav button:active {
+    background-color: #3abc7d;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}

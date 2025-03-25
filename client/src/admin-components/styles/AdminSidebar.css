@@ -1,0 +1,19 @@
+nav {
+    height: 100%;
+    width: 250px; 
+    position: fixed; 
+    z-index: 1; 
+    top: 0; 
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.4); 
+    overflow-x: hidden; 
+    padding-top: 20px;
+}
+
+nav img {
+    width: 410px;
+}
+
+nav ul a {
+    display: block;
+}
