@@ -60,6 +60,7 @@ a li {
     font-size: 1rem;
     cursor: pointer;
     border-top: 2px solid gray;
+    background-color: #8dd7b4;
 }
 
 a li:hover {
