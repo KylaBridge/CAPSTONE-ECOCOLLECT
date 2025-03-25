@@ -1,5 +1,4 @@
 import { Link, useNavigate } from "react-router";
-
 import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
 import "./styles/Sidebar.css";
 
