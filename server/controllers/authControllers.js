@@ -9,6 +9,7 @@ const test = (req, res) => {
 const registerUser = async (req, res) => {
     try {
         const {email, password} = req.body
+
         // Check if email exists
         const exist = await User.findOne({email})
         if(exist) {
@@ -16,14 +17,16 @@ const registerUser = async (req, res) => {
                 error: "Email is already taken"
             })
         }
+
         // Check if password is good
         if(!password || password.length < 6 ) {
             return res.json({
                 error: "password should be atleast 6 characters long"
             })
         }
-        const hashedPassword = await hashPassword(password)
+
         // Creates the user in the database
+        const hashedPassword = await hashPassword(password)
         const user = await User.create({
             email, 
             password: hashedPassword,
