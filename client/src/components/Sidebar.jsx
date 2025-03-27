@@ -1,16 +1,19 @@
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useLocation  } from "react-router";
 import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
+import { AiOutlineHome, AiOutlineTrophy, AiOutlineCrown, AiOutlineSetting, AiOutlineFileDone, AiOutlineLogout } from 'react-icons/ai';
 import "./styles/Sidebar.css";
 
-export default function Sidebar({isShown, setIsShown}) {
-    const navigate = useNavigate()
+export default function Sidebar({ isShown, setIsShown }) {
+    const navigate = useNavigate();
+    const location = useLocation();
+
 
     function toggleNavbar() {
-        setIsShown(prev => !prev)
+        setIsShown(prev => !prev);
     }
 
     function loggingOut() {
-        navigate("/")
+        navigate("/");
     }
 
     return (
@@ -19,13 +22,25 @@ export default function Sidebar({isShown, setIsShown}) {
             <img src={EcoCollectLogo} alt="EcoCollect-Logo" />
             <div className="divider"></div>
             <ul>
-                <Link to="/home"><li>HOME</li></Link>
-                <Link to="/wastesubmission"><li>E-WASTE SUBMISSION</li></Link>
-                <Link to="/achievements"><li>ACHIEVEMENTS & BADGES</li></Link>
-                <Link to="/rewards"><li>REWARDS</li></Link>
-                <Link to="/settings"><li>SETTINGS & HELP</li></Link>
+                <Link to="/home" className={location.pathname === '/home' ? 'active' : ''}>
+                    <li><AiOutlineHome size={20} /> HOME</li>
+                </Link>
+                <Link to="/ewastesubmission" className={location.pathname === '/ewastesubmission' ? 'active' : ''}>
+                    <li><AiOutlineFileDone size={20} /> E-WASTE SUBMISSION</li>
+                </Link>
+                <Link to="/achievements" className={location.pathname === '/achievements' ? 'active' : ''}>
+                    <li><AiOutlineCrown size={20} /> ACHIEVEMENTS & BADGES</li>
+                </Link>
+                <Link to="/rewards" className={location.pathname === '/rewards' ? 'active' : ''}>
+                    <li><AiOutlineTrophy size={20} /> REWARDS</li>
+                </Link>
+                <Link to="/settings" className={location.pathname === '/settings' ? 'active' : ''}>
+                    <li><AiOutlineSetting size={20} /> SETTINGS & HELP</li>
+                </Link>
             </ul>
-            <button onClick={loggingOut}>LOG OUT</button>
+            <button onClick={loggingOut}>
+                <AiOutlineLogout size={18} /> LOG OUT
+            </button>
         </nav>
     );
 }

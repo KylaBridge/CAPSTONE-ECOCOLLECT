@@ -9,11 +9,12 @@ nav img {
     top: 0;
     left: 0;
     height: 100%;
-    width: 250px;
+    width: 280px;
     z-index: 999;
     background-color: #8dd7b4;
     transition: 0.5s;
-    border-right: 2px solid rgba(0, 0, 0, 0.3)
+    border-right: 2px solid rgba(0, 0, 0, 0.3);
+    overflow: hidden;
 }
 
 .navHidden {
@@ -36,7 +37,7 @@ nav img {
     margin-left: 20px;
     margin-top: 20px;
     font-size: 2.5rem;
-    color:  #70cf00;
+    color: #70cf00;
     text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 
@@ -48,42 +49,49 @@ nav img {
 
 ul {
     width: 100%;
-    margin-top: 20px;
-    border-bottom: 2px solid gray;
+    margin: 0;
+    padding: 0;
+    list-style: none;
     transition: 0.5s;
 }
 
-a li {
-    width: 100%;
-    padding: 10px 0 10px 20px;
+
+ul li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 20px;
     font-weight: 800;
     font-size: 1rem;
     cursor: pointer;
-    border-top: 2px solid gray;
+    width: 100%;
+    border-top: 1px solid gray;
+    transition: 0.3s;
     background-color: #8dd7b4;
 }
 
-a li:hover {
+ul li:hover, ul.active li{
     background-color: #3abc7d;
+    color: white;
 }
 
 a {
     text-decoration: none;
     color: black;
+    display: flex;
+    align-items: center;
+    width: 100%;
 }
 
-a:visited {
-    color: black;
-}
 
 nav button {
-    position: relative;
-    top: 25%;
-    bottom: 75%;
-    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     width: 80%;
     height: 40px;
-    margin: 0 25px;
+    margin: 20px auto; 
     font-size: 20px;
     font-weight: bolder;
     color: white;
@@ -92,9 +100,9 @@ nav button {
     background-color: #47e498;
     cursor: pointer;
     border: 2px solid rgba(0, 0, 0, 0.25);
+    transition: 0.3s;
 }
 
-nav button:active {
+nav button:hover {
     background-color: #3abc7d;
-    border: 1px solid rgba(255, 255, 255, 0.5);
 }

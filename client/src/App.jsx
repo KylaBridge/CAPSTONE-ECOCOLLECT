@@ -6,6 +6,9 @@ import { Toaster } from "react-hot-toast"
 import Home from "./pages/Home.jsx"
 import Login from "./pages/Login.jsx"
 import Register from "./pages/Register.jsx"
+import EWasteSubmission from "./pages/EWasteSubmission.jsx"
+import Achievements from "./pages/Achievements.jsx"
+import Settings from "./pages/Settings.jsx"
 import AdminDashboard from "./admin-pages/AdminDashboard.jsx"
 import UserManagement from "./admin-pages/UserManagement.jsx"
 import AnalyticsDashboard from "./admin-pages/AnalyticsDashboard.jsx"
@@ -14,6 +17,7 @@ import EWasteSubmit from "./admin-pages/EWasteSubmit.jsx"
 import AchieversModule from "./admin-pages/AchieversModule.jsx"
 import BadgeManagement from "./admin-pages/BadgeManagement.jsx"
 import ActivityLog from "./admin-pages/ActivityLog.jsx"
+import Rewards from "./pages/Rewards.jsx"
 
 axios.defaults.baseURL = "http://localhost:3000"
 axios.defaults.withCredentials = true
@@ -28,6 +32,13 @@ export default function App() {
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/ewastesubmission" element={<EWasteSubmission/>} />
+        <Route path="/achievements" element={<Achievements/>} />
+        <Route path="/rewards" element={<Rewards/>} />
+        <Route path="/settings" element={<Settings/>} />
+
+
+
 
         {/*Admin Routes */}
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
