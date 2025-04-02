@@ -1,0 +1,108 @@
+
+
+.home-main-container {
+    background-color: #8dd7d7;
+    min-height: 100vh; /* Ensures full height without extra space */
+    width: 100%;
+    padding-top: 20px;
+    padding-inline: 5%;
+    display: flex;
+    flex-direction: column;
+}
+.user-profile {
+    margin-top: -20px;
+}
+
+.home-main-container h1 {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.rank-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.rank-container h2 {
+    border: 7px solid #6db300;
+    padding: 10px;
+    border-radius: 20px;
+    background-color: bisque;
+    width: 45%;
+    text-align: center;
+}
+
+.submission-container {
+    width: 100%;
+    height: 100px;
+    background-color: #6db300;
+    padding: 10px 40px;
+    border-radius: 30px;
+    margin-bottom: 20px;
+}
+
+.submission-bar {
+    width: 100%;
+    background-color: white;
+    margin-top: 10px;
+    padding: 5px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.submission-status {
+    width: 40%;
+    padding: 5px;
+    background-color: #243b55;
+    border-radius: 20px;
+}
+
+.submission-bar span {
+    font-weight: 800;
+    color: #243b55;
+}
+
+.badge-reward-container {
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    margin-top: 60px;
+}
+
+.badge-container h1, .next-reward-container h1 {
+    font-size: 1.3rem;
+}
+
+.badge-container img {
+    width: 200px;
+}
+
+.next-reward-container img {
+    width: 210px;
+    padding-top: 10px;
+    opacity: 0.5;
+}
+
+.home-divider {
+    margin: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    border: 2px solid rgba(0, 0, 0, 0.5);
+}
+
+.home-divider2 {
+    margin: 0 auto;
+    margin-bottom: 10px;
+    width: 80%;
+    border: 2px solid rgba(0, 0, 0, 0.5);
+}
+
+.home-divider3 {
+    margin: 0 auto;
+    width: 60%;
+    border: 2px solid rgba(0, 0, 0, 0.5);
+}

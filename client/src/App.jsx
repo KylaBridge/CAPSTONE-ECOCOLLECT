@@ -38,8 +38,6 @@ export default function App() {
         <Route path="/settings" element={<Settings/>} />
 
 
-
-
         {/*Admin Routes */}
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/usermanagement" element={<UserManagement />} />

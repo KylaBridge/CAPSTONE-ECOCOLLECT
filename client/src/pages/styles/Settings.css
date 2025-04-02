@@ -1,0 +1,141 @@
+.settings-page .header-container img {
+    width: 450px;
+}
+
+.settings-main-container img {
+    width: 200px;
+}
+
+.settings-main-container {
+    width: 90%;
+    background-color: #b0bb54;
+    margin: auto;
+    margin-top: -50px;
+    border-radius: 20px;
+    padding:40px 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+    max-width: 800px;
+}
+
+.settings-main-container .faqs-ask-container {
+    width: 50%;
+}
+
+.faqs-ask-container select {
+    padding: 5px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    width: 100%;
+    background-color: #e0e6b2;
+    border-radius: 20px;
+}
+
+.faqs-ask-container select option {
+    font-weight: 800;
+}
+
+.faqs-ask-container button {
+    padding: 5px;
+    width: 100%;
+    margin: auto;
+    display: block;
+    margin-top: 40px;
+    font-weight: 800;
+    border-radius: 20px;
+    font-size: 1.3rem;
+    background-color: #e0e6b2;
+    border: 2px solid #284d3c;
+    border-bottom: 8px solid rgb(59, 59, 59);
+    cursor: pointer;
+}
+
+.faqs-ask-container button:hover {
+    border-top: 8px solid rgb(0, 0, 0);
+    border-bottom: 2px solid #284d3c;
+}
+
+.settings-main-container p {
+    width: 70%;
+    text-align: center;
+    border: 1px solid black;
+    border-radius: 20px;
+    padding: 10px;
+    color: #245a1e;
+    background-color: white;
+    font-weight: 800;
+    margin-right: 20px;
+    box-shadow: -7px 7px 1px #284d3c;
+    margin-bottom: 20px;
+}
+
+.settings-option-container {
+    display: flex;
+    align-items: center;
+    margin-top: -30px;
+    flex-wrap: wrap;
+}
+
+.settings-option-container img {
+    width: 150px;
+}
+
+.settings-option-container p {
+    width: 57%;
+    height: 50%;
+    text-align: center;
+    border: 1px solid black;
+    border-radius: 20px;
+    padding: 10px;
+    color: #245a1e;
+    background-color: white;
+    font-weight: 800;
+    margin-right: 20px;
+    box-shadow: -7px 7px 1px #284d3c;
+}
+
+.settings {
+    width: 100%;
+}
+
+.settings h1 {
+    color:#245a1e;
+    font-weight: 800;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 1.7rem;
+    margin-bottom: 30px;
+}
+
+.setting-settings {
+    border-bottom: 3px solid #245a1e;
+    padding: 20px 10px 20px 10px;
+    width: 100%;
+    display: flex;
+    gap: 40px;
+    align-items: center;
+}
+
+.on-off-bar {
+    background-color: #dae0ac;
+    height: 35px;
+    width: 70px;
+    border-radius: 20px;
+    padding: 2px;
+    cursor: pointer;
+}
+
+.setting-settings h2 {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: #245a1e;
+}
+
+.on-mode {
+    width: 50%;
+    height: 100%;
+    background-color: white;
+    border-radius: 20px;
+    box-shadow: 2.5px 0 1px gray;
+}

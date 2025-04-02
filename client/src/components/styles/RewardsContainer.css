@@ -1,0 +1,37 @@
+.rewards-container {
+    width: 180px;
+    height: 180px;
+    border: 4px solid #284d3c;
+    border-radius: 10px;
+    margin-top: 40px;
+}
+
+.rewards-container img {
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+}
+
+.rewards-container .price-container {
+    margin: auto;
+    width: 90%;
+    padding: 5px;
+    border: 4px solid #284d3c;
+    border-radius: 20px;
+    text-align: center;
+    background-color: #949a63;
+    color: white;
+    position: relative;
+    top: -20px;
+    cursor: pointer;
+}
+
+.price-container:hover {
+    background-color: #3f7a5e;
+    transition: 0.2s;
+}
+
+.rewards-container:hover {
+    box-shadow: 0 0 20px black;
+    transition: 0.3s;
+}
