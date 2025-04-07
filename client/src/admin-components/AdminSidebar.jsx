@@ -2,13 +2,24 @@ import './styles/AdminSidebar.css'
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { AiOutlineHome, AiOutlineUser, AiOutlineBarChart, AiOutlineMonitor, AiOutlineCheckSquare, AiOutlineTrophy, AiOutlineIdcard, AiOutlineOrderedList, AiOutlineLogout } from 'react-icons/ai';
 import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
+import axios from 'axios';
+import toast from 'react-hot-toast';
 
 export default function AdminSidebar() {
     const navigate = useNavigate();
     const location = useLocation();
 
     function loggingOut() {
-        navigate("/")
+        axios.post("/api/ecocollect/auth/logout", {}, {
+            withCredentials: true 
+        })
+        .then(() => {
+            toast.success("User logged Out")
+            navigate("/")
+        })
+        .catch(err => {
+            console.error("Logout failed:", err)
+        });
     }
 
     return (

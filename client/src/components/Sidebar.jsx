@@ -1,6 +1,8 @@
 import { Link, useNavigate, useLocation  } from "react-router";
 import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
 import { AiOutlineHome, AiOutlineTrophy, AiOutlineCrown, AiOutlineSetting, AiOutlineFileDone, AiOutlineLogout } from 'react-icons/ai';
+import { toast } from "react-hot-toast"
+import axios from "axios";
 import "./styles/Sidebar.css";
 
 export default function Sidebar({ isShown, setIsShown }) {
@@ -13,8 +15,18 @@ export default function Sidebar({ isShown, setIsShown }) {
     }
 
     function loggingOut() {
-        navigate("/");
+        axios.post("/api/ecocollect/auth/logout", {}, {
+            withCredentials: true 
+        })
+        .then(() => {
+            toast.success("User logged Out")
+            navigate("/")
+        })
+        .catch(err => {
+            console.error("Logout failed:", err)
+        });
     }
+    
 
     return (
         <nav className={isShown ? "navShown" : "navHidden"}>

@@ -1,4 +1,6 @@
 import { useState } from "react";
+
+// Components
 import AdminSidebar from "../admin-components/AdminSidebar";
 import UserTable from "../admin-components/UserTable";
 import ViewUser from "../admin-components/ViewUser";
@@ -15,7 +17,6 @@ export default function UserManagement() {
         <div className="admin-profile">
           <h1>User Management</h1>
           <div className="block">
-            <h2>Admin Name</h2>
             <p>Admin</p>
           </div>
         </div>

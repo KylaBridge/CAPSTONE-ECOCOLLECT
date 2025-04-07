@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom"
 import axios from "axios"
 import { Toaster } from "react-hot-toast"
+import { UserContextProvider } from "./context/userContext.jsx"
 
 // Components and Pages
 import Home from "./pages/Home.jsx"
@@ -25,7 +26,7 @@ axios.defaults.withCredentials = true
 export default function App() {
 
   return (
-    <>
+    <UserContextProvider>
       <Toaster position="bottom-right" toastOptions={{duration: 2000}} />
       <Routes>
         {/*User Routes*/}
@@ -48,6 +49,6 @@ export default function App() {
         <Route path="/admin/badgemanagement" element={<BadgeManagement />} />
         <Route path="/admin/activitylog" element={<ActivityLog />} />
       </Routes>
-    </>
+    </UserContextProvider>
   )
 }
