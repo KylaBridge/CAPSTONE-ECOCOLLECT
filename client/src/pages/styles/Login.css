@@ -52,18 +52,7 @@ form {
     border: 1px solid white;
   }
   
-  form .forgotPass-el {
-    text-align: right;
-    text-decoration: none;
-    color: white;
-    margin-bottom: 10px;
-  }
-
-  form .forgotPass-el:hover {
-    text-decoration: underline;
-  }
-  
-  form .login-btn, .register-btn2 {
+  form .login-btn {
     font-size: 1.2rem;
     padding: 5px;
     border-radius: 50px;
@@ -80,14 +69,16 @@ form {
     text-align: center;
   }
   
-  form .register-btn, .login-btn2 {
+  form p .register-btn {
+    width: 20%;
+    margin: 0 auto;
     color: white;
     text-decoration: none;
     font-weight: 800;
     cursor: pointer;
   }
 
-  form .register-btn:hover, .login-btn2:hover {
+  form .register-btn:hover:hover {
     text-decoration: underline;
   }
   

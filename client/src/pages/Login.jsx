@@ -46,7 +46,6 @@ export default function Login() {
 
                 <label htmlFor="password">Password</label>
                 <input id="password" type="password" name="password" required />
-                <p className="forgotPass-el"><a href="#" className="forgotPass-el">Forgot Password?</a></p>
 
                 <button className="login-btn">LOG IN</button>
                 <p className="register-el">Don't have an account? <Link className="register-btn" to={"/register"}>Register</Link></p>
