@@ -1,11 +1,15 @@
 import AdminSidebar from "../admin-components/AdminSidebar"
+import Header from "../admin-components/Header"
 
 export default function EWasteSubmit() {
     return (
         <>
             <AdminSidebar />
             <div className="admin-container">
-              <h1>E-Waste Submission Validation</h1>
+                <Header 
+                    pageTitle="E-Waste Submission Validation" 
+                    adminName="Admin Name" 
+                  />
             </div>
         </>
     )

@@ -2,6 +2,7 @@ import { useState } from "react";
 import AdminSidebar from "../admin-components/AdminSidebar";
 import UserTable from "../admin-components/UserTable";
 import ViewUser from "../admin-components/ViewUser";
+import Header from "../admin-components/Header";
 
 import "./styles/UserManagement.css";
 
@@ -12,13 +13,10 @@ export default function UserManagement() {
     <>
       <AdminSidebar />
       <div className="admin-container">
-        <div className="admin-profile">
-          <h1>User Management</h1>
-          <div className="block">
-            <h2>Admin Name</h2>
-            <p>Admin</p>
-          </div>
-        </div>
+          <Header 
+            pageTitle="User Management" 
+            adminName="Admin Name" 
+          />
         <ViewUser user={selectedUser} />
         <UserTable onViewUser={setSelectedUser} />
       </div>

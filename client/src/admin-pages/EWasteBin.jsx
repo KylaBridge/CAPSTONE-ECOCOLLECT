@@ -1,11 +1,15 @@
 import AdminSidebar from "../admin-components/AdminSidebar"
+import Header from "../admin-components/Header"
 
 export default function EWasteBin() {
     return (
         <>
             <AdminSidebar />
             <div className="admin-container">
-              <h1>E-Waste Bin Monitoring</h1>
+              <Header 
+                pageTitle="E-Waste Bin Monitoring" 
+                adminName="Admin Name" 
+                />
             </div>
         </>
     )

@@ -4,18 +4,3 @@
     height: 100%;
     margin-left: 280px;
 }
-
-.admin-profile {
-    display: flex;
-    justify-content: space-between;
-    border-bottom: 4px solid rgba(0, 0, 0, 0.4);
-}
-
-.block {
-    display: block;
-    margin-bottom: 10px;
-}
-
-.block p {
-    color: black;
-}
