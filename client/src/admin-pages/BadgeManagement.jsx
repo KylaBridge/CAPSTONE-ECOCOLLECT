@@ -3,7 +3,8 @@ import AdminSidebar from "../admin-components/AdminSidebar";
 import './styles/BadgeManagement.css';
 import Header from "../admin-components/Header";
 import BadgeTable from "../admin-components/BadgeTable";
-import { AiOutlineUpload, AiOutlineDelete } from "react-icons/ai";
+import { AiOutlineUpload, AiOutlineDelete, AiFillFilter } from "react-icons/ai";
+import placeholderBadge from "../assets/icons/mrcpu.png"
 
 export default function BadgeManagement() {
     const [badgeName, setBadgeName] = useState("");
@@ -20,22 +21,22 @@ export default function BadgeManagement() {
         {
             name: "E-Waste Champ",
             description: "Achieve 10 pts",
-            icon: null
+            icon: placeholderBadge
         },
         {
             name: "Planet Protector",
             description: "Achieve 10 pts",
-            icon: null
+            icon: placeholderBadge
         },
         {
             name: "Green Advocate",
             description: "Achieve 10 pts",
-            icon: null
+            icon: placeholderBadge
         },
         {
             name: "Green Advocate",
             description: "Achieve 10 pts",
-            icon: null
+            icon: placeholderBadge
         }
     ];
 
@@ -61,98 +62,98 @@ export default function BadgeManagement() {
     return (
         <>
             <AdminSidebar />
-            <div className="admin-container">
-                <Header 
-                    pageTitle="Badge Management" 
-                    adminName="Admin Name" 
+            <div className="badge-management-page admin-container">
+                <Header
+                    pageTitle="Badge Management"
+                    adminName="Admin Name"
                 />
-                <div className="badge-content">
-                    <div className="badge-header">
-                        <div className="total-badges">
-                            <h2>Total Badges</h2>
-                            <p>50</p>
-                        </div>
+
+                {/* Main Grid Content Area */}
+                <div className="badge-management-grid">
+
+                    {/* --- Column 1: Total Badges --- */}
+                    <div className="total-badges-container grid-col-1">
+                        <h2>Total Badges</h2>
+                        <p>50</p> {/* Replace with dynamic value */}
                     </div>
-                
-                 <div className="recently-added">
+
+                    {/* --- Column 2: Recently Added  */}
+                    <div className="middle-column grid-col-2"> {/* Wrapper for vertical stacking */}
+                        <div className="recently-added-container">
                             <h3>Recently Added</h3>
-                            <div className="badge-icons">
+                            <div className="badge-icons-grid">
                                 {recentlyAddedBadges.map((badge, index) => (
-                                    <div key={index} className="badge-icon">
-                                        <img src={badge.icon} alt={badge.name} className="badge-img" />
-                                        <div className="badge-label">{badge.name}</div>
-                                        <div className="badge-desc">{badge.description}</div>
+                                    <div key={index} className="badge-item">
+                                        <img src={badge.icon || placeholderBadge} alt={badge.name} className="badge-item-img" /> {/* Ensure placeholder */}
+                                        <div className="badge-item-label">{badge.name}</div>
+                                        <div className="badge-item-desc">{badge.description}</div>
                                     </div>
                                 ))}
                             </div>
                         </div>
+                    </div>
 
+                    <div className="badge-table-section grid-span-2">
+                        <BadgeTable />
+                    </div>
 
-                        <div className="badge-view">
+                    {/* --- Column 3: Badge Form --- */}
+                    <div className="badge-form-section grid-col-3">
+                         <h3>Badge View</h3> {/* Added header back */}
+                        <div className="badge-form-grid"> {/* Internal grid for upload/form */}
                             <div className="upload-section">
-                                <h3>Badge View</h3>
-                                <div className="upload-icon">
+                                <div className="upload-area">
                                     <div className="upload-placeholder">
                                         {imagePreview ? (
                                             <img src={imagePreview} alt="Badge Preview" />
                                         ) : (
-                                            "IMAGE PREVIEW"
+                                            <img src={placeholderBadge} alt="Placeholder" style={{ opacity: 0.5 }} /> // Show placeholder in preview
                                         )}
-                                        
                                     </div>
-                                    <input 
-                                        type="file" 
-                                        accept=".png, .jpg, .jpeg, .gif" 
-                                        onChange={handleImageChange} 
-                                        id="imageInput" 
-                                        style={{ display: 'none' }} 
-                                    />
-                                    
+                                    <input type="file" accept=".png, .jpg, .jpeg, .gif" onChange={handleImageChange} id="imageInput" style={{display: 'none'}} />
+
                                     <div className="upload-action-group">
                                         {isImageSelected ? (
-                                            <button className="remove-button" onClick={handleRemoveImage}>
-                                                <AiOutlineDelete size={24} style={{ marginRight: "8px" }} />
-                                                REMOVE
+                                            <button type="button" className="remove-button" onClick={handleRemoveImage}>
+                                                <AiOutlineDelete size={20} style={{ marginRight: "5px" }} /> REMOVE
                                             </button>
                                         ) : (
                                             <label htmlFor="imageInput" className="upload-button">
-                                                <AiOutlineUpload size={24} style={{ marginRight: "8px" }} />
-                                                UPLOAD
+                                                <AiOutlineUpload size={20} style={{ marginRight: "5px" }} /> UPLOAD
                                             </label>
                                         )}
-                                        <p className="accepted-file-desc">Accepted formats: .png, .jpg, .jpeg, .gif</p>
-                                    </div>
-                                </div>
-
-                                <div className="form-inputs">
-                                    <div className="input-group">
-                                        <h4>Badge Name:</h4>
-                                        <input type="text" value={badgeName} onChange={(e) => setBadgeName(e.target.value)} />
-                                    </div>
-                                    <div className="input-group">
-                                        <h4>Milestone Condition:</h4>
-                                        <input type="text" value={milestoneCondition} onChange={(e) => setMilestoneCondition(e.target.value)} />
-                                    </div>
-                                    <div className="input-group">
-                                        <h4>Points Required:</h4>
-                                        <input type="number" value={pointsRequired} onChange={(e) => setPointsRequired(e.target.value)} />
-                                    </div>
-                                    <div className="input-group">
-                                        <h4>Badge Description:</h4>
-                                        <textarea value={badgeDescription} onChange={(e) => setBadgeDescription(e.target.value)}></textarea>
-                                    </div>
-                                    <div className="buttons">
-                                        <button disabled={!isFormValid}>UPDATE</button>
-                                        <button disabled={!isFormValid}>REMOVE</button>
+                                        <p className="accepted-file-desc">Accepted formats: png, jpg, gif</p> {/* Shorter text */}
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                </div>    
-                 <div className="badge-table-container">
-                    <BadgeTable />
-                </div>
-            </div>
+
+                            <div className="form-inputs">
+                                <div className="input-group">
+                                    <h4>Badge Name:</h4>
+                                    <input type="text" value={badgeName} onChange={(e) => setBadgeName(e.target.value)} />
+                                </div>
+                                <div className="input-group">
+                                    <h4>Milestone Condition:</h4>
+                                    <input type="text" value={milestoneCondition} onChange={(e) => setMilestoneCondition(e.target.value)} />
+                                </div>
+                                <div className="input-group">
+                                    <h4>Points Required:</h4>
+                                    <input type="number" value={pointsRequired} onChange={(e) => setPointsRequired(e.target.value)} />
+                                </div>
+                                <div className="input-group">
+                                    <h4>Badge Description:</h4>
+                                    <textarea value={badgeDescription} onChange={(e) => setBadgeDescription(e.target.value)} placeholder="Enter description..."></textarea>
+                                </div>
+                                <div className="form-buttons">
+                                    <button type="submit" className="button-update" disabled={!isFormValid}>UPDATE</button>
+                                    <button type="button" className="button-remove" disabled={!isFormValid}>REMOVE</button>
+                                </div>
+                            </div>
+                        </div> {/* End badge-form-grid */}
+                    </div> {/* End badge-form-section */}
+
+                </div> {/* End badge-management-grid */}
+            </div> {/* End badge-management-page */}
         </>
     );
 }

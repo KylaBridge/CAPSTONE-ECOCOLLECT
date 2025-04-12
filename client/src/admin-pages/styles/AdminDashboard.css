@@ -1,38 +1,56 @@
+html, body {
+  margin: 0;
+  height: 100%;
+  background-color: #c4cfc5;
+}
+
 .admin-container {
-    padding: 20px;
     background-color: #c4cfc5;
+}
+
+.top-section, .bottom-section {
+  display: flex;
+  justify-content: flex-start;     
+  gap: 30px;         
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  flex-wrap: wrap;
 }
 
 .top-section{
     margin-top: 20px;
-    display: flex;
     padding: 20px;
-    justify-content: space-between;
     font-size: 1.6rem;
+}
+
+.bottom-section{
+  padding: 0px 20px;
 }
 
 .total-users-container{
     background-color: #dfe0d0;
     height: fit-content;
     width: 500px;
+    max-width: 100%;
     padding: 20px;
     border-radius: 30px;
-    margin-right: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0; /* Prevent shrinking */
 }
 
 .ewaste-collected-container{
     background-color: #dfe0d0;
-    width: 66%;
+    flex: 1;
+    min-width: 350px;
     height: fit-content;
     max-height: 400px;
     padding: 20px;
     border-radius: 30px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-right: 20px;
 }
 
-.total-users-container h2, .ewaste-collected-container h2{
+.total-users-container h2, .ewaste-collected-container h2, .reward-container h2, .ewastebin-container h2{
     padding: 20px;
     text-align: center;
     font-size: 1.6rem;
@@ -83,14 +101,14 @@
 }
   
 
-.total-bar {
+.total-bar, .rewardtotal-bar{
     background: linear-gradient(90deg, #76b082, #284c42);
     color: white;
     text-align: center;
-    margin: auto;
+    margin: 12px 20px;
     width: 90%;
     padding: 0.75rem;
-    border-radius: 8px;
+    border-radius: 9px;
     font-weight: bold;
 }
 
@@ -168,7 +186,7 @@
     color: #333;
   }
 
-  .ewaste-label {
+  .ewaste-label, .rewards-label {
     font-weight: 600;
     font-size: 18px;
     margin: 5px 0 10px 0;
@@ -199,4 +217,143 @@
     border-radius: 8px;
     font-weight: 500;
     transition: background-color 0.2s ease-in-out;
+}
+
+.rewardtotal-bar{
+    background-image: linear-gradient(#284c42, #76b082) !important;
+    margin: 15px 20px !important;
+    width: 90% !important;
+    height: 90px;
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+.reward-container{
+  background-color: #dfe0d0;
+  height: fit-content;
+  width: 450px;
+  padding: 15px;
+  border-radius: 30px;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.rewards-breakdown {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  padding: 10px 80px;
+  justify-items: center;
+}
+
+.reward-item {
+  text-align: center;
+  color: #1a3b34;
+  padding: 10px;
+  border-radius: 12px;
+  border-color: #b4b4b4;
+  border-style: solid;
+  border-width: 1px;
+  width: 100%;
+  max-width: 150px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.reward-item p{
+  color: #343a40;
+}
+
+.ewastebin-container{
+  background-color: #dfe0d0;
+  height: fit-content;
+  flex: 1;
+  min-width: 350px;
+  padding: 15px;
+  border-radius: 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.bin-content-wrapper {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  padding: 20px;
+  gap: 20px;
+}
+
+.bin-table {
+  flex: 1;
+  max-height: 230px;
+  overflow-y: auto;
+  position: relative;
+}
+
+.bin-table::-webkit-scrollbar {
+  width: 8px;
+}
+
+.bin-table::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.bin-table::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.bin-table::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+
+.bin-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+}
+
+
+
+.bin-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-basis: 300px;
+  flex-shrink: 0;
+}
+
+.bintotal-bar{
+  background-image: linear-gradient(#284c42, #76b082);
+  color: white;
+  padding: 15px 20px;
+  border-radius: 15px;
+  font-weight: bold;
+  width: 250px;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.5rem;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.bintotal-bar strong {
+  font-size: 2rem;
+}
+
+
+.bin-icons {
+display: flex;
+justify-content: center;
+width: 100%;
+}
+
+.bin-icon {
+  width: 115px;
+  height: 130px;
+  object-fit: contain;
 }

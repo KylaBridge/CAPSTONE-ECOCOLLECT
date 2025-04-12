@@ -1,12 +1,61 @@
 import AdminSidebar from "../admin-components/AdminSidebar";
 import Header from "../admin-components/Header";
-import { FaUserAlt } from "react-icons/fa";
-import { FaLaptop, FaMobileAlt, FaPlug, FaBatteryHalf } from "react-icons/fa";
+import BinTable from "../admin-components/BinTable";
+import { FaLaptop, FaMobileAlt, FaPlug, FaBatteryHalf, FaTshirt, FaMobile, FaUserAlt,FaTrash} from "react-icons/fa";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { MdCable } from "react-icons/md";
+import binIcon from "../assets/icons/binIcon.png"
+
 import './styles/AdminDashboard.css';
 
 export default function AdminDashboard(){
+
+    const adminBinData = [
+        {
+          binId: 'BIN-001',
+          binName: 'NU Manila Gate Bin',
+          location: 'Gate 2',
+          status: 'Full',
+          category: 'Plastic',
+        },
+        {
+          binId: 'BIN-002',
+          binName: 'NU Fairview Hall A',
+          location: 'Hall A',
+          status: 'Overflowing',
+          category: 'E-waste',
+        },
+        {
+            binId: 'BIN-003',
+            binName: 'NU Fairview Hall B',
+            location: 'Hall B',
+            status: 'Overflowing',
+            category: 'E-waste',
+          },
+          {
+            binId: 'BIN-004',
+            binName: 'NU Fairview Hall c',
+            location: 'Hall BV',
+            status: 'Overflowing',
+            category: 'E-waste',
+          },
+          {
+            binId: 'BIN-004',
+            binName: 'NU Fairview Hall c',
+            location: 'Hall BV',
+            status: 'Overflowing',
+            category: 'E-waste',
+          },
+          {
+            binId: 'BIN-004',
+            binName: 'NU Fairview Hall c',
+            location: 'Hall BV',
+            status: 'Overflowing',
+            category: 'E-waste',
+          },
+        // more bins...
+      ];
+
     return (
         <>
             <AdminSidebar/>
@@ -96,6 +145,62 @@ export default function AdminDashboard(){
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div className="bottom-section">
+                    <div className="reward-container">
+                        <h2>Reward Redemptions</h2>
+
+                        <div className="rewardtotal-bar">
+                            <strong>Total: 142</strong>
+                        </div>
+
+                        <div className="rewards-grid">
+                            <h4 className="rewards-label">Top rewards</h4>
+                            <div className="rewards-breakdown">
+                                <div className="reward-item">
+                                <FaTshirt size={45} className="ewaste-icon" />
+                                <p>NU Merch</p>
+                                </div>
+                                <div className="reward-item">
+                                <FaMobile size={45} className="ewaste-icon" />
+                                <p>Mobile Load</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            
+            {/* ewaste bin monitoring */}
+                    <div className="ewastebin-container">
+                      <h2>Bins Need Emptying</h2>
+                      <div className="bin-content-wrapper">
+
+                            {/* Table remains on the left */}
+                            <div className="bin-table">
+                            <BinTable
+                                columns={['binName', 'status']} // Make sure BinTable renders a <table>
+                                data={adminBinData.filter(bin => bin.status === 'Full' || bin.status === 'Overflowing')} // Example: Filter/limit data if needed
+                            />
+                            </div>
+
+                            {/* New wrapper for the summary on the right */}
+                            <div className="bin-summary">
+                                <div className="bintotal-bar">
+                                    {/* Using span to separate text and number */}
+                                    <span>Total:</span>
+                                    {/* Calculate the actual number of bins needing emptying */}
+                                    <strong>{adminBinData.filter(bin => bin.status === 'Full' || bin.status === 'Overflowing').length}</strong>
+                                </div>
+                                <div className="bin-icons">
+                                    <img src={binIcon} alt="Trash Bin" className="bin-icon" />
+                                    <img src={binIcon} alt="Trash Bin" className="bin-icon" />
+                                </div>
+                            </div>
+
+                            </div> 
+                        </div>
+
+
                 </div>
             </div>
         </>

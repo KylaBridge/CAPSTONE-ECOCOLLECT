@@ -1,5 +1,5 @@
 import { useState } from "react"
-import  "../pages/styles/HomePage.css"
+import "../pages/styles/HomePage.css"
 import Userprofile from "../components/Userprofile";
 import Header from "../components/Header"
 import HomeHeaderTitle from "../assets/headers/home-header.png"
