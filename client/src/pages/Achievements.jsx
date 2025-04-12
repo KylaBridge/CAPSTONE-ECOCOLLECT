@@ -4,6 +4,7 @@ import "./styles/Achievements.css"
 // Components and Pages
 import Sidebar from "../components/Sidebar"
 import Userprofile from "../components/Userprofile"
+import Header from "../components/Header"
 
 //assets
 import Badge1 from "../assets/badges/current-badge.png"
@@ -17,6 +18,7 @@ import Badge8 from "../assets/badges/badge8.png"
 import Badge9 from "../assets/badges/badge9.png"
 import Badge10 from "../assets/badges/badge10.png"
 import Badge11 from "../assets/badges/badge11.png"
+import HomeHeaderTitle from "../assets/headers/home-header.png"
 
 
 export default function Achievements() {
@@ -25,11 +27,7 @@ export default function Achievements() {
   return (
     <>
       <Sidebar isShown={showNavbar} setIsShown={setShowNavbar} />
-      <div className="achievements-header-container">
-                <span>Achievements & Badges</span>
-                <Userprofile />
-      </div>
-
+      <Header headerImg={HomeHeaderTitle} headerText="Achievements" />
       <div className="achievements-main-container">
                 <fieldset className="badges-container">
                     <legend><button>Share</button></legend>
@@ -45,7 +43,7 @@ export default function Achievements() {
                     <img className="unlocked" src={Badge10} alt="badge10" />
                     <img className="unlocked" src={Badge11} alt="badge11" />
                 </fieldset>
-                <h1>Donate to Unlock Badges!</h1>
+                <h2>Donate to Unlock Badges!</h2>
             </div>
     </>
   )

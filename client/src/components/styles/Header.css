@@ -1,11 +1,14 @@
-.header-container {
+.head-container {
     background-image: url("../../assets/headers/header-bg.png");
-    background-attachment: fixed;
-    background-size: contain;
-    height: 240px;
+    background-size: cover;
+    background-position: top;
+    background-repeat: no-repeat;
+    height: 27vh;
+    width: 100%;
+    overflow: hidden;
 }
 
-.header-container span {
+.head-container span {
     position: absolute;
     top: 40px;
     right: 40px;
@@ -15,8 +18,8 @@
     font-size: 1.5rem;
 }
 
-.header-container img {
-    width: 350px;
+.head-container img {
+    width: 300px;
     margin: 0 auto;
     display: block;
 }

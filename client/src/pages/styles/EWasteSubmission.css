@@ -1,7 +1,8 @@
 .waste-main-container {
     background-color: #8dd7d7;
-    height: calc(100vh - 270px);
+    height: auto;
     padding: 20px;
+    padding-bottom: 50px;
 }
 
 .waste-main-container h1 {
@@ -9,6 +10,8 @@
     font-family: Arial, Helvetica, sans-serif;
     color: #245a1e;
     text-shadow: 2px 2px 1px rgb(129, 129, 129);
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    text-align: center;
 }
 
 .insert-waste {
@@ -19,19 +22,20 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0 20px;
+    margin: 0 auto 20px auto;
+    max-width: 500px;
     cursor: pointer;
 }
 
-.waste-main-container .insert-waste h1 {
-    font-size: 4rem;
+.insert-waste h1 {
+    font-size: clamp(3rem, 10vw, 5rem);
     color: #245a1e;
 }
 
 .item-selection-container {
-    display: block;
     margin: 0 auto;
     padding: 20px;
+    max-width: 800px;
 }
 
 .item-selection-container h2 {
@@ -39,43 +43,49 @@
     font-family: Arial, Helvetica, sans-serif;
     color: #245a1e;
     font-weight: 800;
-    text-shadow:2px 2px 1px rgb(129, 129, 129);
+    text-shadow: 2px 2px 1px rgb(129, 129, 129);
+    font-size: clamp(1.2rem, 4vw, 1.6rem);
+    text-align: center;
 }
 
 .items-container {
     display: flex;
-    justify-content: flex-start;
-    align-items: center;
     flex-wrap: wrap;
-    gap: 30px;
+    gap: 20px;
+    justify-content: center;
     border: 2px solid #245a1e;
     border-radius: 20px;
     background-color: #6db300;
-    padding: 10px 20px;
-    width: 100%;
+    padding: 15px;
 }
 
 .items-container p {
     font-size: 1rem;
     font-weight: 800;
     background-color: #245a1e;
-    padding: 5px;
+    padding: 8px 12px;
     border-radius: 5px;
+    color: white;
     cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.items-container p:hover {
+    transform: scale(1.05);
 }
 
 .waste-main-container button {
     display: block;
-    margin: 0 auto;
-    margin-top: 2dvh;
+    margin: 30px auto 0 auto;
     border: 4px solid #245a1e;
     border-radius: 40px;
-    padding: 10px;
-    font-size: 1.5rem;
+    padding: 12px 24px;
+    font-size: clamp(1rem, 3vw, 1.5rem);
     font-weight: bolder;
-    width: 30%;
+    width: clamp(150px, 50%, 300px);
     background-color: #e0e6b2;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .waste-main-container button:hover {

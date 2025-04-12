@@ -1,25 +1,28 @@
 .home-main-container {
     background-color: #8dd7d7;
-    min-height: 100vh;
     width: 100%;
     padding-top: 20px;
     padding-inline: 5%;
     display: flex;
     flex-direction: column;
 }
+
 .user-profile {
     margin-top: -20px;
 }
 
 .home-main-container h1 {
-    font-size: 1.5rem;
+    font-size: clamp(1.2rem, 2.5vw, 1.5rem);
     margin-bottom: 5px;
-    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    margin-top: 10px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .rank-container {
     display: flex;
     justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
     margin-bottom: 20px;
 }
 
@@ -30,13 +33,14 @@
     background-color: bisque;
     width: 45%;
     text-align: center;
+    font-size: clamp(1rem, 2vw, 1.3rem);
 }
 
 .submission-container {
     width: 100%;
-    height: 100px;
+    height: auto;
     background-color: #6db300;
-    padding: 10px 40px;
+    padding: 10px 5%;
     border-radius: 30px;
     margin-bottom: 20px;
 }
@@ -49,6 +53,7 @@
     border-radius: 20px;
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
 }
 
 .submission-status {
@@ -56,6 +61,8 @@
     padding: 5px;
     background-color: #243b55;
     border-radius: 20px;
+    color: white;
+    text-align: center;
 }
 
 .submission-bar span {
@@ -66,41 +73,80 @@
 .badge-reward-container {
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
     text-align: center;
-    margin-top: 60px;
+    gap: 20px;
 }
 
-.badge-container h1, .next-reward-container h1 {
-    font-size: 1.3rem;
+.badge-container h1,
+.next-reward-container h1 {
+    font-size: clamp(1.1rem, 2.5vw, 1.3rem);
 }
 
-.badge-container img {
-    width: 200px;
+.badge-container img,
+.next-reward-container img {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
 }
 
 .next-reward-container img {
-    width: 210px;
     padding-top: 10px;
     opacity: 0.5;
 }
 
-.home-divider {
-    margin: auto;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    width: 100%;
+.home-divider,
+.home-divider2,
+.home-divider3 {
     border: 2px solid rgba(0, 0, 0, 0.5);
+    margin: 10px auto;
+}
+
+.home-divider {
+    width: 100%;
 }
 
 .home-divider2 {
-    margin: 0 auto;
-    margin-bottom: 10px;
     width: 80%;
-    border: 2px solid rgba(0, 0, 0, 0.5);
 }
 
 .home-divider3 {
-    margin: 0 auto;
     width: 60%;
-    border: 2px solid rgba(0, 0, 0, 0.5);
+}
+
+/* 🌐 Responsive Adjustments */
+@media (max-width: 768px) {
+    .rank-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .rank-container h2 {
+        width: 100%;
+    }
+
+    .submission-container {
+        padding: 10px 20px;
+    }
+
+    .submission-status {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .submission-bar {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .badge-reward-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .badge-container img,
+    .next-reward-container img {
+        max-width: 150px;
+    }
 }

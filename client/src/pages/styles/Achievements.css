@@ -1,77 +1,101 @@
-.achievements-header-container {
-    background-image: url("../../assets/headers/header-bg.png");
-    background-attachment: fixed;
-    background-size: contain;
-    height: 270px;
-}
-
-.achievements-header-container span {
-    position: absolute;
-    top: 40px;
-    right: 40px;
-    color:  #245a1e;
-    font-weight: bolder;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    font-size: 1.5rem;
-}
-
-.achievements-header-container .profile-container {
-    top: 100px;
-}
-
+/* Main Container */
 .achievements-main-container {
     background-color: #8dd7d7;
-    height: calc(100vh - 270px);
-    padding: 10px 10px;
-}
-
-fieldset {
+    width: 100%;
+    min-height: calc(100vh - 27vh);
+    padding: 20px 10px 40px;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
+    overflow-x: hidden;
+  }
+  
+  /* User Profile Responsiveness */
+  .achievements-main-container .profile-container {
+    margin-bottom: 20px;
+  }
+  
+  /* Badge Container */
+  fieldset.badges-container {
+    display: flex;
     flex-wrap: wrap;
-    padding: 20px 5px;
-    gap: 10px;
+    justify-content: center;
+    gap: 15px;
     background-color: #b0bb54;
     border: none;
     border-radius: 30px;
-    max-width: 800px;
-    margin: auto;
-}
-
-fieldset img {
-    width: 140px;
+    max-width: 1000px;
+    width: 100%;
+    padding: 20px 10px;
+    overflow: hidden;
+  }
+  
+  /* Badge Image */
+  fieldset img {
+    width: 120px;
     background-color: #e0e6b2;
     border-radius: 20px;
     border: 2px solid #245a1e;
-}
-
-fieldset .unlocked {
+    object-fit: contain;
+    transition: transform 0.2s ease;
+  }
+  
+  fieldset img:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Locked Badge */
+  fieldset .unlocked {
     opacity: 0.5;
     background-color: gray;
-}
-
-.achievements-main-container h1 {
+  }
+  
+  /* Heading Text */
+  .achievements-main-container h2 {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 14px;
     color: #245a1e;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
-    font-size: 1.7rem;
+    font-size: clamp(1.3rem, 5vw, 1.7rem);
     text-shadow: 2px 2px 1px rgb(143, 143, 143);
-}
-
-fieldset legend button {
-    margin-left: 20px;
-    font-size: 1.3rem;
+  }
+  
+  /* Share Button */
+  fieldset legend button {
+    margin-left: 0;
+    margin-bottom: 10px;
+    font-size: clamp(1rem, 3vw, 1.3rem);
     font-weight: 800;
-    width: 100px;
-    padding: 5px;
+    width: clamp(90px, 30%, 100px);
+    padding: 6px 10px;
     border: 4px solid #284d3c;
     border-radius: 20px;
     background-color: #e0e6b2;
     cursor: pointer;
-}
-
-fieldset legend button:hover {
+    transition: background-color 0.2s ease;
+  }
+  
+  fieldset legend button:hover {
     background-color: #b4b98e;
-}
+  }
+  
+  /* Mobile Tweaks */
+  @media (max-width: 480px) {
+    .achievements-main-container {
+      padding: 15px 8px;
+    }
+  
+    fieldset img {
+      width: 90px;
+    }
+  
+    fieldset.badges-container {
+      gap: 10px;
+      padding: 10px;
+    }
+  
+    .achievements-main-container h2 {
+      font-size: 1.2rem;
+    }
+  }
+  
