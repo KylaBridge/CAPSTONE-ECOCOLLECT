@@ -1,5 +1,5 @@
 .bin-table-container {
-    border-radius: 1rem; /* 2xl */
+    border-radius: 1rem;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     padding: 1rem;
     width: 100%;
@@ -9,22 +9,42 @@
   .table-wrapper {
     overflow-x: auto;
     overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #aaa #dfe0d0; 
+    max-height: 220px;
   }
+
+
+  .table-wrapper::-webkit-scrollbar{
+    width: 6px;
+  }
+
+  .table-wrapper::-webkit-scrollbar-track{
+    background: #dfe0d0;
+    border-radius: 10px;
+  }
+
+  .table-wrapper::-webkit-scrollbar-thumb{
+    background-color: #aaa;
+    border-radius: 10px;
+  }
+
+
   
   .bin-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.875rem; /* text-sm */
+    font-size: 0.875rem; 
   }
   
   .bin-table thead {
-    background-color: #f3f4f6; /* gray-100 */
+    background-color: #f3f4f6;
   }
   
   .bin-table th {
     padding: 0.5rem 1rem;
     text-align: left;
-    color: #4b5563; /* gray-600 */
+    color: #4b5563;
     font-weight: 500;
   }
   
@@ -34,7 +54,7 @@
   
   .bin-table td {
     padding: 0.5rem 1rem;
-    color: #374151; /* gray-700 */
-    border-top: 1px solid #f3f4f6; /* gray-100 */
+    color: #374151;
+    border-top: 1px solid #f3f4f6;
   }
   

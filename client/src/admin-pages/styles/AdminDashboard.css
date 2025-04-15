@@ -273,6 +273,7 @@ html, body {
   padding: 15px;
   border-radius: 30px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-left: 20px;
 }
 
 .bin-content-wrapper {
@@ -286,26 +287,7 @@ html, body {
 .bin-table {
   flex: 1;
   max-height: 230px;
-  overflow-y: auto;
   position: relative;
-}
-
-.bin-table::-webkit-scrollbar {
-  width: 8px;
-}
-
-.bin-table::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-}
-
-.bin-table::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
-}
-
-.bin-table::-webkit-scrollbar-thumb:hover {
-  background: #555;
 }
 
 

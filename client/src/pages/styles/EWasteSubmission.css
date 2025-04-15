@@ -218,7 +218,7 @@
   .recent-title-container {
     border-radius: 20px;
     border: 5px solid #245a1e;
-    width: 350px;
+    width: 100%;
     background-color: #e0e6b2;
     padding: 10px;
   }

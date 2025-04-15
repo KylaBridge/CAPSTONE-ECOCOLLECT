@@ -1,6 +1,341 @@
 html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    background-color: #c4cfc5;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: #c4cfc5;
+}
+
+.admin-container {
+  padding: 20px;
+  background-color: #c4cfc5;
+}
+
+.top-section, .bottom-section {
+  display: flex;
+  justify-content: flex-start;     
+  gap: 30px;         
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  flex-wrap: wrap;
+}
+.top-section{
+  margin-top: 15px;
+  padding: 20px;
+  font-size: 1.1rem;
+}
+
+.bottom-section{
+  padding: 0px 20px;
+  gap: 5px !important;
+}
+
+.bins-summary-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.totalbins-container, .fullbins-container {
+  background-image: linear-gradient(to bottom, #76b082, #284c42);
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  color: #f9f9f9;
+  width: 200px;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 150px;
+  box-sizing: border-box;
+}
+
+.totalbins-container h2, .fullbins-container h2{
+  font-size: 1.2rem;
+  padding: 15px;
+}
+
+.totalbins-container p, .fullbins-container p {
+  font-size: 5rem;
+  margin: auto;
+}
+
+.fullbins-container {
+  background-image: linear-gradient(to bottom, #76b082, #284c42);
+  padding: 10px;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 200px;
+  min-height: 150px;
+}
+
+.binview-container {
+  background-color: #dfe0d0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  border-radius: 20px;
+  min-width: 350px;
+  height: fit-content;
+  box-sizing: border-box;
+}
+
+.binlist-container {
+  background-color: #dfe0d0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  flex-shrink: 0;
+  min-width: 400px;
+  width: 60%;
+  padding: 15px;
+
+  /* Added height constraints and overflow */
+  max-height: 385px; /* Set a maximum height */
+  min-height: 260px; /* Set a minimum height */
+  overflow-y: auto; /* Enable vertical scrolling */
+  box-sizing: border-box; /* Ensure padding is included in the height */
+  
+}
+
+
+.binlist-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.bin-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.left-controls,
+.right-controls {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.left-controls {
+  justify-content: flex-start;
+}
+
+.right-controls {
+  justify-content: flex-end;
+}
+
+.sort-dropdown {
+  padding: 8px;
+  border-radius: 5px;
+  background-color: #dfe0d0;
+  border: 1px solid #aaa;
+}
+
+.add-button {
+  padding: 8px 14px;
+  background-color: #118653;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Styles for view buttons in the table */
+.view-button {
+  width: 120px;
+  padding: 8px 12px;
+  border-radius: 15px !important;
+  border: none;
+  background-color: #76b182;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.recent-activity-container {
+  margin: 0;
+  margin-left: 25px;
+  padding: 20px;
+  width: 36%;
+  border-radius: 20px;
+  min-height: 100%;
+  background-color: #dfe0d0;
+}
+
+.recent-activity-container h2{
+  color: black;
+}
+.activity-item p{
+  color: black;
+}
+
+.fullbins-container p {
+  font-size: 5rem;
+  margin: auto;
+}
+
+.bin-view-content {
+  display: flex;
+  gap: 30px;
+}
+
+.image-section {
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+}
+
+.upload-placeholder {
+  width: 100%;
+  max-height: 220px; /* Increased max-height */
+  border: 1px dashed #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px; /* Increased margin */
+}
+
+.upload-placeholder img {
+  max-width: 100%;
+  object-fit: contain;
+  height: auto;
+}
+
+.upload-action-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.upload-button,
+.remove-button {
+  padding: 12px 20px; /* Increased padding */
+  font-size: 1rem; /* Increased font size */
+  background-color: #077553;
+  color: #ddd;
+  border: none;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.accepted-file-desc {
+  font-size: 0.9em;
+  color: #666;
+  text-align: center;
+}
+
+.bin-info {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bin-id-status-location {
+  display: flex;
+  flex-direction: column; /* Stack bin ID and the row below */
+  gap: 10px;
+}
+
+.bin-id-status-location h3 {
+  width: 100%;
+}
+
+.bin-id-status-location .status-location-row {
+  display: flex; /* Row for status and location */
+  gap: 10px;
+  width: 100%; /* Row takes full width */
+}
+
+.bin-id-status-location .status-location-row > div { /* Added this */
+  flex: 1;
+}
+
+.bin-id-status-location select,
+.bin-id-status-location input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%; /* Full width within the div */
+}
+
+.status-toggle select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 150px;
+}
+
+.remarks textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.bin-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.bin-actions button {
+  padding: 8px 15px;
+  background-color: #077553;
+  color: #ddd;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.activity-item {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+}
+
+
+
+@media (min-width: 1200px) {
+  .binview-container {
+    width: 1100px; /* Set fixed width for larger screens */
   }
+}
+
+/* Media query for screens larger than 1400px */
+@media (min-width: 1400px) {
+    .binview-container{
+        width: 1100px; /* Adjust width for even larger screens */
+    }
+}
+
+/* Media query for screens larger than 1600px */
+@media (min-width: 1600px) {
+    .binview-container{
+        width: 1100px; /* Adjust width for even larger screens */
+    }
+}
+
+/* Media query for screens larger than 1800px */
+@media (min-width: 1800px) {
+    .binview-container{
+        width: 1100px; /* Adjust width for even larger screens */
+    }
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+    .binview-container {
+        width: 500px; /* Adjust width for smaller screens */
+        padding: 20px; /* Adjust padding for smaller screens */
+    }
+}
