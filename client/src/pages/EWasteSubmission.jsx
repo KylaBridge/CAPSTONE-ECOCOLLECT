@@ -25,49 +25,50 @@ export default function EWasteSubmission() {
     // Add more dummy data as needed
   ];
 
-  const handleUpload = (event) => {
-    const files = event.target.files;
+const handleUpload = (event) => {
+  const files = event.target.files;
 
-    if (files && files.length > 0) {
-      const newAttachments = [];
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
-        if (!allowedTypes.includes(file.type)) {
-          alert(`Invalid file type for ${file.name}. Please upload a JPEG, PNG, PDF, or DOC file.`);
-          continue; // Skip to the next file
-        }
-
-        const maxSize = 5 * 1024 * 1024;
-        if (file.size > maxSize) {
-          alert(`File size exceeds the limit of 5MB for ${file.name}.`);
-          continue;
-        }
-
-        newAttachments.push(file);
-
-        if (file.type.startsWith('image/')) {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const imageUrl = e.target.result;
-            // Optionally update the attachments state with imageUrl
-            setAttachments((prevAttachments) => {
-              return prevAttachments.map((attachment, index) => {
-                if (attachment.name === file.name) {
-                  return { ...attachment, imageUrl };
-                }
-                return attachment;
-              });
-            });
-          };
-          reader.readAsDataURL(file);
-        }
+  if (files && files.length > 0) {
+    const newAttachments = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+      if (!allowedTypes.includes(file.type)) {
+        alert(`Invalid file type for ${file.name}. Please upload a JPEG, PNG, PDF, or DOC file.`);
+        continue; // Skip to the next file
       }
-      setAttachments((prevAttachments) => [...prevAttachments, ...newAttachments]); // Add new attachments to the state
-    }
 
-    setIsSubmitDisabled(false);
-  };
+      const maxSize = 5 * 1024 * 1024;
+      if (file.size > maxSize) {
+        alert(`File size exceeds the limit of 5MB for ${file.name}.`);
+        continue;
+      }
+
+      newAttachments.push({ name: file.name, file }); // Store file name and file object
+
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const imageUrl = e.target.result;
+          // Optionally update the attachments state with imageUrl
+          setAttachments((prevAttachments) => {
+            return prevAttachments.map((attachment, index) => {
+              if (attachment.name === file.name) {
+                return { ...attachment, imageUrl };
+              }
+              return attachment;
+            });
+          });
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+    setAttachments((prevAttachments) => [...prevAttachments, ...newAttachments]); // Add new attachments to the state
+  }
+
+  setIsSubmitDisabled(false);
+};
+
 
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
@@ -192,12 +193,9 @@ export default function EWasteSubmission() {
               ))}
             </ul>
           </div>
-          
- 
         </div>
       </div>
     </div>
-
     </>
   );
 }

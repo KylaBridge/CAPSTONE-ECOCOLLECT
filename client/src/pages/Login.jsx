@@ -1,36 +1,42 @@
-import "./styles/Login.css"
-import { toast } from "react-hot-toast"
-import { useNavigate } from "react-router-dom"
-import { Link } from "react-router-dom"
-import axios from "axios"
+import "./styles/Login.css";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import { useContext } from "react";
 
-import EcoCollectLogo from "../assets/EcoCollect-Logo.png"
+import { UserContext } from "../context/userContext";
+import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
 
 export default function Login() {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const { setUser } = useContext(UserContext); // ✅ Grab setUser from context
 
     async function loggingIn(formData) {
-        const data = Object.fromEntries(formData)
-        const { email, password } = data
+        const data = Object.fromEntries(formData);
+        const { email, password } = data;
 
         try {
-            const {data} = await axios.post("/api/ecocollect/auth/login", { 
+            const { data: response } = await axios.post("/api/ecocollect/auth/login", { 
                 email, password 
             });
-            console.log("Server Response:", data);
 
-            if(data.error) {
-                toast.error(data.error)
+            console.log("Server Response:", response);
+
+            if (response.error) {
+                toast.error(response.error);
             } 
-            else if(data.user?.role === "admin") {
+            else if (response.user?.role === "admin") {
+                setUser(response.user); // ✅ Save user to context
                 toast.success("Admin logged in");
                 navigate("/admin/usermanagement");
             } else {
-                toast.success("User logged in")
-                navigate("/home")
+                setUser(response); // ✅ Save user to context
+                toast.success("User logged in");
+                navigate("/home");
             }
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
     }
 
@@ -48,10 +54,12 @@ export default function Login() {
                 <input id="password" type="password" name="password" required />
 
                 <button className="login-btn">LOG IN</button>
-                <p className="register-el">Don't have an account? <Link className="register-btn" to={"/register"}>Register</Link></p>
+                <p className="register-el">
+                    Don't have an account? <Link className="register-btn" to={"/register"}>Register</Link>
+                </p>
                 <p className="or-seperator">or</p>
                 <button className="microsoftAcc-btn">Continue with Microsoft Account</button>
             </form>
         </div>
-    )
+    );
 }

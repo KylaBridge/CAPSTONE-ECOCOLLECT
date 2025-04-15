@@ -17,7 +17,6 @@ export default function UserManagement() {
       <div className="admin-container">
           <Header 
             pageTitle="User Management" 
-            adminName="Admin Name" 
           />
         <ViewUser user={selectedUser} />
         <UserTable onViewUser={setSelectedUser} />
