@@ -85,7 +85,8 @@ export default function EWasteSubmission() {
   
   return (
     <>
-      <Sidebar isShown={showNavbar} setIsShown={setShowNavbar} />
+    <div className="body-submission-module">
+            <Sidebar isShown={showNavbar} setIsShown={setShowNavbar} />
       <Header headerImg={EWasteHeaderTitle} headerText="E-Waste Submission" />
 
       <div className="waste-main-container">
@@ -195,6 +196,8 @@ export default function EWasteSubmission() {
  
         </div>
       </div>
+    </div>
+
     </>
   );
 }

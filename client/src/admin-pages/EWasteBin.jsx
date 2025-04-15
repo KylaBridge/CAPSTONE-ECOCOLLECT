@@ -189,7 +189,7 @@ export default function EWasteBin() {
                     />
                     </div>
 
-                    <div className="recent-activity-container">
+                    <div className="recent-activity-container-admin">
                       <h2>Recent Activity</h2>
                     <div className="activity-item">
                         <p>Admin Mark updated BIN-002 (Cafeteria) to "Needs Emptying" - Dec 12, 2024 - 3:00 PM</p>
