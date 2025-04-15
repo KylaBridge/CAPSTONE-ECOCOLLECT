@@ -1,4 +1,4 @@
-.badgetable-container{
+.badgetable-container {
     background-color: #dfe0d0;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
@@ -54,28 +54,22 @@
 }
 
 .badge-table-wrapper {
-    width: 100%;
-}
-
-.badge-table-body-wrapper {
-    background-color: #dfe0d0;
     max-height: 300px;
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: #aaa #dfe0d0; 
+    scrollbar-color: #aaa #dfe0d0;
 }
 
-/* For Chrome, Edge, Safari */
-.badge-table-body-wrapper::-webkit-scrollbar {
+.badge-table-wrapper::-webkit-scrollbar {
     width: 6px;
 }
 
-.badge-table-body-wrapper::-webkit-scrollbar-track {
+.badge-table-wrapper::-webkit-scrollbar-track {
     background: #dfe0d0;
     border-radius: 10px;
 }
 
-.badge-table-body-wrapper::-webkit-scrollbar-thumb {
+.badge-table-wrapper::-webkit-scrollbar-thumb {
     background-color: #aaa;
     border-radius: 10px;
 }
@@ -84,30 +78,40 @@
     width: 100%;
     table-layout: fixed;
     border-collapse: collapse;
+    background-color: #dfe0d0;
 }
 
-.badge-table th, .badge-table td {
+.badge-table thead th {
+    position: sticky;
+    top: 0;
+    background-color: #dfe0d0;
+    z-index: 2;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    font-weight: 600;
+    text-align: center;
+    padding: 20px;
     border: 1px solid #afafaf;
+}
+
+.badge-table th,
+.badge-table td {
+    width: 25%;
+    box-sizing: border-box;
     padding: 20px;
     text-align: center;
-}
-
-.badge-table th {
-    background-color: #dfe0d0;
-    font-weight: 600;
+    border: 1px solid #afafaf;
 }
 
 .badge-table tbody tr {
-    background-color: #dfe0d0; /* or any color you want */
+    background-color: #dfe0d0;
 }
 
 .badge-table button {
     width: 120px;
     padding: 8px 12px;
-    border-radius: 15px !important;
     border: none;
     background-color: #76b182;
     color: white;
-    border-radius: 5px;
+    border-radius: 15px !important;
     cursor: pointer;
 }

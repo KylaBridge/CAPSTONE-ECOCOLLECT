@@ -5,6 +5,14 @@ html, body {
     background-color: #c4cfc5;
 }
 
+.responsive-wrapper {
+    padding: 0 20px;
+    max-width: 1440px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
 .badge-management-page{
     padding: 20px;
     background-color: #c4cfc5;
@@ -46,7 +54,7 @@ html, body {
     text-align: center;
     color: #f9f9f9;
     width: 200px;
-    height: fit-content;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -80,7 +88,7 @@ html, body {
     padding: 20px;
     border-radius: 20px;
     width: 100%;
-    height: fit-content;
+    height: 100%;
     box-sizing: border-box;
 }
 
@@ -93,51 +101,46 @@ html, body {
 
 .badge-icons-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 15px;
-    padding: 10px 0;
-}
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 2rem;
+    text-align: center;
 
-.badge-item {
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 50%;
-    padding: 15px;
+  }
+  
+  .badge-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    text-align: center;
-    aspect-ratio: 1 / 1;
-    min-height: 115px;
-    box-sizing: border-box;
-    overflow: hidden;
-}
-
-.badge-item-img {
-    width: 50%;
-    height: auto;
-    max-height: 60%;
+  }
+  
+  .badge-img-wrapper {
+    width: 100px;
+    height: 140px;
+    margin-bottom: 0.5rem;
+  }
+  
+  .badge-item-img {
+    width: 100%;
+    height: 100%;
     object-fit: contain;
-    margin-bottom: 8px;
-    border-radius: 4px;
-}
-
-.badge-item-label {
-    font-weight: bold;
-    font-size: 0.9rem;
-    margin-bottom: 4px;
-    color: #333;
-    line-height: 1.2;
-     overflow-wrap: break-word;
-}
-
-.badge-item-desc {
-    font-size: 0.75rem;
+  }
+  
+  .badge-text-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .badge-item-label {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+  }
+  
+  .badge-item-desc {
+    font-size: 0.8rem;
     color: #666;
-    line-height: 1.1;
-    overflow-wrap: break-word;
-}
+  }
 
 .badge-table-section {
     width: 100%;
@@ -372,58 +375,46 @@ html, body {
     vertical-align: middle;
 }
 
-.badge-table-section th {
-    background-color: #e9ecef;
-    font-weight: bold;
-    position: sticky;
-    left: 0;
-    z-index: 1;
-}
 
 /* --- Media Queries for Responsiveness --- */
-
-/* Large Tablets / Small Laptops */
 @media (max-width: 1200px) {
     .badge-management-grid {
-        /* Change to 2 columns: Middle | Right, Total goes above */
         grid-template-columns: minmax(300px, 1fr) minmax(400px, 1.2fr);
-        grid-template-areas: /* Define areas for clarity */
+        grid-template-areas:
             "total total"
             "middle right";
-         gap: 20px; /* Adjust gap */
+         gap: 20px;
     }
     .total-badges-container.grid-col-1 {
-        grid-area: total; /* Assign to the 'total' area */
-        width: 100%; /* Take full width */
-        max-width: 250px; /* Limit width */
-        margin: 0 auto 10px auto; /* Center and add bottom margin */
-        min-height: auto; /* Remove min-height */
-        padding: 10px; /* Adjust padding */
+        grid-area: total;
+        width: 100%;
+        max-width: 250px;
+        margin: 0 auto 10px auto;
+        min-height: auto;
+        padding: 10px;
     }
-     .total-badges-container p { font-size: 3rem; } /* Smaller number */
+     .total-badges-container p { font-size: 3rem; }
 
     .middle-column.grid-col-2 {
-        grid-area: middle; /* Assign to 'middle' area */
+        grid-area: middle;
     }
     .badge-form-section.grid-col-3 {
-        grid-area: right; /* Assign to 'right' area */
+        grid-area: right;
     }
-    /* Internal form grid might still stack here if needed */
     .badge-form-grid {
-         grid-template-columns: 1fr; /* Stack form elements earlier */
+         grid-template-columns: 1fr;
     }
     .upload-section { align-items: center; }
 }
-/* Smaller Tablets / Large Phones */
+
 @media (max-width: 768px) {
     .badge-management-grid {
-        /* Change to 1 column */
         grid-template-columns: 1fr;
-        grid-template-areas: /* Redefine areas */
+        grid-template-areas:
             "total"
             "middle"
             "right";
-         gap: 20px; /* Adjust gap */
+         gap: 20px;
     }
     .badge-management-page { padding: 15px; }
 
@@ -431,17 +422,17 @@ html, body {
     .middle-column.grid-col-2,
     .badge-form-section.grid-col-3 {
         width: 100%;
-        max-width: 550px; /* Max width for single column */
-        margin: 0 auto; /* Center column content */
+        max-width: 550px;
+        margin: 0 auto;
     }
-    .total-badges-container.grid-col-1 { margin-bottom: 0; } /* Remove extra margin */
+    .total-badges-container.grid-col-1 { margin-bottom: 0; }
 
     .badge-form-grid {
-        grid-template-columns: 1fr; /* Ensure stacking */
+        grid-template-columns: 1fr;
         gap: 25px;
     }
-     .upload-area { max-width: 100%; } /* Allow upload area to grow */
-     .upload-placeholder { width: 140px; height: 140px; } /* Smaller */
+     .upload-area { max-width: 100%; }
+     .upload-placeholder { width: 140px; height: 140px; }
      .form-buttons { justify-content: center; }
 
      .badge-table-section { padding: 15px; }

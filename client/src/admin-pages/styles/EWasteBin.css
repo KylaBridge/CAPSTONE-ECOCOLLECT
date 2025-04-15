@@ -12,28 +12,25 @@ html, body {
 
 .top-section, .bottom-section {
   display: flex;
-  justify-content: flex-start;     
-  gap: 30px;         
-  max-width: 1400px;
-  margin-left: auto;
-  margin-right: auto;
+  justify-content: space-between;
+  gap: 30px;
   flex-wrap: wrap;
-}
-.top-section{
   margin-top: 15px;
   padding: 20px;
   font-size: 1.1rem;
+  align-items: stretch;
 }
 
-.bottom-section{
-  padding: 0px 20px;
+.bottom-section {
+  padding: 0 20px;
   gap: 5px !important;
 }
 
 .bins-summary-wrapper {
+  flex: 1 1 -12%;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  justify-content: space-between;
 }
 
 .totalbins-container, .fullbins-container {
@@ -42,17 +39,17 @@ html, body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
   color: #f9f9f9;
-  width: 200px;
-  height: fit-content;
+  width: 100%;
+  height: 100%;
+  min-height: 150px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 150px;
-  box-sizing: border-box;
+  margin: 5px;
 }
 
-.totalbins-container h2, .fullbins-container h2{
+.totalbins-container h2, .fullbins-container h2 {
   font-size: 1.2rem;
   padding: 15px;
 }
@@ -63,22 +60,20 @@ html, body {
 }
 
 .fullbins-container {
-  background-image: linear-gradient(to bottom, #76b082, #284c42);
   padding: 10px;
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 200px;
-  min-height: 150px;
 }
 
 .binview-container {
+  flex: 1;
+  min-width: 300px;
   background-color: #dfe0d0;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 30px;
   border-radius: 20px;
-  min-width: 350px;
-  height: fit-content;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .binlist-container {
@@ -89,15 +84,11 @@ html, body {
   min-width: 400px;
   width: 60%;
   padding: 15px;
-
-  /* Added height constraints and overflow */
-  max-height: 385px; /* Set a maximum height */
-  min-height: 260px; /* Set a minimum height */
-  overflow-y: auto; /* Enable vertical scrolling */
-  box-sizing: border-box; /* Ensure padding is included in the height */
-  
+  max-height: 385px;
+  min-height: 260px;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
-
 
 .binlist-header {
   display: flex;
@@ -146,7 +137,6 @@ html, body {
   cursor: pointer;
 }
 
-/* Styles for view buttons in the table */
 .view-button {
   width: 120px;
   padding: 8px 12px;
@@ -154,30 +144,24 @@ html, body {
   border: none;
   background-color: #76b182;
   color: white;
-  border-radius: 5px;
   cursor: pointer;
 }
 
 .recent-activity-container-admin {
-  margin: 0;
-  margin-left: 25px;
+  margin-left: 12px;
   padding: 20px;
-  width: 36%;
+  width: 38%;
   border-radius: 20px;
   min-height: 100%;
   background-color: #dfe0d0;
+
 }
 
 .recent-activity-container-admin h2{
-  color: black;
+    text-align: center;
 }
-.activity-item p{
+.activity-item p, .recent-activity-container-admin h2 {
   color: black;
-}
-
-.fullbins-container p {
-  font-size: 5rem;
-  margin: auto;
 }
 
 .bin-view-content {
@@ -193,12 +177,12 @@ html, body {
 
 .upload-placeholder {
   width: 100%;
-  max-height: 220px; /* Increased max-height */
+  max-height: 220px;
   border: 1px dashed #ccc;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 15px; /* Increased margin */
+  margin-bottom: 15px;
 }
 
 .upload-placeholder img {
@@ -216,15 +200,14 @@ html, body {
 
 .upload-button,
 .remove-button {
-  padding: 12px 20px; /* Increased padding */
-  font-size: 1rem; /* Increased font size */
+  padding: 12px 20px;
+  font-size: 1rem;
   background-color: #077553;
   color: #ddd;
   border: none;
   border-radius: 5px;
   margin-bottom: 5px;
   cursor: pointer;
-  width: fit-content;
 }
 
 .accepted-file-desc {
@@ -243,7 +226,7 @@ html, body {
 
 .bin-id-status-location {
   display: flex;
-  flex-direction: column; /* Stack bin ID and the row below */
+  flex-direction: column;
   gap: 10px;
 }
 
@@ -251,22 +234,22 @@ html, body {
   width: 100%;
 }
 
-.bin-id-status-location .status-location-row {
-  display: flex; /* Row for status and location */
+.status-location-row {
+  display: flex;
   gap: 10px;
-  width: 100%; /* Row takes full width */
+  width: 100%;
 }
 
-.bin-id-status-location .status-location-row > div { /* Added this */
+.status-location-row > div {
   flex: 1;
 }
 
-.bin-id-status-location select,
-.bin-id-status-location input {
+.status-location-row select,
+.status-location-row input {
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  width: 100%; /* Full width within the div */
+  width: 100%;
 }
 
 .status-toggle select {
@@ -303,39 +286,41 @@ html, body {
   padding: 10px 0;
 }
 
+/* Responsive tweaks */
+@media screen and (max-width: 1024px) {
+  .top-section {
+    flex-direction: column;
+  }
 
-
-@media (min-width: 1200px) {
+  .bins-summary-wrapper,
   .binview-container {
-    width: 1100px; /* Set fixed width for larger screens */
+    width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .binview-container {
+    padding: 20px;
   }
 }
 
-/* Media query for screens larger than 1400px */
-@media (min-width: 1400px) {
-    .binview-container{
-        width: 1100px; /* Adjust width for even larger screens */
-    }
-}
+@media screen and (max-width: 768px) {
+  .binview-container {
+    width: 100%;
+    padding: 20px;
+  }
 
-/* Media query for screens larger than 1600px */
-@media (min-width: 1600px) {
-    .binview-container{
-        width: 1100px; /* Adjust width for even larger screens */
-    }
-}
+  .binlist-container {
+    width: 100%;
+    min-width: unset;
+  }
 
-/* Media query for screens larger than 1800px */
-@media (min-width: 1800px) {
-    .binview-container{
-        width: 1100px; /* Adjust width for even larger screens */
-    }
-}
+  .recent-activity-container-admin {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 20px;
+  }
 
-/* Media query for smaller screens */
-@media (max-width: 768px) {
-    .binview-container {
-        width: 500px; /* Adjust width for smaller screens */
-        padding: 20px; /* Adjust padding for smaller screens */
-    }
+  .bin-view-content {
+    flex-direction: column;
+  }
 }

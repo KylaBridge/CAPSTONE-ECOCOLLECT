@@ -18,8 +18,11 @@ export default function UserManagement() {
           <Header 
             pageTitle="User Management" 
           />
-        <ViewUser user={selectedUser} />
-        <UserTable onViewUser={setSelectedUser} />
+          <div className="usermodule-responsive-wrapper">
+             <ViewUser user={selectedUser} />
+              <UserTable onViewUser={setSelectedUser} />
+          </div>
+       
       </div>
     </>
   );
