@@ -58,23 +58,18 @@ export default function BadgeTable() {
                     <th>Action</th>
                 </tr>
                 </thead>
-            </table>
-            <div className="badge-table-body-wrapper">
-                <table className="badge-table">
-                <tbody>
-                    {badges.map((badge) => (
+                <tbody className="badge-table-body">
+                {badges.map((badge) => (
                     <tr key={badge.id}>
-                        <td>{badge.id}</td>
-                        <td>{badge.name}</td>
-                        <td>{badge.points}</td>
-                        <td><button>VIEW</button></td>
+                    <td>{badge.id}</td>
+                    <td>{badge.name}</td>
+                    <td>{badge.points}</td>
+                    <td><button>VIEW</button></td>
                     </tr>
-                    ))}
+                ))}
                 </tbody>
-                </table>
+            </table>
             </div>
-            </div>
-
       </div>
     );
   }

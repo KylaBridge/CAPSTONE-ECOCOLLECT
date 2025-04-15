@@ -11,6 +11,7 @@ export default function EWasteBin() {
     const [imagePreview, setImagePreview] = useState(null);
     const [isImageSelected, setIsImageSelected] = useState(false);
     const [remarks, setRemarks] = useState("");
+    const [binImg, setBinImg] = useState(null);
     const [location, setLocation] = useState("");
     const [status, setStatus] = useState("Full");
 

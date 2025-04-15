@@ -12,6 +12,7 @@
     scrollbar-width: thin;
     scrollbar-color: #aaa #dfe0d0; 
     max-height: 220px;
+    position: relative;
   }
 
 
@@ -46,6 +47,12 @@
     text-align: left;
     color: #4b5563;
     font-weight: 500;
+  }
+
+  .bin-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
   }
   
   .bin-table tbody {

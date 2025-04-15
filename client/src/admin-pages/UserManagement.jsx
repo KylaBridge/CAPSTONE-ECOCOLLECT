@@ -19,8 +19,11 @@ export default function UserManagement() {
             pageTitle="User Management" 
             adminName="Admin Name" 
           />
-        <ViewUser user={selectedUser} />
-        <UserTable onViewUser={setSelectedUser} />
+          <div className="usermodule-responsive-wrapper">
+             <ViewUser user={selectedUser} />
+              <UserTable onViewUser={setSelectedUser} />
+          </div>
+       
       </div>
     </>
   );

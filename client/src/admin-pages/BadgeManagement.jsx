@@ -68,7 +68,8 @@ export default function BadgeManagement() {
                     adminName="Admin Name"
                 />
 
-                {/* Main Grid Content Area */}
+                <div className="responsive-wrapper">
+                     {/* Main Grid Content Area */}
                 <div className="badge-management-grid">
 
                     {/* --- Column 1: Total Badges --- */}
@@ -83,11 +84,19 @@ export default function BadgeManagement() {
                             <h3>Recently Added</h3>
                             <div className="badge-icons-grid">
                                 {recentlyAddedBadges.map((badge, index) => (
-                                    <div key={index} className="badge-item">
-                                        <img src={badge.icon || placeholderBadge} alt={badge.name} className="badge-item-img" /> {/* Ensure placeholder */}
-                                        <div className="badge-item-label">{badge.name}</div>
-                                        <div className="badge-item-desc">{badge.description}</div>
-                                    </div>
+                                  <div key={index} className="badge-item">
+                                  <div className="badge-img-wrapper">
+                                    <img
+                                      src={badge.icon || placeholderBadge}
+                                      alt={badge.name}
+                                      className="badge-item-img"
+                                    />
+                                  </div>
+                                  <div className="badge-text-wrapper">
+                                    <div className="badge-item-label">{badge.name}</div>
+                                    <div className="badge-item-desc">{badge.description}</div>
+                                  </div>
+                                </div>
                                 ))}
                             </div>
                         </div>
@@ -153,6 +162,7 @@ export default function BadgeManagement() {
                     </div> {/* End badge-form-section */}
 
                 </div> {/* End badge-management-grid */}
+                </div>
             </div> {/* End badge-management-page */}
         </>
     );
