@@ -1,93 +1,105 @@
-import { useState } from "react"
-import "./styles/EWasteSubmission.css"
+import { useState, useEffect, useContext } from "react";
+import axios from "axios";
+import { UserContext } from "../context/userContext";
+import "./styles/EWasteSubmission.css";
 
-// Components and Pages
-import Sidebar from "../components/Sidebar"
-import Header from "../components/Header"
-import EWasteHeaderTitle from "../assets/headers/ewaste-header.png"
-import ChipIcon from "../assets/icons/chipandtrash.png"
+// Components and Assets
+import Sidebar from "../components/Sidebar";
+import Header from "../components/Header";
+import EWasteHeaderTitle from "../assets/headers/ewaste-header.png";
+import ChipIcon from "../assets/icons/chipandtrash.png";
 import { IoMdArrowDroprightCircle } from "react-icons/io";
-import { MdDelete } from 'react-icons/md'; 
+import { MdDelete } from 'react-icons/md';
 
 export default function EWasteSubmission() {
-  const [showNavbar, setShowNavbar] = useState(false)
-  const [attachments, setAttachments] = useState([]); // Store attachments
-  const [selectedCategory, setSelectedCategory] = useState(null); 
-  const [isSubmitDisabled, setIsSubmitDisabled] = useState(true); 
+  const [showNavbar, setShowNavbar] = useState(false);
+  const [attachments, setAttachments] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
+  const [submissionLogs, setSubmissionLogs] = useState([]);
+  const { user } = useContext(UserContext);
 
-   // Dummy data for recent activity
-   const dummyActivityLog = [
-    { id: 1234, status: "Pending", date: "Dec 12, 2025 - 3:00 PM" },
-    { id: 5678, status: "Completed", date: "Nov 28, 2025 - 12:00 PM" },
-    { id: 9012, status: "Submitted", date: "Dec 15, 2025 - 2:00 PM" },
-    { id: 3456, status: "Processing", date: "Dec 16, 2025 - 10:00 AM" },
-    { id: 7890, status: "Completed", date: "Dec 17, 2025 - 4:00 PM" },
-    // Add more dummy data as needed
-  ];
+  const handleUpload = (event) => {
+    const files = Array.from(event.target.files);
+    const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+    const maxSize = 5 * 1024 * 1024;
 
-const handleUpload = (event) => {
-  const files = event.target.files;
-
-  if (files && files.length > 0) {
-    const newAttachments = [];
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+    files.forEach(file => {
       if (!allowedTypes.includes(file.type)) {
-        alert(`Invalid file type for ${file.name}. Please upload a JPEG, PNG, PDF, or DOC file.`);
-        continue; // Skip to the next file
+        alert(`Invalid file type: ${file.name}`);
+        return;
       }
 
-      const maxSize = 5 * 1024 * 1024;
       if (file.size > maxSize) {
-        alert(`File size exceeds the limit of 5MB for ${file.name}.`);
-        continue;
+        alert(`File too large: ${file.name}`);
+        return;
       }
 
-      newAttachments.push({ name: file.name, file }); // Store file name and file object
-
-      if (file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const imageUrl = e.target.result;
-          // Optionally update the attachments state with imageUrl
-          setAttachments((prevAttachments) => {
-            return prevAttachments.map((attachment, index) => {
-              if (attachment.name === file.name) {
-                return { ...attachment, imageUrl };
-              }
-              return attachment;
-            });
-          });
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-    setAttachments((prevAttachments) => [...prevAttachments, ...newAttachments]); // Add new attachments to the state
-  }
-
-  setIsSubmitDisabled(false);
-};
-
+      setAttachments(prev => [...prev, file]);
+      setIsSubmitDisabled(false);
+    });
+  };
 
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
-    setIsSubmitDisabled(attachments.length === 0 || !event.target.value); 
+    setIsSubmitDisabled(attachments.length === 0 || !event.target.value);
   };
 
   const handleRemoveAttachment = (index) => {
     const newAttachments = [...attachments];
     newAttachments.splice(index, 1);
     setAttachments(newAttachments);
-    setIsSubmitDisabled(newAttachments.length === 0 || !selectedCategory); 
+    setIsSubmitDisabled(newAttachments.length === 0 || !selectedCategory);
   };
 
+  const fetchSubmissionLogs = async () => {
+    if (!user?._id) return;
+    try {
+      const res = await axios.get(`http://localhost:3000/api/ecocollect/ewaste/user/${user._id}`);
+      setSubmissionLogs(res.data);
+    } catch (err) {
+      console.error("Failed to fetch submission logs", err);
+    }
+  };
 
-  
+  const handleSubmit = async () => {
+    if (!user?._id) {
+      alert("User not found. Please log in again.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("userId", user._id);
+    formData.append("category", selectedCategory);
+    attachments.forEach(file => formData.append("attachments", file));
+
+    try {
+      const response = await axios.post("http://localhost:3000/api/ecocollect/ewaste", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (response.status === 201) {
+        alert("E-Waste submitted successfully!");
+        setAttachments([]);
+        setSelectedCategory("");
+        setIsSubmitDisabled(true);
+        fetchSubmissionLogs();
+      }
+    } catch (err) {
+      console.error(err);
+      alert("An error occurred while submitting.");
+    }
+  };
+
+  useEffect(() => {
+    fetchSubmissionLogs();
+  }, [user]);
+
   return (
-    <>
     <div className="body-submission-module">
-            <Sidebar isShown={showNavbar} setIsShown={setShowNavbar} />
+      <Sidebar isShown={showNavbar} setIsShown={setShowNavbar} />
       <Header headerImg={EWasteHeaderTitle} headerText="E-Waste Submission" />
 
       <div className="waste-main-container">
@@ -100,52 +112,21 @@ const handleUpload = (event) => {
           <img src={ChipIcon} alt="Chip and Trash Icon" className="chip-icon" />
 
           <div className="upload-content-wrapper">
-          <ul className="instruction-list">
-          <li>
-            <div className="instruction-icon-container">
-              <IoMdArrowDroprightCircle className="instruction-icon" />
-            </div>
-            <div className="instruction-text">
-              Let's focus on one e-waste item per submission.
-            </div>
-          </li>
-          <li>
-            <div className="instruction-icon-container">
-              <IoMdArrowDroprightCircle className="instruction-icon" />
-            </div>
-            <div className="instruction-text">
-              Tell us what kind of e-waste you're sending.
-            </div>
-          </li>
-          <li>
-            <div className="instruction-icon-container">
-              <IoMdArrowDroprightCircle className="instruction-icon" />
-            </div>
-            <div className="instruction-text">
-              Add as many pics as you need.
-            </div>
-          </li>
-          <li>
-            <div className="instruction-icon-container">
-              <IoMdArrowDroprightCircle className="instruction-icon" />
-            </div>
-            <div className="instruction-text">
-              We'll give it a once-over and let you know it's good to go!
-            </div>
-          </li>
-        </ul>
+            <ul className="instruction-list">
+              <li><IoMdArrowDroprightCircle className="instruction-icon" /> Let's focus on one e-waste item per submission.</li>
+              <li><IoMdArrowDroprightCircle className="instruction-icon" /> Tell us what kind of e-waste you're sending.</li>
+              <li><IoMdArrowDroprightCircle className="instruction-icon" /> Add as many pics as you need.</li>
+              <li><IoMdArrowDroprightCircle className="instruction-icon" /> We'll give it a once-over and let you know it's good to go!</li>
+            </ul>
 
             <div className="attachments-section">
               <h2>Attachments</h2>
               {attachments.length > 0 ? (
                 <ul className="attachment-list">
-                  {attachments.map((attachment, index) => (
+                  {attachments.map((file, index) => (
                     <li key={index} className="attachment-item">
-                      <span className="attachment-name">{attachment.name}</span> 
-                      <MdDelete
-                    style={{ fontSize: '16px', color: '#245a1e' }}
-                    onClick={() => handleRemoveAttachment(index)}
-                  />
+                      <span className="attachment-name">{file.name}</span>
+                      <MdDelete style={{ fontSize: '16px', color: '#245a1e' }} onClick={() => handleRemoveAttachment(index)} />
                     </li>
                   ))}
                 </ul>
@@ -155,11 +136,7 @@ const handleUpload = (event) => {
             </div>
 
             <div className="item-selection-container">
-              <select
-                className="category-select"
-                value={selectedCategory || ""}
-                onChange={handleCategoryChange}
-              >
+              <select className="category-select" value={selectedCategory || ""} onChange={handleCategoryChange}>
                 <option value="" disabled>Select E-Waste Category</option>
                 <option value="Phone">Phone</option>
                 <option value="Laptop">Laptop</option>
@@ -169,33 +146,32 @@ const handleUpload = (event) => {
               </select>
             </div>
 
-            <button disabled={isSubmitDisabled}>SUBMIT</button>
+            <button onClick={handleSubmit} disabled={isSubmitDisabled}>SUBMIT</button>
           </div>
         </div>
 
-
-        {/* User E-waste submission Log*/}
+        {/* User E-waste submission Log */}
         <div className="log-container">
           <div className="recent-title-container">
             <h2>E-Waste Submissions</h2>
           </div>
 
           <div className="recent-activity-container">
-            <h2>Recent Activity</h2>         
-            
+            <h2>Recent Activity</h2>
             <ul className="activity-list">
-              {dummyActivityLog.map((activity) => (
-                <li key={activity.id} className="activity-item">
-                  <span className="activity-id">Submission ID: {activity.id}</span>
-                  <span className="activity-status">Status: {activity.status}</span>
-                  <span className="activity-date">{activity.date}</span>
+              {submissionLogs.length > 0 ? submissionLogs.map((activity) => (
+                <li key={activity._id} className="activity-item">
+                  <span className="activity-id">Submission ID: {activity._id}</span>
+                  <span className="activity-status">Category: {activity.category}</span>
+                  <span className="activity-date">{new Date(activity.createdAt).toLocaleString()}</span>
                 </li>
-              ))}
+              )) : (
+                <li>No submissions yet.</li>
+              )}
             </ul>
           </div>
         </div>
       </div>
     </div>
-    </>
   );
 }

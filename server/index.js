@@ -19,6 +19,7 @@ app.use(
 // Routes
 app.use("/api/ecocollect", require("./routes/controllerRoutes"))
 app.use("/api/ecocollect/auth", require("./routes/authRoutes"))
+app.use("/uploads", express.static("uploads"));
 
 // database connection
 mongoose.connect(process.env.MONGO_URL)
