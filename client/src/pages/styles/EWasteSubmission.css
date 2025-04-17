@@ -216,8 +216,13 @@
     border-top-right-radius: 20px;
     padding: 0px 0px 20px 0px;
     margin: 27px 10px 12px 10px;
-    width: fit-content;
+    width: 96%;
     justify-content: center;
+    min-width: 300px;            
+    max-width: 100%;    
+    justify-content: center;
+    align-self: center;
+    
   }
   
   .recent-title-container {
@@ -243,6 +248,7 @@
     height: 250px;
     overflow-y: auto;
     background-color: transparent;
+    width: 100%;
   }
   
   .activity-item {
@@ -253,6 +259,10 @@
   
   .activity-id {
     font-weight: bold;
+    width: 40%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;  
   }
   
   .activity-status {

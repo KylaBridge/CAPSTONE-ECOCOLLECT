@@ -19,6 +19,7 @@ import AchieversModule from "./admin-pages/AchieversModule.jsx"
 import BadgeManagement from "./admin-pages/BadgeManagement.jsx"
 import ActivityLog from "./admin-pages/ActivityLog.jsx"
 import Rewards from "./pages/Rewards.jsx"
+import AdminLogIn from "./admin-pages/AdminLogIn.jsx"
 
 axios.defaults.baseURL = "http://localhost:3000"
 axios.defaults.withCredentials = true
@@ -40,6 +41,7 @@ export default function App() {
 
 
         {/*Admin Routes */}
+        <Route path="/admin/login" element={<AdminLogIn />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/usermanagement" element={<UserManagement />} />
         <Route path="/admin/analyticsdashboard" element={<AnalyticsDashboard />} />
