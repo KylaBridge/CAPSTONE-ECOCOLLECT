@@ -1,7 +1,7 @@
 .profile-container {
     border: 4px solid #284d3c;
-    width: 90%;
-    max-width: 700px; 
+    width: 100%;
+    max-width: 100%; 
     height: 120px; 
     border-radius: 20px;
     background-color: #70b536;
@@ -31,55 +31,42 @@
 }
 
 .profile-details h1 {
+    color: antiquewhite;
     width: 50%;
-    font-size: 0.7rem;
+    font-size: clamp(0.7rem, 3.5vw, 1.4rem);
     white-space: nowrap;
 }
 
-.xp-bar-container {
-    width: 100%;
-}
-
-.xp-bar {
-    width: 100%;
-    height: 20px;
-    background-color: white;
+.exp-bar {
+    background-color: #e5e5e5;
     border-radius: 20px;
-    border: 3px solid gray;
+    height: 30px;
+    width: 100%;
+    padding: 3px;
+    position: relative;
     overflow: hidden;
-}
-
-.xp-text{
-    width: 90%;
+  }
+  
+  .progress-bar {
+    background-color: #d1d5a1;
     height: 100%;
-    padding: 0 5px;
-    margin-top: 8px;
-    justify-content: space-between;
+    width: 40%;
+    margin-top: 0 !important; 
+    border-radius: 20px;
+    border-bottom: 5px solid #82935b;
     display: flex;
-}
-
-.xp-number {
-    display: flex;
-    padding: 0 5px;
-    margin-top: 10px;
-}
-
-.xp-number p {
-    font-weight: bolder;
-    font-size: 1.5rem;
-    color: #243b55;
-}
-
-.xp-progress {
-    height: 100%;
-    background-color: #284d3c;
-    max-width: 50%; 
-}
-
-.xp-text {
-    font-size: 0.9rem;
-    text-align: center;
-}
+    align-items: center;
+    justify-content: flex-end;
+    padding:10px;
+    color:#243b55;
+    font-weight: 600;
+    font-size: 14px;
+    position: relative;
+  }
+  
+  .progress-text-inside {
+    z-index: 2;
+  }
 
 .chip-icon {
     width: 90px;

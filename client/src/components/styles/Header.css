@@ -10,7 +10,7 @@
 
 .head-container span {
     position: absolute;
-    top: 40px;
+    top: 5vh;
     right: 40px;
     color:  #245a1e;
     font-weight: bolder;
@@ -19,7 +19,10 @@
 }
 
 .head-container img {
+    max-width: 100%;
     width: 300px;
     margin: 0 auto;
     display: block;
+    height: 110%;
 }
+
