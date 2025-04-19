@@ -82,7 +82,7 @@ export default function EWasteBin() {
     return (
         <>
             <AdminSidebar />
-            <div className="admin-container">
+            <div className="ewastemodule-container">
                 <Header 
                     pageTitle="E-Waste Bin Monitoring" 
                     adminName="Admin Name" 

@@ -4,8 +4,10 @@ html, body {
   background-color: #c4cfc5;
 }
 
-.admin-container {
-    background-color: #c4cfc5;
+.dashboard-container {
+  padding: 40px 40px;
+  height: 100%;
+  margin-left: 280px;
 }
 
 .top-section, .bottom-section {
@@ -26,6 +28,8 @@ html, body {
 
 .bottom-section{
   padding: 0px 20px;
+  margin-top: 5px !important;
+  margin-bottom: 5px !important;
 }
 
 .total-users-container{

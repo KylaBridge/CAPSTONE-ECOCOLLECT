@@ -59,7 +59,7 @@ export default function AdminDashboard(){
     return (
         <>
             <AdminSidebar/>
-            <div className="admin-container">
+            <div className="dashboard-container">
                 <Header 
                     pageTitle="Dashboard Overview" 
                     adminName="Admin Name" 

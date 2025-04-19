@@ -14,7 +14,7 @@ export default function UserManagement() {
   return (
     <>
       <AdminSidebar />
-      <div className="admin-container">
+      <div className="usermodule-container">
           <Header 
             pageTitle="User Management" 
           />
