@@ -1,61 +1,32 @@
 import AdminSidebar from "../admin-components/AdminSidebar";
 import Header from "../admin-components/Header";
 import { useEffect, useState } from "react";
+import axios from "axios";
+import toast from "react-hot-toast"; 
 import "./styles/EWasteSubmit.css";
-import placeholderImg from "../assets/icons/mrcpu.png";
-import binIcon from "../assets/icons/binIcon.png";
-
 
 export default function EWasteSubmit() {
     const [submissions, setSubmissions] = useState([]);
     const [selectedSubmission, setSelectedSubmission] = useState(null);
-    const [currentImageIndex, setCurrentImageIndex] = useState(0); // To track the current image
-
-    const placeholderSubmissions = [
-        {
-            id: "12345",
-            name: "John Cena",
-            submissionDate: "1-12-24",
-            status: "Pending",
-            category: "Battery",
-            images: [placeholderImg, binIcon] // Array of images
-        },
-        {
-            id: "BDG002",
-            name: "JonaMarie Cruz",
-            submissionDate: "1-12-24",
-            status: "Pending",
-            category: "Charger",
-            images: [placeholderImg]
-        },
-        {
-            id: "BDG003",
-            name: "James Allan",
-            submissionDate: "1-12-24",
-            status: "Pending",
-            category: "Phone",
-            images: [placeholderImg, binIcon] // Array of images
-        },
-        {
-            id: "B45667",
-            name: "Chichi Ponkan",
-            submissionDate: "1-12-24",
-            status: "Pending",
-            category: "Cable",
-            images: [placeholderImg]
-        },
-        {
-            id: "B45668",
-            name: "Willie Johnson",
-            submissionDate: "1-12-24",
-            status: "Pending",
-            category: "Mouse",
-            images: [binIcon]
-        }
-    ];
+    const [currentImageIndex, setCurrentImageIndex] = useState(0); 
+    const [statusValue, setStatusValue] = useState("Pending");
 
     useEffect(() => {
-        setSubmissions(placeholderSubmissions);
+        axios.get("http://localhost:3000/api/ecocollect/ewaste")
+            .then((res) => {
+                const formattedData = res.data.map(sub => ({
+                    id: sub._id,
+                    name: sub.user?.name || "Unknown",
+                    submissionDate: new Date(sub.createdAt).toLocaleDateString(),
+                    status: sub.status || "Pending",
+                    category: sub.category,
+                    images: sub.attachments.map(img => `http://localhost:3000/${img.path}`),
+                }));
+                setSubmissions(formattedData);
+            })
+            .catch((error) => {
+                console.error("Error fetching submissions:", error);
+            });
     }, []);
 
     const handleNextImage = () => {
@@ -70,9 +41,38 @@ export default function EWasteSubmit() {
         }
     };
 
+    const handleUpdateSubmission = async () => {
+        try {
+            // 1. Update status
+            const updateRes = await axios.put(`http://localhost:3000/api/ecocollect/ewaste/${selectedSubmission.id}/status`, {
+                status: statusValue,
+            });
+    
+            if (updateRes.status !== 200) {
+                throw new Error("Failed to update status");
+            }
+    
+            // 2. Delete the submission after status update
+            const deleteRes = await axios.delete(`http://localhost:3000/api/ecocollect/ewaste/${selectedSubmission.id}`);
+    
+            if (deleteRes.status !== 200) {
+                throw new Error("Failed to delete submission");
+            }
+    
+            // 3. Update the state without reloading the page
+            setSubmissions(prevSubmissions => prevSubmissions.filter(sub => sub.id !== selectedSubmission.id));  // Remove the deleted submission
+            setSelectedSubmission(null); // Deselect the submission after update
+            toast.success("Submission updated and deleted successfully."); 
+        } catch (error) {
+            console.error("Error updating and deleting submission:", error);
+            toast.error("An error occurred while updating the submission."); 
+        }
+    };
+
     useEffect(() => {
         // Reset image index when a new submission is selected
         setCurrentImageIndex(0);
+        setStatusValue(selectedSubmission?.status || "Pending");
     }, [selectedSubmission]);
 
     return (
@@ -170,14 +170,16 @@ export default function EWasteSubmit() {
                                     </div>
                                     <div className="panel-detail">
                                         <h4>Status:</h4>
-                                        <select defaultValue={selectedSubmission.status}>
+                                        <select value={statusValue} onChange={(e) => setStatusValue(e.target.value)}>
                                             <option value="Pending">Pending</option>
                                             <option value="Approved">Approved</option>
                                             <option value="Rejected">Rejected</option>
                                         </select>
                                     </div>
                                     <div className="panel-button">
-                                        <button className="button-update">UPDATE</button>
+                                    <button className="button-update" onClick={handleUpdateSubmission}>
+                                        UPDATE
+                                    </button>
                                     </div>
                                 </div>
                             </div>
@@ -189,6 +191,8 @@ export default function EWasteSubmit() {
                     </div>
                 </div>
             </div>
+            {/* Hot Toast container to render toasts */}
+            <div id="toast-container" />
         </>
     );
 }

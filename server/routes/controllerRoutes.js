@@ -2,7 +2,7 @@ const express = require("express")
 const router =  express.Router()
 const multer = require("multer");
 const path = require("path");
-const { getUserData, deleteUser, submitEWaste, getUserSubmissions } = require('../controllers/dataControllers')
+const { getUserData, deleteUser, submitEWaste, getUserSubmissions, updateSubmissionStatus, getAllSubmissions, deleteEWaste } = require('../controllers/dataControllers')
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -20,5 +20,8 @@ router.get("/usermanagement", getUserData)
 router.delete("/usermanagement/:id", deleteUser)
 router.post("/ewaste", upload.array("attachments", 5), submitEWaste);
 router.get("/ewaste/user/:userId", getUserSubmissions);
+router.put("/ewaste/:id/status", updateSubmissionStatus);
+router.get("/ewaste", getAllSubmissions); 
+router.delete("/ewaste/:id", deleteEWaste);
 
 module.exports = router
