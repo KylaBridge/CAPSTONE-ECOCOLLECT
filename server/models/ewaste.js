@@ -9,6 +9,7 @@ const ewasteSchema = new mongoose.Schema({
       path: String,
     }
   ],
+  status: { type: String, default: "Pending", enum: ["Pending", "Approved", "Rejected"] }, // ✅ Add this
   createdAt: { type: Date, default: Date.now },
 });
 

@@ -100,7 +100,7 @@ const getAllSubmissions = async (req, res) => {
     }
 };
 
-// Delete Ewaste
+// Delete Ewaste image 
 const deleteEWaste = async (req, res) => {
     try {
         const { id } = req.params;
@@ -117,9 +117,6 @@ const deleteEWaste = async (req, res) => {
                 fs.unlinkSync(filePath);
             }
         }
-
-        // Delete the document from DB
-        await EWaste.findByIdAndDelete(id);
 
         res.status(200).json({ message: "E-waste submission deleted successfully" });
     } catch (err) {

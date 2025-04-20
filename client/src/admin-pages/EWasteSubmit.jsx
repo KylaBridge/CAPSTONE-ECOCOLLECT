@@ -15,14 +15,16 @@ export default function EWasteSubmit() {
     useEffect(() => {
         axios.get("http://localhost:3000/api/ecocollect/ewaste")
             .then((res) => {
-                const formattedData = res.data.map(sub => ({
-                    id: sub._id,
-                    name: sub.user?.name || "Unknown",
-                    submissionDate: new Date(sub.createdAt).toLocaleDateString(),
-                    status: sub.status || "Pending",
-                    category: sub.category,
-                    images: sub.attachments.map(img => `http://localhost:3000/${img.path}`),
-                }));
+                const formattedData = res.data
+                    .filter(sub => sub.status === "Pending") // 🔥 Only keep pending
+                    .map(sub => ({
+                        id: sub._id,
+                        name: sub.user?.name || "Unknown",
+                        submissionDate: new Date(sub.createdAt).toLocaleDateString(),
+                        status: sub.status || "Pending",
+                        category: sub.category,
+                        images: sub.attachments.map(img => `http://localhost:3000/${img.path}`),
+                    }));
                 setSubmissions(formattedData);
             })
             .catch((error) => {
@@ -44,32 +46,26 @@ export default function EWasteSubmit() {
 
     const handleUpdateSubmission = async () => {
         try {
-            // 1. Update status
+            // 1. Update status only (don't delete the document)
             const updateRes = await axios.put(`http://localhost:3000/api/ecocollect/ewaste/${selectedSubmission.id}/status`, {
                 status: statusValue,
             });
-
+    
             if (updateRes.status !== 200) {
                 throw new Error("Failed to update status");
             }
-
-            // 2. Delete the submission after status update
-            const deleteRes = await axios.delete(`http://localhost:3000/api/ecocollect/ewaste/${selectedSubmission.id}`);
-
-            if (deleteRes.status !== 200) {
-                throw new Error("Failed to delete submission");
-            }
-
-            // 3. Update the state without reloading the page
-            setSubmissions(prevSubmissions => prevSubmissions.filter(sub => sub.id !== selectedSubmission.id)); // Remove the deleted submission
-            setSelectedSubmission(null); // Deselect the submission after update
-            setOpenSubmissionId(null); // Close the panel
-            toast.success("Submission updated and deleted successfully.");
+    
+            // 2. Remove it from the frontend table
+            setSubmissions(prev => prev.filter(sub => sub.id !== selectedSubmission.id));
+            setSelectedSubmission(null);
+            setOpenSubmissionId(null);
+    
+            toast.success(`Submission ${statusValue.toLowerCase()} successfully.`);
         } catch (error) {
-            console.error("Error updating and deleting submission:", error);
+            console.error("Error updating submission:", error);
             toast.error("An error occurred while updating the submission.");
         }
-    };
+    };    
 
     const handleDetailsClick = (submission) => {
         if (openSubmissionId === submission.id) {
