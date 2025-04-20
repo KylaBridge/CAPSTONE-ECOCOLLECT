@@ -21,7 +21,7 @@ export default function EWasteSubmission() {
 
   const handleUpload = (event) => {
     const files = Array.from(event.target.files);
-    const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+    const allowedTypes = ['image/jpeg', 'image/png'];
     const maxSize = 5 * 1024 * 1024;
 
     files.forEach(file => {

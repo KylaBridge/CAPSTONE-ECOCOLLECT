@@ -77,6 +77,23 @@ html, body {
   gap: 20px;
 }
 
+.binview-container h2{
+  text-align: center;
+}
+
+.empty-panel-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #777;
+  font-style: italic;
+}
+
+.empty-panel-message p {
+  margin: 0;
+}
+
 .binlist-container {
   background-color: #dfe0d0;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -203,12 +220,19 @@ html, body {
 .remove-button {
   padding: 12px 20px;
   font-size: 1rem;
-  background-color: #077553;
   color: #ddd;
   border: none;
   border-radius: 5px;
   margin-bottom: 5px;
   cursor: pointer;
+}
+
+.upload-button{
+  background-color: #077553;
+}
+
+.remove-button{
+  background-color: #be3a3a;
 }
 
 .accepted-file-desc {
@@ -275,11 +299,32 @@ html, body {
 
 .bin-actions button {
   padding: 8px 15px;
-  background-color: #077553;
   color: #ddd;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.bin-actions button:nth-child(1) {
+  background-color: #077553;
+  color: #ddd;
+}
+
+.bin-actions button:nth-child(1):disabled {
+  background-color: #9e9e9e;
+  color: #bdbdbd;
+  cursor: not-allowed;
+}
+
+.bin-actions button:nth-child(2) {
+  background-color: #c62828;
+  color: #fff;
+}
+
+.bin-actions button:contains("REMOVE"),
+.bin-actions button:contains("CLOSE") {
+  background-color: #c62828;
+  color: #fff;
 }
 
 .activity-item {

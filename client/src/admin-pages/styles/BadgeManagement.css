@@ -166,7 +166,7 @@ html, body {
     align-items: center;
 }
 
-.badge-form-section h3 {
+.badge-form-section.grid-col-3 h3 {
     text-align: center;
     font-size: 1.5rem;
     margin: 0 0 25px 0;
@@ -174,7 +174,8 @@ html, body {
     flex-shrink: 0;
 }
 
-.badge-form-grid {
+.badge-form-grid{
+    background-color: #dfe0d0;
     display: grid;
     grid-template-columns: 1fr;
     gap: 35px;
@@ -326,56 +327,110 @@ html, body {
     background-color: #118653;
     color: white;
 }
-.form-buttons button.button-update:hover {
-     background-color: #0d6a42;
+.form-buttons button.button-update:not(:disabled):hover { /* Apply hover style only when NOT disabled */
+    background-color: #0d6a42;
 }
 
 .form-buttons button.button-remove {
     background-color: #d9534f;
     color: white;
 }
-.form-buttons button.button-remove:hover {
+.form-buttons button.button-remove:not(:disabled):hover {
      background-color: #c1423e;
 }
 
 .form-buttons button:disabled {
     background-color: #cccccc;
+    color: #666666;
     cursor: not-allowed;
 }
 
 /* --- Table Section --- */
-.badge-table-section {
+.badge-table-wrapper {
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+.badge-table-section .table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.badge-table-wrapper::-webkit-scrollbar {
+    width: 6px;
+}
+
+.badge-table-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.badge-table-wrapper::-webkit-scrollbar-thumb {
+    background-color: rgba(100, 100, 100, 0.3);
+    border-radius: 3px;
+}
+
+.badge-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.badge-table-section{
+    padding: 25px;
+}
+
+.badge-table-section thead tr {
+    position: sticky;
+    top: 0;
+    background-color: #dfe0d0;
+    z-index: 1;
+}
+
+.badge-table-section .add-button {
+    background-color: #118653;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+
+.badge-table-section .add-button:hover {
+    background-color: #0e653f;
+}
+
+.badge-table-section table button {
+    background-color: #76b182;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 0.9rem;
     width: 100%;
-    margin: 0 auto;
-    padding: 20px;
-    border-radius: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    box-sizing: border-box;
-    overflow-x: auto;
-    flex: 1;
+    transition: background-color 0.3s ease;
+    margin: 2px; /* Add some spacing between buttons if needed */
 }
-.badge-table-section h3 {
-     text-align: center;
-     font-size: 1.5rem;
-     margin: 0 0 20px 0;
-     color: #343a40;
+
+.badge-table-section table button:hover {
+    background-color: #608d69;
 }
 
 
-.badge-table-section table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 600px;
+.badge-form-section.panel-closed {
+    display: flex; /* Or whatever your default display is */
+    align-items: center;
+    justify-content: center;
 }
 
-.badge-table-section th,
-.badge-table-section td {
-    border: 1px solid #ccc;
-    padding: 10px 12px;
-    text-align: left;
-    vertical-align: middle;
+.empty-panel-message p {
+    text-align: center;
+    color: #1d1d1d;
+    font-style: italic;
 }
-
 
 /* --- Media Queries for Responsiveness --- */
 @media (max-width: 1200px) {
@@ -439,3 +494,4 @@ html, body {
      .badge-table-section { padding: 15px; }
      .badge-table-section table { min-width: 450px; }
 }
+

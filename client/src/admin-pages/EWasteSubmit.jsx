@@ -2,14 +2,15 @@ import AdminSidebar from "../admin-components/AdminSidebar";
 import Header from "../admin-components/Header";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import toast from "react-hot-toast"; 
+import toast from "react-hot-toast";
 import "./styles/EWasteSubmit.css";
 
 export default function EWasteSubmit() {
     const [submissions, setSubmissions] = useState([]);
     const [selectedSubmission, setSelectedSubmission] = useState(null);
-    const [currentImageIndex, setCurrentImageIndex] = useState(0); 
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [statusValue, setStatusValue] = useState("Pending");
+    const [openSubmissionId, setOpenSubmissionId] = useState(null);
 
     useEffect(() => {
         axios.get("http://localhost:3000/api/ecocollect/ewaste")
@@ -47,30 +48,40 @@ export default function EWasteSubmit() {
             const updateRes = await axios.put(`http://localhost:3000/api/ecocollect/ewaste/${selectedSubmission.id}/status`, {
                 status: statusValue,
             });
-    
+
             if (updateRes.status !== 200) {
                 throw new Error("Failed to update status");
             }
-    
+
             // 2. Delete the submission after status update
             const deleteRes = await axios.delete(`http://localhost:3000/api/ecocollect/ewaste/${selectedSubmission.id}`);
-    
+
             if (deleteRes.status !== 200) {
                 throw new Error("Failed to delete submission");
             }
-    
+
             // 3. Update the state without reloading the page
-            setSubmissions(prevSubmissions => prevSubmissions.filter(sub => sub.id !== selectedSubmission.id));  // Remove the deleted submission
+            setSubmissions(prevSubmissions => prevSubmissions.filter(sub => sub.id !== selectedSubmission.id)); // Remove the deleted submission
             setSelectedSubmission(null); // Deselect the submission after update
-            toast.success("Submission updated and deleted successfully."); 
+            setOpenSubmissionId(null); // Close the panel
+            toast.success("Submission updated and deleted successfully.");
         } catch (error) {
             console.error("Error updating and deleting submission:", error);
-            toast.error("An error occurred while updating the submission."); 
+            toast.error("An error occurred while updating the submission.");
+        }
+    };
+
+    const handleDetailsClick = (submission) => {
+        if (openSubmissionId === submission.id) {
+            setOpenSubmissionId(null);
+            setSelectedSubmission(null);
+        } else {
+            setOpenSubmissionId(submission.id);
+            setSelectedSubmission(submission);
         }
     };
 
     useEffect(() => {
-        // Reset image index when a new submission is selected
         setCurrentImageIndex(0);
         setStatusValue(selectedSubmission?.status || "Pending");
     }, [selectedSubmission]);
@@ -111,13 +122,13 @@ export default function EWasteSubmit() {
                                 <tbody className="badge-table-body">
                                     {submissions.map((submission) => (
                                         <tr key={submission.id}>
-                                            <td>{submission.id}</td>
+                                            <td className="submission-id-cell">{submission.id}</td>
                                             <td>{submission.name}</td>
                                             <td>{submission.submissionDate}</td>
                                             <td>{submission.status}</td>
                                             <td>
-                                                <button onClick={() => setSelectedSubmission(submission)}>
-                                                    DETAILS
+                                                <button onClick={() => handleDetailsClick(submission)}>
+                                                    {openSubmissionId === submission.id ? "CLOSE" : "DETAILS"}
                                                 </button>
                                             </td>
                                         </tr>
@@ -177,16 +188,16 @@ export default function EWasteSubmit() {
                                         </select>
                                     </div>
                                     <div className="panel-button">
-                                    <button className="button-update" onClick={handleUpdateSubmission}>
-                                        UPDATE
-                                    </button>
+                                        <button className="button-update" onClick={handleUpdateSubmission}>
+                                            UPDATE
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         ) : (
                             <div className="empty-message">
-                            <p>Select details of a user to view.</p>
-                        </div>
+                                <p>Select details of a user to view.</p>
+                            </div>
                         )}
                     </div>
                 </div>

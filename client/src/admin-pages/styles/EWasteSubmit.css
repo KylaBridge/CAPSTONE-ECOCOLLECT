@@ -116,6 +116,10 @@ html, body {
     background-color: #dfe0d0;
 }
 
+.submission-id-cell {
+  word-break: break-word;
+}
+
 .submit-table button {
     width: 100%;
     padding: 8px 12px;
