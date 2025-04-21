@@ -171,22 +171,29 @@ export default function BadgeManagement() {
                             <div className="recently-added-container">
                                 <h3>Recently Added</h3>
                                 <div className="badge-icons-grid">
-                                    {badges.slice(-4).map((badge) => ( // Display last 4 as recently added
+                                    {badges.length === 0 ? (
+                                        <div className="empty-placeholder">
+                                        <img src={placeholderBadge} alt="No badges" className="placeholder-img" />
+                                        <p className="placeholder-text">No recent badges yet. Be the first to add one!</p>
+                                        </div>
+                                    ) : (
+                                        badges.slice(-4).map((badge) => (
                                         <div key={badge.id} className="badge-item">
                                             <div className="badge-img-wrapper">
-                                                <img
-                                                    src={badge.imageUrl || placeholderBadge}
-                                                    alt={badge.name}
-                                                    className="badge-item-img"
-                                                />
+                                            <img
+                                                src={badge.imageUrl || placeholderBadge}
+                                                alt={badge.name}
+                                                className="badge-item-img"
+                                            />
                                             </div>
                                             <div className="badge-text-wrapper">
-                                                <div className="badge-item-label">{badge.name}</div>
-                                                <div className="badge-item-desc">{badge.description}</div>
+                                            <div className="badge-item-label">{badge.name}</div>
+                                            <div className="badge-item-desc">{badge.description}</div>
                                             </div>
                                         </div>
-                                    ))}
-                                </div>
+                                        ))
+                                    )}
+                                    </div>
                             </div>
                         </div>
 
@@ -211,25 +218,37 @@ export default function BadgeManagement() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {badges.map((badge) => (
+                                        {badges.length === 0 ? (
+                                            <tr>
+                                            <td colSpan="4" style={{ textAlign: "center", padding: "20px", color: "#888" }}>
+                                                No badges found. Try adding one!
+                                            </td>
+                                            </tr>
+                                        ) : (
+                                            badges.map((badge) => (
                                             <tr key={badge.id}>
                                                 <td>{badge.id}</td>
                                                 <td>{badge.name}</td>
                                                 <td>{badge.pointsRequired}</td>
                                                 <td>
-                                                    <button onClick={() => {
-                                                        if (selectedBadge?.id === badge.id && isPanelOpen && viewedFromTable) {
-                                                            handleClosePanel();
-                                                        } else {
-                                                            handleViewBadge(badge);
-                                                        }
-                                                    }}>
-                                                        {selectedBadge?.id === badge.id && isPanelOpen && viewedFromTable ? "CLOSE" : "VIEW"}
-                                                    </button>
+                                                <button
+                                                    onClick={() => {
+                                                    if (selectedBadge?.id === badge.id && isPanelOpen && viewedFromTable) {
+                                                        handleClosePanel();
+                                                    } else {
+                                                        handleViewBadge(badge);
+                                                    }
+                                                    }}
+                                                >
+                                                    {selectedBadge?.id === badge.id && isPanelOpen && viewedFromTable
+                                                    ? "CLOSE"
+                                                    : "VIEW"}
+                                                </button>
                                                 </td>
                                             </tr>
-                                        ))}
-                                    </tbody>
+                                            ))
+                                        )}
+                                        </tbody>
                                 </table>
                             </div>
                         </div>

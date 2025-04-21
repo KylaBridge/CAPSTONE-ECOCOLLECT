@@ -6,19 +6,20 @@ html, body {
   }
 
   .main-container {
-    padding: 40px 40px;
-    height: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
     margin-left: 280px;
+    padding: 40px 40px;
+    box-sizing: border-box;
 }
-
   .flex-container{
     display: flex;
-    justify-content: flex-start;     
-    gap: 30px;         
+    flex: 1;
+    overflow: hidden;
+    gap: 30px;
     max-width: 1400px;
-    margin-left: auto;
-    margin-right: auto;
-    flex-wrap: nowrap;
+    margin: auto;
   }
 
   .submittedewaste-table-container {
@@ -28,7 +29,9 @@ html, body {
     padding: 20px;
     border-radius: 30px;
     width: 60%;
+    height: 100%;
     position: relative;
+    overflow: auto;
   }
   
 
@@ -138,7 +141,7 @@ html, body {
   padding: 25px;
   margin-top: 20px;
   width: 40%;
-  height: auto;
+  height: 100%;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -266,6 +269,12 @@ html, body {
   cursor: pointer;
 }
 
+.button-update:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .panel-form select {
   padding: 8px;
   border-radius: 5px;
@@ -284,4 +293,16 @@ html, body {
 
 .empty-message p{
   color: #202020;
+}
+
+@media (max-width: 1024px) {
+  .flex-container {
+      flex-direction: column;
+      gap: 20px;
+  }
+
+  .submittedewaste-table-container,
+  .submitewaste-panel-container {
+      width: 100%;
+  }
 }

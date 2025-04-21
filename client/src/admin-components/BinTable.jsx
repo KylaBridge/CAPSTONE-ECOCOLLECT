@@ -22,17 +22,23 @@ const BinTable = ({ columns, data }) => {
               ))}
             </tr>
           </thead>
-          <tbody>
-            {data.map((row, idx) => (
-              <tr key={idx}>
-                {columns.map((col) => (
-                  <td key={col}>
-                    {row[col]}
+            <tbody>
+              {data.length === 0 ? (
+                <tr>
+                  <td colSpan={columns.length} className="no-data">
+                    No bins to display. Try adding one!
                   </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
+                </tr>
+              ) : (
+                data.map((row, idx) => (
+                  <tr key={idx}>
+                    {columns.map((col) => (
+                      <td key={col}>{row[col]}</td>
+                    ))}
+                  </tr>
+                ))
+              )}
+            </tbody>
         </table>
       </div>
     </div>

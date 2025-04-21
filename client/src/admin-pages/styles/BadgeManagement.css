@@ -14,20 +14,24 @@ html, body {
 }
 
 .badge-management-page{
-    padding: 40px 40px;
-    height: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
     margin-left: 280px;
+    padding: 40px;
 }
 
 /* --- Main Grid Layout --- */
 .badge-management-grid {
+    margin-top: 20px;
+    flex: 1;
     display: grid;
     grid-template-areas:
         "col1 col2 col3"
         "table table col3";
     grid-template-columns: 200px 1.5fr 1.2fr;
     gap: 20px;
-    margin-top: 20px;
+    overflow: hidden;
 }
 
 .grid-col-1 {
@@ -44,6 +48,9 @@ html, body {
   
   .grid-span-2 {
     grid-area: table;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
   }
 
 /* --- Column 1: Total Badges --- */
@@ -105,7 +112,8 @@ html, body {
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 2rem;
     text-align: center;
-
+    display: flex;
+    justify-content: center;
   }
   
   .badge-item {
@@ -125,11 +133,10 @@ html, body {
     height: 100%;
     object-fit: contain;
   }
-  
+
   .badge-text-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex: 1;
+    overflow-y: auto;
   }
   
   .badge-item-label {
@@ -327,7 +334,7 @@ html, body {
     background-color: #118653;
     color: white;
 }
-.form-buttons button.button-update:not(:disabled):hover { /* Apply hover style only when NOT disabled */
+.form-buttons button.button-update:not(:disabled):hover {
     background-color: #0d6a42;
 }
 
@@ -412,7 +419,7 @@ html, body {
     font-size: 0.9rem;
     width: 100%;
     transition: background-color 0.3s ease;
-    margin: 2px; /* Add some spacing between buttons if needed */
+    margin: 2px;
 }
 
 .badge-table-section table button:hover {
@@ -421,12 +428,39 @@ html, body {
 
 
 .badge-form-section.panel-closed {
-    display: flex; /* Or whatever your default display is */
+    display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .empty-panel-message p {
+    text-align: center;
+    color: #1d1d1d;
+    font-style: italic;
+}
+
+.empty-placeholder {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+    border: 2px dashed #ccc;
+    border-radius: 1rem;
+    margin-top: 1rem;
+    box-sizing: border-box;
+}
+
+.placeholder-img {
+    width: 80px;
+    height: 80px;
+    opacity: 0.5;
+    margin-bottom: 1rem;
+}
+
+.placeholder-text {
     text-align: center;
     color: #1d1d1d;
     font-style: italic;

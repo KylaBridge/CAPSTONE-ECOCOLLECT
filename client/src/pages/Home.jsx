@@ -4,7 +4,7 @@ import Userprofile from "../components/Userprofile";
 import Header from "../components/Header"
 import HomeHeaderTitle from "../assets/headers/home-header.png"
 import Badge from "../assets/badges/current-badge.png"
-import ChainImg from "../assets/icons/lockedchain.png"
+import LockIcon  from "../assets/icons/lockicon.png"
 import NextBadge from "../assets/badges/next-badge.png"
 import SubmissionCharacter from "../assets/icons/submissionchar.png"
 import SmartDevicesIcon from "../assets/icons/smartdevicesicon.png"
@@ -94,7 +94,7 @@ export default function Home() {
                       <img src={NextBadge} alt="Next Badge Reward" />
                       <p>Earn 100 points to unlock</p>
                     </div>
-                    <img src={ChainImg} alt="Locked" className="overlay-image" />
+                    <img src={LockIcon} alt="Locked" className="overlay-image" />
                   </div>
                 </div>
                 <div className="home-divider"></div>

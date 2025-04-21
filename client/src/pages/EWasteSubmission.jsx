@@ -138,11 +138,12 @@ export default function EWasteSubmission() {
             <div className="item-selection-container">
               <select className="category-select" value={selectedCategory || ""} onChange={handleCategoryChange}>
                 <option value="" disabled>Select E-Waste Category</option>
-                <option value="Phone">Phone</option>
+                <option value="Phone">Mobile</option>
                 <option value="Laptop">Laptop</option>
-                <option value="Battery">Battery</option>
-                <option value="Charger">Charger</option>
-                <option value="Other">Other</option>
+                <option value="Battery">Communication Devices</option>
+                <option value="Charger">Cable</option>
+                <option value="Other">Battery</option>
+                <option value="Other">Power Accessories</option>
               </select>
             </div>
 
@@ -157,13 +158,14 @@ export default function EWasteSubmission() {
           </div>
 
           <div className="recent-activity-container">
-            <h2>Recent Activity</h2>
+            <h2>Recent</h2>
             <ul className="activity-list">
               {submissionLogs.length > 0 ? submissionLogs.map((activity) => (
                 <li key={activity._id} className="activity-item">
                   <span className="activity-id">Submission ID: {activity._id}</span>
                   <span className="activity-status">Category: {activity.category}</span>
                   <span className="activity-date">{new Date(activity.createdAt).toLocaleString()}</span>
+                  <span className={`activity-result ${activity.status?.toLowerCase()}`}>Status: {activity.status || "Pending"}</span>
                 </li>
               )) : (
                 <li>No submissions yet.</li>

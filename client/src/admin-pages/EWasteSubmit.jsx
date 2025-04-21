@@ -11,12 +11,13 @@ export default function EWasteSubmit() {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [statusValue, setStatusValue] = useState("Pending");
     const [openSubmissionId, setOpenSubmissionId] = useState(null);
+    const [originalStatus, setOriginalStatus] = useState("Pending");
 
     useEffect(() => {
         axios.get("http://localhost:3000/api/ecocollect/ewaste")
             .then((res) => {
                 const formattedData = res.data
-                    .filter(sub => sub.status === "Pending") // 🔥 Only keep pending
+                    .filter(sub => sub.status === "Pending")
                     .map(sub => ({
                         id: sub._id,
                         name: sub.user?.name || "Unknown",
@@ -80,6 +81,7 @@ export default function EWasteSubmit() {
     useEffect(() => {
         setCurrentImageIndex(0);
         setStatusValue(selectedSubmission?.status || "Pending");
+        setOriginalStatus(selectedSubmission?.status || "Pending");
     }, [selectedSubmission]);
 
     return (
@@ -116,19 +118,27 @@ export default function EWasteSubmit() {
                                     </tr>
                                 </thead>
                                 <tbody className="badge-table-body">
-                                    {submissions.map((submission) => (
-                                        <tr key={submission.id}>
-                                            <td className="submission-id-cell">{submission.id}</td>
-                                            <td>{submission.name}</td>
-                                            <td>{submission.submissionDate}</td>
-                                            <td>{submission.status}</td>
-                                            <td>
-                                                <button onClick={() => handleDetailsClick(submission)}>
-                                                    {openSubmissionId === submission.id ? "CLOSE" : "DETAILS"}
-                                                </button>
+                                    {submissions.length === 0 ? (
+                                        <tr>
+                                            <td colSpan="5" style={{ textAlign: "center", padding: "20px" , fontStyle: "italic"}}>
+                                                No details to show yet.
                                             </td>
                                         </tr>
-                                    ))}
+                                    ) : (
+                                        submissions.map((submission) => (
+                                            <tr key={submission.id}>
+                                                <td className="submission-id-cell">{submission.id}</td>
+                                                <td>{submission.name}</td>
+                                                <td>{submission.submissionDate}</td>
+                                                <td>{submission.status}</td>
+                                                <td>
+                                                    <button onClick={() => handleDetailsClick(submission)}>
+                                                        {openSubmissionId === submission.id ? "CLOSE" : "DETAILS"}
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    )}
                                 </tbody>
                             </table>
                         </div>
@@ -184,9 +194,13 @@ export default function EWasteSubmit() {
                                         </select>
                                     </div>
                                     <div className="panel-button">
-                                        <button className="button-update" onClick={handleUpdateSubmission}>
-                                            UPDATE
-                                        </button>
+                                    <button 
+                                        className="button-update" 
+                                        onClick={handleUpdateSubmission}
+                                        disabled={statusValue === originalStatus}
+                                    >
+                                        UPDATE
+                                    </button>
                                     </div>
                                 </div>
                             </div>

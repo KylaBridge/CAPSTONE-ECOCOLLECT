@@ -235,14 +235,15 @@
 }
 
 .next-reward-image-container img {
-    opacity: 0.5;
+    opacity: 0.4;
 }
 
 .overlay-image {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 230%;
+    width: 40%;
+    opacity: 0.8;
     height: auto;
     transform: translate(-50%, -50%);
     object-fit: contain;
@@ -447,7 +448,7 @@
   /* Large screens (1024px width and above) */
   @media (min-width: 1024px) {
     .overlay-image {
-      width: 150%; 
+      width: 15%; 
     }
   
     .rewards-preview-container {
@@ -479,7 +480,7 @@
   /* Extra large screens (1440px width and above) */
   @media (min-width: 1440px) {
     .overlay-image {
-      width: 30%;
+      width: 15%;
     }
   }
   
