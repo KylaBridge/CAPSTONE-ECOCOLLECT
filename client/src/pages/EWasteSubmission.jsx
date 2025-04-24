@@ -138,12 +138,16 @@ export default function EWasteSubmission() {
             <div className="item-selection-container">
               <select className="category-select" value={selectedCategory || ""} onChange={handleCategoryChange}>
                 <option value="" disabled>Select E-Waste Category</option>
-                <option value="Phone">Mobile</option>
+                <option value="Telephone">Telephone</option>
+                <option value="Router">Router</option>
+                <option value="Mobile Phone">Mobile Phone</option>
+                <option value="Tablet">Tablet</option>
                 <option value="Laptop">Laptop</option>
-                <option value="Battery">Communication Devices</option>
-                <option value="Charger">Cable</option>
-                <option value="Other">Battery</option>
-                <option value="Other">Power Accessories</option>
+                <option value="Charger">Charger</option>
+                <option value="Batteries">Batteries</option>
+                <option value="Cords">Cords</option>
+                <option value="Powerbank">Powerbank</option>
+                <option value="USB">USB</option>
               </select>
             </div>
 
