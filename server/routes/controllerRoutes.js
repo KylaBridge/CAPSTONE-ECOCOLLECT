@@ -2,7 +2,14 @@ const express = require("express")
 const router =  express.Router()
 const multer = require("multer");
 const path = require("path");
-const { getUserData, deleteUser, submitEWaste, getUserSubmissions, updateSubmissionStatus, getAllSubmissions, deleteEWaste } = require('../controllers/dataControllers')
+const { 
+  getUserData, 
+  deleteUser, 
+  submitEWaste, 
+  getUserSubmissions, 
+  updateSubmissionStatus, 
+  getAllSubmissions, 
+  deleteEWaste } = require('../controllers/dataControllers')
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
