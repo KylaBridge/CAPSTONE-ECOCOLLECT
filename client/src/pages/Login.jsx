@@ -41,9 +41,9 @@ export default function Login() {
     }
 
     return (
-        <div className="form-container">
+        <div className="login-container">
             <img className="EcoCollect-logo" src={EcoCollectLogo} alt="EcoCollect-Logo" />
-            <form action={loggingIn}>
+            <form className="login-form" action={loggingIn}>
                 <h1>Login</h1>
                 <p className="welcome-el">Welcome to EcoCollect!</p>
 

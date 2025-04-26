@@ -87,7 +87,7 @@ export default function EWasteSubmit() {
     return (
         <>
             <AdminSidebar />
-            <div className="main-container">
+            <div className="ewaste-submit-main-container">
                 <Header
                     pageTitle="E-Waste Submission Validation"
                     adminName="Admin Name"
@@ -117,7 +117,7 @@ export default function EWasteSubmit() {
                                         <th>Action</th>
                                     </tr>
                                 </thead>
-                                <tbody className="badge-table-body">
+                                <tbody>
                                     {submissions.length === 0 ? (
                                         <tr>
                                             <td colSpan="5" style={{ textAlign: "center", padding: "20px" , fontStyle: "italic"}}>

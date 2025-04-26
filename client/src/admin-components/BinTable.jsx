@@ -9,11 +9,11 @@ const COLUMN_LABELS = {
   category: 'Category',
 };
 
-const BinTable = ({ columns, data }) => {
+const BinTable = ({ columns, data, maxHeight = '220px' }) => {
   return (
     <div className="bin-table-container">
       
-      <div className="table-wrapper">
+      <div className="table-wrapper" style={{ maxHeight }}>
         <table className="bin-table">
           <thead>
             <tr>

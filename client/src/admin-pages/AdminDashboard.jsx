@@ -64,22 +64,22 @@ export default function AdminDashboard(){
                     pageTitle="Dashboard Overview" 
                     adminName="Admin Name" 
                 />
-                <div className="top-section">
+                <div className="admin-dashboard-top-section">
                     <div className="total-users-container">
                         <h2>Total Users Registered</h2>
                         <div className="user-grid">
                             <div className="user-card">
-                            <FaUserAlt className="icon"  size={65}/>
+                            <FaUserAlt className="icon"  size={40}/>
                             <p>Student</p>
                             <h3>30</h3>
                             </div>
                             <div className="user-card">
-                            <FaUserAlt className="icon"  size={65}/>
+                            <FaUserAlt className="icon"  size={40}/>
                             <p>Faculty</p>
                             <h3>12</h3>
                             </div>
                             <div className="user-card">
-                            <FaUserAlt className="icon"  size={65} />
+                            <FaUserAlt className="icon"  size={40} />
                             <p>Staff</p>
                             <h3>100</h3>
                             </div>
@@ -111,33 +111,33 @@ export default function AdminDashboard(){
                                  <h4 className="ewaste-label">Categories</h4>
                                 <div className="ewaste-breakdown">
                                     <div className="ewaste-item">
-                                        <FaMobileAlt size={45} className="ewaste-icon" />
+                                        <FaMobileAlt size={30} className="ewaste-icon" />
                                         <p>Mobile</p>
                                         <span>5 pcs</span>
                                     </div>
 
                                 <div className="ewaste-item">
-                                    <FaLaptop size={45} className="ewaste-icon" />
+                                    <FaLaptop size={30} className="ewaste-icon" />
                                     <p>Laptop</p>
                                     <span>15 pcs</span>
                                 </div>
                                 <div className="ewaste-item">
-                                    <BsFillTelephoneFill size={45} className="ewaste-icon" />
+                                    <BsFillTelephoneFill size={30} className="ewaste-icon" />
                                     <p>Communication</p>
                                     <span>10 pcs</span>
                                 </div>
                                 <div className="ewaste-item">
-                                    <MdCable size={45} className="ewaste-icon" />
+                                    <MdCable size={30} className="ewaste-icon" />
                                     <p>Cable</p>
                                     <span>5 pcs</span>
                                 </div>
                                 <div className="ewaste-item">
-                                    <FaBatteryHalf size={45} className="ewaste-icon" />
+                                    <FaBatteryHalf size={30} className="ewaste-icon" />
                                     <p>Battery</p>
                                     <span>15 pcs</span>
                                 </div>
                                 <div className="ewaste-item">
-                                    <FaPlug size={45} className="ewaste-icon" />
+                                    <FaPlug size={30} className="ewaste-icon" />
                                     <p>Power Accessories</p>
                                     <span>10 pcs</span>
                                 </div>
@@ -147,7 +147,7 @@ export default function AdminDashboard(){
                     </div>
                 </div>
 
-                <div className="bottom-section">
+                <div className="admin-dashboard-bottom-section">
                     <div className="reward-container">
                         <h2>Reward Redemptions</h2>
 
@@ -159,11 +159,11 @@ export default function AdminDashboard(){
                             <h4 className="rewards-label">Top rewards</h4>
                             <div className="rewards-breakdown">
                                 <div className="reward-item">
-                                <FaTshirt size={45} className="ewaste-icon" />
+                                <FaTshirt size={35} className="ewaste-icon" />
                                 <p>NU Merch</p>
                                 </div>
                                 <div className="reward-item">
-                                <FaMobile size={45} className="ewaste-icon" />
+                                <FaMobile size={35} className="ewaste-icon" />
                                 <p>Mobile Load</p>
                                 </div>
                             </div>
@@ -180,6 +180,7 @@ export default function AdminDashboard(){
                             <BinTable
                                 columns={['binName', 'status']} // Make sure BinTable renders a <table>
                                 data={adminBinData.filter(bin => bin.status === 'Full' || bin.status === 'Overflowing')} // Example: Filter/limit data if needed
+                                  maxHeight="150px"
                             />
                             </div>
 

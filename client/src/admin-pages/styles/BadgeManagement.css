@@ -17,8 +17,16 @@ html, body {
     height: 100vh;
     display: flex;
     flex-direction: column;
-    margin-left: 280px;
-    padding: 40px;
+    margin-left: 18%;
+    padding: 13px 30px;
+}
+
+.badgemanagement-page-scaler{
+
+    transform: scale(0.8); /* Adjust this value to control the size (e.g., 0.8 for 80%) */
+    transform-origin: top left; /* Ensure scaling happens from the top-left */
+    width: 125%; /* Ensure the container takes full width before scaling */
+    box-sizing: border-box; /* Include padding and border in the width */
 }
 
 /* --- Main Grid Layout --- */
@@ -102,7 +110,7 @@ html, body {
 
 .recently-added-container h3 {
     text-align: center;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     margin: 0 0 15px 0;
     color: #343a40;
 }
@@ -164,7 +172,7 @@ html, body {
     background-color: #dfe0d0;
     border-radius: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 25px;
+    padding: 20px;
     width: 100%;
     height: auto;
     box-sizing: border-box;
@@ -175,8 +183,8 @@ html, body {
 
 .badge-form-section.grid-col-3 h3 {
     text-align: center;
-    font-size: 1.5rem;
-    margin: 0 0 25px 0;
+    font-size: 1.3rem;
+    margin: 0 0 10px 0;
     color: #343a40;
     flex-shrink: 0;
 }
@@ -185,7 +193,7 @@ html, body {
     background-color: #dfe0d0;
     display: grid;
     grid-template-columns: 1fr;
-    gap: 35px;
+    gap: 25px;
     width: 100%;
     max-width: 450px;
 }
@@ -295,7 +303,7 @@ html, body {
 }
 .input-group h4 {
     margin: 0;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: #343a40;
 }
 
@@ -310,7 +318,7 @@ html, body {
 }
 
 .input-group textarea {
-    height: 80px;
+    height: 60px;
     resize: vertical;
 }
 
@@ -319,11 +327,11 @@ html, body {
     justify-content: flex-end;
     display: flex;
     gap: 10px;
-    margin-top: 5px;
+    margin-top: 2px;
 }
 
 .form-buttons button {
-    padding: 10px 20px;
+    padding: 10px 10px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -354,7 +362,7 @@ html, body {
 
 /* --- Table Section --- */
 .badge-table-wrapper {
-    max-height: 350px;
+    max-height: 290px;
     overflow-y: auto;
 }
 

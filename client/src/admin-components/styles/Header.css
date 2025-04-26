@@ -3,13 +3,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
+    padding: 15px;
     background: #c4cfc5;
-    border-bottom: 4px solid #b8b8b8;
+    border-bottom: 3px solid #b8b8b8;
 }
 
 .page-title h1 {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     font-weight: 600;
     color: #343a40; 
     margin: 0;
@@ -22,7 +22,7 @@
 }
 
 .admin-details {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     display: flex;
     flex-direction: column;
     margin-right: 15px;
@@ -35,13 +35,13 @@
 }
 
 .admin-role {
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: #6c757d;
 }
 
 .admin-icon {
-    width: 80px !important;
-    height: 80px !important;
+    width: 75px !important;
+    height: 75px !important;
     display: block;
     border-radius: 50%;
     object-fit: cover;

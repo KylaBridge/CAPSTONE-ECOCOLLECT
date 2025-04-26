@@ -156,7 +156,8 @@ export default function BadgeManagement() {
                     adminName="Admin Name"
                 />
 
-                <div className="responsive-wrapper">
+                <div className="badgemanagement-page-scaler"> 
+                 <div className="responsive-wrapper">
                     {/* Main Grid Content Area */}
                     <div className="badge-management-grid">
 
@@ -325,6 +326,9 @@ export default function BadgeManagement() {
                         </div>
                     </div>
                 </div>
+                </div>
+
+            
             </div>
         </>
     );

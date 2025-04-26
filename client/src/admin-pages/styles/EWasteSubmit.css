@@ -5,32 +5,47 @@ html, body {
     background-color: #c4cfc5;
   }
 
-  .main-container {
+  .ewaste-submit-main-container {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    margin-left: 280px;
-    padding: 40px 40px;
+    margin-left: 18%;
+    padding: 13px 30px;
     box-sizing: border-box;
+    overflow-y: auto;
 }
   .flex-container{
     display: flex;
     flex: 1;
     overflow: hidden;
-    gap: 30px;
-    max-width: 1400px;
-    margin: auto;
+    gap: 20px;
+    overflow-y: auto;
+  }
+
+  .flex-container::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .flex-container::-webkit-scrollbar-track {
+    background: #dfe0d0;
+    border-radius: 10px;
+  }
+
+  .flex-container::-webkit-scrollbar-thumb {
+    background-color: #aaa;
+    border-radius: 10px;
   }
 
   .submittedewaste-table-container {
     margin-top: 20px;
+    margin-left: 18px;
     background-color: #dfe0d0;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
     border-radius: 30px;
-    width: 60%;
-    height: 100%;
-    position: relative;
+    width: 55%;
+    min-height: 93%;
+    height: 93%;
     overflow: auto;
   }
   
@@ -39,7 +54,7 @@ html, body {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 1.5rem;
+    font-size: 1rem;
     font-weight: bold;
   }
 
@@ -89,6 +104,7 @@ html, body {
 
 .submit-table{
   width: 100%;
+  height: 100%;
   table-layout: fixed;
   border-collapse: collapse;
   background-color: #dfe0d0;
@@ -112,6 +128,7 @@ html, body {
     box-sizing: border-box;
     padding: 20px;
     text-align: center;
+    font-size: 0.7rem;
     border: 1px solid #afafaf;
 }
 
@@ -131,6 +148,7 @@ html, body {
     color: white;
     border-radius: 15px !important;
     cursor: pointer;
+    font-size: 0.6rem;
 }
 
 /* panel view styles*/
@@ -141,7 +159,7 @@ html, body {
   padding: 25px;
   margin-top: 20px;
   width: 40%;
-  height: 100%;
+  height: 93%;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -150,7 +168,7 @@ html, body {
 
 .submitewaste-panel-container h3{
   text-align: center;
-  font-size: 1.5rem;
+  font-size: 1rem;
   margin: 0 0 25px 0;
   color: #343a40;
   flex-shrink: 0;
@@ -163,16 +181,17 @@ html, body {
   position: absolute;
 }
 
-
 .panel-grid {
   display: grid;
-  gap: 20px;
+  gap: 10px;
   width: 100%;
   grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
 }
 
 /* Image section styles */
 .submitimage-container {
+  height: 90%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -185,13 +204,12 @@ html, body {
   padding: 10px;
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  height: 250px;
   display: flex;
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
   overflow: hidden;
-  margin-bottom: 10px;
 }
 
 .submitimage-section .nav-button {
@@ -241,18 +259,20 @@ html, body {
 .panel-detail span {
   font-weight: bold;
   margin-right: 10px;
+  font-size: 0.8rem;
   color: #333;
 }
 
 .panel-detail p {
   margin: 0;
   color: black;
+  font-size: 0.8rem;
 }
 
 
 .panel-form h4 {
   margin: 0;
-  font-size: 1rem;
+  font-size: 0.8rem;
   color: #333;
 }
 
@@ -304,5 +324,7 @@ html, body {
   .submittedewaste-table-container,
   .submitewaste-panel-container {
       width: 100%;
+      height: auto;
+      min-height: fit-content;
   }
 }

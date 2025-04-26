@@ -1,59 +1,60 @@
-.form-container .EcoCollect-logo {
-  width: 450px;
+ .EcoCollect-logo {
+  width: 20%;
+  margin-bottom: 30px;
 }
 
-.form-container {
+.login-container {
     background-image: url("./src/assets/bgphoto-ecocollect.png");
     background-position: center;
     display: flex;
     align-items: center;
     flex-direction: column;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
 }
 
-form {
+.login-form {
     display: flex;
     flex-direction: column;
     background-image: linear-gradient(rgba(30, 32, 32, 0.8), rgba(146, 191, 158, 0.8));
-    width: 90%;
-    max-width: 400px;
+    width: 30%;
+    height: fit-content;
     padding: 30px;
     border-radius: 30px;
   }
   
-  form h1, label, p {
+  .login-form h1, label, p {
     color: white;
   }
   
-  form h1 {
-    font-size: 2rem;
-    margin-bottom: 10px;
+  .login-form h1 {
+    font-size: 1.3rem;
+    margin-bottom: 20px;
   }
   
-  form .welcome-el {
-    margin-bottom: 30px;
+  .login-form .welcome-el {
+    margin-bottom: 20px;
   }
   
-  form label, p, input {
-    font-size: 1rem;
+  .login-form label, p, input {
+    font-size: 0.7rem;
   }
   
-  form label {
+  .login-form label {
     margin-bottom: 5px;
     margin-left: 5px;
   }
   
-  form input {
+  .login-form input {
     margin-bottom: 10px;
     padding: 5px 7px;
     border-radius: 50px;
     border: 1px solid white;
   }
   
-  form .login-btn {
-    font-size: 1.2rem;
+  .login-form .login-btn {
+    font-size: 0.7rem;
     padding: 5px;
     border-radius: 50px;
     border: 2px  solid white;
@@ -65,37 +66,51 @@ form {
     margin-top: 20px;
   }
   
-  form .register-el {
+  .login-form .register-el {
     text-align: center;
+    font-size: 0.8rem;
   }
   
-  form p .register-btn {
+  .login-form p .register-btn {
     width: 20%;
     margin: 0 auto;
     color: white;
     text-decoration: none;
     font-weight: 800;
     cursor: pointer;
+    text-align: center;
   }
 
-  form .register-btn:hover:hover {
+  .login-form .register-btn:hover:hover {
     text-decoration: underline;
   }
   
-  form .or-seperator {
+  .login-form .or-seperator {
     text-align: center;
     margin: 10px 0;
+    font-size: 0.7rem;
   }
   
-  form .microsoftAcc-btn {
+  .login-form .microsoftAcc-btn {
     font-weight: 800;
     border: 1px solid #497460;
     width: 250px;
     padding: 5px 30px;
     margin: 5px auto;
     cursor: pointer;
+    font-size: 0.9rem;
   }
 
-  form .microsoftAcc-btn:hover {
+  .login-form .microsoftAcc-btn:hover {
     background-color: rgb(124, 124, 124);
+  }
+
+  @media screen and (max-width: 768px) {
+    .EcoCollect-logo {
+      width: 100%;
+    }
+  
+    .login-form {
+      width: 80%;
+    }
   }

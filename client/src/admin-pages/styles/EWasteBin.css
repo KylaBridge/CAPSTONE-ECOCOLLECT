@@ -6,9 +6,15 @@ html, body {
 }
 
 .ewastemodule-container {
-  padding: 40px 40px;
+  padding: 13px 30px;
   height: 100%;
-  margin-left: 280px;
+  margin-left: 18%;
+}
+
+.main-content-scaler{
+  transform: scale(0.82);
+  transform-origin: top left;
+  width: 120%;
 }
 
 .top-section, .bottom-section {
@@ -16,8 +22,7 @@ html, body {
   justify-content: space-between;
   gap: 30px;
   flex-wrap: wrap;
-  margin-top: 15px;
-  padding: 20px;
+  padding: 15px;
   font-size: 1.1rem;
   align-items: stretch;
 }
@@ -25,6 +30,7 @@ html, body {
 .bottom-section {
   padding: 0 20px;
   gap: 5px !important;
+  margin-top: 3px !important;
 }
 
 .bins-summary-wrapper {
@@ -79,6 +85,7 @@ html, body {
 
 .binview-container h2{
   text-align: center;
+  font-size: 1.5rem;
 }
 
 .empty-panel-message {
@@ -195,7 +202,7 @@ html, body {
 
 .upload-placeholder {
   width: 100%;
-  max-height: 220px;
+  max-height: 215px;
   border: 1px dashed #ccc;
   display: flex;
   justify-content: center;
@@ -253,6 +260,11 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  font-size: 0.8rem;
+}
+
+.remarks{
+  font-size: 0.8rem;
 }
 
 .bin-id-status-location h3 {

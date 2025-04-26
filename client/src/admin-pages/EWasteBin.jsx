@@ -200,99 +200,98 @@ export default function EWasteBin() {
                     pageTitle="E-Waste Bin Monitoring"
                     adminName="Admin Name"
                 />
+                <div className="main-content-scaler">
+                    <div className="top-section">
+                        <div className="bins-summary-wrapper">
+                            <div className="totalbins-container">
+                                <h2>Total Bins Monitored</h2>
+                                <p>{bins.length}</p>
+                            </div>
 
-                <div className="top-section">
-
-                    <div className="bins-summary-wrapper">
-                        <div className="totalbins-container">
-                            <h2>Total Bins Monitored</h2>
-                            <p>{bins.length}</p>
+                            <div className="fullbins-container">
+                                <h2>Bin Needs Emptying</h2>
+                                <p>{bins.filter(bin => bin.status === 'Needs Emptying').length}</p>
+                            </div>
                         </div>
 
-                        <div className="fullbins-container">
-                            <h2>Bin Needs Emptying</h2>
-                            <p>{bins.filter(bin => bin.status === 'Needs Emptying').length}</p>
-                        </div>
-                    </div>
-
-                    <div className={`binview-container ${!isPanelOpen ? 'panel-closed' : ''}`}>
-                        <h2>{selectedBin?.binId === 'new' ? 'Add New Bin' : 'Bin Details'}</h2>
-                        {isPanelOpen ? (
-                            <div className="bin-view-content">
-                                <div className="image-section">
-                                    <div className="upload-placeholder">
-                                        {imagePreview ? (
-                                            <img src={imagePreview} alt="Bin Preview" />
-                                        ) : (
-                                            <img src={selectedBin?.image || imgPlaceholder} alt="Placeholder" style={{ opacity: 0.5 }} />
-                                        )}
-                                    </div>
-                                    <input type="file" accept=".png, .jpg, .jpeg, .gif" onChange={handleImageChange} id="imageInput" style={{ display: 'none' }} />
-                                    <div className="upload-action-group">
-                                        {isImageSelected ? (
-                                            <button type="button" className="remove-button" onClick={handleRemoveImage}>
-                                                <AiOutlineDelete size={20} style={{ marginRight: "5px" }} /> REMOVE
-                                            </button>
-                                        ) : (
-                                            <label htmlFor="imageInput" className="upload-button">
-                                                <AiOutlineUpload size={20} style={{ marginRight: "5px" }} /> UPLOAD
-                                            </label>
-                                        )}
-                                        <p className="accepted-file-desc">Accepted formats: png, jpg, gif</p>
-                                    </div>
-                                </div>
-
-                                <div className="bin-info">
-                                    <div className="bin-id-status-location">
-                                        <h3>{selectedBin?.binId === 'new' ? 'New Bin' : selectedBin?.binId}</h3>
-                                        <div className="status-location-row">
-                                            <div>
-                                                <select value={status} onChange={(e) => setStatus(e.target.value)}>
-                                                    <option value="Status" disabled>Select Bin Status</option>
-                                                    <option value="Full">Full</option>
-                                                    <option value="Needs Emptying">Needs Emptying</option>
-                                                    <option value="Available">Available</option>
-                                                </select>
-                                            </div>
-                                            <div>
-                                                <input
-                                                    type="text"
-                                                    placeholder="Location"
-                                                    value={location}
-                                                    onChange={(e) => setLocation(e.target.value)}
-                                                />
-                                            </div>
+                        <div className={`binview-container ${!isPanelOpen ? 'panel-closed' : ''}`}>
+                            <h2>{selectedBin?.binId === 'new' ? 'Add New Bin' : 'Bin Details'}</h2>
+                            {isPanelOpen ? (
+                                <div className="bin-view-content">
+                                    <div className="image-section">
+                                        <div className="upload-placeholder">
+                                            {imagePreview ? (
+                                                <img src={imagePreview} alt="Bin Preview" />
+                                            ) : (
+                                                <img src={selectedBin?.image || imgPlaceholder} alt="Placeholder" style={{ opacity: 0.5 }} />
+                                            )}
+                                        </div>
+                                        <input type="file" accept=".png, .jpg, .jpeg, .gif" onChange={handleImageChange} id="imageInput" style={{ display: 'none' }} />
+                                        <div className="upload-action-group">
+                                            {isImageSelected ? (
+                                                <button type="button" className="remove-button" onClick={handleRemoveImage}>
+                                                    <AiOutlineDelete size={20} style={{ marginRight: "5px" }} /> REMOVE
+                                                </button>
+                                            ) : (
+                                                <label htmlFor="imageInput" className="upload-button">
+                                                    <AiOutlineUpload size={20} style={{ marginRight: "5px" }} /> UPLOAD
+                                                </label>
+                                            )}
+                                            <p className="accepted-file-desc">Accepted formats: png, jpg, gif</p>
                                         </div>
                                     </div>
-                                    <div className="remarks">
-                                        <h3>Remarks</h3>
-                                        <textarea placeholder="Enter Remarks" value={remarks} onChange={(e) => setRemarks(e.target.value)}></textarea>
-                                    </div>
-                                    <div className="bin-actions">
-                                        <button onClick={handleSubmitBin} disabled={!isFormValid}>
-                                            {selectedBin?.binId === 'new' ? 'ADD' : 'UPDATE'}
-                                        </button>
-                                        {viewedFromTable && selectedBin ? (
-                                            <button type="button" onClick={() => handleRemoveBin(selectedBin)}>
-                                                REMOVE
+
+                                    <div className="bin-info">
+                                        <div className="bin-id-status-location">
+                                            <h3>{selectedBin?.binId === 'new' ? 'New Bin' : selectedBin?.binId}</h3>
+                                            <div className="status-location-row">
+                                                <div>
+                                                    <select value={status} onChange={(e) => setStatus(e.target.value)}>
+                                                        <option value="Status" disabled>Select Bin Status</option>
+                                                        <option value="Full">Full</option>
+                                                        <option value="Needs Emptying">Needs Emptying</option>
+                                                        <option value="Available">Available</option>
+                                                    </select>
+                                                </div>
+                                                <div>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Location"
+                                                        value={location}
+                                                        onChange={(e) => setLocation(e.target.value)}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="remarks">
+                                            <h3>Remarks</h3>
+                                            <textarea placeholder="Enter Remarks" value={remarks} onChange={(e) => setRemarks(e.target.value)}></textarea>
+                                        </div>
+                                        <div className="bin-actions">
+                                            <button onClick={handleSubmitBin} disabled={!isFormValid}>
+                                                {selectedBin?.binId === 'new' ? 'ADD' : 'UPDATE'}
                                             </button>
-                                        ) : (
-                                            <button type="button" onClick={handleClosePanel}>
-                                                CLOSE
-                                            </button>
-                                        )}
+                                            {viewedFromTable && selectedBin ? (
+                                                <button type="button" onClick={() => handleRemoveBin(selectedBin)}>
+                                                    REMOVE
+                                                </button>
+                                            ) : (
+                                                <button type="button" onClick={handleClosePanel}>
+                                                    CLOSE
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ) : (
-                            <div className="empty-panel-message">
-                                <p>View Bin or Add New Bin to show the details.</p>
-                            </div>
-                        )}
+                            ) : (
+                                <div className="empty-panel-message">
+                                    <p>View Bin or Add New Bin to show the details.</p>
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div>
 
-                <div className="bottom-section">
+                     <div className="bottom-section">
                     <div className="binlist-container">
                         <div className="binlist-header">
                             <div className="left-controls">
@@ -342,6 +341,7 @@ export default function EWasteBin() {
                             <p>Admin Mark added BIN-005 (Science Hall) - Dec 12, 2024 - 2:15 PM</p>
                         </div>
                     </div>
+                </div>
                 </div>
             </div>
         </>

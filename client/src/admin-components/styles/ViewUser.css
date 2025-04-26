@@ -6,6 +6,10 @@
     margin-top: 20px;
 }
 
+.view-user h2{
+    font-size: 1rem;
+}
+
 .user-details {
     margin-left: 20px;
     margin-top: 20px;
@@ -13,4 +17,5 @@
 
 .view-user .user-details p {
     color: black;
+    font-size: 0.7rem;
 }

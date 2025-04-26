@@ -1,7 +1,6 @@
 .bin-table-container {
     border-radius: 1rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    padding: 1rem;
+    padding: 1px;
     width: 100%;
   }
   
@@ -11,7 +10,6 @@
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #aaa #dfe0d0; 
-    max-height: 220px;
     position: relative;
   }
 
