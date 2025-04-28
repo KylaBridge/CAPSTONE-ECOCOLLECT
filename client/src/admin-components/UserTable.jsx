@@ -5,7 +5,7 @@ import "./styles/UserTable.css";
 import { FaSearch } from "react-icons/fa";
 
 
-export default function UserTable({ onViewUser }) {
+export default function UserTable({ onViewUser, viewedUser }) {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -34,21 +34,25 @@ export default function UserTable({ onViewUser }) {
       .catch((error) => console.error("Error fetching data:", error));
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this user?")) return;
+  // const handleDelete = async (id) => {
+  //   if (!window.confirm("Are you sure you want to delete this user?")) return;
 
-    try {
-      await axios.delete(`/api/ecocollect/usermanagement/${id}`);
-      setUsers(users.filter((user) => user._id !== id));
-      toast.success("User deleted successfully");
-    } catch (error) {
-      console.error("Error deleting user:", error);
-    }
-  };
+  //   try {
+  //     await axios.delete(`/api/ecocollect/usermanagement/${id}`);
+  //     setUsers(users.filter((user) => user._id !== id));
+  //     toast.success("User deleted successfully");
+  //   } catch (error) {
+  //     console.error("Error deleting user:", error);
+  //   }
+  // };
 
   const handleView = (user) => {
-    onViewUser(user)
-  }
+    if (viewedUser?._id === user._id) {
+      onViewUser(null);
+    } else {
+      onViewUser(user);
+    }
+  };
 
   const handleSearchInputChange = (event) => {
     setSearchTerm(event.target.value);
@@ -92,9 +96,7 @@ export default function UserTable({ onViewUser }) {
                   <select className="sort-dropdown">
                   <option value="">Sort By</option>
                   <option value="name">Name</option>
-                  <option value="points">Points</option>
-                  <option value="role">Role</option>
-                  <option value="activity">Activity Level</option>
+                  <option value="points">Total Contributions</option>
                   </select>
               </div>
 
@@ -121,39 +123,46 @@ export default function UserTable({ onViewUser }) {
                 )}
               </div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {searchResults.length > 0 ? (
-            searchResults.map((user) => (
-              <tr key={user._id}>
-                <td>{user._id}</td>
-                <td>{user.email}</td>
-                <td>{user.role}</td>
-                <td>
-                  <button className="view-btn" onClick={() => handleView(user)}>
-                    VIEW
-                  </button>
-                  <button className="delete-btn" onClick={() => handleDelete(user._id)}>
-                    DELETE
-                  </button>
-                </td>
-              </tr>
-            ))
-          ) : (
+
+      <div className="usertable-wrapper">
+        <table>
+          <thead>
             <tr>
-              <td colSpan="4" className="no-users">No users found</td>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Last Activity</th>
+              <th>Total Contributions</th>
+              <th>Action</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {searchResults.length > 0 ? (
+              searchResults.map((user) => (
+                <tr key={user._id}>
+                  <td>{user._id}</td>
+                  <td>Placeholder</td> 
+                  <td>{user.email}</td>
+                  <td>{user.role}</td>
+                  <td>Placeholder</td> 
+                  <td>Placeholder</td>
+                  <td>
+                    <button className="view-btn" onClick={() => handleView(user)}>
+                      {viewedUser?._id === user._id ? 'CLOSE' : 'VIEW'}
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4" className="no-users">No users found</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+ 
     </div>
   );
 }

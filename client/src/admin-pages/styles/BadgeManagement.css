@@ -22,11 +22,10 @@ html, body {
 }
 
 .badgemanagement-page-scaler{
-
-    transform: scale(0.8); /* Adjust this value to control the size (e.g., 0.8 for 80%) */
-    transform-origin: top left; /* Ensure scaling happens from the top-left */
-    width: 125%; /* Ensure the container takes full width before scaling */
-    box-sizing: border-box; /* Include padding and border in the width */
+    transform: scale(0.8);
+    transform-origin: top left;
+    width: 125%;
+    box-sizing: border-box;
 }
 
 /* --- Main Grid Layout --- */
@@ -401,6 +400,18 @@ html, body {
     z-index: 1;
 }
 
+.badge-table-section td{
+    padding: 0.5rem 1rem;
+    color: #374151;
+    background-color: #dfe0d0;
+    border: 1px solid #afafaf;
+}
+
+.badge-table-section thead th{
+    border: 1px solid #afafaf;
+    padding: 10px;
+}
+
 .badge-table-section .add-button {
     background-color: #118653;
     color: white;
@@ -505,35 +516,56 @@ html, body {
     .upload-section { align-items: center; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
     .badge-management-grid {
-        grid-template-columns: 1fr;
-        grid-template-areas:
-            "total"
-            "middle"
-            "right";
-         gap: 20px;
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "total"
+        "middle"
+        "right"
+        "table";
+      gap: 20px;
+      display: flex;
+      flex-direction: column;
     }
-    .badge-management-page { padding: 15px; }
-
+  
+    .badge-management-page {
+      padding: 15px;
+      margin-left: 0;
+    }
+  
     .total-badges-container.grid-col-1,
     .middle-column.grid-col-2,
-    .badge-form-section.grid-col-3 {
-        width: 100%;
-        max-width: 550px;
-        margin: 0 auto;
+    .badge-form-section.grid-col-3,
+    .grid-span-2 {
+      width: 100%;
+      max-width: none;
+      margin: 0 auto 20px auto;
     }
-    .total-badges-container.grid-col-1 { margin-bottom: 0; }
-
+    .total-badges-container.grid-col-1 {
+      margin-bottom: 20px;
+    }
+  
     .badge-form-grid {
-        grid-template-columns: 1fr;
-        gap: 25px;
+      grid-template-columns: 1fr;
+      gap: 25px;
     }
-     .upload-area { max-width: 100%; }
-     .upload-placeholder { width: 140px; height: 140px; }
-     .form-buttons { justify-content: center; }
-
-     .badge-table-section { padding: 15px; }
-     .badge-table-section table { min-width: 450px; }
-}
+    .upload-area {
+      max-width: 100%;
+    }
+    .upload-placeholder {
+      width: 140px;
+      height: 140px;
+    }
+    .form-buttons {
+      justify-content: center;
+    }
+  
+    .badge-table-section {
+      padding: 15px;
+    }
+    .badge-table-section table {
+      min-width: auto;
+    }
+  }
 

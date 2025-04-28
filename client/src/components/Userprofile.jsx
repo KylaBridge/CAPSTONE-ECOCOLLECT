@@ -6,21 +6,33 @@ import { UserContext } from "../context/userContext";
 
 export default function Userprofile() {
     const {user} = useContext(UserContext)
-
-    const currentPoints = 50;
-    const totalPoints = 100;
-    const progressPercent = (currentPoints / totalPoints) * 100;
+    const totalSubmissions = user?.submissionCount;
 
     return (
         <div className="profile-container">
-            <img src={ProfilePic} alt="profile picture" className="profile-pic" />
-            <div className="profile-details">
-                {!!user && (<h1>{user.email}</h1>)}
-                <div className="exp-bar">
-                    <div className="progress-bar" style={{ width: `${progressPercent}%` }}>
-                        <span className="progress-text-inside">XP {`${currentPoints}/${totalPoints}`}</span>
+             <img src={user?.profilePicture || ProfilePic} alt="profile picture" className="profile-pic" />
+                  <div className="profile-details">
+                  {!!user ? (
+                    <>
+                    <h2 className="username">{user.username || 'USERNAME'}</h2>
+                    <p className="user-id">ID: {user._id ? user._id.slice(-8) : 'ID Placeholder'}</p>
+                    <p className="user-email">Email: {user.email || 'email@example.com'}</p>
+                    <div className="submissions-bar">
+                        <span className="submissions-label">E-Waste Submitted</span>
+                        <span className="submissions-count">{totalSubmissions !== undefined ? totalSubmissions : '0'}</span>
                     </div>
-                </div>
+                </>
+                ) : (
+                    <>
+                        <h2 className="username">USERNAME</h2>
+                        <p className="user-id">ID: ID Placeholder</p>
+                        <p className="user-email">Email: email@example.com</p>
+                        <div className="submissions-bar">
+                            <span className="submissions-label">E-Waste Submitted</span>
+                            <span className="submissions-count">10</span>
+                        </div>
+                    </>        
+                )}
             </div>
         </div>
     );

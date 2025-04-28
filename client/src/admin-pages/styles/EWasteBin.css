@@ -31,6 +31,8 @@ html, body {
   padding: 0 20px;
   gap: 5px !important;
   margin-top: 3px !important;
+  flex-wrap: wrap;
+  align-items: stretch;
 }
 
 .bins-summary-wrapper {
@@ -105,14 +107,14 @@ html, body {
   background-color: #dfe0d0;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 20px;
-  flex-shrink: 0;
-  min-width: 400px;
-  width: 60%;
+  width: 65%;
+  min-width: 65%;
   padding: 15px;
   max-height: 385px;
   min-height: 260px;
   overflow-y: auto;
   box-sizing: border-box;
+  flex: 1;
 }
 
 .binlist-header {
@@ -179,14 +181,56 @@ html, body {
   border-radius: 20px;
   min-height: 100%;
   background-color: #dfe0d0;
-
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .recent-activity-container-admin h2{
+    font-size: 1.2rem;
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #575656;
     text-align: center;
+    
 }
-.activity-item p, .recent-activity-container-admin h2 {
+.admin-activity-item p{
   color: black;
+  font-size: 0.8rem;
+}
+
+.admin-activity-item {
+  border-radius: 5px;
+  border-bottom: 2px solid #828080;
+  padding: 10px;
+}
+
+.recent-activity-items-wrapper {
+  max-height: 230px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.recent-activity-items-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.recent-activity-items-wrapper::-webkit-scrollbar-track {
+  background-color: #dfe0d0;
+  border-radius: 10px;
+}
+
+.recent-activity-items-wrapper::-webkit-scrollbar-thumb {
+  background-color: #aaa;
+  border-radius: 10px;
+}
+
+.admin-empty-activity-message p {
+  margin: 0;
+  color: #777;
+  font-style: italic;
+  text-align: center;
 }
 
 .bin-view-content {
@@ -339,11 +383,6 @@ html, body {
   color: #fff;
 }
 
-.activity-item {
-  border-bottom: 1px solid #ddd;
-  padding: 10px 0;
-}
-
 /* Responsive tweaks */
 @media screen and (max-width: 1024px) {
   .top-section {
@@ -359,6 +398,18 @@ html, body {
   .binview-container {
     padding: 20px;
   }
+
+  .bottom-section {
+    flex-direction: column;
+  }
+
+  .binlist-container,
+  .recent-activity-container-admin {
+      min-width: unset;
+      width: 100%;
+      margin-left: 0;
+      margin-top: 10px;
+  }
 }
 
 @media screen and (max-width: 768px) {
@@ -367,13 +418,9 @@ html, body {
     padding: 20px;
   }
 
-  .binlist-container {
+  .recent-activity-container-admin, .binlist-container {
     width: 100%;
     min-width: unset;
-  }
-
-  .recent-activity-container-admin {
-    width: 100%;
     margin-left: 0;
     margin-top: 20px;
   }

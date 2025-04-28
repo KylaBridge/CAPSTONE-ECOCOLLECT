@@ -11,6 +11,11 @@ import "./styles/UserManagement.css";
 export default function UserManagement() {
   const [selectedUser, setSelectedUser] = useState(null);
 
+  const handleUserDeleted = () => {
+    setSelectedUser(null);
+    window.location.reload();
+  };
+
   return (
     <>
       <AdminSidebar />
@@ -19,8 +24,8 @@ export default function UserManagement() {
             pageTitle="User Management" 
           />
           <div className="usermodule-responsive-wrapper">
-             <ViewUser user={selectedUser} />
-              <UserTable onViewUser={setSelectedUser} />
+            <ViewUser user={selectedUser} onUserDeleted={handleUserDeleted} />
+            <UserTable onViewUser={setSelectedUser} viewedUser={selectedUser} />
           </div>
        
       </div>

@@ -1,69 +1,71 @@
 .bin-table-container {
-    border-radius: 1rem;
-    padding: 1px;
-    width: 100%;
-  }
-  
-  
-  .table-wrapper {
-    overflow-x: auto;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #aaa #dfe0d0; 
-    position: relative;
-  }
+  border-radius: 1rem;
+  padding: 1px;
+  width: 100%;
+}
 
 
-  .table-wrapper::-webkit-scrollbar{
-    width: 6px;
-  }
+.table-wrapper {
+  overflow-x: auto;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #aaa #dfe0d0;
+  position: relative;
+}
 
-  .table-wrapper::-webkit-scrollbar-track{
-    background: #dfe0d0;
-    border-radius: 10px;
-  }
 
-  .table-wrapper::-webkit-scrollbar-thumb{
-    background-color: #aaa;
-    border-radius: 10px;
-  }
+.table-wrapper::-webkit-scrollbar{
+  width: 6px;
+}
 
-  .bin-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.875rem; 
-  }
-  
-  .bin-table thead {
-    background-color: #f3f4f6;
-  }
-  
-  .bin-table th {
-    padding: 0.5rem 1rem;
-    text-align: left;
-    color: #4b5563;
-    font-weight: 500;
-  }
+.table-wrapper::-webkit-scrollbar-track{
+  background: #dfe0d0;
+  border-radius: 10px;
+}
 
-  .bin-table thead th {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-  }
-  
-  .bin-table tbody {
-    background-color: #dfe0d0;
-  }
-  
-  .bin-table td {
-    padding: 0.5rem 1rem;
-    color: #374151;
-    border-top: 1px solid #f3f4f6;
-  }
-  
-  .bin-table .no-data {
-    text-align: center;
-    padding: 1rem;
-    color: #6b7280;
-    font-style: italic;
-  }
+.table-wrapper::-webkit-scrollbar-thumb{
+  background-color: #aaa;
+  border-radius: 10px;
+}
+
+.bin-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 2px; /* Adjust the gap size as needed */
+  font-size: 0.875rem;
+}
+
+.bin-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: #dfe0d0;
+}
+
+.bin-table th {
+  padding: 0.5rem 1rem;
+  text-align: left;
+  color: #4b5563;
+  font-weight: 500;
+  border: 1px solid #afafaf;
+  background-color: #dfe0d0;
+}
+
+.bin-table tbody {
+  background-color: #dfe0d0;
+}
+
+.bin-table td {
+  padding: 0.5rem 1rem;
+  color: #374151;
+  background-color: #dfe0d0;
+  border: 1px solid #afafaf;
+}
+
+.bin-table .no-data {
+  text-align: center;
+  padding: 1rem;
+  color: #6b7280;
+  font-style: italic;
+  background-color: #dfe0d0; 
+}

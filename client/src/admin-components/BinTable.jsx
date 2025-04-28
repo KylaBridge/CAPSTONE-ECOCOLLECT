@@ -7,6 +7,8 @@ const COLUMN_LABELS = {
   location: 'Location',
   status: 'Status',
   category: 'Category',
+  lastUpdated: 'Last Updated',
+  action: 'Action'
 };
 
 const BinTable = ({ columns, data, maxHeight = '220px' }) => {

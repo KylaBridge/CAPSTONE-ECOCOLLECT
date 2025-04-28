@@ -1,6 +1,6 @@
 .view-user {
-    padding: 30px;
-    background-color: #f0f4e3;
+    padding: 15px;
+    background-color: #dfe0d0;
     border-radius: 30px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     margin-top: 20px;
@@ -10,12 +10,224 @@
     font-size: 1rem;
 }
 
-.user-details {
-    margin-left: 20px;
-    margin-top: 20px;
+.details-wrapper{
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    margin-top: 15px;
+    flex-wrap: nowrap;
+    align-items: flex-start; 
 }
 
-.view-user .user-details p {
-    color: black;
+.details-left{
+    display: flex;
+    flex-direction: row;
+    gap: 0.7rem;
+}
+
+.user-details{
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  padding: 10px;
+  margin-bottom: 1rem;
+}
+
+.user-profile-image {
+  width: 130px;
+  height: 140px;
+  object-fit: cover;
+  border: 2px solid #8fbc8f;
+  flex-shrink: 0;
+}
+
+.user-details p{
+  margin-left: 0;
+  font-size: 0.7rem;
+  color: black;
+  text-align: left;
+  margin-bottom: 4px;
+}
+
+.username-title {
+    font-size: 1.1rem;
+    color: #656464;
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+.userprofile-info {
+  font-size: 0.8rem;
+  color: #555;
+  margin-bottom: 3px;
+  text-align: left;
+}
+
+.view-user h2{
+    margin-left: 15px;
+    font-size: 1.2rem;
+    color:#656464;
+}
+
+.delete-btn {
+    background-color: #284c42;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-top: 5px !important;
+    font-weight: bold;
+    border-radius: 5px;
     font-size: 0.7rem;
+    width: 100%;
+  }
+  
+  .delete-btn:hover {
+    background-color: #336053;
+  }
+  
+  .user-contribution-container {
+    display: flex;
+    background: linear-gradient( #76b082, #284c42);
+    border-radius: 25px;
+    padding: 15px;
+    gap: 1rem;
+    align-items: flex-start;
+    flex-wrap: nowrap;
+    flex-grow: 1;
+    min-width: 0;
+  }
+
+  .user-contribution-section, .user-rewards-section {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 0;
+    min-width: 0;
+  }
+
+
+  .user-contribution-section h3, .user-rewards-section h3 {
+    font-size: 1rem;
+    color: white !important;
+    margin-bottom: 10px;
+  }
+
+  .redeemed-table-scroll, .contribution-table-scroll {
+    width: 100%;
+    max-height: 100px; 
+    overflow: auto;
+    position: relative;
+  }
+  
+  .contribution-table-scroll table, .redeemed-table-scroll table{
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 1px;
+    font-size: 0.7rem;
+  }
+  
+  .contribution-table-scroll th, .contribution-table-scroll td, 
+  .redeemed-table-scroll table th, .redeemed-table-scroll table td{
+    text-align: center;
+    padding: 8px;
+    border: 1px solid #ddd;
+    color: #ddd;
+    background-color: transparent;
+    white-space: nowrap; 
+  }
+  
+  .contribution-table-scroll th, .redeemed-table-scroll table th {
+    color: #f6f6f6;
+    font-weight: bold;
+    position: sticky;
+    border: 1px solid #ddd;
+    background-color: #548269;
+    top: 0;
+    z-index: 2;
+  }
+
+  .contribution-table-scroll tr ,.redeemed-table-scroll tr {
+    background-color: transparent;
+  }
+  
+  .redeemed-table-scroll::-webkit-scrollbar, .contribution-table-scroll::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .redeemed-table-scroll::-webkit-scrollbar-thumb, .contribution-table-scroll::-webkit-scrollbar-thumb {
+    background-color: #6c9772;
+    border-radius: 5px;
+  }
+
+  .no-data {
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+    color: #777;
+}
+
+
+@media (min-width: 900px) {
+  .user-contribution-container {
+      flex-wrap: nowrap;
+      justify-content: space-between;
+  }
+
+  .user-contribution-section,
+  .user-rewards-section {
+      flex: 1 1 auto;
+      margin-right: 1rem;
+  }
+
+  .user-rewards-section {
+      margin-right: 0;
+  }
+}
+
+
+@media (max-width: 899px) {
+  .details-wrapper {
+      flex-direction: column;
+      flex-wrap: wrap;
+  }
+
+  .details-left {
+      width: 100%;
+      align-items: center;
+      flex-direction: column;
+  }
+
+  .user-profile-image {
+      margin-bottom: 1rem;
+  }
+
+  .user-details {
+      align-items: center;
+      text-align: center;
+  }
+
+  .user-details p,
+  .username-title {
+      text-align: center;
+  }
+
+  .delete-btn {
+      width: 100%;
+  }
+
+  .user-contribution-container {
+      width: 100%;
+      flex-direction: column;
+      flex-wrap: wrap;
+  }
+
+  .user-contribution-section,
+  .user-rewards-section {
+      width: 100%;
+      margin-right: 0;
+      margin-bottom: 1rem;
+  }
 }

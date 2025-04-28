@@ -20,7 +20,7 @@ export default function Home() {
    const [userRank, setUserRank] = useState(45);
    const [previousRank, setPreviousRank] = useState(46);
     //making the progress bar dynamic (testing)
-   const currentPoints = 100;
+   const currentPoints = 80;
    const totalPoints = 100;
    const progressPercent = (currentPoints / totalPoints) * 100;
 

@@ -72,6 +72,20 @@ export default function EWasteBin() {
       const [remarks, setRemarks] = useState("");
       const [binImg, setBinImg] = useState(null);
       const [initialBinValues, setInitialBinValues] = useState(null);
+      const [recentActivities, setRecentActivities] = useState([]);
+    
+      const logActivity = (message) => {
+        const timestamp = new Date().toLocaleString('en-PH', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true,
+            timeZone: 'Asia/Manila'
+        });
+        setRecentActivities(prevActivities => [{ message, timestamp }, ...prevActivities]);
+    };
 
 
       const isFormValid = location && status && (
@@ -147,6 +161,7 @@ export default function EWasteBin() {
         if (selectedBin?.binId === binToRemove.binId) {
             handleClosePanel();
         }
+        logActivity(`Admin removed BIN "${binToRemove.binId}"`);
         alert(`Bin "${binToRemove.binId}" removed!`);
     };
 
@@ -162,6 +177,7 @@ export default function EWasteBin() {
                 : bin
         );
         setBins(updatedBins);
+        logActivity(`Admin updated BIN "${selectedBin.binId}" (${selectedBin.location})`);
         handleClosePanel();
         alert(`Bin "${selectedBin.binId}" updated!`);
     };
@@ -180,6 +196,7 @@ export default function EWasteBin() {
             remarks
         };
         setBins([...bins, newBin]);
+        logActivity(`Admin added BIN "${newBin.binId}" (${location})`);
         handleClosePanel();
         alert(`New bin "${newBin.binId}" added!`);
     };
@@ -334,11 +351,18 @@ export default function EWasteBin() {
 
                     <div className="recent-activity-container-admin">
                         <h2>Recent Activity</h2>
-                        <div className="activity-item">
-                            <p>Admin Mark updated BIN-002 (Cafeteria) to "Needs Emptying" - Dec 12, 2024 - 3:00 PM</p>
-                        </div>
-                        <div className="activity-item">
-                            <p>Admin Mark added BIN-005 (Science Hall) - Dec 12, 2024 - 2:15 PM</p>
+                        <div className="recent-activity-items-wrapper">
+                            {recentActivities.length === 0 ? (
+                                <div className="admin-empty-activity-message">
+                                    <p>No activities yet</p>
+                                </div>
+                            ) : (
+                                recentActivities.map((activity, index) => (
+                                    <div key={index} className="admin-activity-item">
+                                        <p>{activity.message} - {activity.timestamp}</p>
+                                    </div>
+                                ))
+                            )}
                         </div>
                     </div>
                 </div>
