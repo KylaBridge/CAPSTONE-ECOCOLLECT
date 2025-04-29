@@ -72,23 +72,23 @@ const loginUser = async (req, res) => {
     }
 }
 
-const getProfile = (req, res) => {
-    const {token} = req.cookies
-    if(token) {
-        jwt.verify(token, process.env.JWT_SECRET, {}, (err, user) => {
-            if(err) throw err
-            res.json(user)
-        })
+const getProfile = async (req, res) => {
+    const { token } = req.cookies;
+    if (token) {
+        jwt.verify(token, process.env.JWT_SECRET, {}, async (err, decoded) => {
+            if (err) throw err;
+            const user = await User.findById(decoded.id); // Get full user
+            res.json(user);
+        });
     } else {
-        res.json(null)
+        res.json(null);
     }
-}
+};
 
 const logoutUser = (req, res) => {
     res.clearCookie("token")
     res.json({ message: "Logged out successfully" })
 };
-
 
 module.exports = {
     test,
