@@ -24,6 +24,20 @@ const submitEWaste = async (req, res) => {
     }
 };
 
+// Get user submit count
+const userSubmitCount = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        // Count the number of submissions for the given user
+        const count = await EWaste.countDocuments({ user: userId });
+
+        res.status(200).json({ submissionCount: count });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Failed to fetch submission count" });
+    }
+};
+
 // Get submissions by user :user
 const getUserSubmissions = async (req, res) => {
     try {
@@ -38,5 +52,6 @@ const getUserSubmissions = async (req, res) => {
 
 module.exports = {
     submitEWaste,
+    userSubmitCount,
     getUserSubmissions,
 };

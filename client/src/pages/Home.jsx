@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useState, useContext } from "react"
+import { UserContext } from "../context/userContext";
 import "../pages/styles/HomePage.css"
 import Userprofile from "../components/Userprofile";
 import Header from "../components/Header"
@@ -15,14 +16,15 @@ import { FaCaretDown, FaCaretUp} from "react-icons/fa";
 
 export default function Home() {
   const [showNavbar, setShowNavbar] = useState(false)
+  const { user, loading } = useContext(UserContext);
 
-   // Placeholder for user's rank and previous rank (for determining the icon)
-   const [userRank, setUserRank] = useState(45);
-   const [previousRank, setPreviousRank] = useState(46);
-    //making the progress bar dynamic (testing)
-   const currentPoints = 80;
-   const totalPoints = 100;
-   const progressPercent = (currentPoints / totalPoints) * 100;
+  // Placeholder for user's rank and previous rank (for determining the icon)
+  const userRank = user?.rank || "-";
+  const previousRank = user?.previousRank ?? null;
+  //making the progress bar dynamic (testing)
+  const currentPoints = user?.points || 0;
+  const totalPoints = Math.ceil(currentPoints / 100) * 100 || 100;
+  const progressPercent = ((currentPoints % 100) / 100) * 100;
 
   const getRankIcon = () => {
     if (previousRank === null) {
@@ -49,14 +51,14 @@ export default function Home() {
                 <h1 className="rank-title">Highest Rank</h1>
                 <div className="rank-container">
                     <div className="merit">
-                        <h2>BEGINNER</h2>
+                      <h2>{user?.rank || "Loading..."}</h2>
                     </div>
                     <div className="leaderboard-rank">
                     <h2 className="rank-number-container">
-                        <span className="rank-label">RANK</span>
+                        <span className="rank-label">Leaderboards</span>
                         <div className="rank-icon-container">
                           {getRankIcon()}
-                          <span className="user-rank-number">{userRank}</span>
+                          <span className="user-rank-number">coming soon..</span>
                         </div>
                       </h2>
                     </div>
@@ -69,7 +71,7 @@ export default function Home() {
                       <h2>Total Points</h2>
                       <div className="submission-bar">
                         <div className="submission-status" style={{ width: `${progressPercent}%` }}>
-                        <span className="submission-text-inside">{`${currentPoints}/${totalPoints}`}</span>
+                          <span className="submission-text-inside">{`${currentPoints}/${totalPoints}`}</span>
                         </div>
                       </div>
                     </div>

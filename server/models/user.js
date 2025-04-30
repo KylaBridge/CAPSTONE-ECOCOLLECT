@@ -10,6 +10,14 @@ const userSchema = new Schema({
     role: {
         type: String,
         default: "user"
+    },
+    rank: {
+        type: String,
+        default: "Eco Starter"
+    },
+    points: {
+        type: Number,
+        default: 0
     }
 })
 

@@ -2,6 +2,7 @@ const User = require('../models/user');
 const EWaste = require('../models/ewaste');
 const path = require("path");
 const fs = require("fs");
+const { getRank } = require('../helpers/rank')
 
 // GET all users :admin
 const getUserData = async (req, res) => {
@@ -30,7 +31,7 @@ const updateSubmissionStatus = async (req, res) => {
 
         if (!submission) return res.status(404).json({ message: "Submission not found" });
 
-        // If status changes from "Pending", delete image files and remove from DB
+        // If status changes from "Pending", delete image files
         if (status !== "Pending" && submission.attachments.length > 0) {
             submission.attachments.forEach((file) => {
                 const filePath = path.join(__dirname, "..", file.path);
@@ -47,6 +48,17 @@ const updateSubmissionStatus = async (req, res) => {
         submission.status = status;
         await submission.save();
 
+        // ✅ Add points to user if status is "Approved"
+        if (status === "Approved") {
+            const user = await User.findById(submission.user);
+            if (user) {
+                const pointsToAdd = 20;
+                user.points += pointsToAdd;
+                user.rank = getRank(user.points);
+                await user.save();
+            }
+        }
+
         res.status(200).json({ message: "Status and image data updated successfully" });
     } catch (err) {
         console.error(err);
@@ -57,7 +69,7 @@ const updateSubmissionStatus = async (req, res) => {
 // Get all e-waste submissions :admin
 const getAllSubmissions = async (req, res) => {
     try {
-        const submissions = await EWaste.find().populate("user"); // Populate user info
+        const submissions = await EWaste.find().populate("user");
         res.status(200).json(submissions);
     } catch (error) {
         res.status(500).json({ message: "Error fetching submissions" });
@@ -74,7 +86,6 @@ const deleteEWaste = async (req, res) => {
             return res.status(404).json({ message: "Submission not found" });
         }
 
-        // Delete image files from server
         for (const file of submission.attachments) {
             const filePath = path.join(__dirname, "..", file.path);
             if (fs.existsSync(filePath)) {

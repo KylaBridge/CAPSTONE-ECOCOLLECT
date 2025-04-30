@@ -13,6 +13,7 @@ const {
 } = require('../controllers/adminController');
 const { 
     submitEWaste, 
+    userSubmitCount,
     getUserSubmissions 
 } = require('../controllers/userController');
 
@@ -37,6 +38,7 @@ const upload = multer({ storage: storage });
 router.get("/usermanagement", getUserData);
 router.delete("/usermanagement/:id", deleteUser);
 router.post("/ewaste", upload.array("attachments", 5), submitEWaste);
+router.get("/ewaste/user/:userId/count", userSubmitCount);
 router.get("/ewaste/user/:userId", getUserSubmissions);
 router.put("/ewaste/:id/status", updateSubmissionStatus);
 router.get("/ewaste", getAllSubmissions); 
