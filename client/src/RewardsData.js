@@ -9,31 +9,31 @@ export default [
     {
         id: 1,
         img: RewardsImg1,
-        price: 150 + " points",
+        price: 20 + " points",
     },
     {
         id: 2,
         img: RewardsImg2,
-        price: 300 + " points",
+        price: 80 + " points",
     },
     {
         id: 3,
         img: RewardsImg3,
-        price: 400 + " points",
+        price: 140 + " points",
     },
     {
         id: 4,
         img: RewardsImg4,
-        price: 500 + " points",
+        price: 180 + " points",
     },
     {
         id: 5,
         img: RewardsImg5,
-        price: 25 + " points",
+        price: 220 + " points",
     },
     {
         id: 6,
         img: RewardsImg6,
-        price: 30 + " points",
+        price: 280 + " points",
     }
 ]
