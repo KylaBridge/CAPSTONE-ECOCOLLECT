@@ -151,9 +151,26 @@
     margin-top: 0 !important;
     border-radius: 20px;
     border-bottom: 5px solid #82935b;
-    transition: width 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding:10px;
+    color:#243b55;
+    font-weight: 600;
+    font-size: 14px;
+    position: relative;
   }
   
+  .submission-points-top-right {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #243b55;
+    z-index: 3;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+  }  
   .submission-text-inside {
     position: absolute;
     top: 50%;
