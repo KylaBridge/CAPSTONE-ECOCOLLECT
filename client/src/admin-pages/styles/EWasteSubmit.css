@@ -304,6 +304,110 @@ html, body {
   color: #202020;
 }
 
+.zoomable-image-wrapper {
+  position: relative;
+  cursor: zoom-in;
+  display: inline-block;
+}
+
+.zoomable-image {
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+}
+
+.zoom-icon {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.image-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.image-modal-content {
+  position: relative;
+  background: transparent;
+  padding: 20px; /* Add some padding around the image and buttons */
+  border-radius: 8px;
+  max-width: 90%;
+  max-height: 90%;
+  z-index: 10000;
+  display: flex; /* Enable flexbox for positioning */
+  align-items: center; /* Vertically align image and buttons */
+}
+
+.modal-image-wrapper {
+  flex-grow: 1; /* Allow image wrapper to take up available space */
+  display: flex;
+  justify-content: center; /* Center the image */
+  align-items: center;
+  max-width: 100%; /* Ensure image doesn't overflow */
+  max-height: 100%;
+}
+
+.modal-image {
+  max-width: 100%;
+  max-height: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.modal-nav-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  padding: 15px;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 10001;
+  border-radius: 5px;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.modal-nav-button:hover {
+  opacity: 1;
+}
+
+.modal-nav-button.left {
+  left: 20px;
+}
+
+.modal-nav-button.right {
+  right: 20px;
+}
+
+.close-modal {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: white;
+  border: none;
+  font-size: 20px;
+  padding: 5px 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 10002;
+}
+
 @media (max-width: 1024px) {
   .flex-container {
       flex-direction: column;

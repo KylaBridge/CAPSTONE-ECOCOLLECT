@@ -26,8 +26,9 @@
 }
 
 .user-rank-number {
-    color: black; 
-    font-weight: bold;
+    font-weight: 600;
+    font-size: 14px;
+    color: #194215 !important;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
   }
 
@@ -36,8 +37,9 @@
     grid-template-columns: 1fr 1fr;
     gap: 10px;
     margin-bottom: 10px;
+    align-items: stretch; 
   }
-  
+
   .rank-container h2 {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     color: #967737;
@@ -48,6 +50,11 @@
     text-align: center;
     font-size: clamp(1rem, 2vw, 1.3rem);
     width: 100%;
+    min-height: 0;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center; 
   }
 
   .rank-icon-container {
@@ -56,7 +63,7 @@
     gap: 4px;
   }
   
-  .leaderboard-rank {
+  .merit, .leaderboard-rank {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -135,28 +142,28 @@
     width: 100%;
     padding: 3px;
     position: relative;
-    overflow: hidden;
+    box-sizing: border-box;
   }
   
   .submission-status {
     background-color: #d1d5a1;
     height: 100%;
-    width: 40%;
-    margin-top: 0 !important; 
+    margin-top: 0 !important;
     border-radius: 20px;
     border-bottom: 5px solid #82935b;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding:10px;
-    color:#243b55;
-    font-weight: 600;
-    font-size: 14px;
-    position: relative;
+    transition: width 0.3s ease-in-out;
   }
   
   .submission-text-inside {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    font-weight: 600;
+    font-size: 14px;
+    color: #243b55;
     z-index: 2;
+    white-space: nowrap;
   }
 
 .submission-content {
@@ -325,6 +332,7 @@
     .rank-container {
       flex-direction: column;
       align-items: center;
+      align-items: stretch;
     }
   
     .rank-container h2 {

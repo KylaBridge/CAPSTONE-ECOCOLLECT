@@ -70,9 +70,8 @@ export default function Home() {
                       <h1>Submissions</h1>
                       <h2>Total Points</h2>
                       <div className="submission-bar">
-                        <div className="submission-status" style={{ width: `${progressPercent}%` }}>
-                          <span className="submission-text-inside">{`${currentPoints}/${totalPoints}`}</span>
-                        </div>
+                        <div className="submission-status" style={{ width: `${progressPercent}%` }} />
+                        <span className="submission-text-inside">{`${currentPoints}/${totalPoints}`}</span>
                       </div>
                     </div>
                     <img

@@ -3,6 +3,7 @@ import Header from "../admin-components/Header";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { MdOutlineZoomOutMap } from "react-icons/md";
 import "./styles/EWasteSubmit.css";
 
 export default function EWasteSubmit() {
@@ -12,6 +13,8 @@ export default function EWasteSubmit() {
     const [statusValue, setStatusValue] = useState("Pending");
     const [openSubmissionId, setOpenSubmissionId] = useState(null);
     const [originalStatus, setOriginalStatus] = useState("Pending");
+    const [isImageModalOpen, setImageModalOpen] = useState(false);
+    const [modalImageIndex, setModalImageIndex] = useState(0);
 
     useEffect(() => {
         axios.get("http://localhost:3000/api/ecocollect/ewaste")
@@ -86,8 +89,9 @@ export default function EWasteSubmit() {
 
     return (
         <>
-            <AdminSidebar />
-            <div className="ewaste-submit-main-container">
+
+            <div className="ewaste-submit-main-container">            
+                <AdminSidebar />
                 <Header
                     pageTitle="E-Waste Submission Validation"
                     adminName="Admin Name"
@@ -150,23 +154,28 @@ export default function EWasteSubmit() {
                         {selectedSubmission ? (
                             <div className="panel-grid">
                                 <div className="submitimage-container">
-                                    <div className="submitimage-section">
-                                        {selectedSubmission?.images?.length > 1 && (
-                                            <button className="nav-button prev" onClick={handlePrevImage}>{'<'}</button>
-                                        )}
+                                <div className="submitimage-section">
+                                    {selectedSubmission?.images?.length > 1 && (
+                                        <button className="nav-button prev" onClick={handlePrevImage}>{'<'}</button>
+                                    )}
+                                    <div className="zoomable-image-wrapper" onClick={() => {
+                                        setModalImageIndex(currentImageIndex);
+                                        setImageModalOpen(true);
+                                    }}>
                                         <img
-                                            src={Array.isArray(selectedSubmission.images) ? selectedSubmission.images[currentImageIndex] : selectedSubmission.images}
+                                            src={selectedSubmission.images[currentImageIndex]}
                                             alt="Submission"
-                                            onError={(e) => {
-                                                e.target.onerror = null;
-                                                e.target.src = "/assets/fallback.png";
-                                            }}
-                                            style={{ maxWidth: "100%", maxHeight: "300px", objectFit: "contain" }}
+                                            onError={(e) => { e.target.src = "/assets/fallback.png"; }}
+                                            className="zoomable-image"
                                         />
-                                        {selectedSubmission?.images?.length > 1 && (
-                                            <button className="nav-button next" onClick={handleNextImage}>{'>'}</button>
-                                        )}
+                                        <div className="zoom-icon">
+                                            <MdOutlineZoomOutMap size={24} />
+                                        </div>
                                     </div>
+                                    {selectedSubmission?.images?.length > 1 && (
+                                        <button className="nav-button next" onClick={handleNextImage}>{'>'}</button>
+                                    )}
+                                </div>
                                 </div>
                                 <div className="panel-form"> {/* The details form */}
                                     <div className="panel-detail">
@@ -214,6 +223,32 @@ export default function EWasteSubmit() {
             </div>
             {/* Hot Toast container to render toasts */}
             <div id="toast-container" />
+
+            {isImageModalOpen && selectedSubmission?.images?.length > 0 && (
+                <div className="image-modal-backdrop" onClick={() => setImageModalOpen(false)}>
+                    <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <button className="close-modal" onClick={() => setImageModalOpen(false)}>✖</button>
+                            <div className="modal-image-wrapper">
+                                {selectedSubmission.images.length > 1 && (
+                                    <button className="modal-nav-button left" onClick={() => setModalImageIndex(prev => Math.max(0, prev - 1))}
+                                        disabled={modalImageIndex === 0}>
+                                        {'<'}
+                                    </button>
+                                )}
+                                <img
+                                src={selectedSubmission.images[modalImageIndex]} alt="Zoomed" className="modal-image"/>
+
+                                {selectedSubmission.images.length > 1 && (
+                                    <button className="modal-nav-button right"
+                                        onClick={() => setModalImageIndex(prev => Math.min(selectedSubmission.images.length - 1, prev + 1))}
+                                        disabled={modalImageIndex === selectedSubmission.images.length - 1}>
+                                        {'>'}
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+            )}
         </>
     );
 }
