@@ -11,33 +11,23 @@ import SubmissionCharacter from "../assets/icons/submissionchar.png"
 import SmartDevicesIcon from "../assets/icons/smartdevicesicon.png"
 import SmartIcon from "../assets/icons/smarticon.png"
 import Sidebar from "../components/Sidebar"
-import { FaCaretDown, FaCaretUp} from "react-icons/fa";
-
 
 export default function Home() {
   const [showNavbar, setShowNavbar] = useState(false)
   const { user, loading } = useContext(UserContext);
 
-  // Placeholder for user's rank and previous rank (for determining the icon)
-  const userRank = user?.rank || "-";
-  const previousRank = user?.previousRank ?? null;
-  //making the progress bar dynamic (testing)
+  //making the progress bar dynamic 
   const currentPoints = user?.points || 0;
-  const totalPoints = Math.ceil(currentPoints / 100) * 100 || 100;
-  const progressPercent = ((currentPoints % 100) / 100) * 100;
 
-  const getRankIcon = () => {
-    if (previousRank === null) {
-      return null;
-    }
-    if (userRank < previousRank) {
-      return <FaCaretUp className="rank-icon up" />;
-    } else if (userRank > previousRank) {
-      return <FaCaretDown className="rank-icon down" />;
-    } else {
-      return null;
-    }
-  };
+  // Determine level by steps of 100
+  const level = Math.floor(currentPoints / 100);
+  const levelStart = level * 100;
+  const levelEnd = (level + 1) * 100;
+
+  // Calculate progress within current level
+  const progressPercent = ((currentPoints - levelStart) / (levelEnd - levelStart)) * 100;
+  const totalPoints = levelEnd;
+
   
   return (
     <>
@@ -57,7 +47,6 @@ export default function Home() {
                     <h2 className="rank-number-container">
                         <span className="rank-label">Leaderboards</span>
                         <div className="rank-icon-container">
-                          {getRankIcon()}
                           <span className="user-rank-number">coming soon..</span>
                         </div>
                       </h2>
@@ -70,8 +59,9 @@ export default function Home() {
                       <h1>Submissions</h1>
                       <h2>Total Points</h2>
                       <div className="submission-bar">
+                        <div className="submission-points-top-right">{`${currentPoints}/${totalPoints}`}</div>
                         <div className="submission-status" style={{ width: `${progressPercent}%` }}>
-                          <span className="submission-text-inside">{`${currentPoints}/${totalPoints}`}</span>
+                          {/* Optional: keep this empty or remove the span */}
                         </div>
                       </div>
                     </div>

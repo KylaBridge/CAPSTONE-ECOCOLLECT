@@ -155,9 +155,16 @@
     position: relative;
   }
   
-  .submission-text-inside {
-    z-index: 2;
-  }
+  .submission-points-top-right {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #243b55;
+    z-index: 3;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+  }  
 
 .submission-content {
     display: flex;
