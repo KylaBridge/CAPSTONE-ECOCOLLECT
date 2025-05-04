@@ -2,7 +2,7 @@
     background-color: #8dd7d7;
     z-index: 1;
     padding: 20px 30px;
-    padding-bottom: 50px;
+    min-height: 100%;
 }
 
 .outer-rewards-container {

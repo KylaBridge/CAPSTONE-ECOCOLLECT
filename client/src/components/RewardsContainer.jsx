@@ -1,5 +1,4 @@
 import "./styles/RewardsContainer.css"
-import RewardsData from "../RewardsData"
 
 export default function RewardsContainer(props) {
     
