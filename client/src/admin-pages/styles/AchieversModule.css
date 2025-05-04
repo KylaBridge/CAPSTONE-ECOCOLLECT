@@ -8,3 +8,129 @@ html, body {
     height: 100%;
     margin-left: 18%;
   }
+
+  .achievers-table-container{
+    margin-top: 20px;
+    margin-bottom: 30px;
+    background-color: #dfe0d0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 30px;
+    width: 100%;
+    min-height: 50%;
+  }
+
+  .achievers-title{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  .achievers-table-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .sort-element{
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+  .sort-dropdown {
+    padding: 8px;
+    border-radius: 5px;
+    background-color: #dfe0d0;
+    border: 1px solid #aaa;
+  }
+
+  .achievers-table-wrapper{
+    max-height: 500px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #aaa #dfe0d0;
+  }
+
+  
+.achievers-table-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+.achievers-table-wrapper::-webkit-scrollbar-track {
+  background: #dfe0d0;
+  border-radius: 10px;
+}
+
+.achievers-table-wrapper::-webkit-scrollbar-thumb {
+  background-color: #aaa;
+  border-radius: 10px;
+}
+
+.achievers-table{
+  width: 100%;
+  height: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 1px;
+  background-color: #dfe0d0;
+}
+
+.achievers-table thead th{
+  position: sticky;
+  top: 0;
+  background-color: #dfe0d0;
+  z-index: 2;
+  font-weight: 600;
+  text-align: center;
+  font-size: 0.8rem;
+  padding: 20px;
+  background-color: #dfe0d0;
+  border: 1px solid #afafaf;
+}
+
+.achievers-table th,
+.achievers-table td {
+    width: 25%;
+    box-sizing: border-box;
+    padding: 20px;
+    text-align: center;
+    font-size: 0.7rem;
+    border: 1px solid #afafaf;
+}
+
+.achievers-table tbody tr {
+    background-color: #dfe0d0;
+}
+
+.achievers-id-cell {
+  word-break: break-word;
+}
+
+.export-button {
+  background-color: #118653;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.8rem;
+}
+
+
+.export-button:hover {
+  background-color: #0e653f;
+}
+
+.no-data-message {
+  text-align: center;
+  font-style: italic;
+  color: #888;
+  padding: 20px;
+}

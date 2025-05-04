@@ -29,7 +29,7 @@ export default function Login() {
             else if (response.user?.role === "admin") {
                 setUser(response.user); // ✅ Save user to context
                 toast.success("Admin logged in");
-                navigate("/admin/usermanagement");
+                navigate("/admin/dashboard");
             } else {
                 setUser(response); // ✅ Save user to context
                 toast.success("User logged in");
