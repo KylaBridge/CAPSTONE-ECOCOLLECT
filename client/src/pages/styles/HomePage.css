@@ -110,16 +110,16 @@
     color: red;
   }
 
-.submission-container {
+  .submission-container {
     width: 100%;
     height: auto;
     background-color: #70b536;
-    padding: 5px 3%;
+    padding: 10px 3%;
     border-radius: 30px;
     margin-bottom: 5px;
 }
 
-.submission-container h1{
+.submission-container h1 {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-weight: 600;
     font-size: 1.3rem;
@@ -127,78 +127,48 @@
     color: #eeeeee;
 }
 
-.submission-container h2{
+.submission-content {
+    display: flex; /* Enable flexbox for the content */
+    align-items: center; /* Vertically align text and image */
+    justify-content: space-between; /* Put space between text and image */
+    gap: 20px; /* Space between text and image */
+}
+
+.submission-text {
+    flex: 1; /* Allow text to take up available space */
+    color: #70b536;
+    display: flex;
+    flex-direction: column; /* Stack points and submissions vertically */
+    gap: 10px;
+}
+
+.points-display,
+.submission-items-display {
+    display: flex;
+    gap: 8px;
+    align-items: center; /* Vertically align points/submissions with their labels */
+}
+
+.points-display h2,
+.submission-items-display h2 {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 1rem;
     font-weight: bold;
     color: #e0e6b2;
-    margin-bottom: 6px;
+    margin: 0;
 }
 
-.submission-bar {
-    background-color: #e5e5e5;
-    border-radius: 20px;
-    height: 30px;
-    width: 100%;
-    padding: 3px;
-    position: relative;
-    box-sizing: border-box;
-  }
-  
-  .submission-status {
-    background-color: #d1d5a1;
-    height: 100%;
-    margin-top: 0 !important;
-    border-radius: 20px;
-    border-bottom: 5px solid #82935b;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding:10px;
-    color:#243b55;
-    font-weight: 600;
-    font-size: 14px;
-    position: relative;
-  }
-  
-  .submission-points-top-right {
-    position: absolute;
-    top: 5px;
-    right: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #243b55;
-    z-index: 3;
+.points-display span.points-label,
+.submission-items-display span.submission-count {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
-  }  
-  .submission-text-inside {
-    position: absolute;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-    font-weight: 600;
-    font-size: 14px;
-    color: #243b55;
-    z-index: 2;
-    white-space: nowrap;
-  }
+    font-size: 1rem;
+    color: #eeeeee;
+}
 
-.submission-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-  }
-  
-  .submission-text {
-    flex: 1;
-    color: #70b536;
-  }
-  
-  .submission-character {
+.submission-character {
     max-width: 100px;
     height: auto;
-  }
+}
  
 /*{-------------------------------}*/
   .badge-reward-container {

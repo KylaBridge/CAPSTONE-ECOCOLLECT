@@ -70,18 +70,13 @@ export default function AdminDashboard(){
                         <div className="user-grid">
                             <div className="user-card">
                             <FaUserAlt className="icon"  size={40}/>
-                            <p>Student</p>
+                            <p>Users</p>
                             <h3>30</h3>
                             </div>
                             <div className="user-card">
                             <FaUserAlt className="icon"  size={40}/>
-                            <p>Faculty</p>
+                            <p>Admin</p>
                             <h3>12</h3>
-                            </div>
-                            <div className="user-card">
-                            <FaUserAlt className="icon"  size={40} />
-                            <p>Staff</p>
-                            <h3>100</h3>
                             </div>
                         </div>
 

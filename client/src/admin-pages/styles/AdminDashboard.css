@@ -69,7 +69,7 @@ html, body {
 .user-grid {
     display: grid;
     padding: 15px;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 0.5rem;
     justify-items: center;
 }
@@ -222,7 +222,6 @@ html, body {
 }
 
 .rewardtotal-bar{
-    background-image: linear-gradient(#284c42, #76b082) !important;
     margin: 10px auto;
     width: 80% !important;
     height: fit-content;
@@ -314,7 +313,7 @@ html, body {
 }
 
 .bintotal-bar{
-  background-image: linear-gradient(#284c42, #76b082);
+  background: linear-gradient(90deg, #76b082, #284c42);
   color: white;
   padding: 15px 20px;
   border-radius: 15px;
