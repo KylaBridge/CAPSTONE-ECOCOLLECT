@@ -11,6 +11,10 @@ const userSchema = new Schema({
         type: String,
         default: "user"
     },
+    exp: {
+        type: Number,
+        default: 0
+    },
     rank: {
         type: String,
         default: "Eco Starter"

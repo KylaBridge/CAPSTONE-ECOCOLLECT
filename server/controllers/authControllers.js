@@ -77,11 +77,12 @@ const getProfile = async (req, res) => {
     if (token) {
         jwt.verify(token, process.env.JWT_SECRET, {}, async (err, decoded) => {
             if (err) throw err;
-            const user = await User.findById(decoded.id); // Get full user
+            const user = await User.findById(decoded.id);
             res.status(200).json({
                 _id: user._id,
                 name: user.name,
                 email: user.email,
+                exp: user.exp,
                 points: user.points,
                 rank: user.rank
             });

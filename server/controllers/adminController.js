@@ -52,9 +52,11 @@ const updateSubmissionStatus = async (req, res) => {
         if (status === "Approved") {
             const user = await User.findById(submission.user);
             if (user) {
-                const pointsToAdd = 20;
+                const pointsToAdd = 5;
+                const expToAdd = 20;
                 user.points += pointsToAdd;
-                user.rank = getRank(user.points);
+                user.exp += expToAdd;
+                user.rank = getRank(user.expToAdd);
                 await user.save();
             }
         }

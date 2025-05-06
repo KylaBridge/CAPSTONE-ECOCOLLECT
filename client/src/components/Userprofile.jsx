@@ -23,14 +23,14 @@ export default function Userprofile() {
                 });
 
             // Calculate level boundaries based on user's points
-            const currentPoints = user?.points || 0;
+            const currentPoints = user?.exp || 0;
             const level = Math.floor(currentPoints / 100);
             setLevelStart(level * 100);
             setLevelEnd((level + 1) * 100);
         }
     }, [user]);
 
-    const currentPoints = user?.points || 0;
+    const currentPoints = user?.exp || 0;
     const progressPercent = ((currentPoints - levelStart) / (levelEnd - levelStart)) * 100;
 
     return (
