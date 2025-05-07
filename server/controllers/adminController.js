@@ -56,7 +56,7 @@ const updateSubmissionStatus = async (req, res) => {
                 const expToAdd = 20;
                 user.points += pointsToAdd;
                 user.exp += expToAdd;
-                user.rank = getRank(user.expToAdd);
+                user.rank = getRank(user.exp);
                 await user.save();
             }
         }
