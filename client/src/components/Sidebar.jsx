@@ -46,9 +46,6 @@ export default function Sidebar({ isShown, setIsShown }) {
                 <Link to="/rewards" className={location.pathname === '/rewards' ? 'active' : ''}>
                     <li><AiOutlineTrophy size={20} /> REWARDS</li>
                 </Link>
-                <Link to="/settings" className={location.pathname === '/settings' ? 'active' : ''}>
-                    <li><AiOutlineSetting size={20} /> SETTINGS & HELP</li>
-                </Link>
             </ul>
             <button onClick={loggingOut}>
                 <AiOutlineLogout size={18} /> LOG OUT

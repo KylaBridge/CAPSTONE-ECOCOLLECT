@@ -9,7 +9,6 @@ import Login from "./pages/Login.jsx"
 import Register from "./pages/Register.jsx"
 import EWasteSubmission from "./pages/EWasteSubmission.jsx"
 import Achievements from "./pages/Achievements.jsx"
-import Settings from "./pages/Settings.jsx"
 import AdminDashboard from "./admin-pages/AdminDashboard.jsx"
 import UserManagement from "./admin-pages/UserManagement.jsx"
 import AnalyticsDashboard from "./admin-pages/AnalyticsDashboard.jsx"
@@ -37,7 +36,6 @@ export default function App() {
         <Route path="/ewastesubmission" element={<EWasteSubmission/>} />
         <Route path="/achievements" element={<Achievements/>} />
         <Route path="/rewards" element={<Rewards/>} />
-        <Route path="/settings" element={<Settings/>} />
 
 
         {/*Admin Routes */}
