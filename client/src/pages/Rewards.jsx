@@ -9,22 +9,14 @@ import Sidebar from "../components/Sidebar";
 
 export default function Rewards() {
   const [showNavbar, setShowNavbar] = useState(false);
-  //for testing
-  const [simulatedPoints, setSimulatedPoints] = useState(50); 
-  // const { user, updateUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [selectedReward, setSelectedReward] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [redeemSuccess, setRedeemSuccess] = useState(false);
   const [claimStub, setClaimStub] = useState("");
   const [insufficientPoints, setInsufficientPoints] = useState(false);
 
-    // Use the simulated points for testing
-  const currentPoints = simulatedPoints;
-  // const currentPoints = user?.points || 0;
-  const level = Math.floor(currentPoints / 100);
-  const levelStart = level * 100;
-  const levelEnd = (level + 1) * 100;
-  const progressPercent = ((currentPoints - levelStart) / (levelEnd - levelStart)) * 100;
+  const currentPoints = user?.points || 0;
 
   const handleRewardClick = (reward) => {
     setSelectedReward(reward);
@@ -76,7 +68,7 @@ export default function Rewards() {
         <div className="rewards-main-container">
           <div className="outer-rewards-container">
             <h1>REWARDS STORE</h1>
-            <span>Points: {`${currentPoints}/${levelEnd}`}</span>
+            <span>Points: {currentPoints}</span>
           </div>
           <div className="inner-rewards-container">{rewardItems}</div>
         </div>
