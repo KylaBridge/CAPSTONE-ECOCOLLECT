@@ -134,6 +134,7 @@ html, body {
     flex-direction: column;
     justify-content: center;
     margin-left: 12px;
+    margin-top: 15px;
   }
   
   .ewaste-total h3 {
@@ -163,6 +164,9 @@ html, body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 0.7rem;
+    justify-items: center;
+    position: relative;
+    min-height: 50px;
   }
   
   .ewaste-item {
@@ -343,4 +347,17 @@ width: 100%;
   width: 100px;
   height: 90px;
   object-fit: contain;
+}
+
+
+.no-items-msg {
+  text-align: center;
+  color: #3c3c3c;
+  font-style: italic;
+  font-size: 0.7rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
 }

@@ -36,20 +36,74 @@ html, body {
     position: relative;
   }
 
-  .sort-element{
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
+.sort-element {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }
 
-  .sort-dropdown {
-    padding: 8px;
-    border-radius: 5px;
-    background-color: #dfe0d0;
-    border: 1px solid #aaa;
-  }
+.sort-dropdown-wrapper {
+  position: relative;
+}
 
+.sort-button {
+  padding: 8px 12px;
+  border-radius: 5px;
+  background-color: #dfe0d0;
+  border: 1px solid #aaa;
+  cursor: pointer;
+}
+
+.sort-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #f9f9f9;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  margin-top: 4px;
+  z-index: 10;
+  padding: 5px;
+  min-width: 150px;
+}
+
+.menu-item {
+  padding: 8px;
+  cursor: pointer;
+  position: relative;
+}
+
+.menu-item:hover {
+  background-color: #dce9d2;
+  font-weight: 500;
+  color: #2c5f2d;
+}
+
+.submenu {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  margin-left: 4px;
+  background-color: #fff;
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  padding: 5px;
+  min-width: 140px;
+  z-index: 15;
+}
+
+.submenu div {
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.submenu div:hover {
+  background-color: #dce9d2;
+  font-weight: 500;
+  color: #2c5f2d;
+}
   .achievers-table-wrapper{
     max-height: 500px;
     overflow-y: auto;
@@ -133,4 +187,31 @@ html, body {
   font-style: italic;
   color: #888;
   padding: 20px;
+}
+
+.table-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.pagination-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+}
+
+.pagination-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
 }
