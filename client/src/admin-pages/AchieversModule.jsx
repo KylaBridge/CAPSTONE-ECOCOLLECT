@@ -150,14 +150,14 @@ const filterAndSortData = (criteria) => {
 
             <div className="achievers-table-container">
                 <div className="achievers-table-header">
-          <div className="sort-element">
+          <div className="sort-table">
             <div className="sort-dropdown-wrapper">
                 <button className="sort-button" onClick={() => setDropdownOpen(!dropdownOpen)}>
                 Sort ▾
                 </button>
 
                 {dropdownOpen && (
-                <div className="sort-dropdown">
+                <div className="sort-achievers-dropdown">
                     <div
                     className="menu-item"
                     onMouseEnter={() => setHovered("weekly")}

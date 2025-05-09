@@ -36,7 +36,7 @@ html, body {
     position: relative;
   }
 
-.sort-element {
+.sort-table {
   position: relative;
   display: flex;
   align-items: center;
@@ -55,7 +55,7 @@ html, body {
   cursor: pointer;
 }
 
-.sort-dropdown {
+.sort-achievers-dropdown{
   position: absolute;
   top: 100%;
   left: 0;
