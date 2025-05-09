@@ -4,11 +4,47 @@ import BinTable from "../admin-components/BinTable";
 import { FaLaptop, FaMobileAlt, FaPlug, FaBatteryHalf, FaTshirt, FaMobile, FaUserAlt,FaTrash} from "react-icons/fa";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { MdCable } from "react-icons/md";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import binIcon from "../assets/icons/binIcon.png"
-
 import './styles/AdminDashboard.css';
 
 export default function AdminDashboard(){
+    
+    const [ roleCounts, setRoleCounts ] = useState({userCount: 0, adminCount: 0})
+    const totalUsers = roleCounts.userCount + roleCounts.adminCount;
+
+    const [ ewasteCount, setEwasteCount ] = useState({telephoneCount: 0, routerCount: 0,
+        mobileCount: 0, tabletCount: 0,
+        laptopCount: 0, chargerCount: 0,
+        batteryCount: 0, cordCount: 0,
+        powerbankCount: 0, usbCount: 0})
+    const totalEwastes = (ewasteCount.telephoneCount + ewasteCount.routerCount +
+        ewasteCount.mobileCount + ewasteCount.tabletCount +
+        ewasteCount.laptopCount + ewasteCount.chargerCount +
+        ewasteCount.batteryCount + ewasteCount.cordCount +
+        ewasteCount.powerbankCount + ewasteCount.usbCount);
+
+    useEffect(() => {
+        const fetchRoleCount = async () => {
+            try {
+                const response = await axios.get('/api/ecocollect/user/role-count');
+                setRoleCounts(response.data);
+            } catch (err) {
+                console.error(err);
+            }
+        }; 
+        const fetchEwasteCount = async () => {
+            try {
+                const response = await axios.get('/api/ecocollect/user/ewastes');
+                setEwasteCount(response.data);
+            } catch (err) {
+                console.error(err)
+            }
+        }
+        fetchRoleCount();
+        fetchEwasteCount();
+    }, []);
 
     const adminBinData = [
         {
@@ -71,17 +107,17 @@ export default function AdminDashboard(){
                             <div className="user-card">
                             <FaUserAlt className="icon"  size={40}/>
                             <p>Users</p>
-                            <h3>30</h3>
+                            <h3>{roleCounts.userCount || "..."}</h3>
                             </div>
                             <div className="user-card">
                             <FaUserAlt className="icon"  size={40}/>
                             <p>Admin</p>
-                            <h3>12</h3>
+                            <h3>{roleCounts.adminCount || "..."}</h3>
                             </div>
                         </div>
 
                         <div className="total-bar">
-                            <strong>Total: 142</strong>
+                            <strong>{totalUsers || "loading.."}</strong>
                         </div>
                     </div>
 
@@ -92,7 +128,7 @@ export default function AdminDashboard(){
                         <div className="ewaste-total-wrapper">
                             <div className="ewaste-total">
                             <h3>Total:</h3>
-                            <span className="total-number">60</span>
+                            <span className="total-number">{totalEwastes || "Loading.."}</span>
                             <p>pcs</p>
                             </div>
 
@@ -108,33 +144,33 @@ export default function AdminDashboard(){
                                     <div className="ewaste-item">
                                         <FaMobileAlt size={30} className="ewaste-icon" />
                                         <p>Mobile</p>
-                                        <span>5 pcs</span>
+                                        <span>{ewasteCount.mobileCount}</span>
                                     </div>
 
                                 <div className="ewaste-item">
                                     <FaLaptop size={30} className="ewaste-icon" />
                                     <p>Laptop</p>
-                                    <span>15 pcs</span>
+                                    <span>{ewasteCount.laptopCount}</span>
                                 </div>
                                 <div className="ewaste-item">
                                     <BsFillTelephoneFill size={30} className="ewaste-icon" />
                                     <p>Communication</p>
-                                    <span>10 pcs</span>
+                                    <span>{ewasteCount.telephoneCount}</span>
                                 </div>
                                 <div className="ewaste-item">
                                     <MdCable size={30} className="ewaste-icon" />
                                     <p>Cable</p>
-                                    <span>5 pcs</span>
+                                    <span>{ewasteCount.cordCount}</span>
                                 </div>
                                 <div className="ewaste-item">
                                     <FaBatteryHalf size={30} className="ewaste-icon" />
                                     <p>Battery</p>
-                                    <span>15 pcs</span>
+                                    <span>{ewasteCount.batteryCount}</span>
                                 </div>
                                 <div className="ewaste-item">
                                     <FaPlug size={30} className="ewaste-icon" />
                                     <p>Power Accessories</p>
-                                    <span>10 pcs</span>
+                                    <span>{ewasteCount.powerbankCount}</span>
                                 </div>
                             </div>   
                             </div>

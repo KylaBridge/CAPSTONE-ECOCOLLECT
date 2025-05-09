@@ -5,7 +5,9 @@ const path = require("path");
 const fs = require("fs");
 
 const { 
-    getUserData, 
+    getEwastes,
+    getUserData,
+    countUsersByRole,
     deleteUser, 
     updateSubmissionStatus, 
     getAllSubmissions, 
@@ -35,7 +37,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+router.get("/user/ewastes", getEwastes);
 router.get("/usermanagement", getUserData);
+router.get("/user/role-count", countUsersByRole);
 router.delete("/usermanagement/:id", deleteUser);
 router.post("/ewaste", upload.array("attachments", 5), submitEWaste);
 router.get("/ewaste/user/:userId/count", userSubmitCount);

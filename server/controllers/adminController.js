@@ -1,13 +1,56 @@
 const User = require('../models/user');
-const EWaste = require('../models/ewaste');
+const EWaste = require('../models/ewaste')
 const path = require("path");
 const fs = require("fs");
 const { getRank } = require('../helpers/rank')
+
+// GET all ewastes
+const getEwastes = async (req, res) => {
+    try {
+        const telephoneCount = await EWaste.countDocuments({ category: "Telephone" });
+        const routerCount = await EWaste.countDocuments({ category: "Router" });
+        const mobileCount = await EWaste.countDocuments({ category: "Mobile Phone" });
+        const tabletCount = await EWaste.countDocuments({ category: "Tablet" });
+        const laptopCount = await EWaste.countDocuments({ category: "Laptop" });
+        const chargerCount = await EWaste.countDocuments({ category: "Charger" });
+        const batteryCount= await EWaste.countDocuments({ category: "Batteries" });
+        const cordCount = await EWaste.countDocuments({ category: "Cords" });
+        const powerbankCount = await EWaste.countDocuments({ category: "Powerbank" });
+        const usbCount = await EWaste.countDocuments({ category: "USB" });
+
+        res.status(200).json({
+            telephoneCount, routerCount,
+            mobileCount, tabletCount,
+            laptopCount, chargerCount,
+            batteryCount, cordCount,
+            powerbankCount,usbCount
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Failed fetching ewastes" });
+    }
+}
 
 // GET all users :admin
 const getUserData = async (req, res) => {
     const data = await User.find({});
     res.status(200).json(data);
+};
+
+// Count users by role :admin
+const countUsersByRole = async (req, res) => {
+    try {
+        const userCount = await User.countDocuments({ role: "user" });
+        const adminCount = await User.countDocuments({ role: "admin" });
+
+        res.status(200).json({
+            userCount,
+            adminCount,
+        });
+    } catch (error) {
+        console.error("Error counting roles:", error);
+        res.status(500).json({ message: "Failed to count roles" });
+    }
 };
 
 // DELETE user :admin
@@ -103,7 +146,9 @@ const deleteEWaste = async (req, res) => {
 };
 
 module.exports = {
+    getEwastes,
     getUserData,
+    countUsersByRole,
     deleteUser,
     updateSubmissionStatus,
     getAllSubmissions,

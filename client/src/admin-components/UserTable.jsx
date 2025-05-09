@@ -34,18 +34,6 @@ export default function UserTable({ onViewUser, viewedUser }) {
       .catch((error) => console.error("Error fetching data:", error));
   };
 
-  // const handleDelete = async (id) => {
-  //   if (!window.confirm("Are you sure you want to delete this user?")) return;
-
-  //   try {
-  //     await axios.delete(`/api/ecocollect/usermanagement/${id}`);
-  //     setUsers(users.filter((user) => user._id !== id));
-  //     toast.success("User deleted successfully");
-  //   } catch (error) {
-  //     console.error("Error deleting user:", error);
-  //   }
-  // };
-
   const handleView = (user) => {
     if (viewedUser?._id === user._id) {
       onViewUser(null);
