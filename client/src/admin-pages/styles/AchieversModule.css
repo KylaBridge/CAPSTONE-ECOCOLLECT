@@ -34,6 +34,7 @@ html, body {
     justify-content: space-between;
     margin-bottom: 20px;
     position: relative;
+    color: #154d31;
   }
 
 .sort-table {
@@ -104,6 +105,7 @@ html, body {
   font-weight: 500;
   color: #2c5f2d;
 }
+
   .achievers-table-wrapper{
     max-height: 500px;
     overflow-y: auto;

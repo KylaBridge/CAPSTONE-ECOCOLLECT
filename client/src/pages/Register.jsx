@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
 import axios from "axios"
 
-import EcoCollectLogo from "../assets/EcoCollect-Logo.png"
+import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
 
 export default function Register() {
     const navigate = useNavigate()
@@ -31,9 +31,9 @@ export default function Register() {
     return (
         <div className="form-container">
             <img className="EcoCollect-logo" src={EcoCollectLogo} alt="EcoCollect-Logo" />
-            <form action={getRegisterData}>
+            <form className = "register-form" action={getRegisterData}>
                 <h1>Register</h1>
-
+                <p className="welcome-el">Welcome to EcoCollect!</p>
                 <label htmlFor="email">Email</label>
                 <input id="email" type="email" name="email" required />
 

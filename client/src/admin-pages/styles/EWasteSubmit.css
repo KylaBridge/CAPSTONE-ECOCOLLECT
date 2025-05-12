@@ -39,6 +39,7 @@ html, body {
     transform: translateX(-50%);
     font-size: 1rem;
     font-weight: bold;
+    color: #154d31;
   }
 
   .submit-table-header{
@@ -159,7 +160,7 @@ html, body {
   text-align: center;
   font-size: 1rem;
   margin: 0 0 25px 0;
-  color: #343a40;
+  color: #154d31;
   flex-shrink: 0;
 }
 

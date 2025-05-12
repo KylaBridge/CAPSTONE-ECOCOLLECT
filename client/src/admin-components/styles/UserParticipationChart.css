@@ -1,0 +1,52 @@
+.user-participation-card {
+  background-color: #dfe0d0;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+
+  min-width: 350px;
+  flex-shrink: 0;
+}
+
+.user-participation-card .top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+   color: #154d31;
+}
+
+.user-participation-card .year-dropdown {
+  padding: 6px 12px;
+  border-radius: 8px;
+  background-color: transparent;
+  border: 1px solid #ccc;
+  font-weight: 900;
+  color: #118653;
+}
+
+.user-participation-card .toggle-group {
+  display: flex;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.user-participation-card .toggle-group button {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: none;
+  background-color: #b6ccb3;
+  color: #1b4b34;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.user-participation-card .toggle-group button.active {
+  background: linear-gradient( #76b082, #284c42);
+  color: #fff;
+}
+
+.user-participation-card .card-note {
+  font-size: 0.7rem;
+  color: #666;
+}

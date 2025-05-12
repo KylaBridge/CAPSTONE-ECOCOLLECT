@@ -150,7 +150,7 @@ const filterAndSortData = (criteria) => {
 
             <div className="achievers-table-container">
                 <div className="achievers-table-header">
-          <div className="sort-table">
+            <div className="sort-table">
             <div className="sort-dropdown-wrapper">
                 <button className="sort-button" onClick={() => setDropdownOpen(!dropdownOpen)}>
                 Sort ▾

@@ -8,5 +8,86 @@ html, body {
   .activitymodule-container{
     padding: 13px 30px;
     height: 100%;
-    margin-left: 280px;
+    margin-left: 18%;
   }
+
+  .activity-table-container {
+    margin-top: 20px;
+    margin-bottom: 30px;
+    background-color: #dfe0d0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 30px;
+    width: 100%;
+    min-height: 50%;
+}
+
+.filters-container {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+.filters-container input,
+.filters-container select {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.activity-log-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.pagination {
+  margin-top: 15px;
+  display: flex;
+  gap: 5px;
+}
+
+.pagination button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 6px;
+  background-color: #eee;
+  cursor: pointer;
+}
+
+.pagination button.active {
+  background-color: #4caf50;
+  color: white;
+}
+
+  .activity-table-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.activity-table-controls input,
+.activity-table-controls select {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  min-width: 180px;
+  background-color: transparent;
+}
+
+.activity-log-table th,
+.activity-log-table td {
+  padding: 12px 10px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.activity-log-table td {
+  max-width: 250px;
+  white-space: wrap;
+  word-wrap: break-word;
+}
