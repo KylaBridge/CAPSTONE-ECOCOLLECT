@@ -1,33 +1,52 @@
 import './styles/EwasteCollectedChart.css';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
-const ewasteData = {
-  labels: ['Phones', 'Laptops', 'Cable', 'Chargers', 'Batteries', 'Routers', 'USB', 'Powerbank', 'Telephone', 'Tablet'],
-  datasets: [
-    {
-      data: [10, 5, 6, 20, 15, 10, 5, 6, 20, 15],
-      backgroundColor: [  
-        '#0b3d0b', // dark forest green
-        '#145214', // rich deep green
-        '#1c6e1c', // strong jungle green
-        '#268a26', // healthy leaf green
-        '#32a836', // vibrant grass green
-        '#42bf48', // bright lime green
-        '#5edc6c', // soft neon green
-        '#7eea8a', // minty fresh green
-        '#a2f5ad', // pale green
-        '#cdfcd3', // almost pastel green,
-      ],
-      borderWidth: 0,
-    },
-  ],
-};
+const categoryLabels = [
+  { key: 'mobileCount', label: 'Phones', color: '#0b3d0b' },
+  { key: 'laptopCount', label: 'Laptops', color: '#145214' },
+  { key: 'cordCount', label: 'Cable', color: '#1c6e1c' },
+  { key: 'chargerCount', label: 'Chargers', color: '#268a26' },
+  { key: 'batteryCount', label: 'Batteries', color: '#32a836' },
+  { key: 'routerCount', label: 'Routers', color: '#42bf48' },
+  { key: 'usbCount', label: 'USB', color: '#5edc6c' },
+  { key: 'powerbankCount', label: 'Powerbank', color: '#7eea8a' },
+  { key: 'telephoneCount', label: 'Telephone', color: '#a2f5ad' },
+  { key: 'tabletCount', label: 'Tablet', color: '#cdfcd3' },
+];
 
 export default function EwasteCollectedChart() {
+  const [ewasteData, setEwasteData] = useState(null);
+
+  useEffect(() => {
+    axios.get('/api/ecocollect/user/ewastes') // Adjust if your API base is different
+      .then(res => {
+        const data = res.data;
+        const labels = categoryLabels.map(c => c.label);
+        const backgroundColor = categoryLabels.map(c => c.color);
+        const chartData = categoryLabels.map(c => data[c.key] || 0);
+
+        setEwasteData({
+          labels,
+          datasets: [{
+            data: chartData,
+            backgroundColor,
+            borderWidth: 0,
+          }],
+        });
+      })
+      .catch(err => {
+        console.error("Failed to fetch ewaste data", err);
+      });
+  }, []);
+
+  if (!ewasteData) return <div>Loading chart...</div>;
+
   const total = ewasteData.datasets[0].data.reduce((acc, val) => acc + val, 0);
 
   return (
