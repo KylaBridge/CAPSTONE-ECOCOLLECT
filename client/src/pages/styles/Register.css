@@ -70,6 +70,10 @@
     text-align: center;
     font-size: 0.8rem;
   }
+
+  .register-el, .login-btn2 {
+    display: block;
+  }
   
   .register-form .login-btn2 {
     width: 20%;
