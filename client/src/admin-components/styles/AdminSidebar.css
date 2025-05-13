@@ -30,8 +30,8 @@ nav::-webkit-scrollbar {
 
 
 
-nav img {
-    width: 100%;
+.admin-sidebarlogo{
+    width: 50%;
     margin: 20px 0;
 }
 

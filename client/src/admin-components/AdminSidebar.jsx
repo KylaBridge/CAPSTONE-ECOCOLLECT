@@ -24,7 +24,7 @@ export default function AdminSidebar() {
 
     return (
         <nav>
-            <img src={EcoCollectLogo} alt='Ecocollect-Logo' />
+            <img className='admin-sidebarlogo' src={EcoCollectLogo} alt='Ecocollect-Logo' />
             <div className="divider"></div>
 
             <div className="sidebar-content">

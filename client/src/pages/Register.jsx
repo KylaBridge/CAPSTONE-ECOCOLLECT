@@ -44,6 +44,7 @@ export default function Register() {
                 <p className="register-el">Already have an account? <Link className="login-btn2" to={"/"}>Login</Link></p>
                 <p className="or-seperator">or</p>
                 <button className="microsoftAcc-btn">Continue with Microsoft Account</button>
+                <Link className="go-back-btn" to={"/landing"}>Go Back to Main</Link>
             </form>
         </div>
     )

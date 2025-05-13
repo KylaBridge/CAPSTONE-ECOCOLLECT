@@ -31,7 +31,7 @@ export default function Sidebar({ isShown, setIsShown }) {
     return (
         <nav className={isShown ? "navShown" : "navHidden"}>
             <h1 className="toggleBtn" onClick={toggleNavbar}>☰</h1>
-            <img src={EcoCollectLogo} alt="EcoCollect-Logo" />
+            <img className = 'user-sidebar-logo' src={EcoCollectLogo} alt="EcoCollect-Logo" />
             <div className="divider"></div>
             <ul>
                 <Link to="/home" className={location.pathname === '/home' ? 'active' : ''}>

@@ -1,0 +1,626 @@
+/* Root color theme */
+:root {
+  --green-dark: #284c42;
+  --green: #70ac40;
+  --green-light: #a5d6a7;
+  --text-light: #f0fdf4;
+  --blue-light: #8dd7d7;
+  --bg-light: #8dd7d7;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.landing-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--green);
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1rem;
+  background-color: rgba(0, 0, 0, 0.392);
+  backdrop-filter: blur(2px);
+  color: var(--text-light);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  transition: background-color 0.3s ease;
+}
+
+.navbar.navbar-solid {
+  background-color: var(--green);
+  backdrop-filter: none;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  font-size: 1.5rem;
+  gap: 0.5rem;
+}
+
+.logo-icon {
+  width: 50px;
+  height: 30px;
+}
+
+.menu-toggle {
+  font-size: 1.8rem;
+  background: none;
+  border: none;
+  color: var(--text-light);
+  cursor: pointer;
+  display: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.nav-links a:hover {
+  text-decoration: underline;
+}
+
+.landing-hero {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+                    url('./src/assets/bgphoto-ecocollect.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4rem 6rem;
+  color: white;
+}
+
+.hero-content {
+  flex: 1;
+  z-index: 1;
+  margin-top: 60px;
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.hero-content p {
+  font-size: 1rem;
+  max-width: 400px;
+}
+
+.hero-btn {
+  display: inline-block;
+  margin-top: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--green);
+  color: var(--text-light);
+  text-decoration: none;
+  border-radius: 50px;
+  width: fit-content;
+  font-weight: 600;
+}
+
+.hero-image {
+  margin-top: 20px;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  z-index: 1;
+}
+
+.hero-image img {
+  max-width: 50%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Transform Section */
+.transform-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4rem 6rem;
+  flex-wrap: wrap;
+}
+
+.transform-text {
+  flex: 1;
+  min-width: 300px;
+  color: white;
+  margin-left: 100px;
+}
+
+.transform-text h2 {
+  font-size: 2.5rem;
+  font-weight: 900;
+  line-height: 1.3;
+  text-align: left;
+
+}
+
+.transform-text .highlight {
+  color: #fff;
+  text-shadow: 1px 1px #000;
+}
+
+.transform-text p {
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  text-align: left;
+}
+
+.transform-image {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  min-width: 400px;
+}
+
+.transform-image img {
+  max-width: 360px;
+  height: auto;
+}
+
+/* How It Works */
+.how-it-works {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #5ba007;
+  background-color: var(--blue-light);
+}
+
+.how-it-works h2 {
+  font-size: 2.2rem;
+  font-weight: bold;
+}
+
+.steps {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 100px;
+}
+
+.step {
+  flex: 1 1 200px;
+  max-width: 200px;
+}
+
+.icon-circle {
+  width: 50%;
+  height: 100px;
+  background-image: linear-gradient(to bottom,#6db300 5%,#005c1b 95%);
+  color: white;
+  border-radius: 50%;
+  margin: 0 auto 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  transition: transform 0.3s ease;
+}
+
+.step:hover .icon-circle {
+  transform: scale(1.1);
+  background-color: #fff8dc;
+  color: var(--text-light);
+}
+
+.step h3 {
+  font-size: 1.2rem;
+  margin: 0.5rem 0;
+}
+
+.step p {
+  color: #5ba007;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+/* TRACK YOUR BADGES SECTION */
+.track-badge {
+  display: flex;
+  padding: 4rem 10rem;
+  color: white;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.badges-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.badge-images {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+
+.badge-images img {
+  width: 250px;
+}
+
+.third-badge-wrapper {
+  margin-top: 0.5rem;
+}
+
+.third-badge {
+  width: 250px;
+  height: auto;
+}
+
+.badge-description {
+  flex: 1;
+  text-align: right;
+}
+
+.badge-description h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.badge-description p {
+  font-size: 1.1rem;
+}
+
+/* E-WASTE TO REWARDS SECTION */
+.landing-reward-section{
+  background-color: var(--blue-light);
+  display: flex;
+  padding: 4rem 10rem;
+  flex-wrap: wrap;
+  align-items: center;
+  color: #5ba007;
+  justify-content: space-between;
+}
+
+.rewards-text {
+  flex: 1;
+  min-width: 280px;
+  padding-right: 2rem;
+}
+
+.rewards-text h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.rewards-text p {
+  color: #5ba007;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.rewards-images {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+}
+
+.rewards-images img {
+  width: 420px;
+  height: auto;
+}
+
+/* FOOTER STYLES */
+.landing-footer {
+ color: white;
+ padding: 1.5rem 6rem;
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ font-size: 0.9rem;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.footer-logo {
+ display: flex;
+ align-items: center;
+ gap: 0.5rem;
+ margin-bottom: 0.5rem;
+ margin-right: 1rem;
+}
+
+.footer-logo img {
+ width: 100px;
+ height: auto;
+}
+
+
+.footer-links {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+
+.footer-links a {
+ color: white;
+ text-decoration: none;
+ margin-left: 0;
+}
+
+.footer-links a:hover {
+ text-decoration: underline;
+}
+
+.footer-links .separator {
+ margin: 0 0.5rem;
+}
+
+.footer-social {
+ display: flex;
+ gap: 1rem;
+ margin-top: 0.5rem;
+ margin-left: 2rem;
+}
+
+.footer-social a {
+ color: white;
+ font-size: 1.2rem;
+ text-decoration: none;
+}
+
+.footer-right p{
+ text-align: right;
+ font-size: 1rem;
+ font-weight: bold;
+}
+
+section {
+  transition: all 0.5s ease-in-out;
+  opacity: 0.4;
+  filter: blur(5px);
+  transform: scale(0.98);
+}
+
+/* When in focus */
+.focused-section {
+  opacity: 1;
+  filter: blur(0);
+  transform: scale(1);
+  z-index: 2;
+}
+
+
+/* RESPONSIVE ADJUSTMENTS */
+@media (max-width: 768px) {
+  /* Hero Section */
+  .landing-hero {
+    flex-direction: column;
+    padding: 2rem 3rem;
+    text-align: center;
+  }
+
+  .hero-image {
+    margin-top: 2rem;
+  }
+
+  .hero-image img {
+    max-width: 55%;
+  }
+
+  .hero-content h1 {
+    font-size: 2.2rem;
+  }
+
+  /* Transform Section */
+  .transform-section {
+    padding: 50px 3rem;
+    flex-direction: column;
+  }
+
+  .transform-text {
+    min-width: 100%;
+    margin-left: 0;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .transform-image {
+    margin-top: 20px;
+    margin-right: 0;
+    min-width: auto;
+  }
+
+  .transform-image img {
+    max-width: 100%;
+  }
+
+  /* How It Works Section */
+  .how-it-works {
+    padding: 2rem 3rem;
+  }
+
+  .steps {
+    padding: 30px 10px;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .step {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .icon-circle {
+    width: 80px;
+    height: 80px;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Track Your Badges Section */
+  .track-badge {
+    flex-direction: column;
+    text-align: center;
+    padding: 2rem 3rem;
+  }
+
+  .badges-wrapper {
+    align-items: center;
+  }
+
+  .badge-images {
+    justify-content: center;
+    margin-right: 0;
+    margin-bottom: 1rem;
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-width: 100%;
+  }
+
+  .badge-images img {
+    width: calc(50% - 0.5rem);
+    max-width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .third-badge-wrapper {
+    width: 60%;
+    display: flex;
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+
+  .third-badge {
+    width: 80%;
+    max-width: 250px;
+  }
+
+  .badge-description {
+    text-align: center;
+    padding: 20px 1rem;
+    margin-top: 1rem;
+  }
+
+  /* E-waste to Rewards Section */
+  .landing-reward-section {
+    flex-direction: column;
+    text-align: center;
+    padding: 2rem 3rem;
+  }
+
+  .rewards-text {
+    padding-right: 0;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .rewards-images {
+    align-items: center;
+    width: 90%;
+  }
+
+  .rewards-images img {
+    width: 100%;
+    max-width: 360px;
+  }
+
+  /* Footer Section */
+  .landing-footer {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 3rem;
+  }
+
+  .footer-left {
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1rem;
+    white-space: normal;
+  }
+
+  .footer-logo {
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-links {
+    margin-bottom: 0.5rem;
+    flex-wrap: nowrap;
+    justify-content: center;
+  }
+
+  .footer-right p {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+
+  /* Navbar for Mobile */
+  .menu-toggle {
+    display: block;
+  }
+
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: var(--green);
+    padding: 1rem 2rem;
+  }
+
+  .nav-links.active {
+    display: flex;
+  }
+}
+
+/* Ensure desktop navbar stays horizontal */
+@media (min-width: 769px) {
+  .nav-links {
+    display: flex !important;
+    position: static;
+    flex-direction: row;
+    align-items: flex-end;
+    background: none;
+    padding: 0;
+    width: 45%;
+    box-shadow: none;
+    height: fit-content;
+    border: none;
+  }
+
+  .menu-toggle {
+    display: none;
+  }
+
+  .navbar {
+    height: 60px;
+  }
+}

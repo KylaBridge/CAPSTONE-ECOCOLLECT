@@ -55,10 +55,12 @@ export default function Login() {
 
                 <button className="login-btn">LOG IN</button>
                 <p className="register-el">
-                    Don't have an account? <Link className="register-btn" to={"/register"}>Register</Link>
-                </p>
+                    Don't have an account?
+                    <Link className="register-btn" to="/register"> Register</Link>
+                    </p>
                 <p className="or-seperator">or</p>
                 <button className="microsoftAcc-btn">Continue with Microsoft Account</button>
+                <Link className="go-back-btn" to={"/landing"}>Go Back to Main</Link>
             </form>
         </div>
     );

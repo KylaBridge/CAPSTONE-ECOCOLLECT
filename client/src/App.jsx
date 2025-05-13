@@ -19,6 +19,7 @@ import BadgeManagement from "./admin-pages/BadgeManagement.jsx"
 import ActivityLog from "./admin-pages/ActivityLog.jsx"
 import Rewards from "./pages/Rewards.jsx"
 import AdminLogIn from "./admin-pages/AdminLogIn.jsx"
+import LandingPage from "./pages/LandingPage.jsx"
 
 axios.defaults.baseURL = "http://localhost:3000"
 axios.defaults.withCredentials = true
@@ -30,6 +31,7 @@ export default function App() {
       <Toaster position="bottom-right" toastOptions={{duration: 2000}} />
       <Routes>
         {/*User Routes*/}
+        <Route path="/landing" element={<LandingPage />} />
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/home" element={<Home />} />
