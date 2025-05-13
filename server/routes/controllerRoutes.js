@@ -37,15 +37,18 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// Admin Routes
 router.get("/user/ewastes", getEwastes);
 router.get("/usermanagement", getUserData);
 router.get("/user/role-count", countUsersByRole);
 router.delete("/usermanagement/:id", deleteUser);
-router.post("/ewaste", upload.array("attachments", 5), submitEWaste);
-router.get("/ewaste/user/:userId/count", userSubmitCount);
-router.get("/ewaste/user/:userId", getUserSubmissions);
 router.put("/ewaste/:id/status", updateSubmissionStatus);
 router.get("/ewaste", getAllSubmissions); 
 router.delete("/ewaste/:id", deleteEWaste);
+
+// User Routes
+router.post("/ewaste", upload.array("attachments", 5), submitEWaste);
+router.get("/ewaste/user/:userId/count", userSubmitCount);
+router.get("/ewaste/user/:userId", getUserSubmissions);
 
 module.exports = router;

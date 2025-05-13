@@ -64,7 +64,13 @@ const loginUser = async (req, res) => {
                         secure: process.env.NODE_ENV === "production"
                     }).json({
                         message: user.role === "admin" ? "User is an admin" : "User logged in",
-                        user
+                        _id: user._id,
+                        role: user.role,
+                        name: user.name,
+                        email: user.email,
+                        exp: user.exp,
+                        points: user.points,
+                        rank: user.rank
                     });
                 }
             );

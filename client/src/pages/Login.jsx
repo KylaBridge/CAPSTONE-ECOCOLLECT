@@ -25,13 +25,12 @@ export default function Login() {
 
             if (response.error) {
                 toast.error(response.error);
-            } 
-            else if (response.user?.role === "admin") {
-                setUser(response.user); // ✅ Save user to context
+            } else if (response.role === "admin") {
+                setUser(response); // response *is* the user object
                 toast.success("Admin logged in");
                 navigate("/admin/dashboard");
             } else {
-                setUser(response); // ✅ Save user to context
+                setUser(response);
                 toast.success("User logged in");
                 navigate("/home");
             }
