@@ -7,16 +7,16 @@ const { getRank } = require('../helpers/rank');
 // GET all ewastes with approved status
 const getEwastes = async (req, res) => {
     try {
-        const telephoneCount = await EWaste.countDocuments({ category: "Telephone", status: "approved" });
-        const routerCount = await EWaste.countDocuments({ category: "Router", status: "approved" });
-        const mobileCount = await EWaste.countDocuments({ category: "Mobile Phone", status: "approved" });
-        const tabletCount = await EWaste.countDocuments({ category: "Tablet", status: "approved" });
-        const laptopCount = await EWaste.countDocuments({ category: "Laptop", status: "approved" });
-        const chargerCount = await EWaste.countDocuments({ category: "Charger", status: "approved" });
-        const batteryCount= await EWaste.countDocuments({ category: "Batteries", status: "approved" });
-        const cordCount = await EWaste.countDocuments({ category: "Cords", status: "approved" });
-        const powerbankCount = await EWaste.countDocuments({ category: "Powerbank", status: "approved" });
-        const usbCount = await EWaste.countDocuments({ category: "USB", status: "approved" });
+        const telephoneCount = await EWaste.countDocuments({ category: "Telephone", status: "Approved" });
+        const routerCount = await EWaste.countDocuments({ category: "Router", status: "Approved" });
+        const mobileCount = await EWaste.countDocuments({ category: "Mobile Phone", status: "Approved" });
+        const tabletCount = await EWaste.countDocuments({ category: "Tablet", status: "Approved" });
+        const laptopCount = await EWaste.countDocuments({ category: "Laptop", status: "Approved" });
+        const chargerCount = await EWaste.countDocuments({ category: "Charger", status: "Approved" });
+        const batteryCount= await EWaste.countDocuments({ category: "Batteries", status: "Approved" });
+        const cordCount = await EWaste.countDocuments({ category: "Cords", status: "Approved" });
+        const powerbankCount = await EWaste.countDocuments({ category: "Powerbank", status: "Approved" });
+        const usbCount = await EWaste.countDocuments({ category: "USB", status: "Approved" });
 
         res.status(200).json({
             telephoneCount, routerCount,
