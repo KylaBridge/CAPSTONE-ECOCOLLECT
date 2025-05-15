@@ -6,13 +6,16 @@ const fs = require("fs");
 
 const { 
     getEwastes,
+    getAllSubmissions,
+    updateSubmissionStatus,
+    deleteEWaste,
     getUserData,
     countUsersByRole,
-    deleteUser, 
-    updateSubmissionStatus, 
-    getAllSubmissions, 
-    deleteEWaste,
+    deleteUser,
+    getAllRewards,
     addReward,
+    updateReward,
+    deleteReward
 } = require('../controllers/adminController');
 const { 
     submitEWaste, 
@@ -46,7 +49,10 @@ router.delete("/usermanagement/:id", deleteUser);
 router.put("/ewaste/:id/status", updateSubmissionStatus);
 router.get("/ewaste", getAllSubmissions); 
 router.delete("/ewaste/:id", deleteEWaste);
+router.get("/rewards", getAllRewards);
 router.post("/rewards", addReward);
+router.put("/rewards/:id", updateReward);
+router.delete("/rewards/:id", deleteReward);
 
 // User Routes
 router.post("/ewaste", upload.array("attachments", 5), submitEWaste);

@@ -5,170 +5,227 @@ const path = require("path");
 const fs = require("fs");
 const { getRank } = require('../helpers/rank');
 
-// GET all ewastes with approved status
+//
+// ------------------ E-WASTE SUBMISSIONS ------------------
+//
+
+// Get counts of approved ewaste items by category
 const getEwastes = async (req, res) => {
-    try {
-        const telephoneCount = await EWaste.countDocuments({ category: "Telephone", status: "Approved" });
-        const routerCount = await EWaste.countDocuments({ category: "Router", status: "Approved" });
-        const mobileCount = await EWaste.countDocuments({ category: "Mobile Phone", status: "Approved" });
-        const tabletCount = await EWaste.countDocuments({ category: "Tablet", status: "Approved" });
-        const laptopCount = await EWaste.countDocuments({ category: "Laptop", status: "Approved" });
-        const chargerCount = await EWaste.countDocuments({ category: "Charger", status: "Approved" });
-        const batteryCount= await EWaste.countDocuments({ category: "Batteries", status: "Approved" });
-        const cordCount = await EWaste.countDocuments({ category: "Cords", status: "Approved" });
-        const powerbankCount = await EWaste.countDocuments({ category: "Powerbank", status: "Approved" });
-        const usbCount = await EWaste.countDocuments({ category: "USB", status: "Approved" });
+  try {
+    const telephoneCount = await EWaste.countDocuments({ category: "Telephone", status: "Approved" });
+    const routerCount = await EWaste.countDocuments({ category: "Router", status: "Approved" });
+    const mobileCount = await EWaste.countDocuments({ category: "Mobile Phone", status: "Approved" });
+    const tabletCount = await EWaste.countDocuments({ category: "Tablet", status: "Approved" });
+    const laptopCount = await EWaste.countDocuments({ category: "Laptop", status: "Approved" });
+    const chargerCount = await EWaste.countDocuments({ category: "Charger", status: "Approved" });
+    const batteryCount = await EWaste.countDocuments({ category: "Batteries", status: "Approved" });
+    const cordCount = await EWaste.countDocuments({ category: "Cords", status: "Approved" });
+    const powerbankCount = await EWaste.countDocuments({ category: "Powerbank", status: "Approved" });
+    const usbCount = await EWaste.countDocuments({ category: "USB", status: "Approved" });
 
-        res.status(200).json({
-            telephoneCount, routerCount,
-            mobileCount, tabletCount,
-            laptopCount, chargerCount,
-            batteryCount, cordCount,
-            powerbankCount,usbCount
-        })
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Failed fetching ewastes" });
-    }
-}
-
-// GET all users
-const getUserData = async (req, res) => {
-    const data = await User.find({});
-    res.status(200).json(data);
+    res.status(200).json({
+      telephoneCount,
+      routerCount,
+      mobileCount,
+      tabletCount,
+      laptopCount,
+      chargerCount,
+      batteryCount,
+      cordCount,
+      powerbankCount,
+      usbCount
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed fetching ewastes" });
+  }
 };
 
-// Count users by role 
-const countUsersByRole = async (req, res) => {
-    try {
-        const userCount = await User.countDocuments({ role: "user" });
-        const adminCount = await User.countDocuments({ role: "admin" });
-
-        res.status(200).json({
-            userCount,
-            adminCount,
-        });
-    } catch (error) {
-        console.error("Error counting roles:", error);
-        res.status(500).json({ message: "Failed to count roles" });
-    }
+// Get all e-waste submissions with user details populated
+const getAllSubmissions = async (req, res) => {
+  try {
+    const submissions = await EWaste.find().populate("user");
+    res.status(200).json(submissions);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error fetching submissions" });
+  }
 };
 
-// DELETE user :admin
-const deleteUser = async (req, res) => {
-    try {
-        const { id } = req.params;
-        await User.findByIdAndDelete(id);
-        res.status(200).json({ message: "User deleted successfully" });
-    } catch (error) {
-        res.status(500).json({ message: "Error deleting user" });
-    }
-};
-
-// Update submission status 
+// Update submission status and manage related user points and image files
 const updateSubmissionStatus = async (req, res) => {
+  try {
     const { id } = req.params;
     const { status } = req.body;
 
-    try {
-        const submission = await EWaste.findById(id);
-
-        if (!submission) return res.status(404).json({ message: "Submission not found" });
-
-        // If status changes from "Pending", delete image files
-        if (status !== "Pending" && submission.attachments.length > 0) {
-            submission.attachments.forEach((file) => {
-                const filePath = path.join(__dirname, "..", file.path);
-                if (fs.existsSync(filePath)) {
-                    fs.unlinkSync(filePath); // Delete the file
-                }
-            });
-
-            // Clear the attachments array in the DB
-            submission.attachments = [];
-        }
-
-        // Update the status
-        submission.status = status;
-        await submission.save();
-
-        // ✅ Add points to user if status is "Approved"
-        if (status === "Approved") {
-            const user = await User.findById(submission.user);
-            if (user) {
-                const pointsToAdd = 5;
-                const expToAdd = 20;
-                user.points += pointsToAdd;
-                user.exp += expToAdd;
-                user.rank = getRank(user.exp);
-                await user.save();
-            }
-        }
-
-        res.status(200).json({ message: "Status and image data updated successfully" });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "Failed to update status" });
+    const submission = await EWaste.findById(id);
+    if (!submission) {
+      return res.status(404).json({ message: "Submission not found" });
     }
+
+    // Delete images if status changed from "Pending"
+    if (status !== "Pending" && submission.attachments.length > 0) {
+      submission.attachments.forEach(file => {
+        const filePath = path.join(__dirname, "..", file.path);
+        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      });
+      submission.attachments = [];
+    }
+
+    submission.status = status;
+    await submission.save();
+
+    if (status === "Approved") {
+      const user = await User.findById(submission.user);
+      if (user) {
+        user.points += 5;
+        user.exp += 20;
+        user.rank = getRank(user.exp);
+        await user.save();
+      }
+    }
+
+    res.status(200).json({ message: "Status and image data updated successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to update status" });
+  }
 };
 
-// GET all e-waste submissions 
-const getAllSubmissions = async (req, res) => {
-    try {
-        const submissions = await EWaste.find().populate("user");
-        res.status(200).json(submissions);
-    } catch (error) {
-        res.status(500).json({ message: "Error fetching submissions" });
-    }
-};
-
-// DELETE Ewaste image :admin
+// Delete e-waste submission and its image files
 const deleteEWaste = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const submission = await EWaste.findById(id);
+  try {
+    const { id } = req.params;
+    const submission = await EWaste.findById(id);
 
-        if (!submission) {
-            return res.status(404).json({ message: "Submission not found" });
-        }
-
-        for (const file of submission.attachments) {
-            const filePath = path.join(__dirname, "..", file.path);
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
-            }
-        }
-
-        res.status(200).json({ message: "E-waste submission deleted successfully" });
-    } catch (err) {
-        console.error("Error deleting e-waste submission:", err);
-        res.status(500).json({ message: "Server error while deleting submission" });
+    if (!submission) {
+      return res.status(404).json({ message: "Submission not found" });
     }
+
+    for (const file of submission.attachments) {
+      const filePath = path.join(__dirname, "..", file.path);
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    }
+
+    await EWaste.findByIdAndDelete(id); // actually delete the submission itself
+
+    res.status(200).json({ message: "E-waste submission deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting e-waste submission:", err);
+    res.status(500).json({ message: "Server error while deleting submission" });
+  }
 };
 
-// POST a new reward 
-const addReward = async (req, res) => {
-    try {
-        const { name, price } = req.body;
-        const reward = await Reward.create({ name, price });
+//
+// ------------------ USER MANAGEMENT ------------------
+//
 
-        return res.status(201).json({
-            message: "Reward added successfully!",
-            reward
-        });
-    } catch (error) {
-        console.error("Error adding reward:", error);
-        return res.status(500).json({ error: "Failed to add reward" });
-    }
+// Get all users
+const getUserData = async (req, res) => {
+  try {
+    const data = await User.find({});
+    res.status(200).json(data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed fetching users" });
+  }
+};
+
+// Count users grouped by role
+const countUsersByRole = async (req, res) => {
+  try {
+    const userCount = await User.countDocuments({ role: "user" });
+    const adminCount = await User.countDocuments({ role: "admin" });
+
+    res.status(200).json({ userCount, adminCount });
+  } catch (error) {
+    console.error("Error counting roles:", error);
+    res.status(500).json({ message: "Failed to count roles" });
+  }
+};
+
+// Delete a user by ID (admin only)
+const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await User.findByIdAndDelete(id);
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error deleting user" });
+  }
+};
+
+//
+// ------------------ REWARDS MANAGEMENT ------------------
+//
+
+// Get all rewards
+const getAllRewards = async (req, res) => {
+  try {
+    const rewards = await Reward.find();
+    res.status(200).json(rewards);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch rewards" });
+  }
+};
+
+// Add a new reward
+const addReward = async (req, res) => {
+  try {
+    const { name, category, price, description } = req.body;
+    const reward = await Reward.create({ name, category, price, description });
+
+    res.status(201).json({
+      message: "Reward added successfully!",
+      reward
+    });
+  } catch (error) {
+    console.error("Error adding reward:", error);
+    res.status(500).json({ error: "Failed to add reward" });
+  }
+};
+
+// Update a reward by ID
+const updateReward = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updated = await Reward.findByIdAndUpdate(id, req.body, { new: true });
+    res.status(200).json(updated);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to update reward" });
+  }
+};
+
+// Delete a reward by ID
+const deleteReward = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Reward.findByIdAndDelete(id);
+    res.status(200).json({ message: "Reward deleted" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to delete reward" });
+  }
 };
 
 module.exports = {
-    getEwastes,
-    getUserData,
-    countUsersByRole,
-    deleteUser,
-    updateSubmissionStatus,
-    getAllSubmissions,
-    deleteEWaste,
-    addReward,
+  // E-waste submissions
+  getEwastes,
+  getAllSubmissions,
+  updateSubmissionStatus,
+  deleteEWaste,
+
+  // User management
+  getUserData,
+  countUsersByRole,
+  deleteUser,
+
+  // Rewards management
+  getAllRewards,
+  addReward,
+  updateReward,
+  deleteReward
 };

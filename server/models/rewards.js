@@ -3,6 +3,7 @@ const mongoose= require("mongoose");
 const rewardsSchema = new mongoose.Schema({
     name: String,
     price: Number,
+    category: String,
     createdAt: { 
         type: Date, 
         default: Date.now 
