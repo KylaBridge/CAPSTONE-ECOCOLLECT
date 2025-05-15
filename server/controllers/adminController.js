@@ -1,5 +1,6 @@
 const User = require('../models/user');
 const EWaste = require('../models/ewaste');
+const Reward = require('../models/rewards');
 const path = require("path");
 const fs = require("fs");
 const { getRank } = require('../helpers/rank');
@@ -31,13 +32,13 @@ const getEwastes = async (req, res) => {
     }
 }
 
-// GET all users :admin
+// GET all users
 const getUserData = async (req, res) => {
     const data = await User.find({});
     res.status(200).json(data);
 };
 
-// Count users by role :admin
+// Count users by role 
 const countUsersByRole = async (req, res) => {
     try {
         const userCount = await User.countDocuments({ role: "user" });
@@ -64,7 +65,7 @@ const deleteUser = async (req, res) => {
     }
 };
 
-// Update submission status :admin
+// Update submission status 
 const updateSubmissionStatus = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
@@ -111,7 +112,7 @@ const updateSubmissionStatus = async (req, res) => {
     }
 };
 
-// Get all e-waste submissions :admin
+// GET all e-waste submissions 
 const getAllSubmissions = async (req, res) => {
     try {
         const submissions = await EWaste.find().populate("user");
@@ -121,7 +122,7 @@ const getAllSubmissions = async (req, res) => {
     }
 };
 
-// Delete Ewaste image :admin
+// DELETE Ewaste image :admin
 const deleteEWaste = async (req, res) => {
     try {
         const { id } = req.params;
@@ -145,6 +146,22 @@ const deleteEWaste = async (req, res) => {
     }
 };
 
+// POST a new reward 
+const addReward = async (req, res) => {
+    try {
+        const { name, price } = req.body;
+        const reward = await Reward.create({ name, price });
+
+        return res.status(201).json({
+            message: "Reward added successfully!",
+            reward
+        });
+    } catch (error) {
+        console.error("Error adding reward:", error);
+        return res.status(500).json({ error: "Failed to add reward" });
+    }
+};
+
 module.exports = {
     getEwastes,
     getUserData,
@@ -153,4 +170,5 @@ module.exports = {
     updateSubmissionStatus,
     getAllSubmissions,
     deleteEWaste,
+    addReward,
 };
