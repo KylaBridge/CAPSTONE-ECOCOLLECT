@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import AdminSidebar from "../admin-components/AdminSidebar";
 import Header from "../admin-components/Header";
+import { TbPlayerTrackPrevFilled, TbPlayerTrackNextFilled} from "react-icons/tb";
 import "./styles/ActivityLog.css";
 
 export default function ActivityLog() {
@@ -198,16 +199,32 @@ export default function ActivityLog() {
             </tbody>
           </table>
 
-          <div className="pagination">
-            {Array.from({ length: totalPages }, (_, idx) => (
-              <button
-                key={idx}
-                className={currentPage === idx + 1 ? "active" : ""}
-                onClick={() => setCurrentPage(idx + 1)}
-              >
-                {idx + 1}
-              </button>
-            ))}
+        <div className="pagination-controls">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="pagination-button"
+            >
+              <TbPlayerTrackPrevFilled
+                size={15}
+                color={currentPage === 1 ? "#ccc" : "#0e653f"}
+              />
+            </button>
+
+            <span className="pagination-info">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            <button
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="pagination-button"
+            >
+              <TbPlayerTrackNextFilled
+                size={15}
+                color={currentPage === totalPages ? "#ccc" : "#0e653f"}
+              />
+            </button>
           </div>
         </div>
       </div>

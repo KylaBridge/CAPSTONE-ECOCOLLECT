@@ -32,7 +32,7 @@
   justify-content: space-between;
   gap: 24px;
   margin: 20px 0;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .reward-chart-card .summary-cards {

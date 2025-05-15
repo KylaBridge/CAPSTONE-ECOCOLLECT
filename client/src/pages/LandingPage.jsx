@@ -57,7 +57,7 @@ export default function LandingPage() {
         </button>
         <nav className={`nav-links ${menuOpen ? "active" : ""}`}>
           <a href="/landing">Home</a>
-          <a href="#about">About Us</a>
+          <a href="/about">About Us</a>
           <a href="#contact">Contact Us</a>
           <a href="/">Log In</a>
         </nav>

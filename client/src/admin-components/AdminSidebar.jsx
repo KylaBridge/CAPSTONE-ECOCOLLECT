@@ -1,6 +1,7 @@
 import './styles/AdminSidebar.css'
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { AiOutlineHome, AiOutlineUser, AiOutlineBarChart, AiOutlineMonitor, AiOutlineCheckSquare, AiOutlineTrophy, AiOutlineIdcard, AiOutlineOrderedList, AiOutlineLogout } from 'react-icons/ai';
+import { IoRibbonOutline } from "react-icons/io5";
 import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -49,6 +50,9 @@ export default function AdminSidebar() {
                     </Link>
                     <Link to='/admin/badgemanagement' className={location.pathname === '/admin/badgemanagement' ? 'active' : ''}>
                         <li><AiOutlineIdcard size={20} /> Badge Management</li> 
+                    </Link>
+                    <Link to='/admin/rewardmanagement' className={location.pathname === '/admin/rewardmanagement' ? 'active' : ''}>
+                        <li><IoRibbonOutline size={20} /> Reward Management</li> 
                     </Link>
                     <Link to='/admin/activitylog' className={location.pathname === '/admin/activitylog' ? 'active' : ''}>
                         <li><AiOutlineOrderedList size={20} /> Activity Log</li> 

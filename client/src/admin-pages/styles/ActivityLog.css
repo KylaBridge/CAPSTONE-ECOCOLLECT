@@ -42,25 +42,6 @@ html, body {
   border-collapse: collapse;
 }
 
-.pagination {
-  margin-top: 15px;
-  display: flex;
-  gap: 5px;
-}
-
-.pagination button {
-  padding: 5px 10px;
-  border: none;
-  border-radius: 6px;
-  background-color: #eee;
-  cursor: pointer;
-}
-
-.pagination button.active {
-  background-color: #4caf50;
-  color: white;
-}
-
   .activity-table-controls {
   display: flex;
   flex-wrap: wrap;
@@ -90,4 +71,12 @@ html, body {
   max-width: 250px;
   white-space: wrap;
   word-wrap: break-word;
+}
+
+.activitymodule-container .pagination-controls {
+    display: flex;
+    justify-content: end;
+    align-items: end;
+    gap: 1rem;
+    margin-top: 10px;
 }

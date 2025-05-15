@@ -84,7 +84,7 @@ a li:hover, a.active li {
     align-items: center;
     justify-content: center;
     gap: 5px;
-    margin: 0 25px;
+    margin: 0 auto;
 }
 
 nav button:hover {

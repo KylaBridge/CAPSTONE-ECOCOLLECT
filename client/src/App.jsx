@@ -16,10 +16,12 @@ import EWasteBin from "./admin-pages/EWasteBin.jsx"
 import EWasteSubmit from "./admin-pages/EWasteSubmit.jsx"
 import AchieversModule from "./admin-pages/AchieversModule.jsx"
 import BadgeManagement from "./admin-pages/BadgeManagement.jsx"
+import RewardManagement from "./admin-pages/RewardManagement.jsx"
 import ActivityLog from "./admin-pages/ActivityLog.jsx"
 import Rewards from "./pages/Rewards.jsx"
 import AdminLogIn from "./admin-pages/AdminLogIn.jsx"
 import LandingPage from "./pages/LandingPage.jsx"
+import AboutPage from "./pages/AboutPage.jsx"
 
 axios.defaults.baseURL = "http://localhost:3000"
 axios.defaults.withCredentials = true
@@ -32,6 +34,7 @@ export default function App() {
       <Routes>
         {/*User Routes*/}
         <Route path="/landing" element={<LandingPage />} />
+        <Route path="/about" element={<AboutPage/>} />
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/home" element={<Home />} />
@@ -49,6 +52,7 @@ export default function App() {
         <Route path="/admin/ewastesubmit" element={<EWasteSubmit />} />
         <Route path="/admin/achieversmodule" element={<AchieversModule />} />
         <Route path="/admin/badgemanagement" element={<BadgeManagement />} />
+        <Route path="/admin/rewardmanagement" element={<RewardManagement />} />
         <Route path="/admin/activitylog" element={<ActivityLog />} />
       </Routes>
     </UserContextProvider>
