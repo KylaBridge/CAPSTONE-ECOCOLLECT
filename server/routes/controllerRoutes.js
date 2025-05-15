@@ -11,7 +11,8 @@ const {
     deleteUser, 
     updateSubmissionStatus, 
     getAllSubmissions, 
-    deleteEWaste 
+    deleteEWaste,
+    addReward,
 } = require('../controllers/adminController');
 const { 
     submitEWaste, 
@@ -45,6 +46,7 @@ router.delete("/usermanagement/:id", deleteUser);
 router.put("/ewaste/:id/status", updateSubmissionStatus);
 router.get("/ewaste", getAllSubmissions); 
 router.delete("/ewaste/:id", deleteEWaste);
+router.post("/rewards", addReward);
 
 // User Routes
 router.post("/ewaste", upload.array("attachments", 5), submitEWaste);
