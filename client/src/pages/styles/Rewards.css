@@ -187,3 +187,25 @@
     margin-top: 15px;
     text-align: center;
   }
+
+.loading-message,
+.no-rewards-message {
+    width: 100%;
+    text-align: center;
+    padding: 40px;
+    font-size: 1.2rem;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    margin: 20px 0;
+}
+
+.loading-message {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}

@@ -29,6 +29,12 @@ if (!fs.existsSync(uploadDirectory)) {
     fs.mkdirSync(uploadDirectory, { recursive: true });
 }
 
+// Ensure rewards images folder exists
+const rewardsDirectory = path.join(__dirname, "..", "uploads", "rewards");
+if (!fs.existsSync(rewardsDirectory)) {
+    fs.mkdirSync(rewardsDirectory, { recursive: true });
+}
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, "uploads/"); // this folder should exist or be created
@@ -39,7 +45,18 @@ const storage = multer.diskStorage({
     }
 });
 
+const rewardsStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "uploads/rewards/"); // Store reward images in a separate folder
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
 const upload = multer({ storage: storage });
+const rewardsUpload = multer({ storage: rewardsStorage });
 
 // Admin Routes
 router.get("/user/ewastes", getEwastes);
@@ -50,13 +67,18 @@ router.put("/ewaste/:id/status", updateSubmissionStatus);
 router.get("/ewaste", getAllSubmissions); 
 router.delete("/ewaste/:id", deleteEWaste);
 router.get("/rewards", getAllRewards);
-router.post("/rewards", addReward);
-router.put("/rewards/:id", updateReward);
+router.post("/rewards", rewardsUpload.single("image"), addReward);
+router.put("/rewards/:id", rewardsUpload.single("image"), updateReward);
 router.delete("/rewards/:id", deleteReward);
 
 // User Routes
 router.post("/ewaste", upload.array("attachments", 5), submitEWaste);
 router.get("/ewaste/user/:userId/count", userSubmitCount);
 router.get("/ewaste/user/:userId", getUserSubmissions);
+
+// User Management Routes
+router.get("/users", getUserData);
+router.get("/users/count", countUsersByRole);
+router.delete("/users/:id", deleteUser);
 
 module.exports = router;
