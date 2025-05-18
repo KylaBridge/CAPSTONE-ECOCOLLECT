@@ -2,13 +2,16 @@
     background-color: #8dd7d7;
     width: 100%;
     height: 100vh;
-    /* this is for constraining the stretch of the whole container on larger screens*/
-    /* max-width: 700px;
-    margin: auto; */
-    padding-inline: 5%;
     display: flex;
     flex-direction: column;
     position: relative;
+}
+
+.home-content-wrapper {
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    margin: 0 auto;
 }
 
 .user-profile {
@@ -304,6 +307,53 @@
 /*Responsive Adjustments */
 
 @media (max-width: 360px){
+  .home-content-wrapper {
+    width: 95%;
+}
+
+    .rank-container {
+        gap: 8px;
+    }
+
+    .rank-container h2 {
+        font-size: 0.9rem;
+        padding: 8px;
+        border-width: 5px;
+    }
+
+    .submission-container {
+        padding: 8px 3%;
+    }
+
+    .submission-container h1 {
+        font-size: 1.1rem;
+    }
+
+    .points-display h2,
+    .submission-items-display h2,
+    .submission-items-display span.submission-count {
+        font-size: 0.9rem;
+    }
+
+    .submission-character {
+        max-width: 80px;
+    }
+
+    .next-reward-item h1, 
+    .current-reward-item h1 {
+        font-size: 1rem;
+    }
+
+    .next-reward-image-container, 
+    .current-reward-image-container {
+        padding: 8px;
+    }
+
+    .next-reward-image-container p, 
+    .current-reward-image-container p {
+        font-size: 0.8rem;
+    }
+
     .reward-text-container {
         margin-left: 45%;
       }
@@ -316,10 +366,14 @@
 
 /* Small screens (up to 480px width) */
 @media (max-width: 480px) {
+    .home-content-wrapper {
+        width: 90%;
+    }
+
     .rank-container {
-      flex-direction: column;
-      align-items: center;
-      align-items: stretch;
+        flex-direction: column;
+        align-items: center;
+        align-items: stretch;
     }
   
     .rank-container h2 {
@@ -377,6 +431,9 @@
   
   /* Medium screens (481px to 739px width) */
   @media (min-width: 481px) and (max-width: 739px) {
+    .home-content-wrapper {
+        width: 95%;
+    }
     .rewards-preview-container {
       padding: 12px;
       min-height: 110px;
@@ -413,6 +470,9 @@
   
   /* Tablet screens (740px to 1024px width) */
   @media (min-width: 740px) and (max-width: 1024px) {
+    .home-content-wrapper {
+        width: 95%;
+    }
     .rewards-preview-container {
       padding: 15px 20px;
       min-height: 150px;
@@ -443,6 +503,9 @@
   
   /* Large screens (1024px width and above) */
   @media (min-width: 1024px) {
+    .home-content-wrapper {
+        width: 80%;
+    }
     .overlay-image {
       width: 15%; 
     }

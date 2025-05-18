@@ -22,6 +22,7 @@ import Rewards from "./pages/Rewards.jsx"
 import AdminLogIn from "./admin-pages/AdminLogIn.jsx"
 import LandingPage from "./pages/LandingPage.jsx"
 import AboutPage from "./pages/AboutPage.jsx"
+import ContactPage from "./pages/ContactPage.jsx"
 
 axios.defaults.baseURL = "http://localhost:3000"
 axios.defaults.withCredentials = true
@@ -35,6 +36,7 @@ export default function App() {
         {/*User Routes*/}
         <Route path="/landing" element={<LandingPage />} />
         <Route path="/about" element={<AboutPage/>} />
+        <Route path="/contact" element={<ContactPage/>} />
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/home" element={<Home />} />

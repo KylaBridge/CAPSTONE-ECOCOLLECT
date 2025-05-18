@@ -34,12 +34,12 @@ export default function Home() {
         }
     }, [user]);
 
-
     return (
         <>
             <Sidebar isShown={showNavbar} setIsShown={setShowNavbar} />
             <Header headerImg={HomeHeaderTitle} headerText="Home" />
-                <div className="home-main-container">
+            <div className="home-main-container">
+                <div className="home-content-wrapper">
                     <div className="user-profile">
                         <Userprofile/>
                     </div>
@@ -50,12 +50,12 @@ export default function Home() {
                             <h2>{user?.rank || "Loading..."}</h2>
                         </div>
                         <div className="leaderboard-rank">
-                        <h2 className="rank-number-container">
-                            <span className="rank-label">Leaderboards</span>
-                            <div className="rank-icon-container">
-                                <span className="user-rank-number">coming soon..</span>
-                            </div>
-                        </h2>
+                            <h2 className="rank-number-container">
+                                <span className="rank-label">Leaderboards</span>
+                                <div className="rank-icon-container">
+                                    <span className="user-rank-number">coming soon..</span>
+                                </div>
+                            </h2>
                         </div>
                     </div>
 
@@ -78,27 +78,29 @@ export default function Home() {
                             />
                         </div>
                     </div>
+
                     <div className="badge-reward-container">
-                    <div className="current-reward-item">
-                        <h1>Current Badge</h1>
-                        <div className="current-reward-image-container">
-                            <img src={Badge} alt="Current Badge Reward" />
-                            <p>Get after joining</p>
-                        </div>
+                        <div className="current-reward-item">
+                            <h1>Current Badge</h1>
+                            <div className="current-reward-image-container">
+                                <img src={Badge} alt="Current Badge Reward" />
+                                <p>Get after joining</p>
+                            </div>
                         </div>
                         <div className="next-reward-item">
-                        <h1>Next Badge</h1>
-                        <div className="next-reward-image-container">
-                            <img src={NextBadge} alt="Next Badge Reward" />
-                            <p>Earn 100 points to unlock</p>
-                        </div>
-                        <img src={LockIcon} alt="Locked" className="overlay-image" />
+                            <h1>Next Badge</h1>
+                            <div className="next-reward-image-container">
+                                <img src={NextBadge} alt="Next Badge Reward" />
+                                <p>Earn 100 points to unlock</p>
+                            </div>
+                            <img src={LockIcon} alt="Locked" className="overlay-image" />
                         </div>
                     </div>
+
                     <div className="home-divider"></div>
 
                     <div className="rewards-preview-container">
-                    <img src={SmartDevicesIcon} alt="Reward Mascot" className="reward-mascot" />
+                        <img src={SmartDevicesIcon} alt="Reward Mascot" className="reward-mascot" />
                         <div className="reward-text-container">
                             <img src={SmartIcon} alt="Smart Logo" className="smart-logo" />
                             <p className="reward-description">
@@ -107,6 +109,7 @@ export default function Home() {
                         </div>
                     </div>
                 </div>
+            </div>
         </>
     )
 }

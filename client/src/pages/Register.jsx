@@ -5,6 +5,7 @@ import { Link } from "react-router-dom"
 import axios from "axios"
 
 import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
+import PartnershipLogos from "../assets/partnershiplogos.png";
 
 export default function Register() {
     const navigate = useNavigate()
@@ -43,9 +44,10 @@ export default function Register() {
                 <button className="register-btn2">REGISTER</button>
                 <p className="register-el">Already have an account? <Link className="login-btn2" to={"/"}>Login</Link></p>
                 <p className="or-seperator">or</p>
-                <button className="microsoftAcc-btn">Continue with Microsoft Account</button>
+                <button className="microsoftAcc-btn">Continue with Microsoft</button>
                 <Link className="go-back-btn" to={"/landing"}>Go Back to Main</Link>
             </form>
+            <img className="partnership-logo" src={PartnershipLogos} alt="NU x SM Cares Partnership" />
         </div>
     )
 } 
