@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const EWaste = require('../models/ewaste');
 const Reward = require('../models/rewards');
+const Redemption = require('../models/redemption');
 const path = require("path");
 const fs = require("fs");
 const { getRank } = require('../helpers/rank');
@@ -263,6 +264,20 @@ const deleteReward = async (req, res) => {
   }
 };
 
+// Get redemption history for user
+const getUserRedemptions = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const redemptions = await Redemption.find({ userId })
+            .sort({ redemptionDate: -1 })
+            .populate('rewardId', 'name points');
+        res.status(200).json(redemptions);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Failed to fetch redemption history" });
+    }
+};
+
 module.exports = {
   // E-waste submissions
   getEwastes,
@@ -279,5 +294,8 @@ module.exports = {
   getAllRewards,
   addReward,
   updateReward,
-  deleteReward
+  deleteReward,
+
+  // Redemption history
+  getUserRedemptions
 };

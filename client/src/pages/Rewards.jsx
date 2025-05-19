@@ -7,6 +7,7 @@ import RewardsContainer from "../components/RewardsContainer";
 import RewardsHeader from "../assets/headers/rewards-header.png";
 import Sidebar from "../components/Sidebar";
 import { toast } from "react-hot-toast";
+import Logs from "../components/Logs";
 
 export default function Rewards() {
   const [showNavbar, setShowNavbar] = useState(false);
@@ -14,17 +15,32 @@ export default function Rewards() {
   const [selectedReward, setSelectedReward] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [redeemSuccess, setRedeemSuccess] = useState(false);
-  const [claimStub, setClaimStub] = useState("");
   const [insufficientPoints, setInsufficientPoints] = useState(false);
   const [rewards, setRewards] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [redemptionHistory, setRedemptionHistory] = useState([]);
 
   const currentPoints = user?.points || 0;
 
-  // Fetch rewards from backend
+  // Fetch rewards and redemption history
   useEffect(() => {
     fetchRewards();
-  }, []);
+    if (user?._id) {
+      fetchRedemptionHistory();
+    }
+  }, [user]);
+
+  const fetchRedemptionHistory = async () => {
+    if (!user?._id) return;
+    
+    try {
+      const response = await axios.get(`http://localhost:3000/api/ecocollect/redeem/user/${user._id}`);
+      setRedemptionHistory(response.data);
+    } catch (error) {
+      console.error("Error fetching redemption history:", error);
+      toast.error("Failed to load redemption history");
+    }
+  };
 
   const fetchRewards = async () => {
     try {
@@ -49,7 +65,6 @@ export default function Rewards() {
     setSelectedReward(reward);
     setIsModalOpen(true);
     setRedeemSuccess(false);
-    setClaimStub("");
     setInsufficientPoints(false);
   };
 
@@ -58,19 +73,33 @@ export default function Rewards() {
     setSelectedReward(null);
   };
 
-  const handleRedeem = () => {
+  const handleRedeem = async () => {
     if (!selectedReward) return;
 
     if (currentPoints >= selectedReward.price) {
-      // TODO: Implement actual redemption through backend
-      const stub = Math.random().toString(36).substring(2, 15).toUpperCase();
-      setClaimStub(stub);
-      setRedeemSuccess(true);
-      setInsufficientPoints(false);
+      try {
+        const response = await axios.post("http://localhost:3000/api/ecocollect/redeem", {
+          userId: user._id,
+          rewardId: selectedReward.id
+        });
+
+        if (response.status === 201) {
+          setRedeemSuccess(true);
+          setInsufficientPoints(false);
+          // Update user points in context
+          user.points = response.data.remainingPoints;
+          // Refresh rewards list and redemption history
+          fetchRewards();
+          fetchRedemptionHistory();
+          toast.success("Reward redeemed successfully!");
+        }
+      } catch (error) {
+        console.error("Error redeeming reward:", error);
+        toast.error("Failed to redeem reward");
+      }
     } else {
       setInsufficientPoints(true);
       setRedeemSuccess(false);
-      setClaimStub("");
       setTimeout(() => {
         setInsufficientPoints(false);
       }, 3000);
@@ -103,6 +132,18 @@ export default function Rewards() {
               ))
             )}
           </div>
+
+          {/* Redemption History */}
+          <div className="redemption-history">
+            <Logs 
+              submissionLogs={redemptionHistory.map(redemption => ({
+                _id: redemption._id,
+                category: redemption.rewardName,
+                createdAt: redemption.redemptionDate,
+              }))} 
+              type="redemption"
+            />
+          </div>
         </div>
       </div>
 
@@ -130,9 +171,8 @@ export default function Rewards() {
               </button>
             ) : (
               <div className="redeem-success">
-                <h3>Redemption Successful!</h3>
-                <p>Your Claim Stub:</p>
-                <div className="claim-stub">{claimStub}</div>
+                <h3>Purchased!</h3>
+                <p>Thank you for your purchase.</p>
               </div>
             )}
 

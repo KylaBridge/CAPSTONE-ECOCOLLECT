@@ -6,6 +6,7 @@ import "./styles/EWasteSubmission.css";
 // Components and Assets
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
+import Logs from "../components/Logs";
 import EWasteHeaderTitle from "../assets/headers/ewaste-header.png";
 import ChipIcon from "../assets/icons/chipandtrash.png";
 import { IoMdArrowDroprightCircle } from "react-icons/io";
@@ -155,28 +156,7 @@ export default function EWasteSubmission() {
           </div>
         </div>
 
-        {/* User E-waste submission Log */}
-        <div className="log-container">
-          <div className="recent-title-container">
-            <h2>E-Waste Submissions</h2>
-          </div>
-
-          <div className="recent-activity-container">
-            <h2>Recent</h2>
-            <ul className="activity-list">
-              {submissionLogs.length > 0 ? submissionLogs.map((activity) => (
-                <li key={activity._id} className="activity-item">
-                  <span className="activity-id">Submission ID: {activity._id}</span>
-                  <span className="activity-status">Category: {activity.category}</span>
-                  <span className="activity-date">{new Date(activity.createdAt).toLocaleString()}</span>
-                  <span className={`activity-result ${activity.status?.toLowerCase()}`}>Status: {activity.status || "Pending"}</span>
-                </li>
-              )) : (
-                <li>No submissions yet.</li>
-              )}
-            </ul>
-          </div>
-        </div>
+        <Logs submissionLogs={submissionLogs} />
       </div>
     </div>
   );

@@ -15,12 +15,14 @@ const {
     getAllRewards,
     addReward,
     updateReward,
-    deleteReward
+    deleteReward,
+    getUserRedemptions
 } = require('../controllers/adminController');
 const { 
     submitEWaste, 
     userSubmitCount,
-    getUserSubmissions 
+    getUserSubmissions,
+    redeemReward,
 } = require('../controllers/userController');
 
 // Ensure uploads folder exists
@@ -70,11 +72,13 @@ router.get("/rewards", getAllRewards);
 router.post("/rewards", rewardsUpload.single("image"), addReward);
 router.put("/rewards/:id", rewardsUpload.single("image"), updateReward);
 router.delete("/rewards/:id", deleteReward);
+router.get("/redeem/user/:userId", getUserRedemptions);
 
 // User Routes
 router.post("/ewaste", upload.array("attachments", 5), submitEWaste);
 router.get("/ewaste/user/:userId/count", userSubmitCount);
 router.get("/ewaste/user/:userId", getUserSubmissions);
+router.post("/redeem", redeemReward);
 
 // User Management Routes
 router.get("/users", getUserData);

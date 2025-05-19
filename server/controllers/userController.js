@@ -1,4 +1,7 @@
 const EWaste = require('../models/ewaste');
+const Redemption = require('../models/redemption');
+const User = require('../models/user');
+const Reward = require('../models/rewards');
 
 // Submit EWaste :user
 const submitEWaste = async (req, res) => {
@@ -50,8 +53,54 @@ const getUserSubmissions = async (req, res) => {
     }
 };
 
+// Redeem reward :user
+const redeemReward = async (req, res) => {
+    try {
+        const { userId, rewardId } = req.body;
+
+        // Find the user and reward
+        const user = await User.findById(userId);
+        const reward = await Reward.findById(rewardId);
+
+        if (!user || !reward) {
+            return res.status(404).json({ message: "User or reward not found" });
+        }
+
+        // Check if user has enough points
+        if (user.points < reward.pointsCost) {
+            return res.status(400).json({ message: "Insufficient points" });
+        }
+
+        // Create redemption record
+        const redemption = new Redemption({
+            userId,
+            rewardId,
+            rewardName: reward.name,
+            redemptionDate: new Date()
+        });
+
+        // Update user points
+        user.points -= reward.points;
+
+        // Save both redemption and updated user points
+        await Promise.all([
+            redemption.save(),
+            user.save()
+        ]);
+
+        res.status(201).json({ 
+            message: "Reward redeemed successfully",
+            remainingPoints: user.points
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Failed to redeem reward" });
+    }
+};
+
 module.exports = {
     submitEWaste,
     userSubmitCount,
     getUserSubmissions,
+    redeemReward
 };
