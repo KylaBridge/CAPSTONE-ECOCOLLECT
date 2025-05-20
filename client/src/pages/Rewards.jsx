@@ -19,6 +19,7 @@ export default function Rewards() {
   const [rewards, setRewards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [redemptionHistory, setRedemptionHistory] = useState([]);
+  const [activeTab, setActiveTab] = useState("rewards");
 
   const currentPoints = user?.points || 0;
 
@@ -117,32 +118,56 @@ export default function Rewards() {
             <h1>REWARDS STORE</h1>
             <span>Points: {currentPoints}</span>
           </div>
-          <div className="inner-rewards-container">
-            {loading ? (
-              <div className="loading-message">Loading rewards...</div>
-            ) : rewards.length === 0 ? (
-              <div className="no-rewards-message">No rewards available at the moment.</div>
-            ) : (
-              rewards.map((reward) => (
-                <RewardsContainer
-                  key={reward.id}
-                  reward={reward}
-                  onRewardClick={handleRewardClick}
-                />
-              ))
-            )}
-          </div>
 
-          {/* Redemption History */}
-          <div className="redemption-history">
-            <Logs 
-              submissionLogs={redemptionHistory.map(redemption => ({
-                _id: redemption._id,
-                category: redemption.rewardName,
-                createdAt: redemption.redemptionDate,
-              }))} 
-              type="redemption"
-            />
+          {/* Centered Wrapper */}
+          <div className="rewards-center-wrapper">
+            <div className="rewards-section-card">
+              <div className="rewards-toggle">
+                <button
+                  className={activeTab === "rewards" ? "active" : ""}
+                  onClick={() => setActiveTab("rewards")}
+                >
+                  Available Rewards
+                </button>
+                <button
+                  className={activeTab === "history" ? "active" : ""}
+                  onClick={() => setActiveTab("history")}
+                >
+                  Redemption History
+                </button>
+              </div>
+
+              {/* Conditional Rendering */}
+              {activeTab === "rewards" ? (
+                <div className="inner-rewards-container">
+                  {loading ? (
+                    <div className="loading-message">Loading rewards...</div>
+                  ) : rewards.length === 0 ? (
+                    <div className="no-rewards-message">No rewards available at the moment.</div>
+                  ) : (
+                    rewards.map((reward) => (
+                      <RewardsContainer
+                        key={reward.id}
+                        reward={reward}
+                        onRewardClick={handleRewardClick}
+                      />
+                    ))
+                  )}
+                </div>
+              ) : (
+                <div className="redemption-history">
+                  <Logs 
+                    submissionLogs={redemptionHistory.map(redemption => ({
+                      _id: redemption._id,
+                      category: redemption.rewardName,
+                      createdAt: redemption.redemptionDate,
+                    }))} 
+                    type="redemption"
+                    showTitle={false}
+                  />
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

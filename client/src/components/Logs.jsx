@@ -1,16 +1,18 @@
 import React from 'react';
 import "./styles/Logs.css";
 
-export default function Logs({ submissionLogs, type = "ewaste" }) {
+export default function Logs({ submissionLogs, type = "ewaste", showTitle = true }) {
   const getTitle = () => {
     return type === "ewaste" ? "E-Waste Submissions" : "Redemption History";
   };
 
   return (
     <div className="log-container">
-      <div className="recent-title-container">
-        <h2>{getTitle()}</h2>
-      </div>
+      {showTitle && (
+        <div className="recent-title-container">
+          <h2>{getTitle()}</h2>
+        </div>
+      )}
 
       <div className="recent-activity-container">
         <h2>Recent</h2>

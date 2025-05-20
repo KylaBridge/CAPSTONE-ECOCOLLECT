@@ -23,6 +23,7 @@
     padding-bottom: 10px;
     max-width: 900px;
     margin: auto;
+    margin-bottom: 20px;
 }
 
 .rewards-main-container .outer-rewards-container h1 {
@@ -52,7 +53,7 @@
 }
 
 .inner-rewards-container { 
-    margin-top: 20px;
+    margin: 20px 0px 20px 0px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -208,4 +209,60 @@
     0% { opacity: 0.6; }
     50% { opacity: 1; }
     100% { opacity: 0.6; }
+}
+
+.rewards-section-card {
+  background: #6db035;
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  padding: 10px;
+  margin-bottom: 0;
+  max-width: 100%;
+  min-height: unset;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding-top: 0;
+}
+
+.rewards-toggle {
+  display: flex;
+  width: calc(100% + 20px);
+  margin-left: -10px;
+  margin-right: -10px;
+}
+
+.rewards-toggle button {
+  flex: 1 1 0;
+  width: 100%;
+  min-width: 0;
+  padding: 14px 0;
+  background: #6db035;
+  border: 1px solid #3a5b20;
+}
+
+.rewards-toggle button.active {
+  background: #88d746;
+  color: #385a1d;
+  font-weight: bold;
+  z-index: 4;
+}
+
+.rewards-toggle button:first-child {
+  border-top-left-radius: 16px;
+}
+
+.rewards-toggle button:last-child {
+  border-top-right-radius: 16px;
+}
+
+.rewards-center-wrapper {
+  max-width: 900px;
+  width: 100%;
+  box-sizing: border-box;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
 }
