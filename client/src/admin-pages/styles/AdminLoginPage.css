@@ -43,15 +43,15 @@
   }
   
   .admin-login-right .logo {
-    width: 200px;
+    width: 100px;
     margin-bottom: 20px;
   }
   
   .admin-login-right form {
     background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(124, 167, 140, 0.8));
-    padding: 30px;
+    padding: 25px;
     border-radius: 30px;
-    max-width: 400px;
+    max-width: 350px;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -120,4 +120,16 @@
     text-align: center;
     margin: 15px 0;
     color: white;
+  }
+  
+  .partnership-logos {
+    width: 100px;
+    margin-top: 20px;
+    object-fit: contain;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .partnership-logos {
+        width: 100px;
+    }
   }

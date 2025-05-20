@@ -11,6 +11,7 @@ import EWasteHeaderTitle from "../assets/headers/ewaste-header.png";
 import ChipIcon from "../assets/icons/chipandtrash.png";
 import { IoMdArrowDroprightCircle } from "react-icons/io";
 import { MdDelete } from 'react-icons/md';
+import { FaCamera } from 'react-icons/fa';
 
 export default function EWasteSubmission() {
   const [showNavbar, setShowNavbar] = useState(false);
@@ -108,7 +109,10 @@ export default function EWasteSubmission() {
           <h1>Drop your E-Waste!</h1>
           <div className="upload-button-container">
             <input type="file" id="file-upload" style={{ display: "none" }} onChange={handleUpload} multiple />
-            <label htmlFor="file-upload">UPLOAD</label>
+            <label htmlFor="file-upload">
+              <FaCamera className="camera-icon" />
+              UPLOAD
+            </label>
           </div>
           <img src={ChipIcon} alt="Chip and Trash Icon" className="chip-icon" />
 

@@ -33,7 +33,7 @@ export default function Sidebar({ isShown, setIsShown }) {
             <h1 className="toggleBtn" onClick={toggleNavbar}>☰</h1>
             <img className = 'user-sidebar-logo' src={EcoCollectLogo} alt="EcoCollect-Logo" />
             <div className="divider"></div>
-            <ul>
+            <ul className="user-sidebar-ul">
                 <Link to="/home" className={location.pathname === '/home' ? 'active' : ''}>
                     <li><AiOutlineHome size={20} /> HOME</li>
                 </Link>

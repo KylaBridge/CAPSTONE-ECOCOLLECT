@@ -11,7 +11,7 @@
     height: 100%;
     width: 280px;
     z-index: 999;
-    background-color: #8dd7b4;
+    background-color: #8dd7d7;
     transition: 0.5s;
     border-right: 2px solid rgba(0, 0, 0, 0.3);
     overflow: hidden;
@@ -24,7 +24,7 @@
     height: 100vh;
     width: 0%;
     z-index: 999;
-    background-color: #8dd7b4;
+    background-color: #8dd7d7;
     overflow: hidden;
     transition: 0.5s;
 }
@@ -47,7 +47,7 @@
     margin-top: -30px;
 }
 
-ul {
+.user-sidebar-ul {
     width: 100%;
     margin: 0;
     padding: 0;
@@ -56,7 +56,7 @@ ul {
 }
 
 
-ul li {
+.user-sidebar-ul  li {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -67,15 +67,15 @@ ul li {
     width: 100%;
     border-top: 1px solid gray;
     transition: 0.3s;
-    background-color: #8dd7b4;
+    background-color: #8dd7d7;
 }
 
-ul li:hover, ul.active li{
+.user-sidebar-ul li:hover, .user-sidebar-ul .active li{
     background-color: #3abc7d;
     color: white;
 }
 
-a {
+.user-sidebar-ul a {
     text-decoration: none;
     color: black;
     display: flex;
@@ -97,7 +97,7 @@ nav button {
     color: white;
     border: none;
     border-radius: 10px;
-    background-color: #47e498;
+    background-color: #3abc7d;
     cursor: pointer;
     border: 2px solid rgba(0, 0, 0, 0.25);
     transition: 0.3s;

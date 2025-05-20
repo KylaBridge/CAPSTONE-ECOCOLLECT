@@ -1,6 +1,7 @@
 import "./styles/AdminLoginPage.css";
 import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
-import BackgroundImage from "../assets/bgphoto-ecocollect.png"
+import BackgroundImage from "../assets/bgphoto-ecocollect.png";
+import PartnershipLogos from "../assets/partnershiplogos.png";
 
 export default function AdminLogIn(){
      return (
@@ -8,9 +9,9 @@ export default function AdminLogIn(){
             <div className="bg-form-container">
                 <div className="admin-login-left">
                     <img className="forest-characters" src={BackgroundImage} alt="EcoCollect Characters" />
-                    </div>
+                </div>
                 
-                    <div className="admin-login-right">
+                <div className="admin-login-right">
                     <img className="logo" src={EcoCollectLogo} alt="EcoCollect Logo" />
                     <form>
                         <h1>Admin Login</h1>
@@ -26,10 +27,9 @@ export default function AdminLogIn(){
                         <p className="or-separator">or</p>
                         <button className="microsoftAcc-btn">Continue with Microsoft Account</button>
                     </form>
+                    <img className="partnership-logos" src={PartnershipLogos} alt="Partnership Logos" />
                 </div>
             </div>
-      
-      </div>
-      
-        );
+        </div>
+    );
 }

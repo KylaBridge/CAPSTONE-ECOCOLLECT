@@ -29,7 +29,7 @@ export default function AdminSidebar() {
             <div className="divider"></div>
 
             <div className="sidebar-content">
-                <ul>
+                <ul className="admin-sidebar-ul">
                     <Link to='/admin/dashboard' className={location.pathname === '/admin/dashboard' ? 'active' : ''}>
                         <li><AiOutlineHome size={20} /> Dashboard</li> 
                     </Link>

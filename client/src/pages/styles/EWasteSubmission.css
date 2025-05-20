@@ -97,7 +97,7 @@
     background-color: #acb187;
 }
 
-  .upload-button-container label {
+.upload-button-container label {
     background-color: #edf3c1;
     border: none;
     padding: 12px 30px;
@@ -110,20 +110,28 @@
     box-shadow: 0px 6px 0px #284d3c;
     cursor: pointer;
     transition: transform 0.1s ease, box-shadow 0.1s ease;
-  }
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 
-  .no-attachments {
+.camera-icon {
+    font-size: 1.2rem;
+    color: #245a1e;
+}
+
+.no-attachments {
     text-align: center;
     font-style: italic;
     color: #474747;
     margin-top: 10px;
-  }
-  
-  .attachments-section {
+}
+
+.attachments-section {
     margin-top: 15px;
-  }
-  
-  .attachments-section h2 {
+}
+
+.attachments-section h2 {
     font-family: Arial, Helvetica, sans-serif;
     color: #245a1e;
     font-weight: 800;
@@ -131,9 +139,9 @@
     font-size: clamp(1.2rem, 4vw, 1.6rem);
     text-align: center;
     margin-bottom: 12px;
-  }
-  
-  .attachment-list {
+}
+
+.attachment-list {
     list-style: none;
     padding: 0;
     margin-bottom: 5px;
@@ -141,19 +149,18 @@
     overflow-y: auto;
     border-radius: 8px;
     box-sizing: border-box;
-  }
-  
-  .attachment-item {
+}
+
+.attachment-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     border: 1px solid #245a1e;
     padding: 10px;
     background-color: transparent;
-  }
-  
+}
 
-  .category-select {
+.category-select {
     width: 100%;
     padding: 12px;
     border: 4px solid #245a1e;
@@ -169,12 +176,12 @@
     background-repeat: no-repeat;
     background-position: right 12px center;
     cursor: pointer;
-  }
-  
-  .category-select option {
+}
+
+.category-select option {
     background-color: #edf3c1;
     color: black;
-  }
+}
 
 .upload-content-wrapper{
     background-color: #6db300;
@@ -182,7 +189,6 @@
     border: 4px solid #245a1e;
     padding: 15px;
 }
-
 
 .upload-content-wrapper button {
     display: block;
@@ -203,9 +209,9 @@
     padding: 0;
     background-color: transparent;
     margin-bottom: 5px;
-  }
-  
-  .instruction-list li {
+}
+
+.instruction-list li {
     font-size: 0.7rem;
     color: #333;
     display: grid;
@@ -213,22 +219,22 @@
     align-items: center;
     background-color: transparent;
     padding: 5px 0;
-  }
+}
 
-  .instruction-icon-container {
+.instruction-icon-container {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 20px;
     height: 20px;
-  }
-  
-  .instruction-icon {
+}
+
+.instruction-icon {
     font-size: 1rem;
     color: #edf3c1;
-  }
-  
-  .attachment-name {
+}
+
+.attachment-name {
     font-size: 0.9rem;
-  }  
+}  
   
