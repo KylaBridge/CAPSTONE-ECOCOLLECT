@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "./styles/UserTable.css";
 import { FaSearch } from "react-icons/fa";
+import AdminButton from "./AdminButton";
 
 
 export default function UserTable({ onViewUser, viewedUser }) {
@@ -136,9 +137,14 @@ export default function UserTable({ onViewUser, viewedUser }) {
                   <td>Placeholder</td> 
                   <td>Placeholder</td>
                   <td>
-                    <button className="view-btn" onClick={() => handleView(user)}>
+                    <AdminButton 
+                      type="view" 
+                      size="small"
+                      isActive={viewedUser?._id === user._id}
+                      onClick={() => handleView(user)}
+                    >
                       {viewedUser?._id === user._id ? 'CLOSE' : 'VIEW'}
-                    </button>
+                    </AdminButton>
                   </td>
                 </tr>
               ))

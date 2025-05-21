@@ -3,6 +3,7 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import React, { useState, useEffect } from "react"; 
 import defaultProfileImage from "../assets/icons/profile-pic.png"; 
+import AdminButton from "./AdminButton";
 
 export default function ViewUser({ user,  onUserDeleted }) {
 
@@ -95,9 +96,14 @@ export default function ViewUser({ user,  onUserDeleted }) {
                 <p className="userprofile-info">Email: {user?.email || 'email@example.com'}</p>
                 <p className="userprofile-info">Role: {user?.role || 'Role Placeholder'}</p>
                 <p className="userprofile-info">ID: {user?._id || 'ID Placeholder'}</p>
-                <button className="delete-btn" onClick={handleDelete} style={{ marginTop: "1rem" }}>
+                <AdminButton 
+                  type="remove" 
+                  size="small"
+                  onClick={handleDelete}
+                  style={{ marginTop: "1rem" }}
+                >
                   REMOVE USER
-                </button>
+                </AdminButton>
               </div>
 
           </div>

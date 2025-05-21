@@ -30,18 +30,6 @@ html, body {
   gap: 10px;
 }
 
-.add-reward-button {
-  padding: 8px 14px;
-  background-color: #118653;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.add-reward-button:hover {
-  background-color: #45a049;
-}
 
 .sort-dropdown {
   padding: 8px;
@@ -121,11 +109,6 @@ position: sticky;
     width: 100%;
 }
 
-.edit-icon {
-  margin-left: 5px;
-  color: #888;
-}
-
 .image-preview {
   display: flex;
   flex-direction: column;
@@ -141,72 +124,6 @@ position: sticky;
   border: 1px solid #ccc;
 }
 
-.edit-image{
-  padding: 5px 10px;
-  font-size: 12px;
-  margin: 2px 0;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  background-color: #ddd;
-  transition: background-color 0.2s;
-}
-
-
-.edit-image:hover {
-  background-color: #b7e1cd;
-}
-
-.remove-image:hover {
-  background-color: #f8bcbc;
-}
-
-.update-button,
-.remove-button {
-  padding: 6px 10px;
-  margin-right: 5px;
-  width: 100%;
-  font-size: 13px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.update-button {
-  background-color: #4caf50;
-  color: white;
-  margin-bottom: 5px ;
-}
-
-.update-button:hover {
-  background-color: #388e3c;
-}
-
-.remove-button {
-  background-color: #f44336;
-  color: white;
-}
-
-.remove-button:hover {
-  background-color: #d32f2f;
-}
-
-.replace-image-button {
-  background-color: #4caf50;
-  color: white;
-  padding: 6px 10px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-top: 5px;
-  font-size: 12px;
-}
-
-.replace-image-button:hover {
-  background-color: #45a049;
-}
-
 .pagination-footer {
   display: flex;
   justify-content: center;
@@ -220,27 +137,6 @@ position: sticky;
   height: 50px;
   object-fit: cover;
   border-radius: 6px;
-}
-
-.cancel-button {
-  background-color: gray;
-  color: white;
-  padding: 5px 8px;
-  border: none;
-  margin-top: 5px;
-  border-radius: 6px;
-  cursor: pointer;
-  width: 100%;
-}
-
-.edit-button{
-  width: 100%;
-  padding: 10px 20px;
-  background-color: #76b182;
-  color: #fff;
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
 }
 
 .reward-management-container .pagination-controls {
@@ -264,7 +160,17 @@ position: sticky;
     opacity: 0.5;
 }
 
-.update-button:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
+
+.reward-table-btn {
+  width: 100%;;
+  padding: 15px 15px;
+  justify-content: center;
+  margin: 2px 0;
+  /* Add any other custom styles you want for table buttons */
+}
+
+/* Optionally, center the buttons in the table cell */
+.rewards-table td {
+  text-align: center;
+  vertical-align: middle;
 }

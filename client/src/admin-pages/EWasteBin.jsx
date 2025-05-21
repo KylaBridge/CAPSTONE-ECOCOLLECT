@@ -3,8 +3,8 @@ import Header from "../admin-components/Header"
 import "./styles/EWasteBin.css"
 import imgPlaceholder from "../assets/icons/mrcpu.png"
 import React, { useState } from "react";
-import { AiOutlineUpload, AiOutlineDelete, AiFillFilter } from "react-icons/ai";
 import BinTable from "../admin-components/BinTable";
+import AdminButton from "../admin-components/AdminButton";
 
 export default function EWasteBin() {
 
@@ -246,12 +246,22 @@ export default function EWasteBin() {
                                         <input type="file" accept=".png, .jpg, .jpeg, .gif" onChange={handleImageChange} id="imageInput" style={{ display: 'none' }} />
                                         <div className="upload-action-group">
                                             {isImageSelected ? (
-                                                <button type="button" className="remove-button" onClick={handleRemoveImage}>
-                                                    <AiOutlineDelete size={20} style={{ marginRight: "5px" }} /> REMOVE
-                                                </button>
+                                                <AdminButton 
+                                                    type="remove" 
+                                                    size="small"
+                                                    onClick={handleRemoveImage}
+                                                >
+                                                    REMOVE
+                                                </AdminButton>
                                             ) : (
-                                                <label htmlFor="imageInput" className="upload-button">
-                                                    <AiOutlineUpload size={20} style={{ marginRight: "5px" }} /> UPLOAD
+                                                <label htmlFor="imageInput">
+                                                    <AdminButton 
+                                                        type="upload" 
+                                                        size="small"
+                                                        onClick={() => document.getElementById('imageInput').click()}
+                                                    >
+                                                        UPLOAD
+                                                    </AdminButton>
                                                 </label>
                                             )}
                                             <p className="accepted-file-desc">Accepted formats: png, jpg, gif</p>
@@ -285,17 +295,30 @@ export default function EWasteBin() {
                                             <textarea placeholder="Enter Remarks" value={remarks} onChange={(e) => setRemarks(e.target.value)}></textarea>
                                         </div>
                                         <div className="bin-actions">
-                                            <button onClick={handleSubmitBin} disabled={!isFormValid}>
-                                                {selectedBin?.binId === 'new' ? 'ADD' : 'UPDATE'}
-                                            </button>
+                                            <AdminButton 
+                                                type={selectedBin?.binId === 'new' ? 'save' : 'update'}
+                                                size="medium"
+                                                onClick={handleSubmitBin}
+                                                disabled={!isFormValid}
+                                            >
+                                                {selectedBin?.binId === 'new' ? 'SAVE' : 'UPDATE'}
+                                            </AdminButton>
                                             {viewedFromTable && selectedBin ? (
-                                                <button type="button" onClick={() => handleRemoveBin(selectedBin)}>
+                                                <AdminButton 
+                                                    type="remove"
+                                                    size="medium"
+                                                    onClick={() => handleRemoveBin(selectedBin)}
+                                                >
                                                     REMOVE
-                                                </button>
+                                                </AdminButton>
                                             ) : (
-                                                <button type="button" onClick={handleClosePanel}>
-                                                    CLOSE
-                                                </button>
+                                                <AdminButton 
+                                                    type="cancel"
+                                                    size="medium"
+                                                    onClick={handleClosePanel}
+                                                >
+                                                    CANCEL
+                                                </AdminButton>
                                             )}
                                         </div>
                                     </div>
@@ -323,7 +346,13 @@ export default function EWasteBin() {
                             <h2 className="bin-title">Bin List</h2>
 
                             <div className="right-controls">
-                                <button className="add-button" onClick={handleAddBin}>Add Bin</button>
+                                <AdminButton 
+                                    type="add"
+                                    size="medium"
+                                    onClick={handleAddBin}
+                                >
+                                    Add Bin
+                                </AdminButton>
                             </div>
                         </div>
 
@@ -332,18 +361,20 @@ export default function EWasteBin() {
                             data={bins.map((bin) => ({
                                 ...bin,
                                 action: (
-                                  <button
-                                      className="view-button"
-                                      onClick={() => {
-                                          if (isPanelOpen && selectedBin?.binId === bin.binId) {
-                                              handleClosePanel();
-                                          } else {
-                                              handleViewBin(bin);
-                                          }
-                                      }}
-                                  >
-                                      {isPanelOpen && selectedBin?.binId === bin.binId ? 'CLOSE' : 'VIEW'}
-                                  </button>
+                                    <AdminButton 
+                                        type="view"
+                                        size="small"
+                                        isActive={isPanelOpen && selectedBin?.binId === bin.binId}
+                                        onClick={() => {
+                                            if (isPanelOpen && selectedBin?.binId === bin.binId) {
+                                                handleClosePanel();
+                                            } else {
+                                                handleViewBin(bin);
+                                            }
+                                        }}
+                                    >
+                                        {isPanelOpen && selectedBin?.binId === bin.binId ? 'CLOSE' : 'VIEW'}
+                                    </AdminButton>
                                 ),
                             }))}
                         />

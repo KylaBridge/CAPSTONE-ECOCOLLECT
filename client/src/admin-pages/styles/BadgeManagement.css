@@ -247,37 +247,6 @@ html, body {
     gap: 10px;
 }
 
-.remove-button, .upload-button {
-    display: flex;
-    width: 100%;
-    height: auto;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    box-sizing: border-box;
-    padding: 8px 12px;
-    font-size: 0.85rem;
-    max-width: 140px;
-}
-.upload-button {
-     background-color: #3a7a3e;
-     color: white;
-}
-.remove-button {
-     background-color: #c84343;
-     color: white;
-}
-.upload-button:hover {
-     background-color: #2d6030;
-}
-.remove-button:hover {
-     background-color: #a13535;
-}
-
-
 .accepted-file-desc {
     color: #555;
     text-align: center;
@@ -337,28 +306,6 @@ html, body {
     font-weight: bold;
 }
 
-.form-buttons button.button-update {
-    background-color: #118653;
-    color: white;
-}
-.form-buttons button.button-update:not(:disabled):hover {
-    background-color: #0d6a42;
-}
-
-.form-buttons button.button-remove {
-    background-color: #d9534f;
-    color: white;
-}
-.form-buttons button.button-remove:not(:disabled):hover {
-     background-color: #c1423e;
-}
-
-.form-buttons button:disabled {
-    background-color: #cccccc;
-    color: #666666;
-    cursor: not-allowed;
-}
-
 /* --- Table Section --- */
 .badge-table-wrapper {
     max-height: 290px;
@@ -413,25 +360,7 @@ html, body {
     padding: 10px;
 }
 
-.badge-table-section .add-button {
-    background-color: #118653;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 0.8rem;
-}
-
-
-.badge-table-section .add-button:hover {
-    background-color: #0e653f;
-}
-
 .badge-table-section table button {
-    background-color: #76b182;
-    color: white;
     border: none;
     padding: 6px 10px;
     border-radius: 15px;
@@ -441,11 +370,6 @@ html, body {
     transition: background-color 0.3s ease;
     margin: 2px;
 }
-
-.badge-table-section table button:hover {
-    background-color: #608d69;
-}
-
 
 .badge-form-section.panel-closed {
     display: flex;

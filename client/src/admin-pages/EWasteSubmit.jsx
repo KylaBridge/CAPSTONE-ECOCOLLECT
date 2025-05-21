@@ -5,6 +5,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { MdOutlineZoomOutMap } from "react-icons/md";
 import "./styles/EWasteSubmit.css";
+import AdminButton from "../admin-components/AdminButton";
 
 export default function EWasteSubmit() {
     const [submissions, setSubmissions] = useState([]);
@@ -136,9 +137,14 @@ export default function EWasteSubmit() {
                                                 <td>{submission.submissionDate}</td>
                                                 <td>{submission.status}</td>
                                                 <td>
-                                                    <button onClick={() => handleDetailsClick(submission)}>
-                                                        {openSubmissionId === submission.id ? "CLOSE" : "DETAILS"}
-                                                    </button>
+                                                    <AdminButton
+                                                        type="view"
+                                                        size="small"
+                                                        isActive={openSubmissionId === submission.id}
+                                                        onClick={() => handleDetailsClick(submission)}
+                                                    >
+                                                        {openSubmissionId === submission.id ? "CLOSE" : "VIEW"}
+                                                    </AdminButton>
                                                 </td>
                                             </tr>
                                         ))
@@ -203,13 +209,14 @@ export default function EWasteSubmit() {
                                         </select>
                                     </div>
                                     <div className="panel-button">
-                                    <button 
-                                        className="button-update" 
+                                    <AdminButton
+                                        type="update"
+                                        size="medium"
                                         onClick={handleUpdateSubmission}
                                         disabled={statusValue === originalStatus}
                                     >
                                         UPDATE
-                                    </button>
+                                    </AdminButton>
                                     </div>
                                 </div>
                             </div>

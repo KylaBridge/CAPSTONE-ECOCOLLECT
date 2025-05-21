@@ -5,8 +5,8 @@ import Header from "../admin-components/Header";
 import "./styles/RewardManagement.css";
 import { FaSearch } from "react-icons/fa";
 import { TbPlayerTrackPrevFilled, TbPlayerTrackNextFilled } from "react-icons/tb";
-import PlaceholderImg from "../assets/icons/mrcpu.png";
 import { toast } from "react-hot-toast";
+import AdminButton from "../admin-components/AdminButton";
 
 export default function RewardManagement() {
   const [rewards, setRewards] = useState([]);
@@ -200,7 +200,7 @@ export default function RewardManagement() {
 
       <div className="rewards-table-container">
         <div className="reward-header-controls">
-          <button className="add-reward-button" onClick={handleAddReward}>+ Add Reward</button>
+          <AdminButton type="add" size="medium" onClick={handleAddReward}>Add Reward</AdminButton>
           <select className="sort-dropdown" onChange={(e) => setCategoryFilter(e.target.value)}>
             <option value="all">All Categories</option>
             <option value="merch">Merch</option>
@@ -277,12 +277,14 @@ export default function RewardManagement() {
                             id={`fileInput-${reward.id}`}
                             onChange={(e) => handleImageChange(reward.id, e.target.files[0])}
                           />
-                          <button
-                            className="replace-image-button"
+                          <AdminButton
+                            type="upload"
+                            size="small"
+                            className="reward-table-btn"
                             onClick={() => document.getElementById(`fileInput-${reward.id}`).click()}
                           >
                             {reward.image ? "Replace Image" : "Add Image"}
-                          </button>
+                          </AdminButton>
                         </>
                       )}
                       {editId !== reward.id && !reward.image && "No image"}
@@ -290,8 +292,10 @@ export default function RewardManagement() {
                     <td>
                       {editId === reward.id ? (
                         <>
-                          <button
-                            className="update-button"
+                          <AdminButton
+                            type={reward.id === newRewardId ? "save" : "update"}
+                            size="small"
+                            className="reward-table-btn"
                             onClick={handleUpdate}
                             disabled={
                               (reward.id === newRewardId && !isAddFormComplete()) ||
@@ -299,19 +303,21 @@ export default function RewardManagement() {
                             }
                           >
                             {reward.id === newRewardId ? "Save" : "Update"}
-                          </button>
+                          </AdminButton>
                           {reward.id === newRewardId ? (
-                            <button className="cancel-button" onClick={handleCancelAdd}>Cancel</button>
+                            <AdminButton type="cancel" size="small" className="reward-table-btn" onClick={handleCancelAdd}>Cancel</AdminButton>
                           ) : (
                             <>
-                              <button className="remove-button" onClick={() => handleRemove(reward.id)}>Delete</button>
-                              <button className="cancel-button" onClick={handleCancelEdit}>Cancel</button>
+                              <AdminButton type="remove" size="small" className="reward-table-btn" onClick={() => handleRemove(reward.id)}>Delete</AdminButton>
+                              <AdminButton type="cancel" size="small" className="reward-table-btn" onClick={handleCancelEdit}>Cancel</AdminButton>
                             </>
                           )}
                         </>
                       ) : (
-                        <button
-                          className="edit-button"
+                        <AdminButton
+                          type="update"
+                          size="small"
+                          className="reward-table-btn"
                           onClick={() => {
                             setOriginalReward({ ...reward });
                             setEditId(reward.id);
@@ -319,7 +325,7 @@ export default function RewardManagement() {
                           }}
                         >
                           Edit
-                        </button>
+                        </AdminButton>
                       )}
                     </td>
                   </tr>

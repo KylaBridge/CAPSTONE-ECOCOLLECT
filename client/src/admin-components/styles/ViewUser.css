@@ -64,23 +64,6 @@
     font-size: 1.2rem;
     color: #154d31;
 }
-
-.delete-btn {
-    background-color: #284c42;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    margin-top: 5px !important;
-    font-weight: bold;
-    border-radius: 5px;
-    font-size: 0.7rem;
-    width: 100%;
-  }
-  
-  .delete-btn:hover {
-    background-color: #336053;
-  }
   
   .user-contribution-container {
     display: flex;
@@ -208,10 +191,6 @@
   .user-details p,
   .username-title {
       text-align: center;
-  }
-
-  .delete-btn {
-      width: 100%;
   }
 
   .user-contribution-container {

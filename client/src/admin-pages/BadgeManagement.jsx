@@ -4,6 +4,7 @@ import './styles/BadgeManagement.css';
 import Header from "../admin-components/Header";
 import { AiOutlineUpload, AiOutlineDelete } from "react-icons/ai";
 import placeholderBadge from "../assets/icons/mrcpu.png";
+import AdminButton from "../admin-components/AdminButton";
 
 // Placeholder data for badges
 const placeholderBadgesData = [
@@ -206,7 +207,7 @@ export default function BadgeManagement() {
                                         <option value="points">Points</option>
                                     </select>
                                 <h3>Badge List</h3>
-                                <button className="add-button" onClick={handleAddBadge}>Add New Badge</button>
+                                <AdminButton type="add" size="medium" onClick={handleAddBadge}>Add New Badge</AdminButton>
                             </div>
                             <div className="badge-table-wrapper">
                                 <table className="badge-table-section">
@@ -232,19 +233,20 @@ export default function BadgeManagement() {
                                                 <td>{badge.name}</td>
                                                 <td>{badge.pointsRequired}</td>
                                                 <td>
-                                                <button
+                                                <AdminButton
+                                                    type="view"
+                                                    size="small"
+                                                    isActive={selectedBadge?.id === badge.id && isPanelOpen && viewedFromTable}
                                                     onClick={() => {
-                                                    if (selectedBadge?.id === badge.id && isPanelOpen && viewedFromTable) {
-                                                        handleClosePanel();
-                                                    } else {
-                                                        handleViewBadge(badge);
-                                                    }
+                                                        if (selectedBadge?.id === badge.id && isPanelOpen && viewedFromTable) {
+                                                            handleClosePanel();
+                                                        } else {
+                                                            handleViewBadge(badge);
+                                                        }
                                                     }}
                                                 >
-                                                    {selectedBadge?.id === badge.id && isPanelOpen && viewedFromTable
-                                                    ? "CLOSE"
-                                                    : "VIEW"}
-                                                </button>
+                                                    {selectedBadge?.id === badge.id && isPanelOpen && viewedFromTable ? "CLOSE" : "VIEW"}
+                                                </AdminButton>
                                                 </td>
                                             </tr>
                                             ))
@@ -272,12 +274,10 @@ export default function BadgeManagement() {
                                             <input type="file" accept=".png, .jpg, .jpeg, .gif" onChange={handleImageChange} id="imageInput" style={{ display: 'none' }} />
                                             <div className="upload-action-group">
                                                 {isImageSelected ? (
-                                                    <button type="button" className="remove-button" onClick={handleRemoveImage}>
-                                                        <AiOutlineDelete size={20} style={{ marginRight: "5px" }} /> REMOVE
-                                                    </button>
+                                                    <AdminButton type="remove" size="small" onClick={handleRemoveImage}>REMOVE</AdminButton>
                                                 ) : (
-                                                    <label htmlFor="imageInput" className="upload-button">
-                                                        <AiOutlineUpload size={20} style={{ marginRight: "5px" }} /> UPLOAD
+                                                    <label htmlFor="imageInput">
+                                                        <AdminButton type="upload" size="small" onClick={() => document.getElementById('imageInput').click()}>UPLOAD</AdminButton>
                                                     </label>
                                                 )}
                                                 <p className="accepted-file-desc">Accepted formats: png, jpg, gif</p>
@@ -303,17 +303,22 @@ export default function BadgeManagement() {
                                             <textarea value={badgeDescription} onChange={(e) => setBadgeDescription(e.target.value)} placeholder="Enter description..." required></textarea>
                                         </div>
                                         <div className="form-buttons">
-                                            <button type="button" className="button-update" onClick={handleSubmitBadge} disabled={!isFormValid}>
-                                                {selectedBadge?.id === 'new' ? 'ADD' : 'UPDATE'}
-                                            </button>
+                                            <AdminButton
+                                                type={selectedBadge?.id === 'new' ? 'save' : 'update'}
+                                                size="medium"
+                                                onClick={handleSubmitBadge}
+                                                disabled={!isFormValid}
+                                            >
+                                                {selectedBadge?.id === 'new' ? 'SAVE' : 'UPDATE'}
+                                            </AdminButton>
                                             {viewedFromTable && selectedBadge ? (
-                                                <button type="button" className="button-remove" onClick={() => handleRemoveBadge(selectedBadge)}>
+                                                <AdminButton type="remove" size="medium" onClick={() => handleRemoveBadge(selectedBadge)}>
                                                     REMOVE
-                                                </button>
+                                                </AdminButton>
                                             ) : (
-                                                <button type="button" className="button-remove" onClick={handleClosePanel}>
-                                                    CLOSE
-                                                </button>
+                                                <AdminButton type="cancel" size="medium" onClick={handleClosePanel}>
+                                                    CANCEL
+                                                </AdminButton>
                                             )}
                                         </div>
                                     </div>
