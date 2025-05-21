@@ -200,9 +200,6 @@ export default function BadgeManagement() {
         imagePreview !== initialBadgeValues?.imageUrl ||
         isImageSelected !== !!initialBadgeValues?.imageUrl);
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
-
     return (
         <>
             <AdminSidebar />
