@@ -16,7 +16,12 @@ const {
     addReward,
     updateReward,
     deleteReward,
-    getUserRedemptions
+    getUserRedemptions,
+    getAllBadges,
+    addBadge,
+    updateBadge,
+    deleteBadge,
+    getBadgeCount
 } = require('../controllers/adminController');
 const { 
     submitEWaste, 
@@ -35,6 +40,12 @@ if (!fs.existsSync(uploadDirectory)) {
 const rewardsDirectory = path.join(__dirname, "..", "uploads", "rewards");
 if (!fs.existsSync(rewardsDirectory)) {
     fs.mkdirSync(rewardsDirectory, { recursive: true });
+}
+
+// Ensure badges images folder exists
+const badgesDirectory = path.join(__dirname, "..", "uploads", "badges");
+if (!fs.existsSync(badgesDirectory)) {
+    fs.mkdirSync(badgesDirectory, { recursive: true });
 }
 
 const storage = multer.diskStorage({
@@ -57,8 +68,19 @@ const rewardsStorage = multer.diskStorage({
     }
 });
 
+const badgesStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "uploads/badges/"); // Store badge images in a separate folder
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, 'badge-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
 const upload = multer({ storage: storage });
 const rewardsUpload = multer({ storage: rewardsStorage });
+const badgesUpload = multer({ storage: badgesStorage });
 
 // Admin Routes
 router.get("/user/ewastes", getEwastes);
@@ -73,6 +95,13 @@ router.post("/rewards", rewardsUpload.single("image"), addReward);
 router.put("/rewards/:id", rewardsUpload.single("image"), updateReward);
 router.delete("/rewards/:id", deleteReward);
 router.get("/redeem/user/:userId", getUserRedemptions);
+
+// Badge Management Routes
+router.get("/badges", getAllBadges);
+router.get("/badges/count", getBadgeCount);
+router.post("/badges", badgesUpload.single("image"), addBadge);
+router.put("/badges/:id", badgesUpload.single("image"), updateBadge);
+router.delete("/badges/:id", deleteBadge);
 
 // User Routes
 router.post("/ewaste", upload.array("attachments", 5), submitEWaste);
