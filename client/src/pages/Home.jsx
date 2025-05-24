@@ -17,6 +17,8 @@ export default function Home() {
     const [showNavbar, setShowNavbar] = useState(false)
     const { user, loading } = useContext(UserContext);
     const [submissionCount, setSubmissionCount] = useState(0);
+    const [currentBadge, setCurrentBadge] = useState(null);
+    const [nextBadge, setNextBadge] = useState(null);
 
     const currentPoints = user?.points || 0;
 
@@ -30,6 +32,34 @@ export default function Home() {
                 })
                 .catch((error) => {
                     console.error("Error fetching submission count:", error);
+                });
+
+            // Fetch badges
+            axios
+                .get('/api/ecocollect/badges')
+                .then((response) => {
+                    const badges = response.data;
+                    // Find current badge based on user's rank
+                    const current = badges.find(badge => badge.name === user.rank);
+                    if (current) {
+                        setCurrentBadge({
+                            ...current,
+                            image: current.image ? `http://localhost:3000/${current.image.path}` : Badge
+                        });
+                    }
+
+                    // Find next badge (the one with higher points required)
+                    const sortedBadges = badges.sort((a, b) => a.pointsRequired - b.pointsRequired);
+                    const next = sortedBadges.find(badge => badge.pointsRequired > user.exp);
+                    if (next) {
+                        setNextBadge({
+                            ...next,
+                            image: next.image ? `http://localhost:3000/${next.image.path}` : NextBadge
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching badges:", error);
                 });
         }
     }, [user]);
@@ -83,15 +113,29 @@ export default function Home() {
                         <div className="current-reward-item">
                             <h1>Current Badge</h1>
                             <div className="current-reward-image-container">
-                                <img src={Badge} alt="Current Badge Reward" />
-                                <p>Get after joining</p>
+                                <img 
+                                    src={currentBadge?.image || Badge} 
+                                    alt={currentBadge?.name || "Current Badge"} 
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = Badge;
+                                    }}
+                                />
+                                <p>{currentBadge?.description || "Get after joining"}</p>
                             </div>
                         </div>
                         <div className="next-reward-item">
                             <h1>Next Badge</h1>
                             <div className="next-reward-image-container">
-                                <img src={NextBadge} alt="Next Badge Reward" />
-                                <p>Earn 100 points to unlock</p>
+                                <img 
+                                    src={nextBadge?.image || NextBadge} 
+                                    alt={nextBadge?.name || "Next Badge"}
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = NextBadge;
+                                    }}
+                                />
+                                <p>{nextBadge ? `Earn ${nextBadge.pointsRequired} points to unlock` : "Earn 100 points to unlock"}</p>
                             </div>
                             <img src={LockIcon} alt="Locked" className="overlay-image" />
                         </div>

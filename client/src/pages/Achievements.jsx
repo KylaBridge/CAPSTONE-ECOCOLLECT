@@ -1,11 +1,13 @@
-import { useState } from "react"
+import { useState, useEffect, useContext } from "react"
 import "./styles/Achievements.css"
 import { FiShare2, FiX, FiZoomIn} from "react-icons/fi"
 import LockIcon  from "../assets/icons/lockicon.png"
+import axios from "axios"
 
 // Components and Pages
 import Sidebar from "../components/Sidebar"
 import Header from "../components/Header"
+import { UserContext } from "../context/userContext"
 
 //assets
 import Badge1 from "../assets/badges/current-badge.png"
@@ -23,25 +25,29 @@ import HomeHeaderTitle from "../assets/headers/home-header.png"
 
 export default function Achievements() {
   const [showNavbar, setShowNavbar] = useState(false)
-  // Mock data
-  const userPoints = 30;
-
+  const [badges, setBadges] = useState([])
   const [selectedBadge, setSelectedBadge] = useState(null)
+  const { user } = useContext(UserContext)
 
-  const badges = [
-    { id: 1, name: "Eco Starter", img: Badge1, requiredPoints: 10, description: "Donate your first E-waste" },
-    { id: 2, name: "Eco Explorer", img: Badge2, requiredPoints: 20, description: "Donate three times!" },
-    { id: 3, name: "Green Beginner", img: Badge3, requiredPoints: 30, description: "Off to a great start!" },
-    { id: 4, name: "Recycling Rookie", img: Badge4, requiredPoints: 40, description: "You're getting there!" },
-    { id: 5, name: "Eco Learner", img: Badge5, requiredPoints: 50, description: "Donate your organs to unlock" },
-    { id: 6, name: "Green Enthusiast", img: Badge6, requiredPoints: 60, description: "You're in the zone!" },
-    { id: 7, name: "Earth Ally", img: Badge7, requiredPoints: 70, description: "The planet thanks you!" },
-    { id: 8, name: "E-Waste Guardian", img: Badge8, requiredPoints: 80, description: "A true defender!" },
-    { id: 9, name: "Eco Novice", img: Badge9, requiredPoints: 90, description: "On your way to legend!" },
-    { id: 10, name: "Eco Starter", img: Badge10, requiredPoints: 100, description: "Back to basics badge." },
-    { id: 11, name: "Eco Explorer", img: Badge11, requiredPoints: 110, description: "Explorer vibes 2.0!" },
-  ]
+  useEffect(() => {
+    const fetchBadges = async () => {
+      try {
+        const response = await axios.get('/api/ecocollect/badges')
+        const badgesWithImages = response.data.map(badge => ({
+          ...badge,
+          img: badge.image ? `http://localhost:3000/${badge.image.path}` : Badge1,
+          requiredPoints: badge.pointsRequired
+        }))
+        // Sort badges by points required
+        badgesWithImages.sort((a, b) => a.requiredPoints - b.requiredPoints)
+        setBadges(badgesWithImages)
+      } catch (error) {
+        console.error('Error fetching badges:', error)
+      }
+    }
 
+    fetchBadges()
+  }, [])
 
   return (
     <>
@@ -52,16 +58,24 @@ export default function Achievements() {
           <h2 className="badge-header-title">Badge <br /> Collections</h2>
           <div className="badge-scroll-container">
           {badges.map((badge, index) => (
-            <div key={index} className="badge-card" onClick={() => setSelectedBadge(badge)}>
+            <div key={badge._id || index} className="badge-card" onClick={() => setSelectedBadge(badge)}>
               <div className="badge-wrapper">
-                <div className={`badge-bg-square ${userPoints < badge.requiredPoints ? 'locked' : ''}`}>
-                  <img src={badge.img} alt={badge.name} className="badge-img" />
+                <div className={`badge-bg-square ${user?.exp < badge.requiredPoints ? 'locked' : ''}`}>
+                  <img 
+                    src={badge.img} 
+                    alt={badge.name} 
+                    className="badge-img"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = Badge1;
+                    }}
+                  />
                 </div>    
-                  {userPoints < badge.requiredPoints && (
+                  {user?.exp < badge.requiredPoints && (
                     <img src={LockIcon} alt="Locked" className="lock-icon" />
                   )}
                 <span
-                  className={`badge-tap-icon ${userPoints < badge.requiredPoints ? 'locked-icon' : 'unlocked-icon'}`}
+                  className={`badge-tap-icon ${user?.exp < badge.requiredPoints ? 'locked-icon' : 'unlocked-icon'}`}
                 >
                   <FiZoomIn size={16} />
                 </span>
@@ -80,12 +94,20 @@ export default function Achievements() {
             <button className="modal-close-btn" onClick={() => setSelectedBadge(null)}>
               <FiX size={24} />
             </button>
-            <img src={selectedBadge.img} alt={selectedBadge.name} className="badge-modal-img" />
+            <img 
+              src={selectedBadge.img} 
+              alt={selectedBadge.name} 
+              className="badge-modal-img"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = Badge1;
+              }}
+            />
             <h3>{selectedBadge.name}</h3>
             <p>{selectedBadge.description}</p>
             <button
-              className={`share-button ${userPoints < selectedBadge.requiredPoints ? 'disabled' : ''}`}
-              disabled={userPoints < selectedBadge.requiredPoints}
+              className={`share-button ${user?.exp < selectedBadge.requiredPoints ? 'disabled' : ''}`}
+              disabled={user?.exp < selectedBadge.requiredPoints}
             >
               <FiShare2 /> Share
             </button>
