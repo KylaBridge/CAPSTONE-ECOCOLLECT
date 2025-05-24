@@ -24,7 +24,7 @@ import HomeHeaderTitle from "../assets/headers/home-header.png"
 export default function Achievements() {
   const [showNavbar, setShowNavbar] = useState(false)
   // Mock data
-  const userPoints = 30; // This would be dynamic based on the user's data
+  const userPoints = 30;
 
   const [selectedBadge, setSelectedBadge] = useState(null)
 

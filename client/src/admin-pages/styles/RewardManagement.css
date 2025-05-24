@@ -166,10 +166,8 @@ position: sticky;
   padding: 5px 5px;
   justify-content: center;
   margin: 2px 0;
-  /* Add any other custom styles you want for table buttons */
 }
 
-/* Optionally, center the buttons in the table cell */
 .rewards-table td {
   text-align: center;
   vertical-align: middle;
