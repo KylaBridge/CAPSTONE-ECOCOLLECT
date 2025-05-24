@@ -5,7 +5,7 @@ const Redemption = require('../models/redemption');
 const Badge = require('../models/badge');
 const path = require("path");
 const fs = require("fs");
-const { getRank } = require('../helpers/rank');
+const { updateUserRank } = require('../controllers/userController');
 
 //
 // ------------------ E-WASTE SUBMISSIONS ------------------
@@ -82,8 +82,8 @@ const updateSubmissionStatus = async (req, res) => {
       if (user) {
         user.points += 5;
         user.exp += 20;
-        user.rank = getRank(user.exp);
         await user.save();
+        await updateUserRank(user._id);
       }
     }
 

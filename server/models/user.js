@@ -17,7 +17,7 @@ const userSchema = new Schema({
     },
     rank: {
         type: String,
-        default: "Eco Starter"
+        default: "Beginner"
     },
     points: {
         type: Number,

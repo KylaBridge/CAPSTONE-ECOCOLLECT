@@ -2,6 +2,38 @@ const EWaste = require('../models/ewaste');
 const Redemption = require('../models/redemption');
 const User = require('../models/user');
 const Reward = require('../models/rewards');
+const Badge = require('../models/badge');
+
+// Update user rank based on badges
+const updateUserRank = async (userId) => {
+    try {
+        const user = await User.findById(userId);
+        if (!user) return null;
+
+        // Get all badges and sort by points required
+        const badges = await Badge.find().sort({ pointsRequired: -1 });
+        
+        // Find the highest badge the user qualifies for
+        let highestBadge = null;
+        for (const badge of badges) {
+            if (user.exp >= badge.pointsRequired) {
+                highestBadge = badge;
+                break;
+            }
+        }
+
+        // Update user's rank if they have a qualifying badge
+        if (highestBadge) {
+            user.rank = highestBadge.name;
+            await user.save();
+        }
+
+        return user;
+    } catch (err) {
+        console.error('Error updating user rank:', err);
+        return null;
+    }
+};
 
 // Submit EWaste :user
 const submitEWaste = async (req, res) => {
@@ -102,5 +134,6 @@ module.exports = {
     submitEWaste,
     userSubmitCount,
     getUserSubmissions,
-    redeemReward
+    redeemReward,
+    updateUserRank
 };
