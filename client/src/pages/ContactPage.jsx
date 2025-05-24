@@ -141,7 +141,6 @@ export default function ContactPage() {
             <div className="secured-data">
               <h3>Secured Data</h3>
               <div className="info-item">
-                {/* <FaShield className="info-icon" /> */}
                 <p>Your data is protected and will only be used for EcoCollect communications.</p>
               </div>
             </div>

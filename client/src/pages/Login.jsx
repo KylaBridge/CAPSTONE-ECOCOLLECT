@@ -11,7 +11,7 @@ import PartnershipLogos from "../assets/partnershiplogos.png";
 
 export default function Login() {
     const navigate = useNavigate();
-    const { setUser } = useContext(UserContext); // ✅ Grab setUser from context
+    const { setUser } = useContext(UserContext);
 
     async function loggingIn(formData) {
         const data = Object.fromEntries(formData);
@@ -27,7 +27,7 @@ export default function Login() {
             if (response.error) {
                 toast.error(response.error);
             } else if (response.role === "admin") {
-                setUser(response); // response *is* the user object
+                setUser(response);
                 toast.success("Admin logged in");
                 navigate("/admin/dashboard");
             } else {
