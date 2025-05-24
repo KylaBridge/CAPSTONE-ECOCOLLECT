@@ -397,6 +397,160 @@ const getBadgeCount = async (req, res) => {
   }
 };
 
+// Get total redemption count
+const getRedemptionCount = async (req, res) => {
+  try {
+    const count = await Redemption.countDocuments();
+    res.status(200).json({ count });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to get redemption count" });
+  }
+};
+
+// Get reward redemption statistics
+const getRewardRedemptionStats = async (req, res) => {
+  try {
+    const { period } = req.query; // 'weekly' or 'monthly'
+    
+    // Get the date range based on period
+    const now = new Date();
+    const startDate = new Date();
+    if (period === 'weekly') {
+      startDate.setDate(now.getDate() - 7);
+    } else {
+      startDate.setMonth(now.getMonth() - 1);
+    }
+
+    // Aggregate redemptions by reward
+    const redemptions = await Redemption.aggregate([
+      {
+        $match: {
+          redemptionDate: { $gte: startDate, $lte: now }
+        }
+      },
+      {
+        $lookup: {
+          from: 'rewards',
+          localField: 'rewardId',
+          foreignField: '_id',
+          as: 'reward'
+        }
+      },
+      {
+        $unwind: '$reward'
+      },
+      {
+        $group: {
+          _id: '$reward.name',
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { count: -1 }
+      }
+    ]);
+
+    res.status(200).json(redemptions);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to get reward redemption stats" });
+  }
+};
+
+// Get user participation data
+const getUserParticipationData = async (req, res) => {
+  try {
+    const { year, viewType } = req.query;
+    const startDate = new Date(year, 0, 1);
+    const endDate = new Date(year, 11, 31);
+
+    let groupBy;
+    let dateFormat;
+
+    switch (viewType) {
+      case 'Daily':
+        groupBy = { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } };
+        dateFormat = "%Y-%m-%d";
+        break;
+      case 'Weekly':
+        groupBy = { $dateToString: { format: "%Y-%U", date: "$createdAt" } };
+        dateFormat = "%Y-%U";
+        break;
+      case 'Monthly':
+        groupBy = { $dateToString: { format: "%Y-%m", date: "$createdAt" } };
+        dateFormat = "%Y-%m";
+        break;
+      default:
+        groupBy = { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } };
+        dateFormat = "%Y-%m-%d";
+    }
+
+    // Get submissions count
+    const submissions = await EWaste.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: startDate, $lte: endDate }
+        }
+      },
+      {
+        $group: {
+          _id: groupBy,
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { _id: 1 }
+      }
+    ]);
+
+    // Get redemptions count
+    const redemptions = await Redemption.aggregate([
+      {
+        $match: {
+          redemptionDate: { $gte: startDate, $lte: endDate }
+        }
+      },
+      {
+        $group: {
+          _id: groupBy,
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { _id: 1 }
+      }
+    ]);
+
+    // Get signups count
+    const signups = await User.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: startDate, $lte: endDate }
+        }
+      },
+      {
+        $group: {
+          _id: groupBy,
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { _id: 1 }
+      }
+    ]);
+
+    res.status(200).json({
+      submissions,
+      redemptions,
+      signups
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to get user participation data" });
+  }
+};
+
 module.exports = {
   // E-waste submissions
   getEwastes,
@@ -417,11 +571,18 @@ module.exports = {
 
   // Redemption history
   getUserRedemptions,
+  getRedemptionCount,
 
   // Badge management
   getAllBadges,
   addBadge,
   updateBadge,
   deleteBadge,
-  getBadgeCount
+  getBadgeCount,
+
+  // Reward redemption statistics
+  getRewardRedemptionStats,
+
+  // User participation data
+  getUserParticipationData
 };

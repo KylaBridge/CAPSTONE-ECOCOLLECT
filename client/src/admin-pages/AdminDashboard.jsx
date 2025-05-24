@@ -13,6 +13,7 @@ import './styles/AdminDashboard.css';
 
 export default function AdminDashboard() {
   const [roleCounts, setRoleCounts] = useState({ userCount: 0, adminCount: 0 });
+  const [redemptionCount, setRedemptionCount] = useState(0);
   const totalUsers = roleCounts.userCount + roleCounts.adminCount;
 
   const [ewasteCount, setEwasteCount] = useState({
@@ -49,8 +50,18 @@ export default function AdminDashboard() {
       }
     };
 
+    const fetchRedemptionCount = async () => {
+      try {
+        const response = await axios.get('/api/ecocollect/rewards/redemption-count');
+        setRedemptionCount(response.data.count);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
     fetchRoleCount();
     fetchEwasteCount();
+    fetchRedemptionCount();
   }, []);
 
   const iconMap = {
@@ -146,7 +157,7 @@ export default function AdminDashboard() {
           <div className="reward-container">
             <h2>Reward Redemptions</h2>
             <div className="rewardtotal-bar">
-              <strong>Total: 142</strong>
+              <strong>Total: {redemptionCount || "..."}</strong>
             </div>
             <div className="rewards-grid">
               <h4 className="rewards-label">Top rewards</h4>
