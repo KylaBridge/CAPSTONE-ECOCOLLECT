@@ -13,6 +13,7 @@
     "axios": "^1.8.2",
     "chart.js": "^4.4.9",
     "chartjs-plugin-datalabels": "^2.2.0",
+    "html2canvas": "^1.4.1",
     "icons": "^1.0.0",
     "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
