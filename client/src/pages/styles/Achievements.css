@@ -221,6 +221,114 @@
     }
   }
 
+
+.milestone-value {
+  font-size: 0.7rem;
+  color: #666;
+}
+
+.share-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.social-share-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.social-share-btn:hover {
+  opacity: 0.9;
+}
+
+.social-share-btn.facebook {
+  background-color: #1877f2;
+}
+
+.social-share-btn.twitter {
+  background-color: #1da1f2;
+}
+
+.social-share-btn.instagram {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+}
+
+.share-card-template {
+  width: 600px;
+  height: 400px;
+  background-color: #e0e6b2;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.share-card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  color: white;
+  text-align: center;
+}
+
+.share-card-badge {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.share-card-content h2 {
+  font-size: 2rem;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  font-family: 'Luckiest Guy', cursive;
+}
+
+.share-card-content p {
+  font-size: 1.2rem;
+  margin: 10px 0;
+  max-width: 80%;
+  line-height: 1.4;
+}
+
+.share-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.share-card-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.share-card-footer p {
+  font-size: 1rem;
+  margin: 0;
+  opacity: 0.9;
+}
+
+
   @media (min-width: 400px) {
     .badge-card {
       width: 108px;

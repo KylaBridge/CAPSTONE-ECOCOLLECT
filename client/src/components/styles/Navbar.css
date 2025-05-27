@@ -81,7 +81,8 @@
     display: flex !important;
     position: static;
     flex-direction: row;
-    align-items: flex-end;
+    align-items: center;
+    justify-content: flex-end;
     background: none;
     padding: 0;
     width: 45%;

@@ -1,8 +1,9 @@
-import { useState, useEffect, useContext } from "react"
+import { useState, useEffect, useContext, useRef } from "react"
 import "./styles/Achievements.css"
-import { FiShare2, FiX, FiZoomIn} from "react-icons/fi"
+import { FiShare2, FiX, FiZoomIn, FiFacebook, FiTwitter, FiInstagram, FiDownload } from "react-icons/fi"
 import LockIcon  from "../assets/icons/lockicon.png"
 import axios from "axios"
+import html2canvas from 'html2canvas'
 
 // Components and Pages
 import Sidebar from "../components/Sidebar"
@@ -11,22 +12,16 @@ import { UserContext } from "../context/userContext"
 
 //assets
 import Badge1 from "../assets/badges/current-badge.png"
-import Badge2 from "../assets/badges/next-badge.png"
-import Badge3 from "../assets/badges/badge3.png"
-import Badge4 from "../assets/badges/badge4.png"
-import Badge5 from "../assets/badges/badge5.png"
-import Badge6 from "../assets/badges/badge6.png"
-import Badge7 from "../assets/badges/badge7.png"
-import Badge8 from "../assets/badges/badge8.png"
-import Badge9 from "../assets/badges/badge9.png"
-import Badge10 from "../assets/badges/badge10.png"
-import Badge11 from "../assets/badges/badge11.png"
 import HomeHeaderTitle from "../assets/headers/home-header.png"
+import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
 
 export default function Achievements() {
   const [showNavbar, setShowNavbar] = useState(false)
   const [badges, setBadges] = useState([])
   const [selectedBadge, setSelectedBadge] = useState(null)
+  const [showShareOptions, setShowShareOptions] = useState(false)
+  const [isGeneratingShareCard, setIsGeneratingShareCard] = useState(false)
+  const shareCardRef = useRef(null)
   const { user } = useContext(UserContext)
 
   useEffect(() => {
@@ -48,6 +43,100 @@ export default function Achievements() {
 
     fetchBadges()
   }, [])
+
+  const generateShareCard = async () => {
+    if (!shareCardRef.current) return null;
+    
+    setIsGeneratingShareCard(true);
+    try {
+      // Wait for the image to load before generating the canvas
+      const badgeImage = shareCardRef.current.querySelector('.share-card-badge');
+      if (badgeImage) {
+        await new Promise((resolve, reject) => {
+          if (badgeImage.complete) {
+            resolve();
+          } else {
+            badgeImage.onload = resolve;
+            badgeImage.onerror = reject;
+          }
+        });
+      }
+
+      const canvas = await html2canvas(shareCardRef.current, {
+        scale: 2,
+        backgroundColor: null,
+        logging: false,
+        useCORS: true, // Enable CORS for images
+        allowTaint: true, // Allow cross-origin images
+      });
+      return canvas.toDataURL('image/png');
+    } catch (error) {
+      console.error('Error generating share card:', error);
+      return null;
+    } finally {
+      setIsGeneratingShareCard(false);
+    }
+  };
+
+  const handleShare = async () => {
+    const shareCard = await generateShareCard();
+    if (!shareCard) {
+      setShowShareOptions(true);
+      return;
+    }
+
+    const shareData = {
+      title: `EcoCollect Badge: ${selectedBadge.name}`,
+      text: `I earned the ${selectedBadge.name} badge on EcoCollect!`,
+      url: window.location.href,
+      files: [new File([await (await fetch(shareCard)).blob()], 'badge.png', { type: 'image/png' })]
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.error('Error sharing:', err);
+        setShowShareOptions(true);
+      }
+    } else {
+      setShowShareOptions(true);
+    }
+  };
+
+  const shareToSocialMedia = async (platform) => {
+    const shareCard = await generateShareCard();
+    if (!shareCard) {
+      alert('Failed to generate share card. Please try again.');
+      return;
+    }
+
+    const shareText = encodeURIComponent(`I earned the ${selectedBadge.name} badge on EcoCollect!`);
+    const shareUrl = encodeURIComponent(window.location.href);
+    
+    let shareLink = '';
+    switch(platform) {
+      case 'facebook':
+        shareLink = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}&quote=${shareText}`;
+        break;
+      case 'twitter':
+        shareLink = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
+        break;
+      case 'instagram':
+        // For Instagram, we'll provide a download option
+        const link = document.createElement('a');
+        link.href = shareCard;
+        link.download = 'eco-collect-badge.png';
+        link.click();
+        alert('Badge image downloaded! You can now share it on Instagram.');
+        return;
+      default:
+        return;
+    }
+    
+    window.open(shareLink, '_blank', 'width=600,height=400');
+    setShowShareOptions(false);
+  };
 
   return (
     <>
@@ -87,11 +176,46 @@ export default function Achievements() {
       </div>
     </div>
 
+      {/* Hidden Share Card Template */}
+      <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
+        <div ref={shareCardRef} className="share-card-template">
+          <div className="share-card-content">
+            <img 
+              src={selectedBadge?.img} 
+              alt={selectedBadge?.name} 
+              className="share-card-badge"
+              crossOrigin="anonymous"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = Badge1;
+              }}
+            />
+            <h2>{selectedBadge?.name}</h2>
+            <p>{selectedBadge?.description}</p>
+            <div className="share-card-footer">
+              <img 
+                src={EcoCollectLogo} 
+                alt="EcoCollect" 
+                className="share-card-logo"
+                crossOrigin="anonymous"
+              />
+              <p>EcoCollect Achievement</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Modal */}
       {selectedBadge && (
-        <div className="badge-modal-overlay" onClick={() => setSelectedBadge(null)}>
+        <div className="badge-modal-overlay" onClick={() => {
+          setSelectedBadge(null);
+          setShowShareOptions(false);
+        }}>
           <div className="badge-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close-btn" onClick={() => setSelectedBadge(null)}>
+            <button className="modal-close-btn" onClick={() => {
+              setSelectedBadge(null);
+              setShowShareOptions(false);
+            }}>
               <FiX size={24} />
             </button>
             <img 
@@ -105,12 +229,30 @@ export default function Achievements() {
             />
             <h3>{selectedBadge.name}</h3>
             <p>{selectedBadge.description}</p>
+            <p className="badge-milestone">
+              <span className="milestone-value">{selectedBadge.milestoneCondition}</span>
+            </p>
             <button
               className={`share-button ${user?.exp < selectedBadge.requiredPoints ? 'disabled' : ''}`}
-              disabled={user?.exp < selectedBadge.requiredPoints}
+              disabled={user?.exp < selectedBadge.requiredPoints || isGeneratingShareCard}
+              onClick={handleShare}
             >
-              <FiShare2 /> Share
+              {isGeneratingShareCard ? 'Generating...' : <><FiShare2 /> Share</>}
             </button>
+
+            {showShareOptions && (
+              <div className="share-options">
+                <button onClick={() => shareToSocialMedia('facebook')} className="social-share-btn facebook">
+                  <FiFacebook /> Facebook
+                </button>
+                <button onClick={() => shareToSocialMedia('twitter')} className="social-share-btn twitter">
+                  <FiTwitter /> Twitter
+                </button>
+                <button onClick={() => shareToSocialMedia('instagram')} className="social-share-btn instagram">
+                  <FiInstagram /> Download for Instagram
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
