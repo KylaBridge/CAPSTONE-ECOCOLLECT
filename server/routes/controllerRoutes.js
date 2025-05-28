@@ -24,7 +24,8 @@ const {
     getBadgeCount,
     getRedemptionCount,
     getRewardRedemptionStats,
-    getUserParticipationData
+    getUserParticipationData,
+    getAllRedemptions
 } = require('../controllers/adminController');
 const { 
     submitEWaste, 
@@ -98,6 +99,7 @@ router.post("/rewards", rewardsUpload.single("image"), addReward);
 router.put("/rewards/:id", rewardsUpload.single("image"), updateReward);
 router.delete("/rewards/:id", deleteReward);
 router.get("/redeem/user/:userId", getUserRedemptions);
+router.get("/redeem/all", getAllRedemptions);
 router.get("/rewards/redemption-count", getRedemptionCount);
 router.get("/rewards/redemption-stats", getRewardRedemptionStats);
 router.get("/analytics/participation", getUserParticipationData);
