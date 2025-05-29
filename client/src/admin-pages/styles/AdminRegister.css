@@ -1,4 +1,4 @@
-.admin-login-page {
+.admin-register-page {
     background-color: #284c42;
     min-height: 100vh;
     display: flex;
@@ -15,7 +15,7 @@
     overflow: hidden;
   }
   
-  .admin-login-left {
+  .admin-register-left {
     flex: 1;
     display: flex;
     justify-content: center;
@@ -23,7 +23,7 @@
     overflow: hidden;
   }
   
-  .admin-login-left img.forest-characters {
+  .admin-register-left img.forest-characters {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -31,7 +31,7 @@
     display: block;
   }
   
-  .admin-login-right {
+  .admin-register-right {
     flex: 1;
     background: linear-gradient(to bottom, #0f2922, #567d63);
     display: flex;
@@ -42,12 +42,12 @@
     position: relative;
   }
   
-  .admin-login-right .logo {
+  .admin-register-right .logo {
     width: 100px;
     margin-bottom: 20px;
   }
   
-  .admin-login-right form {
+  .admin-register-right form {
     background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(124, 167, 140, 0.8));
     padding: 25px;
     border-radius: 30px;
@@ -84,7 +84,7 @@
     border: 1px solid white;
   }
   
-  .login-btn {
+  .register-btn {
     font-size: 1.2rem;
     padding: 10px;
     border-radius: 50px;
@@ -97,7 +97,7 @@
     transition: 0.3s;
   }
   
-  .login-btn:hover {
+  .register-btn:hover {
     background-color: #3d6c5b;
   }
   
@@ -127,24 +127,19 @@
     margin-top: 20px;
     object-fit: contain;
   }
-
-  .register-admin-el {
+  
+  .login-link {
     text-align: center;
     margin-top: 10px;
   }
   
-  .register-link {
-    text-align: center;
-    margin-top: 10px;
-  }
-  
-  .register-link a {
+  .login-link a {
     color: white;
     text-decoration: none;
     font-weight: bold;
   }
   
-  .register-link a:hover {
+  .login-link a:hover {
     text-decoration: underline;
   }
   
@@ -152,4 +147,4 @@
     .partnership-logos {
         width: 100px;
     }
-  }
+  } 

@@ -56,7 +56,7 @@ export default function Login() {
                 <button className="login-btn">LOG IN</button>
                 <p className="register-el">
                     Don't have an account?
-                    <Link className="register-btn" to="/register"> Register</Link>
+                    <Link className="register-link" to="/register"> Register</Link>
                     </p>
                 <p className="or-seperator">or</p>
                 <button className="microsoftAcc-btn">Continue with Microsoft</button>

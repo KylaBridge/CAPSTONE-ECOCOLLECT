@@ -7,6 +7,7 @@ import { UserContextProvider } from "./context/userContext.jsx"
 import Home from "./pages/Home.jsx"
 import Login from "./pages/Login.jsx"
 import Register from "./pages/Register.jsx"
+import AdminRegister from "./admin-pages/AdminRegister.jsx"
 import EWasteSubmission from "./pages/EWasteSubmission.jsx"
 import Achievements from "./pages/Achievements.jsx"
 import AdminDashboard from "./admin-pages/AdminDashboard.jsx"
@@ -47,6 +48,7 @@ export default function App() {
 
         {/*Admin Routes */}
         <Route path="/admin/login" element={<AdminLogIn />} />
+        <Route path="/admin/register" element={<AdminRegister />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/usermanagement" element={<UserManagement />} />
         <Route path="/admin/analyticsdashboard" element={<AnalyticsDashboard />} />
