@@ -1,10 +1,42 @@
 import "./styles/AdminLoginPage.css";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import axios from "axios";
+import { useContext } from "react";
+import { UserContext } from "../context/userContext";
 import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
 import BackgroundImage from "../assets/bgphoto-ecocollect.png";
-import PartnershipLogos from "../assets/partnershiplogos.png";
-import { Link } from "react-router-dom";
+import PartnershipLogos from "../assets/partnershiplogos.png"
 
 export default function AdminLogIn(){
+    const navigate = useNavigate();
+    const { setUser } = useContext(UserContext);
+
+    async function loggingIn(formData) {
+        const data = Object.fromEntries(formData);
+        const { email, password } = data;
+
+        try {
+            const { data: response } = await axios.post("/api/ecocollect/auth/login", { 
+                email, password 
+            });
+
+            console.log("Server Response:", response);
+
+            if (response.error) {
+                toast.error(response.error);
+            } else if (response.role === "user") {
+                toast.error("You are not authorized to access this page");
+            } else {
+                setUser(response);
+                toast.success("Admin logged in");
+                navigate("/admin/dashboard");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
      return (
         <div className="admin-login-page">
             <div className="bg-form-container">
@@ -14,7 +46,7 @@ export default function AdminLogIn(){
                 
                 <div className="admin-login-right">
                     <img className="logo" src={EcoCollectLogo} alt="EcoCollect Logo" />
-                    <form>
+                    <form action={loggingIn}>
                         <h1>Admin Login</h1>
                         <p className="welcome-title">Welcome to EcoCollect!</p>
                 

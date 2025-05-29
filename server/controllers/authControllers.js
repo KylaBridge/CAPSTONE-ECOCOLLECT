@@ -2,8 +2,38 @@ const User = require("../models/user")
 const { comparePassword, hashPassword } = require("../helpers/auth")
 const jwt = require("jsonwebtoken")
 
-const test = (req, res) => {
-    res.json("test is working")
+// Register admin
+const registerAdmin = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // Check if email exists
+        const exist = await User.findOne({ email });
+        if (exist) {
+            return res.json({
+                error: "Email is already taken"
+            });
+        }
+
+        // Check if password is good
+        if (!password || password.length < 6) {
+            return res.json({
+                error: "Password should be at least 6 characters long"
+            });
+        }
+
+        // Creates the admin user in the database
+        const hashedPassword = await hashPassword(password);
+        const admin = await User.create({
+            email,
+            password: hashedPassword,
+            role: "admin" // Set role to admin
+        });
+        return res.json(admin);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
 }
 
 // Register user
@@ -108,7 +138,7 @@ const logoutUser = (req, res) => {
 };
 
 module.exports = {
-    test,
+    registerAdmin,
     registerUser,
     loginUser,
     getProfile,

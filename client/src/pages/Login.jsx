@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useContext } from "react";
-
 import { UserContext } from "../context/userContext";
 import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
 import PartnershipLogos from "../assets/partnershiplogos.png";
@@ -26,10 +25,6 @@ export default function Login() {
 
             if (response.error) {
                 toast.error(response.error);
-            } else if (response.role === "admin") {
-                setUser(response);
-                toast.success("Admin logged in");
-                navigate("/admin/dashboard");
             } else {
                 setUser(response);
                 toast.success("User logged in");

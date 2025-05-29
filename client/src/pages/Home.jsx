@@ -74,7 +74,7 @@ export default function Home() {
                         <Userprofile/>
                     </div>
 
-                    <h1 className="rank-title">Highest Rank</h1>
+                    <h1 className="rank-title">Rank</h1>
                     <div className="rank-container">
                         <div className="merit">
                             <h2>{user?.rank || "Loading..."}</h2>
