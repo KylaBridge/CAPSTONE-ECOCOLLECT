@@ -18,7 +18,7 @@ export default function AdminLogIn(){
 
         try {
             const { data: response } = await axios.post("/api/ecocollect/auth/login", { 
-                email, password 
+                email, password, isAdminLogin: true
             });
 
             console.log("Server Response:", response);

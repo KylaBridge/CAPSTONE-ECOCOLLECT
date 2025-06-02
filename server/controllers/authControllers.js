@@ -71,7 +71,7 @@ const registerUser = async (req, res) => {
 // Login user
 const loginUser = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, isAdminLogin } = req.body;
 
         // Check if the user exists
         const user = await User.findOne({ email });
@@ -79,31 +79,39 @@ const loginUser = async (req, res) => {
             return res.json({ error: "No user found" });
         }
 
+        // If this is an admin login, only allow admins
+        if (isAdminLogin && user.role !== "admin") {
+            return res.json({ error: "You are not authorized to access this page" });
+        }
+
         // Check if passwords match
         const match = await comparePassword(password, user.password);
         if (match) {
-            jwt.sign(
-                { email: user.email, id: user._id },
-                process.env.JWT_SECRET,
-                {},
-                (err, token) => {
-                    if (err) throw err;
-                    res.cookie("token", token, {
-                        httpOnly: true,
-                        sameSite: "lax", // or "none" if cross-origin
-                        secure: process.env.NODE_ENV === "production"
-                    }).json({
-                        message: user.role === "admin" ? "User is an admin" : "User logged in",
-                        _id: user._id,
-                        role: user.role,
-                        name: user.name,
-                        email: user.email,
-                        exp: user.exp,
-                        points: user.points,
-                        rank: user.rank
-                    });
-                }
-            );
+            // Only set token if not admin login or user is admin
+            if (!isAdminLogin || user.role === "admin") {
+                jwt.sign(
+                    { email: user.email, id: user._id },
+                    process.env.JWT_SECRET,
+                    {},
+                    (err, token) => {
+                        if (err) throw err;
+                        res.cookie("token", token, {
+                            httpOnly: true,
+                            sameSite: "lax", // or "none" if cross-origin
+                            secure: process.env.NODE_ENV === "production"
+                        }).json({
+                            message: user.role === "admin" ? "User is an admin" : "User logged in",
+                            _id: user._id,
+                            role: user.role,
+                            name: user.name,
+                            email: user.email,
+                            exp: user.exp,
+                            points: user.points,
+                            rank: user.rank
+                        });
+                    }
+                );
+            }
         } else {
             res.json({ error: "Password does not match" });
         }

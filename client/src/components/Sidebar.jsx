@@ -20,7 +20,7 @@ export default function Sidebar({ isShown, setIsShown }) {
         })
         .then(() => {
             toast.success("User logged Out")
-            navigate("/admin/login")
+            navigate("/")
         })
         .catch(err => {
             console.error("Logout failed:", err)

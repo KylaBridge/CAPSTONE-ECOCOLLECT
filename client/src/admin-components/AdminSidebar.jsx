@@ -16,7 +16,7 @@ export default function AdminSidebar() {
         })
         .then(() => {
             toast.success("User logged Out")
-            navigate("/")
+            navigate("/admin/login");
         })
         .catch(err => {
             console.error("Logout failed:", err)
