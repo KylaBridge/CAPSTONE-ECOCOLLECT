@@ -130,6 +130,7 @@ const getProfile = async (req, res) => {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
+                role: user.role,
                 exp: user.exp,
                 points: user.points,
                 rank: user.rank
