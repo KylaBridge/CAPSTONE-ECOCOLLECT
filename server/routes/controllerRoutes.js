@@ -4,29 +4,43 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-const { 
+// Import controllers from their new files
+const {
     getEwastes,
     getAllSubmissions,
     updateSubmissionStatus,
-    deleteEWaste,
+    deleteEWaste
+} = require('../controllers/ewasteController');
+
+const {
     getUserData,
     countUsersByRole,
     deleteUser,
+    getUserParticipationData
+} = require('../controllers/userManageController');
+
+const {
     getAllRewards,
     addReward,
     updateReward,
     deleteReward,
+    getRewardRedemptionStats
+} = require('../controllers/rewardsController');
+
+const {
     getUserRedemptions,
+    getRedemptionCount,
+    getAllRedemptions
+} = require('../controllers/redemptionController');
+
+const {
     getAllBadges,
     addBadge,
     updateBadge,
     deleteBadge,
-    getBadgeCount,
-    getRedemptionCount,
-    getRewardRedemptionStats,
-    getUserParticipationData,
-    getAllRedemptions
-} = require('../controllers/adminController');
+    getBadgeCount
+} = require('../controllers/badgeController');
+
 const { 
     submitEWaste, 
     userSubmitCount,
