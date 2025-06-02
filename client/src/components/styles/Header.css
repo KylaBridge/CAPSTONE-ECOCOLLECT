@@ -12,10 +12,12 @@
     position: absolute;
     top: 5vh;
     right: 40px;
-    color:  #245a1e;
+    color:  #eeeeee;
+    text-shadow: 3px 3px 2px rgba(39, 39, 39, 0.616);
+    -webkit-text-stroke: 0.1px rgba(0, 0, 0, 0.749);
     font-weight: bolder;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    font-size: 1.5rem;
+    font-family: 'Luckiest Guy';
+    font-size: 1.3rem;
 }
 
 .head-container img {

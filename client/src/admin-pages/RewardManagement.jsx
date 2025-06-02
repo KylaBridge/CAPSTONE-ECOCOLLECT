@@ -258,7 +258,29 @@ export default function RewardManagement() {
                     </td>
                     <td>
                       {editId === reward.id ? (
-                        <input type="number" value={reward.points} onChange={e => handleInputChange(reward.id, "points", e.target.value)} />
+                        <input 
+                            type="number" 
+                            value={reward.points} 
+                            onChange={e => {
+                                const value = e.target.value;
+                                if (value === '') {
+                                    handleInputChange(reward.id, "points", '');
+                                } else {
+                                    const numValue = parseInt(value);
+                                    if (!isNaN(numValue) && numValue >= 0) {
+                                        handleInputChange(reward.id, "points", numValue);
+                                    }
+                                }
+                            }}
+                            onBlur={e => {
+                                const value = e.target.value;
+                                if (value !== '') {
+                                    const cleanValue = value.replace(/^0+/, '') || '0';
+                                    handleInputChange(reward.id, "points", parseInt(cleanValue));
+                                }
+                            }}
+                            min="0"
+                        />
                       ) : reward.points}
                     </td>
                     <td>

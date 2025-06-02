@@ -360,7 +360,30 @@ export default function BadgeManagement() {
                                             </div>
                                             <div className="input-group">
                                                 <h4>Points Required:</h4>
-                                                <input type="number" value={pointsRequired} onChange={(e) => setPointsRequired(e.target.value)} required />
+                                                <input 
+                                                    type="number" 
+                                                    value={pointsRequired} 
+                                                    onChange={(e) => {
+                                                        const value = e.target.value;
+                                                        if (value === '') {
+                                                            setPointsRequired('');
+                                                        } else {
+                                                            const numValue = parseInt(value);
+                                                            if (!isNaN(numValue) && numValue >= 0) {
+                                                                setPointsRequired(numValue);
+                                                            }
+                                                        }
+                                                    }}
+                                                    onBlur={(e) => {
+                                                        const value = e.target.value;
+                                                        if (value !== '') {
+                                                            const cleanValue = value.replace(/^0+/, '') || '0';
+                                                            setPointsRequired(parseInt(cleanValue));
+                                                        }
+                                                    }}
+                                                    min="0"
+                                                    required 
+                                                />
                                             </div>
                                             <div className="input-group">
                                                 <h4>Badge Description:</h4>
