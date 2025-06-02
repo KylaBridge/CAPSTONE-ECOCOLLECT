@@ -8,6 +8,7 @@ import html2canvas from 'html2canvas'
 // Components and Pages
 import Sidebar from "../components/Sidebar"
 import Header from "../components/Header"
+import BadgeShareCard from "../components/BadgeShareCard"
 import { UserContext } from "../context/userContext"
 
 //assets
@@ -123,7 +124,6 @@ export default function Achievements() {
         shareLink = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
         break;
       case 'instagram':
-        // For Instagram, we'll provide a download option
         const link = document.createElement('a');
         link.href = shareCard;
         link.download = 'eco-collect-badge.png';
@@ -140,70 +140,48 @@ export default function Achievements() {
 
   return (
     <>
-    <div className="body-achievements-module">
-      <Sidebar isShown={showNavbar} setIsShown={setShowNavbar} />
-      <Header headerImg={HomeHeaderTitle} headerText="Achievements" />
-      <div className="achievements-main-container">
+      <div className="body-achievements-module">
+        <Sidebar isShown={showNavbar} setIsShown={setShowNavbar} />
+        <Header headerImg={HomeHeaderTitle} headerText="Achievements" />
+        <div className="achievements-main-container">
           <h2 className="badge-header-title">Badge <br /> Collections</h2>
           <div className="badge-scroll-container">
-          {badges.map((badge, index) => (
-            <div key={badge._id || index} className="badge-card" onClick={() => setSelectedBadge(badge)}>
-              <div className="badge-wrapper">
-                <div className={`badge-bg-square ${user?.exp < badge.requiredPoints ? 'locked' : ''}`}>
-                  <img 
-                    src={badge.img} 
-                    alt={badge.name} 
-                    className="badge-img"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = Badge1;
-                    }}
-                  />
-                </div>    
+            {badges.map((badge, index) => (
+              <div key={badge._id || index} className="badge-card" onClick={() => setSelectedBadge(badge)}>
+                <div className="badge-wrapper">
+                  <div className={`badge-bg-square ${user?.exp < badge.requiredPoints ? 'locked' : ''}`}>
+                    <img 
+                      src={badge.img} 
+                      alt={badge.name} 
+                      className="badge-img"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = Badge1;
+                      }}
+                    />
+                  </div>    
                   {user?.exp < badge.requiredPoints && (
                     <img src={LockIcon} alt="Locked" className="lock-icon" />
                   )}
-                <span
-                  className={`badge-tap-icon ${user?.exp < badge.requiredPoints ? 'locked-icon' : 'unlocked-icon'}`}
-                >
-                  <FiZoomIn size={16} />
-                </span>
+                  <span
+                    className={`badge-tap-icon ${user?.exp < badge.requiredPoints ? 'locked-icon' : 'unlocked-icon'}`}
+                  >
+                    <FiZoomIn size={16} />
+                  </span>
+                </div>
+                <p className="badge-name">{badge.name}</p>
               </div>
-              <p className="badge-name">{badge.name}</p>
+            ))}
           </div>
-          ))}
         </div>
       </div>
-    </div>
 
-      {/* Hidden Share Card Template */}
-      <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
-        <div ref={shareCardRef} className="share-card-template">
-          <div className="share-card-content">
-            <img 
-              src={selectedBadge?.img} 
-              alt={selectedBadge?.name} 
-              className="share-card-badge"
-              crossOrigin="anonymous"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = Badge1;
-              }}
-            />
-            <h2>{selectedBadge?.name}</h2>
-            <p>{selectedBadge?.description}</p>
-            <div className="share-card-footer">
-              <img 
-                src={EcoCollectLogo} 
-                alt="EcoCollect" 
-                className="share-card-logo"
-                crossOrigin="anonymous"
-              />
-              <p>EcoCollect Achievement</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Badge Share Card Component */}
+      <BadgeShareCard 
+        user={user}
+        selectedBadge={selectedBadge}
+        shareCardRef={shareCardRef}
+      />
 
       {/* Modal */}
       {selectedBadge && (

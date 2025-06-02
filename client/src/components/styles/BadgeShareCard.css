@@ -1,0 +1,150 @@
+.share-card-template {
+  width: 600px;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f7f4 100%);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif;
+}
+
+.share-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.share-card-header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.share-card-header h1 {
+  color: #2E7D32;
+  font-size: 24px;
+  margin-bottom: 5px;
+  line-height: 1.2;
+}
+
+.share-card-header p {
+  color: #4CAF50;
+  font-size: 18px;
+}
+
+.share-card-badge-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 0;
+}
+
+.share-card-badge {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+}
+
+.badge-title {
+  color: #1B5E20;
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  margin: 5px 0;
+}
+
+.badge-details {
+  text-align: center;
+  color: #333;
+  line-height: 1.4;
+  padding: 0 20px;
+}
+
+.badge-description, .badge-date, .badge-earner {
+  margin: 3px 0;
+  font-size: 14px;
+}
+
+.share-card-footer {
+  margin-top: 15px;
+}
+
+.share-card-cta {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.share-card-cta p {
+  margin: 5px 0;
+  color: #2E7D32;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.share-card-hashtags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.share-card-hashtags span {
+  background: #E8F5E9;
+  color: #2E7D32;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.share-card-logos {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding: 0 10px;
+}
+
+.logo-left {
+  display: flex;
+  align-items: center;
+}
+
+.nu-logo, .sm-cares-logo {
+  height: 40px;
+  object-fit: contain;
+}
+
+.share-card-logo {
+  height: 40px;
+  object-fit: contain;
+  margin: 0 10px;
+}
+
+/* Add responsive adjustments */
+@media screen and (max-width: 768px) {
+  .share-card-template {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .share-card-badge {
+    width: 120px;
+    height: 120px;
+  }
+
+  .share-card-header h1 {
+    font-size: 20px;
+  }
+
+  .share-card-header p {
+    font-size: 16px;
+  }
+
+  .badge-title {
+    font-size: 18px;
+  }
+
+  .share-card-cta p {
+    font-size: 14px;
+  }
+} 
