@@ -113,7 +113,7 @@ const loginUser = async (req, res) => {
                 );
             }
         } else {
-            res.json({ error: "Password does not match" });
+            res.json({ error: "Email or password is invalid" });
         }
     } catch (error) {
         console.log(error);

@@ -1,7 +1,8 @@
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route, Navigate } from "react-router-dom"
 import axios from "axios"
 import { Toaster } from "react-hot-toast"
-import { UserContextProvider } from "./context/userContext.jsx"
+import { useContext } from "react"
+import { UserContextProvider, UserContext } from "./context/userContext.jsx"
 
 // Components and Pages
 import Home from "./pages/Home.jsx"
@@ -25,39 +26,119 @@ import LandingPage from "./pages/LandingPage.jsx"
 import AboutPage from "./pages/AboutPage.jsx"
 import ContactPage from "./pages/ContactPage.jsx"
 
+// Protected route for authenticated users
+function ProtectedRoute({ children }) {
+  const { user, loading } = useContext(UserContext)
+  // Wait for the authentication check to finish
+  if (loading) return (
+    <div className="loading">
+      <div className="loading-spinner"></div>
+    </div>
+  )
+  if (!user) return <Navigate to="/" replace />
+  return children
+}
+
+// Protected route for admin users
+function AdminProtectedRoute({ children }) {
+  const { user, loading } = useContext(UserContext)
+  // Wait for the authentication check to finish
+  if (loading) return (
+    <div className="loading">
+      <div className="loading-spinner"></div>
+    </div>
+  )
+  if (!user || user.role !== "admin") return <Navigate to="/admin/login" replace />
+  return children
+}
+
 axios.defaults.baseURL = "http://localhost:3000"
 axios.defaults.withCredentials = true
 
 export default function App() {
-
   return (
     <UserContextProvider>
       <Toaster position="bottom-right" toastOptions={{duration: 2000}} />
       <Routes>
-        {/*User Routes*/}
+        {/* Public User Routes */}
         <Route path="/landing" element={<LandingPage />} />
         <Route path="/about" element={<AboutPage/>} />
         <Route path="/contact" element={<ContactPage/>} />
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/ewastesubmission" element={<EWasteSubmission/>} />
-        <Route path="/achievements" element={<Achievements/>} />
-        <Route path="/rewards" element={<Rewards/>} />
 
+        {/* Protected User Routes */}
+        <Route path="/home" element={
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        } />
+        <Route path="/ewastesubmission" element={
+          <ProtectedRoute>
+            <EWasteSubmission/>
+          </ProtectedRoute>
+        } />
+        <Route path="/achievements" element={
+          <ProtectedRoute>
+            <Achievements/>
+          </ProtectedRoute>
+        } />
+        <Route path="/rewards" element={
+          <ProtectedRoute>
+            <Rewards/>
+          </ProtectedRoute>
+        } />
 
-        {/*Admin Routes */}
+        {/* Admin Auth Routes */}
         <Route path="/admin/login" element={<AdminLogIn />} />
         <Route path="/admin/register" element={<AdminRegister />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/usermanagement" element={<UserManagement />} />
-        <Route path="/admin/analyticsdashboard" element={<AnalyticsDashboard />} />
-        <Route path="/admin/ewastebin" element={<EWasteBin />} />
-        <Route path="/admin/ewastesubmit" element={<EWasteSubmit />} />
-        <Route path="/admin/achieversmodule" element={<AchieversModule />} />
-        <Route path="/admin/badgemanagement" element={<BadgeManagement />} />
-        <Route path="/admin/rewardmanagement" element={<RewardManagement />} />
-        <Route path="/admin/activitylog" element={<ActivityLog />} />
+
+        {/* Protected Admin Routes */}
+        <Route path="/admin/dashboard" element={
+          <AdminProtectedRoute>
+            <AdminDashboard />
+          </AdminProtectedRoute>
+        } />
+        <Route path="/admin/usermanagement" element={
+          <AdminProtectedRoute>
+            <UserManagement />
+          </AdminProtectedRoute>
+        } />
+        <Route path="/admin/analyticsdashboard" element={
+          <AdminProtectedRoute>
+            <AnalyticsDashboard />
+          </AdminProtectedRoute>
+        } />
+        <Route path="/admin/ewastebin" element={
+          <AdminProtectedRoute>
+            <EWasteBin />
+          </AdminProtectedRoute>
+        } />
+        <Route path="/admin/ewastesubmit" element={
+          <AdminProtectedRoute>
+            <EWasteSubmit />
+          </AdminProtectedRoute>
+        } />
+        <Route path="/admin/achieversmodule" element={
+          <AdminProtectedRoute>
+            <AchieversModule />
+          </AdminProtectedRoute>
+        } />
+        <Route path="/admin/badgemanagement" element={
+          <AdminProtectedRoute>
+            <BadgeManagement />
+          </AdminProtectedRoute>
+        } />
+        <Route path="/admin/rewardmanagement" element={
+          <AdminProtectedRoute>
+            <RewardManagement />
+          </AdminProtectedRoute>
+        } />
+        <Route path="/admin/activitylog" element={
+          <AdminProtectedRoute>
+            <ActivityLog />
+          </AdminProtectedRoute>
+        } />
       </Routes>
     </UserContextProvider>
   )
