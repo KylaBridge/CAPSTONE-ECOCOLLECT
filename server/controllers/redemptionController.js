@@ -1,7 +1,7 @@
 const Redemption = require('../models/redemption');
 
 //
-// ------------------ BADGE MANAGEMENT ------------------
+// ------------------ REDEMPTION MANAGEMENT ------------------
 //
 
 // Get all redemptions with populated user and reward details
