@@ -154,6 +154,11 @@ export default function BadgeManagement() {
 
     const handleSubmitBadge = async (e) => {
         e.preventDefault();
+        // Prevent negative points
+        if (isNaN(pointsRequired) || Number(pointsRequired) < 0) {
+            alert('Points Required must be a non-negative number.');
+            return;
+        }
         try {
             const formData = new FormData();
             formData.append('name', badgeName);
@@ -168,15 +173,27 @@ export default function BadgeManagement() {
                 const response = await axios.post('/api/ecocollect/badges', formData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
-                setBadges([...badges, response.data.badge]);
+                // Transform image path for immediate preview
+                const newBadge = {
+                    ...response.data.badge,
+                    id: response.data.badge._id,
+                    image: response.data.badge.image ? `http://localhost:3000/${response.data.badge.image.path}` : null
+                };
+                setBadges([...badges, newBadge]);
                 handleClosePanel();
                 alert('New badge added!');
             } else {
                 const response = await axios.put(`/api/ecocollect/badges/${selectedBadge._id}`, formData, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
+                // Transform image path for immediate preview
+                const updatedBadge = {
+                    ...response.data.badge,
+                    id: response.data.badge._id,
+                    image: response.data.badge.image ? `http://localhost:3000/${response.data.badge.image.path}` : null
+                };
                 setBadges(badges.map(badge =>
-                    badge._id === selectedBadge._id ? response.data.badge : badge
+                    badge._id === selectedBadge._id ? updatedBadge : badge
                 ));
                 handleClosePanel();
                 alert('Badge updated!');
@@ -190,7 +207,9 @@ export default function BadgeManagement() {
     const isFormValid =
         badgeName &&
         milestoneCondition &&
-        pointsRequired &&
+        pointsRequired !== "" &&
+        !isNaN(pointsRequired) &&
+        Number(pointsRequired) >= 0 &&
         badgeDescription &&
         (selectedBadge?.id === 'new' ||
         badgeName !== initialBadgeValues?.name ||
@@ -338,7 +357,7 @@ export default function BadgeManagement() {
                                                         <AdminButton type="remove" size="small" onClick={() => {
                                                             setImagePreview(null);
                                                             setIsImageSelected(false);
-                                                        }}>REMOVE</AdminButton>
+                                                        }}>Replace</AdminButton>
                                                     ) : (
                                                         <label htmlFor="imageInput">
                                                             <AdminButton type="upload" size="small" onClick={() => document.getElementById('imageInput').click()}>UPLOAD</AdminButton>
@@ -360,6 +379,7 @@ export default function BadgeManagement() {
                                             </div>
                                             <div className="input-group">
                                                 <h4>Points Required:</h4>
+<<<<<<< Updated upstream
                                                 <input 
                                                     type="number" 
                                                     value={pointsRequired} 
@@ -383,6 +403,20 @@ export default function BadgeManagement() {
                                                     }}
                                                     min="0"
                                                     required 
+=======
+                                                <input
+                                                    type="number"
+                                                    value={pointsRequired}
+                                                    min="0"
+                                                    onChange={(e) => {
+                                                        const val = e.target.value;
+                                                        // Only allow non-negative integers
+                                                        if (val === "" || (/^\d+$/.test(val) && Number(val) >= 0)) {
+                                                            setPointsRequired(val);
+                                                        }
+                                                    }}
+                                                    required
+>>>>>>> Stashed changes
                                                 />
                                             </div>
                                             <div className="input-group">

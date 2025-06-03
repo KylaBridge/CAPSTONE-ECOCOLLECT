@@ -58,7 +58,11 @@ export default function RewardManagement() {
 
   const handleInputChange = (id, field, value) => {
     setRewards(prev => {
-      const updated = prev.map(r => r.id === id ? { ...r, [field]: value } : r);
+      const updated = prev.map(r => 
+        r.id === id 
+          ? { ...r, [field]: field === "points" ? Number(value) : value } 
+          : r
+      );
       if (originalReward && id === originalReward.id) {
         const edited = updated.find(r => r.id === id);
         const changed = Object.keys(originalReward).some(key => edited[key] !== originalReward[key]);
@@ -193,6 +197,14 @@ export default function RewardManagement() {
     setHasChanges(false);
   };
 
+  // Helper to check if in add/edit mode
+  const isEditingOrAdding = editId !== null;
+
+  // Handler to show toast if restricted
+  const showEditWarning = () => {
+    toast.error("Finish adding or editing the current reward before proceeding.", { position: "bottom-right" });
+  };
+
   return (
     <div className="reward-management-container">
       <AdminSidebar />
@@ -200,8 +212,20 @@ export default function RewardManagement() {
 
       <div className="rewards-table-container">
         <div className="reward-header-controls">
-          <AdminButton type="add" size="medium" onClick={handleAddReward}>Add Reward</AdminButton>
-          <select className="sort-dropdown" onChange={(e) => setCategoryFilter(e.target.value)}>
+          <AdminButton
+            type="add"
+            size="medium"
+            onClick={isEditingOrAdding ? showEditWarning : handleAddReward}
+            disabled={isEditingOrAdding}
+          >
+            Add Reward
+          </AdminButton>
+          <select
+            className="sort-dropdown"
+            onChange={isEditingOrAdding ? showEditWarning : (e) => setCategoryFilter(e.target.value)}
+            value={categoryFilter}
+            disabled={isEditingOrAdding}
+          >
             <option value="all">All Categories</option>
             <option value="merch">Merch</option>
             <option value="mobile load">Mobile Load</option>
@@ -211,8 +235,9 @@ export default function RewardManagement() {
               type="text"
               placeholder="Search rewards"
               value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
+              onChange={isEditingOrAdding ? showEditWarning : e => setSearchTerm(e.target.value)}
               className="search-input"
+              disabled={isEditingOrAdding}
             />
             <FaSearch className="search-icon" />
           </div>
@@ -340,11 +365,16 @@ export default function RewardManagement() {
                           type="update"
                           size="small"
                           className="reward-table-btn"
-                          onClick={() => {
-                            setOriginalReward({ ...reward });
-                            setEditId(reward.id);
-                            setHasChanges(false);
-                          }}
+                          onClick={
+                            isEditingOrAdding
+                              ? showEditWarning
+                              : () => {
+                                  setOriginalReward({ ...reward });
+                                  setEditId(reward.id);
+                                  setHasChanges(false);
+                                }
+                          }
+                          disabled={isEditingOrAdding}
                         >
                           Edit
                         </AdminButton>
@@ -358,21 +388,21 @@ export default function RewardManagement() {
 
           <div className="pagination-controls">
             <button
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
+              onClick={isEditingOrAdding ? showEditWarning : () => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1 || isEditingOrAdding}
               className="pagination-button"
             >
-              <TbPlayerTrackPrevFilled size={15} color={currentPage === 1 ? "#ccc" : "#0e653f"} />
+              <TbPlayerTrackPrevFilled size={15} color={currentPage === 1 || isEditingOrAdding ? "#ccc" : "#0e653f"} />
             </button>
 
             <span>Page {currentPage} of {totalPages}</span>
 
             <button
-              onClick={() => setCurrentPage(prev => (prev < totalPages ? prev + 1 : prev))}
-              disabled={currentPage === totalPages}
+              onClick={isEditingOrAdding ? showEditWarning : () => setCurrentPage(prev => (prev < totalPages ? prev + 1 : prev))}
+              disabled={currentPage === totalPages || isEditingOrAdding}
               className="pagination-button"
             >
-              <TbPlayerTrackNextFilled size={15} color={currentPage === totalPages ? "#ccc" : "#0e653f"} />
+              <TbPlayerTrackNextFilled size={15} color={currentPage === totalPages || isEditingOrAdding ? "#ccc" : "#0e653f"} />
             </button>
           </div>
         </div>
