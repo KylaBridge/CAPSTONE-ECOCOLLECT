@@ -379,7 +379,6 @@ export default function BadgeManagement() {
                                             </div>
                                             <div className="input-group">
                                                 <h4>Points Required:</h4>
-<<<<<<< Updated upstream
                                                 <input 
                                                     type="number" 
                                                     value={pointsRequired} 
@@ -403,20 +402,6 @@ export default function BadgeManagement() {
                                                     }}
                                                     min="0"
                                                     required 
-=======
-                                                <input
-                                                    type="number"
-                                                    value={pointsRequired}
-                                                    min="0"
-                                                    onChange={(e) => {
-                                                        const val = e.target.value;
-                                                        // Only allow non-negative integers
-                                                        if (val === "" || (/^\d+$/.test(val) && Number(val) >= 0)) {
-                                                            setPointsRequired(val);
-                                                        }
-                                                    }}
-                                                    required
->>>>>>> Stashed changes
                                                 />
                                             </div>
                                             <div className="input-group">
