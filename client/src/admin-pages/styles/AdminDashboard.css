@@ -46,7 +46,7 @@ html, body {
     background-color: #dfe0d0;
     flex: 1;
     min-width: 350px;
-    height: fit-content;
+    min-height: 300px;
     max-height: 400px;
     padding: 20px;
     border-radius: 30px;

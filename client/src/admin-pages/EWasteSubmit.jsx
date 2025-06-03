@@ -1,6 +1,6 @@
 import AdminSidebar from "../admin-components/AdminSidebar";
 import Header from "../admin-components/Header";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { MdOutlineZoomOutMap } from "react-icons/md";
@@ -16,6 +16,9 @@ export default function EWasteSubmit() {
     const [originalStatus, setOriginalStatus] = useState("Pending");
     const [isImageModalOpen, setImageModalOpen] = useState(false);
     const [modalImageIndex, setModalImageIndex] = useState(0);
+    const [sortOption, setSortOption] = useState("");
+    const [showStatusSubmenu, setShowStatusSubmenu] = useState(false);
+    const dropdownRef = useRef(null);
 
     useEffect(() => {
         axios.get("http://localhost:3000/api/ecocollect/ewaste")
@@ -88,9 +91,29 @@ export default function EWasteSubmit() {
         setOriginalStatus(selectedSubmission?.status || "Pending");
     }, [selectedSubmission]);
 
+    React.useEffect(() => {
+        function handleClickOutside(event) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setShowStatusSubmenu(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    // Add sorting logic using useMemo
+    const sortedSubmissions = useMemo(() => {
+        let sorted = [...submissions];
+        if (sortOption === "date") {
+            sorted.sort((a, b) => new Date(b.submissionDate) - new Date(a.submissionDate));
+        } else if (sortOption === "name") {
+            sorted.sort((a, b) => a.name.localeCompare(b.name));
+        }
+        return sorted;
+    }, [submissions, sortOption]);
+
     return (
         <>
-
             <div className="ewaste-submit-main-container">            
                 <AdminSidebar />
                 <Header
@@ -100,12 +123,38 @@ export default function EWasteSubmit() {
                 <div className="flex-container">
                     <div className="submittedewaste-table-container">
                         <div className="submit-table-header">
-                            <div className="sort-element">
-                                <select className="sort-dropdown">
-                                    <option value="">Sort By</option>
-                                    <option value="name">Date</option>
-                                    <option value="points">Status</option>
-                                </select>
+                            <div className="submit-table-sort-dropdown" ref={dropdownRef}>
+                                <button
+                                    className="submit-table-sort-btn"
+                                    onClick={() => setShowStatusSubmenu(!showStatusSubmenu)}
+                                    type="button"
+                                >
+                                    Sort By
+                                    {sortOption === "date" && " : Date"}
+                                    {sortOption === "name" && " : Name"}
+                                </button>
+                                {showStatusSubmenu && (
+                                    <div className="submit-table-dropdown-menu">
+                                        <div
+                                            className="submit-table-dropdown-item"
+                                            onClick={() => {
+                                                setSortOption("date");
+                                                setShowStatusSubmenu(false);
+                                            }}
+                                        >
+                                            Date
+                                        </div>
+                                        <div
+                                            className="submit-table-dropdown-item"
+                                            onClick={() => {
+                                                setSortOption("name");
+                                                setShowStatusSubmenu(false);
+                                            }}
+                                        >
+                                            Name
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             <h2 className="submission-title">Submission List</h2>
@@ -123,14 +172,14 @@ export default function EWasteSubmit() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {submissions.length === 0 ? (
+                                    {sortedSubmissions.length === 0 ? (
                                         <tr>
                                             <td colSpan="5" style={{ textAlign: "center", padding: "20px" , fontStyle: "italic"}}>
                                                 No details to show yet.
                                             </td>
                                         </tr>
                                     ) : (
-                                        submissions.map((submission) => (
+                                        sortedSubmissions.map((submission) => (
                                             <tr key={submission.id}>
                                                 <td className="submission-id-cell">{submission.id}</td>
                                                 <td>{submission.name}</td>

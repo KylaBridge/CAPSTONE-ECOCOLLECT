@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import AdminSidebar from "../admin-components/AdminSidebar";
 import Header from "../admin-components/Header";
@@ -18,6 +18,8 @@ export default function RewardManagement() {
   const [hasChanges, setHasChanges] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
   const rowsPerPage = 5;
 
   // Fetch rewards from backend
@@ -43,7 +45,8 @@ export default function RewardManagement() {
   };
 
   const filteredRewards = rewards.filter(r => {
-    const matchesSearch = [r.name, r.category, String(r.id)].some(val => 
+    if (editId && r.id === editId) return true;
+    const matchesSearch = [r.name, r.category, String(r.id)].some(val =>
       val.toLowerCase().includes(searchTerm.toLowerCase())
     );
     const matchesCategory = categoryFilter === "all" || r.category === categoryFilter;
@@ -205,6 +208,16 @@ export default function RewardManagement() {
     toast.error("Finish adding or editing the current reward before proceeding.", { position: "bottom-right" });
   };
 
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <div className="reward-management-container">
       <AdminSidebar />
@@ -220,16 +233,48 @@ export default function RewardManagement() {
           >
             Add Reward
           </AdminButton>
-          <select
-            className="sort-dropdown"
-            onChange={isEditingOrAdding ? showEditWarning : (e) => setCategoryFilter(e.target.value)}
-            value={categoryFilter}
-            disabled={isEditingOrAdding}
-          >
-            <option value="all">All Categories</option>
-            <option value="merch">Merch</option>
-            <option value="mobile load">Mobile Load</option>
-          </select>
+          <div className="reward-sort-dropdown" ref={dropdownRef}>
+            <button
+              className="reward-sort-btn"
+              onClick={() => setShowDropdown(!showDropdown)}
+              type="button"
+              disabled={isEditingOrAdding}
+            >
+              Sort By
+              {categoryFilter !== "all" && ` : ${categoryFilter}`}
+            </button>
+            {showDropdown && (
+              <div className="reward-dropdown-menu">
+                <div
+                  className="reward-dropdown-item"
+                  onClick={() => {
+                    setCategoryFilter("all");
+                    setShowDropdown(false);
+                  }}
+                >
+                  All Categories
+                </div>
+                <div
+                  className="reward-dropdown-item"
+                  onClick={() => {
+                    setCategoryFilter("merch");
+                    setShowDropdown(false);
+                  }}
+                >
+                  Merch
+                </div>
+                <div
+                  className="reward-dropdown-item"
+                  onClick={() => {
+                    setCategoryFilter("mobile load");
+                    setShowDropdown(false);
+                  }}
+                >
+                  Mobile Load
+                </div>
+              </div>
+            )}
+          </div>
           <div className="search-container">
             <input
               type="text"

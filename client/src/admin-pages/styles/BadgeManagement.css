@@ -410,6 +410,76 @@ html, body {
     font-style: italic;
 }
 
+.badge-table-sort-dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .badge-table-sort-btn {
+    padding: 6px 16px;
+    border-radius: 5px;
+    background-color: #dfe0d0;
+    border: 1px solid #aaa;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #154d31;
+    min-width: 120px;
+    text-align: left;
+  }
+  
+  .badge-table-sort-btn:hover {
+    background-color: #e8e9d9;
+  }
+  
+  .badge-table-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #dfe0d0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    z-index: 1000;
+    min-width: 120px;
+  }
+  
+  .badge-table-dropdown-item {
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .badge-table-dropdown-item:hover {
+    background: #e6f2ea;
+  }
+  
+  .badge-table-dropdown-item.status-parent {
+    position: relative;
+  }
+  
+  .badge-table-submenu {
+    position: absolute;
+    left: 100%;
+    top: 0;
+    background-color: #dfe0d0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    min-width: 120px;
+  }
+  
+  .badge-table-submenu-item {
+    color: #154d31;
+    background-color: #dfe0d0;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .badge-table-submenu-item:hover {
+    background: #e6f2ea;
+  }
+
 /* --- Media Queries for Responsiveness --- */
 @media (max-width: 1200px) {
     .badge-management-grid {

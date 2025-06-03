@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import AdminSidebar from "../admin-components/AdminSidebar";
 import './styles/BadgeManagement.css';
 import Header from "../admin-components/Header";
@@ -24,6 +24,8 @@ export default function BadgeManagement() {
     const [error, setError] = useState(null);
     const [sortOption, setSortOption] = useState("");
     const [sortedBadges, setSortedBadges] = useState([]);
+    const [showStatusSubmenu, setShowStatusSubmenu] = useState(false);
+    const dropdownRef = useRef(null);
 
     // Fetch badges on component mount
     useEffect(() => {
@@ -34,6 +36,16 @@ export default function BadgeManagement() {
     useEffect(() => {
         sortBadges();
     }, [badges, sortOption]);
+
+    React.useEffect(() => {
+        function handleClickOutside(event) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setShowStatusSubmenu(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
     const fetchBadges = async () => {
         try {
@@ -61,7 +73,7 @@ export default function BadgeManagement() {
                 sorted.sort((a, b) => a.name.localeCompare(b.name));
                 break;
             case "points":
-                sorted.sort((a, b) => a.pointsRequired - b.pointsRequired);
+                sorted.sort((a, b) => b.pointsRequired - a.pointsRequired);
                 break;
             default:
                 // Default sort by creation date (newest first)
@@ -272,15 +284,39 @@ export default function BadgeManagement() {
 
                             <div className="badge-table-section grid-span-2">
                                 <div className="table-header">
-                                    <select 
-                                        className="sort-dropdown" 
-                                        value={sortOption}
-                                        onChange={handleSortChange}
-                                    >
-                                        <option value="">Sort By</option>
-                                        <option value="name">Name</option>
-                                        <option value="points">Points</option>
-                                    </select>
+                                    <div className="badge-table-sort-dropdown" ref={dropdownRef}>
+                                        <button
+                                            className="badge-table-sort-btn"
+                                            onClick={() => setShowStatusSubmenu(!showStatusSubmenu)}
+                                            type="button"
+                                        >
+                                            Sort By
+                                            {sortOption === "name" && " : Name"}
+                                            {sortOption === "points" && " : Points"}
+                                        </button>
+                                        {showStatusSubmenu && (
+                                            <div className="badge-table-dropdown-menu">
+                                                <div
+                                                    className="badge-table-dropdown-item"
+                                                    onClick={() => {
+                                                        setSortOption("name");
+                                                        setShowStatusSubmenu(false);
+                                                    }}
+                                                >
+                                                    Name
+                                                </div>
+                                                <div
+                                                    className="badge-table-dropdown-item"
+                                                    onClick={() => {
+                                                        setSortOption("points");
+                                                        setShowStatusSubmenu(false);
+                                                    }}
+                                                >
+                                                    Points
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
                                     <h3>Badge List</h3>
                                     <AdminButton type="add" size="medium" onClick={handleAddBadge}>Add New Badge</AdminButton>
                                 </div>

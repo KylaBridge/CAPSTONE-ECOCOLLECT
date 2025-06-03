@@ -134,7 +134,7 @@ export default function ActivityLog() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
 
-            <select
+            <select className="activity-table-filter"
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
             >
@@ -143,13 +143,13 @@ export default function ActivityLog() {
               <option value="user">User</option>
             </select>
 
-            <select
+            <select className="activity-table-filter"
               value={activityTypeFilter}
               onChange={(e) => setActivityTypeFilter(e.target.value)}
             >
               <option value="All">All Activities</option>
               {activityTypes.map((type, idx) => (
-                <option key={idx} value={type}>
+                <option  key={idx} value={type}>
                   {type}
                 </option>
               ))}

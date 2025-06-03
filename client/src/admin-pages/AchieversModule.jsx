@@ -1,7 +1,7 @@
 import AdminSidebar from "../admin-components/AdminSidebar";
 import Header from "../admin-components/Header";
 import "./styles/AchieversModule.css";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { FaSearch } from "react-icons/fa";
@@ -15,10 +15,32 @@ export default function AchieversModule() {
     const [showAll, setShowAll] = useState(true); 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [sortOption, setSortOption] = useState("exp");
+    const [badgeFilter, setBadgeFilter] = useState("");
+    const [showDropdown, setShowDropdown] = useState(false);
+    const [showBadgeSubmenu, setShowBadgeSubmenu] = useState(false);
+    const dropdownRef = useRef(null);
     const itemsPerPage = 7;
+
+    const badges = [
+        "EcoStarter", "Recycling Rookie", "Green Beginner", "EcoExplorer",
+        "EcoLearner", "Earth Ally", "Green Enthusiast", "E-Waste Guardian",
+        "EcoNovice", "Green Advocate", "Planet Protector", "E-Waste Champion"
+    ];
 
     useEffect(() => {
         fetchUserData();
+    }, []);
+
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setShowDropdown(false);
+                setShowBadgeSubmenu(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
     const fetchUserData = async () => {
@@ -51,7 +73,17 @@ export default function AchieversModule() {
         setShowAll(false);
     };
 
-    const rankedData = data.map((user, index) => ({
+    const sortedData = useMemo(() => {
+        let sorted = [...data];
+        if (sortOption === "exp") {
+            sorted.sort((a, b) => (b.exp || 0) - (a.exp || 0));
+        } else if (sortOption === "badge" && badgeFilter) {
+            sorted = sorted.filter(user => user.rank === badgeFilter);
+        }
+        return sorted;
+    }, [data, sortOption, badgeFilter]);
+
+    const rankedData = sortedData.map((user, index) => ({
         ...user,
         position: index + 1,
     }));
@@ -99,6 +131,66 @@ export default function AchieversModule() {
 
             <div className="achievers-table-container">
                 <div className="achievers-table-header">
+                    <div className="achievers-sort-dropdown" ref={dropdownRef}>
+                        <button
+                            className="achievers-sort-btn"
+                            onClick={() => setShowDropdown(!showDropdown)}
+                        >
+                            Sort By: {sortOption === "exp" ? "Experience Points" : 
+                                    badgeFilter ? badgeFilter : "Badge"}
+                        </button>
+                        {showDropdown && (
+                            <div className="achievers-dropdown-menu">
+                                <div
+                                    className="achievers-dropdown-item"
+                                    onClick={() => {
+                                        setSortOption("exp");
+                                        setBadgeFilter("");
+                                        setShowDropdown(false);
+                                    }}
+                                >
+                                    Experience Points
+                                </div>
+                                <div
+                                    className="achievers-dropdown-item status-parent"
+                                    onMouseEnter={() => setShowBadgeSubmenu(true)}
+                                    onMouseLeave={() => setShowBadgeSubmenu(false)}
+                                >
+                                    Badge
+                                    {showBadgeSubmenu && (
+                                        <div className="achievers-submenu">
+                                            <div
+                                                className="achievers-submenu-item"
+                                                onClick={() => {
+                                                    setSortOption("badge");
+                                                    setBadgeFilter("");
+                                                    setShowDropdown(false);
+                                                    setShowBadgeSubmenu(false);
+                                                }}
+                                            >
+                                                All Badges
+                                            </div>
+                                            {badges.map((badge, index) => (
+                                                <div
+                                                    key={index}
+                                                    className="achievers-submenu-item"
+                                                    onClick={() => {
+                                                        setSortOption("badge");
+                                                        setBadgeFilter(badge);
+                                                        setShowDropdown(false);
+                                                        setShowBadgeSubmenu(false);
+                                                    }}
+                                                >
+                                                    {badge}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
                     <h2 className="achievers-title">Top Contributors</h2>
 
                     <div className="search-container">

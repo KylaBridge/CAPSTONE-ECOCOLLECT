@@ -75,6 +75,7 @@
     flex-wrap: nowrap;
     flex-grow: 1;
     min-width: 0;
+    min-height: 160px;
   }
 
   .user-contribution-section, .user-rewards-section {

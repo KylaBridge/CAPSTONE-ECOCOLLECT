@@ -2,7 +2,7 @@ import AdminSidebar from "../admin-components/AdminSidebar"
 import Header from "../admin-components/Header"
 import "./styles/EWasteBin.css"
 import imgPlaceholder from "../assets/icons/mrcpu.png"
-import React, { useState } from "react";
+import React, { useState,  useRef } from "react";
 import BinTable from "../admin-components/BinTable";
 import AdminButton from "../admin-components/AdminButton";
 
@@ -73,6 +73,25 @@ export default function EWasteBin() {
       const [binImg, setBinImg] = useState(null);
       const [initialBinValues, setInitialBinValues] = useState(null);
       const [recentActivities, setRecentActivities] = useState([]);
+      const [sortOption, setSortOption] = useState("");
+      const [statusSubSort, setStatusSubSort] = useState("");
+      const [showStatusSubmenu, setShowStatusSubmenu] = useState(false);
+      const dropdownRef = useRef(null);
+
+      const getSortedBins = () => {
+        let sorted = [...bins];
+        if (sortOption === "location") {
+            sorted.sort((a, b) => a.location.localeCompare(b.location));
+        } else if (sortOption === "status" && statusSubSort) {
+            // Show bins with selected status first, then the rest
+            sorted.sort((a, b) => {
+                if (a.status === statusSubSort && b.status !== statusSubSort) return -1;
+                if (a.status !== statusSubSort && b.status === statusSubSort) return 1;
+                return 0;
+            });
+        }
+        return sorted;
+    };
     
       const logActivity = (message) => {
         const timestamp = new Date().toLocaleString('en-PH', {
@@ -209,6 +228,16 @@ export default function EWasteBin() {
         }
     };
 
+     React.useEffect(() => {
+        function handleClickOutside(event) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setShowStatusSubmenu(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
       return (
         <>
             <AdminSidebar />
@@ -276,7 +305,6 @@ export default function EWasteBin() {
                                                     <select value={status} onChange={(e) => setStatus(e.target.value)}>
                                                         <option value="Status" disabled>Select Bin Status</option>
                                                         <option value="Full">Full</option>
-                                                        <option value="Needs Emptying">Needs Emptying</option>
                                                         <option value="Available">Available</option>
                                                     </select>
                                                 </div>
@@ -335,12 +363,60 @@ export default function EWasteBin() {
                     <div className="binlist-container">
                         <div className="binlist-header">
                             <div className="left-controls">
-                                <select className="sort-dropdown">
-                                    <option value="">Sort By</option>
-                                    <option value="binId">Bin ID</option>
-                                    <option value="location">Location</option>
-                                    <option value="status">Status</option>
-                                </select>
+                                <div className="custom-sort-dropdown" ref={dropdownRef}>
+                                    <button
+                                        className="sort-btn"
+                                        onClick={() => setShowStatusSubmenu(false)}
+                                        type="button"
+                                    >
+                                        Sort By
+                                        {sortOption === "location" && " : Location"}
+                                        {sortOption === "status" && statusSubSort && ` : Status (${statusSubSort})`}
+                                    </button>
+                                    <div className="dropdown-menu">
+                                        <div
+                                            className="dropdown-item"
+                                            onClick={() => {
+                                                setSortOption("location");
+                                                setStatusSubSort("");
+                                                setShowStatusSubmenu(false);
+                                            }}
+                                        >
+                                            Location
+                                        </div>
+                                        <div
+                                            className="dropdown-item status-parent"
+                                            onMouseEnter={() => setShowStatusSubmenu(true)}
+                                            onMouseLeave={() => setShowStatusSubmenu(false)}
+                                        >
+                                            Status &raquo;
+                                            {showStatusSubmenu && (
+                                                <div className="submenu">
+                                                    <div
+                                                        className="submenu-item"
+                                                        onClick={() => {
+                                                            setSortOption("status");
+                                                            setStatusSubSort("Available");
+                                                            setShowStatusSubmenu(false);
+                                                        }}
+                                                    >
+                                                        Available
+                                                    </div>
+                                                    <div
+                                                        className="submenu-item"
+                                                        onClick={() => {
+                                                            setSortOption("status");
+                                                            setStatusSubSort("Full");
+                                                            setShowStatusSubmenu(false);
+                                                        }}
+                                                    >
+                                                        Full
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <h2 className="bin-title">Bin List</h2>
@@ -358,7 +434,7 @@ export default function EWasteBin() {
 
                         <BinTable
                             columns={binColumns}
-                            data={bins.map((bin) => ({
+                            data={getSortedBins().map((bin) => ({
                                 ...bin,
                                 action: (
                                     <AdminButton 

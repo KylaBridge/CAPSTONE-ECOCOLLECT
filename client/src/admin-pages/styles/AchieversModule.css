@@ -217,3 +217,98 @@ html, body {
     cursor: not-allowed;
     opacity: 0.5;
 }
+
+.achievers-sort-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.achievers-sort-btn {
+  padding: 8px 16px;
+  background-color: #dfe0d0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.8em;
+  color: #154d31;
+  min-width: 120px;
+  text-align: left;
+}
+
+.achievers-sort-btn:hover {
+  background-color: #e8e9d9;
+}
+
+.achievers-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #dfe0d0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  z-index: 1000;
+  min-width: 120px;
+}
+
+.achievers-dropdown-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 0.9em;
+  color: #154d31;
+}
+
+.achievers-dropdown-item:hover {
+  background-color: #e6f2ea;
+}
+
+.achievers-dropdown-item.status-parent {
+  position: relative;
+}
+
+.achievers-submenu {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  background-color: #dfe0d0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  min-width: 200px;
+  max-height: 300px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #aaa #dfe0d0;
+}
+
+.achievers-submenu::-webkit-scrollbar {
+  width: 6px;
+}
+
+.achievers-submenu::-webkit-scrollbar-track {
+  background: #dfe0d0;
+  border-radius: 10px;
+}
+
+.achievers-submenu::-webkit-scrollbar-thumb {
+  background-color: #aaa !important;
+  border-radius: 10px;
+}
+
+.achievers-submenu-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 0.9em;
+  color: #154d31;
+  border-bottom: 1px solid #e8e9d9;
+}
+
+.achievers-submenu-item:last-child {
+  border-bottom: none;
+}
+
+.achievers-submenu-item:hover {
+  background-color: #e6f2ea;
+}

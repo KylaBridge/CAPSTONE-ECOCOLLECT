@@ -37,12 +37,40 @@ html, body {
   font-size: 14px;
 }
 
+.activity-table-filter {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  font-size: 0.8em;
+  background-color: #dfe0d0;
+  color: #154d31;
+  min-width: 180px;
+}
+
+.activity-table-filter:hover {
+  background-color: #e8e9d9;
+}
+
+.activity-table-filter option {
+  background-color: #dfe0d0 !important;
+  color: #154d31;
+  font-size: 0.9rem;
+  padding: 8px;
+}
+
+.activity-table-filter option:hover
+{
+  background-color: #e6f2ea !important;
+}
+
 .activity-log-table {
   width: 100%;
   border-collapse: collapse;
+  color: #154d31;
 }
 
-  .activity-table-controls {
+.activity-table-controls {
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
@@ -50,8 +78,7 @@ html, body {
   align-items: center;
 }
 
-.activity-table-controls input,
-.activity-table-controls select {
+.activity-table-controls input {
   padding: 8px;
   border-radius: 8px;
   border: 1px solid #ccc;
