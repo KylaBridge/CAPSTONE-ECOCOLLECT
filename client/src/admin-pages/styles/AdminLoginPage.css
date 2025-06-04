@@ -118,7 +118,7 @@
   
   .or-separator {
     text-align: center;
-    margin: 15px 0;
+    margin: 5px 0;
     color: white;
   }
   
@@ -146,6 +146,19 @@
   
   .register-link a:hover {
     text-decoration: underline;
+  }
+
+  .go-home-btn {
+    font-size: 0.8rem;
+    margin: 0 auto;
+    color: white;
+    text-decoration: underline;
+    cursor: pointer;
+    text-align: center;
+    border-style: none;
+    background-color: transparent;
+    justify-content: center;
+    margin-top: 10px;
   }
   
   @media screen and (max-width: 768px) {

@@ -431,9 +431,16 @@ export default function BadgeManagement() {
                                                     }}
                                                     onBlur={(e) => {
                                                         const value = e.target.value;
-                                                        if (value !== '') {
+                                                        if (value === '') {
+                                                            setPointsRequired(0);
+                                                        } else {
                                                             const cleanValue = value.replace(/^0+/, '') || '0';
                                                             setPointsRequired(parseInt(cleanValue));
+                                                        }
+                                                    }}
+                                                    onKeyPress={(e) => {
+                                                        if (!/[0-9]/.test(e.key)) {
+                                                            e.preventDefault();
                                                         }
                                                     }}
                                                     min="0"

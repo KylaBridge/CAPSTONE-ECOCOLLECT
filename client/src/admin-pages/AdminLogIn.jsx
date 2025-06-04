@@ -60,6 +60,7 @@ export default function AdminLogIn(){
                         <p className="register-admin-el">Don't have an account? <Link to="/admin/register"className="register-link">Register</Link></p>
                         <p className="or-separator">or</p>
                         <button className="microsoftAcc-btn">Continue with Microsoft Account</button>
+                        <Link className="go-home-btn" to={"/landing"}>Go to Home</Link>
                     </form>
                     <img className="partnership-logos" src={PartnershipLogos} alt="Partnership Logos" />
                 </div>

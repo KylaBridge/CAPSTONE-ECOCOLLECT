@@ -63,7 +63,7 @@ export default function RewardManagement() {
     setRewards(prev => {
       const updated = prev.map(r => 
         r.id === id 
-          ? { ...r, [field]: field === "points" ? Number(value) : value } 
+          ? { ...r, [field]: field === "points" ? (value === '' ? '' : Number(value)) : value } 
           : r
       );
       if (originalReward && id === originalReward.id) {
@@ -135,14 +135,15 @@ export default function RewardManagement() {
     return (
       newReward.name.trim() !== "" &&
       newReward.category.trim() !== "" &&
-      newReward.points > 0 &&
-      newReward.description.trim() !== ""
+      newReward.points >= 0 &&
+      newReward.description.trim() !== "" &&
+      newReward.image !== null
     );
   };
 
   const handleUpdate = async () => {
     const current = rewards.find(r => r.id === editId);
-    if (!current.name || !current.category || !current.points || !current.description) {
+    if (!current.name || !current.category || current.points === undefined || !current.description) {
       toast.error("All fields are required");
       return;
     }
@@ -344,7 +345,9 @@ export default function RewardManagement() {
                             }}
                             onBlur={e => {
                                 const value = e.target.value;
-                                if (value !== '') {
+                                if (value === '') {
+                                    handleInputChange(reward.id, "points", 0);
+                                } else {
                                     const cleanValue = value.replace(/^0+/, '') || '0';
                                     handleInputChange(reward.id, "points", parseInt(cleanValue));
                                 }

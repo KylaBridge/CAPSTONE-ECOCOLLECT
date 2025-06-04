@@ -76,11 +76,9 @@ export default function EWasteBin() {
         if (sortOption === "location") {
             sorted.sort((a, b) => a.location.localeCompare(b.location));
         } else if (sortOption === "status" && statusSubSort) {
-            sorted.sort((a, b) => {
-                if (a.status === statusSubSort && b.status !== statusSubSort) return -1;
-                if (a.status !== statusSubSort && b.status === statusSubSort) return 1;
-                return 0;
-            });
+            if (statusSubSort !== "All") {
+                sorted = sorted.filter(bin => bin.status === statusSubSort);
+            }
         }
         return sorted;
     };
@@ -425,6 +423,16 @@ export default function EWasteBin() {
                                             Status &raquo;
                                             {showStatusSubmenu && (
                                                 <div className="submenu">
+                                                    <div
+                                                        className="submenu-item"
+                                                        onClick={() => {
+                                                            setSortOption("status");
+                                                            setStatusSubSort("All");
+                                                            setShowStatusSubmenu(false);
+                                                        }}
+                                                    >
+                                                        All
+                                                    </div>
                                                     <div
                                                         className="submenu-item"
                                                         onClick={() => {
