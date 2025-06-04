@@ -4,12 +4,15 @@ import { FiShare2, FiX, FiZoomIn, FiFacebook, FiTwitter, FiInstagram, FiDownload
 import LockIcon  from "../assets/icons/lockicon.png"
 import axios from "axios"
 import html2canvas from 'html2canvas'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-hot-toast'
 
 // Components and Pages
 import Sidebar from "../components/Sidebar"
 import Header from "../components/Header"
 import BadgeShareCard from "../components/BadgeShareCard"
 import { UserContext } from "../context/userContext"
+import ShareableBadge from "../components/ShareableBadge"
 
 //assets
 import Badge1 from "../assets/badges/current-badge.png"
@@ -22,8 +25,10 @@ export default function Achievements() {
   const [selectedBadge, setSelectedBadge] = useState(null)
   const [showShareOptions, setShowShareOptions] = useState(false)
   const [isGeneratingShareCard, setIsGeneratingShareCard] = useState(false)
+  const [showShareCard, setShowShareCard] = useState(false)
   const shareCardRef = useRef(null)
   const { user } = useContext(UserContext)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchBadges = async () => {
@@ -67,8 +72,8 @@ export default function Achievements() {
         scale: 2,
         backgroundColor: null,
         logging: false,
-        useCORS: true, // Enable CORS for images
-        allowTaint: true, // Allow cross-origin images
+        useCORS: true,
+        allowTaint: true,
       });
       return canvas.toDataURL('image/png');
     } catch (error) {
@@ -80,62 +85,111 @@ export default function Achievements() {
   };
 
   const handleShare = async () => {
-    const shareCard = await generateShareCard();
-    if (!shareCard) {
-      setShowShareOptions(true);
-      return;
-    }
+    if (!selectedBadge) return;
+    
+    // Generate a shareable URL for the badge
+    const shareUrl = `${window.location.origin}/badge/${selectedBadge._id}`;
+    const shareText = `I earned the ${selectedBadge.name} badge on EcoCollect!`;
 
-    const shareData = {
-      title: `EcoCollect Badge: ${selectedBadge.name}`,
-      text: `I earned the ${selectedBadge.name} badge on EcoCollect!`,
-      url: window.location.href,
-      files: [new File([await (await fetch(shareCard)).blob()], 'badge.png', { type: 'image/png' })]
-    };
+    // Always show our custom share options first
+    setShowShareOptions(true);
 
+    // If Web Share API is available, we'll use it as a fallback
     if (navigator.share) {
       try {
-        await navigator.share(shareData);
+        const shareData = {
+          title: `EcoCollect Badge: ${selectedBadge.name}`,
+          text: shareText,
+          url: shareUrl
+        };
+        
+        // If we have a share card image, include it
+        if (shareCardRef.current) {
+          const shareCardImage = await generateShareCard();
+          if (shareCardImage) {
+            try {
+              const blob = await (await fetch(shareCardImage)).blob();
+              const file = new File([blob], 'badge-share.png', { type: 'image/png' });
+              shareData.files = [file];
+            } catch (error) {
+              console.error('Error creating share file:', error);
+            }
+          }
+        }
+        
+        // We'll keep this as a fallback but won't use it by default
+        // await navigator.share(shareData);
       } catch (err) {
-        console.error('Error sharing:', err);
-        setShowShareOptions(true);
+        console.error('Error preparing share data:', err);
       }
-    } else {
-      setShowShareOptions(true);
     }
   };
 
-  const shareToSocialMedia = async (platform) => {
-    const shareCard = await generateShareCard();
-    if (!shareCard) {
-      alert('Failed to generate share card. Please try again.');
-      return;
+  const handleDownload = async () => {
+    if (!selectedBadge) return;
+    
+    try {
+      // Generate the share card image
+      const shareCardImage = await generateShareCard();
+      if (!shareCardImage) {
+        throw new Error('Failed to generate share card');
+      }
+      
+      // Create a temporary link element
+      const link = document.createElement('a');
+      link.href = shareCardImage;
+      link.download = `eco-collect-badge-certificate-${selectedBadge.name.toLowerCase().replace(/\s+/g, '-')}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error downloading badge certificate:', error);
+      alert('Failed to download badge certificate. Please try again.');
     }
+  };
 
-    const shareText = encodeURIComponent(`I earned the ${selectedBadge.name} badge on EcoCollect!`);
-    const shareUrl = encodeURIComponent(window.location.href);
-    
-    let shareLink = '';
-    switch(platform) {
-      case 'facebook':
-        shareLink = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}&quote=${shareText}`;
-        break;
-      case 'twitter':
-        shareLink = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
-        break;
-      case 'instagram':
-        const link = document.createElement('a');
-        link.href = shareCard;
-        link.download = 'eco-collect-badge.png';
-        link.click();
-        alert('Badge image downloaded! You can now share it on Instagram.');
-        return;
-      default:
-        return;
+  const shareToSocialMedia = async (platform, badge) => {
+    try {
+      const baseUrl = window.location.origin;
+      const shareUrl = `${baseUrl}/badge/${badge._id}`;
+      const shareTitle = encodeURIComponent(`${badge.name} - EcoCollect Badge`);
+      const shareDescription = encodeURIComponent(badge.description);
+
+      let shareLink = '';
+      switch (platform) {
+        case 'facebook':
+          shareLink = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${shareTitle}`;
+          break;
+        case 'twitter':
+          shareLink = `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${shareTitle}`;
+          break;
+        case 'whatsapp':
+          shareLink = `https://api.whatsapp.com/send?text=${shareTitle}%20${encodeURIComponent(shareUrl)}`;
+          break;
+        case 'telegram':
+          shareLink = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${shareTitle}`;
+          break;
+        case 'linkedin':
+          shareLink = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
+          break;
+        case 'pinterest':
+          shareLink = `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(shareUrl)}&description=${shareTitle}`;
+          break;
+        case 'copy':
+          await navigator.clipboard.writeText(shareUrl);
+          toast.success('Link copied to clipboard!');
+          setShowShareOptions(false);
+          return;
+        default:
+          return;
+      }
+
+      window.open(shareLink, '_blank', 'width=600,height=400');
+      setShowShareOptions(false);
+    } catch (error) {
+      console.error('Error sharing:', error);
+      toast.error('Failed to share badge');
     }
-    
-    window.open(shareLink, '_blank', 'width=600,height=400');
-    setShowShareOptions(false);
   };
 
   return (
@@ -181,18 +235,29 @@ export default function Achievements() {
         user={user}
         selectedBadge={selectedBadge}
         shareCardRef={shareCardRef}
+        isVisible={showShareCard}
       />
+
+      {/* Shareable Badge Component */}
+      {selectedBadge && (
+        <ShareableBadge 
+          badgeId={selectedBadge._id}
+          isVisible={showShareOptions}
+        />
+      )}
 
       {/* Modal */}
       {selectedBadge && (
         <div className="badge-modal-overlay" onClick={() => {
           setSelectedBadge(null);
           setShowShareOptions(false);
+          setShowShareCard(false);
         }}>
           <div className="badge-modal" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close-btn" onClick={() => {
               setSelectedBadge(null);
               setShowShareOptions(false);
+              setShowShareCard(false);
             }}>
               <FiX size={24} />
             </button>
@@ -220,15 +285,33 @@ export default function Achievements() {
 
             {showShareOptions && (
               <div className="share-options">
-                <button onClick={() => shareToSocialMedia('facebook')} className="social-share-btn facebook">
-                  <FiFacebook /> Facebook
-                </button>
-                <button onClick={() => shareToSocialMedia('twitter')} className="social-share-btn twitter">
-                  <FiTwitter /> Twitter
-                </button>
-                <button onClick={() => shareToSocialMedia('instagram')} className="social-share-btn instagram">
-                  <FiInstagram /> Download for Instagram
-                </button>
+                <h4>Share to Social Media</h4>
+                <div className="social-share-grid">
+                  <button onClick={() => shareToSocialMedia('facebook', selectedBadge)} className="social-share-btn facebook">
+                    <FiFacebook /> Facebook
+                  </button>
+                  <button onClick={() => shareToSocialMedia('twitter', selectedBadge)} className="social-share-btn twitter">
+                    <FiTwitter /> Twitter
+                  </button>
+                  <button onClick={() => shareToSocialMedia('whatsapp', selectedBadge)} className="social-share-btn whatsapp">
+                    <FiShare2 /> WhatsApp
+                  </button>
+                  <button onClick={() => shareToSocialMedia('telegram', selectedBadge)} className="social-share-btn telegram">
+                    <FiShare2 /> Telegram
+                  </button>
+                  <button onClick={() => shareToSocialMedia('linkedin', selectedBadge)} className="social-share-btn linkedin">
+                    <FiShare2 /> LinkedIn
+                  </button>
+                  <button onClick={() => shareToSocialMedia('pinterest', selectedBadge)} className="social-share-btn pinterest">
+                    <FiShare2 /> Pinterest
+                  </button>
+                  <button onClick={() => shareToSocialMedia('copy', selectedBadge)} className="social-share-btn copy">
+                    <FiShare2 /> Copy Link
+                  </button>
+                  <button onClick={handleDownload} className="social-share-btn download">
+                    <FiDownload /> Download Badge
+                  </button>
+                </div>
               </div>
             )}
           </div>

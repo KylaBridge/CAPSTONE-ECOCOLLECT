@@ -45,7 +45,8 @@ const {
     addBadge,
     updateBadge,
     deleteBadge,
-    getBadgeCount
+    getBadgeCount,
+    getBadgeById
 } = require('../controllers/badgeController');
 
 const { 
@@ -150,6 +151,7 @@ router.get("/bins/count", getBinCount);
 // Badge Management Routes
 router.get("/badges", getAllBadges);
 router.get("/badges/count", getBadgeCount);
+router.get("/badges/:id", getBadgeById);
 router.post("/badges", badgesUpload.single("image"), addBadge);
 router.put("/badges/:id", badgesUpload.single("image"), updateBadge);
 router.delete("/badges/:id", deleteBadge);

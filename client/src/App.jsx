@@ -25,6 +25,7 @@ import AdminLogIn from "./admin-pages/AdminLogIn.jsx"
 import LandingPage from "./pages/LandingPage.jsx"
 import AboutPage from "./pages/AboutPage.jsx"
 import ContactPage from "./pages/ContactPage.jsx"
+import ShareableBadge from "./components/ShareableBadge.jsx"
 
 // Protected route for authenticated users
 function ProtectedRoute({ children }) {
@@ -66,6 +67,7 @@ export default function App() {
         <Route path="/contact" element={<ContactPage/>} />
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/badge/:id" element={<ShareableBadge />} />
 
         {/* Protected User Routes */}
         <Route path="/home" element={

@@ -243,5 +243,16 @@
 
 .attachment-name {
     font-size: 0.9rem;
+}
+
+.disabled-button {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #cccccc;
+}
+
+.disabled-button:hover {
+  background-color: #cccccc;
+  cursor: not-allowed;
 }  
   

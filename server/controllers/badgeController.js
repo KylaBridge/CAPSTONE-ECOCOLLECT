@@ -120,10 +120,28 @@ const getBadgeCount = async (req, res) => {
   }
 };
 
+// Get badge by ID
+const getBadgeById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const badge = await Badge.findById(id);
+    
+    if (!badge) {
+      return res.status(404).json({ message: "Badge not found" });
+    }
+
+    res.status(200).json(badge);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch badge" });
+  }
+};
+
 module.exports = {
   getAllBadges,
   addBadge,
   updateBadge,
   deleteBadge,
   getBadgeCount,
+  getBadgeById
 };

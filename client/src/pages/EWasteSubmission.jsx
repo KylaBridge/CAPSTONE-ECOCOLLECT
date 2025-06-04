@@ -17,7 +17,6 @@ export default function EWasteSubmission() {
   const [showNavbar, setShowNavbar] = useState(false);
   const [attachments, setAttachments] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   const [submissionLogs, setSubmissionLogs] = useState([]);
   const { user } = useContext(UserContext);
 
@@ -38,20 +37,17 @@ export default function EWasteSubmission() {
       }
 
       setAttachments(prev => [...prev, file]);
-      setIsSubmitDisabled(false);
     });
   };
 
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
-    setIsSubmitDisabled(attachments.length === 0 || !event.target.value);
   };
 
   const handleRemoveAttachment = (index) => {
     const newAttachments = [...attachments];
     newAttachments.splice(index, 1);
     setAttachments(newAttachments);
-    setIsSubmitDisabled(newAttachments.length === 0 || !selectedCategory);
   };
 
   const fetchSubmissionLogs = async () => {
@@ -86,7 +82,6 @@ export default function EWasteSubmission() {
         alert("E-Waste submitted successfully!");
         setAttachments([]);
         setSelectedCategory("");
-        setIsSubmitDisabled(true);
         fetchSubmissionLogs();
       }
     } catch (err) {
@@ -156,7 +151,13 @@ export default function EWasteSubmission() {
               </select>
             </div>
 
-            <button onClick={handleSubmit} disabled={isSubmitDisabled}>SUBMIT</button>
+            <button 
+              onClick={handleSubmit} 
+              disabled={!attachments.length || !selectedCategory}
+              className={!attachments.length || !selectedCategory ? 'disabled-button' : ''}
+            >
+              SUBMIT
+            </button>
           </div>
         </div>
 

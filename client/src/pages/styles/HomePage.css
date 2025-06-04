@@ -131,17 +131,17 @@
 }
 
 .submission-content {
-    display: flex; /* Enable flexbox for the content */
-    align-items: center; /* Vertically align text and image */
-    justify-content: space-between; /* Put space between text and image */
-    gap: 20px; /* Space between text and image */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
 }
 
 .submission-text {
-    flex: 1; /* Allow text to take up available space */
+    flex: 1;
     color: #70b536;
     display: flex;
-    flex-direction: column; /* Stack points and submissions vertically */
+    flex-direction: column;
     gap: 10px;
 }
 
@@ -149,7 +149,7 @@
 .submission-items-display {
     display: flex;
     gap: 8px;
-    align-items: center; /* Vertically align points/submissions with their labels */
+    align-items: center;
 }
 
 .points-display h2,
@@ -232,8 +232,10 @@
   flex-grow: 1;
 }
 
+
 .next-reward-image-container img {
     opacity: 0.4;
+    padding-bottom: 12px;
 }
 
 .overlay-image {
