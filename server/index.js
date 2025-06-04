@@ -21,9 +21,27 @@ app.use("/api/ecocollect", require("./routes/controllerRoutes"))
 app.use("/api/ecocollect/auth", require("./routes/authRoutes"))
 app.use("/uploads", express.static("uploads"));
 
+// Health check endpoint
+app.get("/health", (req, res) => {
+    res.status(200).json({ status: "ok" });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ error: "Something went wrong!" });
+});
+
 // database connection
+const PORT = process.env.PORT || 10000;
+
 mongoose.connect(process.env.MONGO_URL)
     .then(() => {
-        app.listen(process.env.PORT, () => {console.log('DB connected and Server is running on', process.env.PORT)})
+        app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
+        });
     })
-    .catch((err) => console.log("Database Not Connected", err))
+    .catch((err) => {
+        console.error("Database Connection Error:", err);
+        process.exit(1);
+    });
