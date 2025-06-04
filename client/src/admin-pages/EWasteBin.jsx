@@ -2,88 +2,80 @@ import AdminSidebar from "../admin-components/AdminSidebar"
 import Header from "../admin-components/Header"
 import "./styles/EWasteBin.css"
 import imgPlaceholder from "../assets/icons/mrcpu.png"
-import React, { useState,  useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import BinTable from "../admin-components/BinTable";
 import AdminButton from "../admin-components/AdminButton";
+import axios from "axios";
+
+const BACKEND_URL = "http://localhost:3000";
+
+// Helper to get full image URL
+const getImageUrl = (imagePath) => {
+    if (!imagePath) return null;
+    if (imagePath.startsWith("/uploads")) {
+        return `${BACKEND_URL}${imagePath}`;
+    }
+    return imagePath;
+};
 
 export default function EWasteBin() {
 
-  const initialBinData = [
-    {
-        binId: 'BIN-001',
-        location: 'NU Main Entrance',
-        status: 'Full',
-        lastUpdated: '1 hour ago',
-        image: null,
-        remarks: ''
-    },
-    {
-        binId: 'BIN-002',
-        location: 'Cafeteria',
-        status: 'Needs Emptying',
-        lastUpdated: '3 hours ago',
-        image: null,
-        remarks: ''
-    },
-    {
-        binId: 'BIN-003',
-        location: 'Library',
-        status: 'Available',
-        lastUpdated: '5 hours ago',
-        image: null,
-        remarks: ''
-    },
-    {
-        binId: 'BIN-004',
-        location: 'Engineering Building',
-        status: 'Available',
-        lastUpdated: '6 hours ago',
-        image: null,
-        remarks: ''
-    },
-    {
-        binId: 'BIN-005',
-        location: 'Science Hall',
-        status: 'Full',
-        lastUpdated: '8 hours ago',
-        image: null,
-        remarks: ''
-    },
-    {
-        binId: 'BIN-006',
-        location: 'Dormitory Area',
-        status: 'Needs Emptying',
-        lastUpdated: '10 hours ago',
-        image: null,
-        remarks: ''
-    },
-];
+    const binColumns = ['binId', 'location', 'status', 'lastUpdated', 'action'];
+    const [bins, setBins] = useState([]);
+    const [imagePreview, setImagePreview] = useState(null);
+    const [isImageSelected, setIsImageSelected] = useState(false);
+    const [selectedBin, setSelectedBin] = useState(null);
+    const [isPanelOpen, setIsPanelOpen] = useState(false);
+    const [viewedFromTable, setViewedFromTable] = useState(false);
+    const [newBinId, setNewBinId] = useState("");
+    const [location, setLocation] = useState("");
+    const [status, setStatus] = useState("Full");
+    const [remarks, setRemarks] = useState("");
+    const [binImg, setBinImg] = useState(null);
+    const [initialBinValues, setInitialBinValues] = useState(null);
+    const [recentActivities, setRecentActivities] = useState([]);
+    const [sortOption, setSortOption] = useState("");
+    const [statusSubSort, setStatusSubSort] = useState("");
+    const [showStatusSubmenu, setShowStatusSubmenu] = useState(false);
+    const dropdownRef = useRef(null);
 
-      const binColumns = ['binId', 'location', 'status', 'lastUpdated', 'action'];
-      const [bins, setBins] = useState(initialBinData);
-      const [imagePreview, setImagePreview] = useState(null);
-      const [isImageSelected, setIsImageSelected] = useState(false);
-      const [selectedBin, setSelectedBin] = useState(null);
-      const [isPanelOpen, setIsPanelOpen] = useState(false);
-      const [viewedFromTable, setViewedFromTable] = useState(false);
-      const [newBinId, setNewBinId] = useState("");
-      const [location, setLocation] = useState("");
-      const [status, setStatus] = useState("Full");
-      const [remarks, setRemarks] = useState("");
-      const [binImg, setBinImg] = useState(null);
-      const [initialBinValues, setInitialBinValues] = useState(null);
-      const [recentActivities, setRecentActivities] = useState([]);
-      const [sortOption, setSortOption] = useState("");
-      const [statusSubSort, setStatusSubSort] = useState("");
-      const [showStatusSubmenu, setShowStatusSubmenu] = useState(false);
-      const dropdownRef = useRef(null);
+    useEffect(() => {
+        fetchBins();
+    }, []);
 
-      const getSortedBins = () => {
+    const fetchBins = async () => {
+        try {
+            const res = await axios.get("/api/ecocollect/bins");
+            setBins(res.data.map(bin => ({
+                binId: bin._id,
+                location: bin.location,
+                status: bin.status,
+                lastUpdated: timeAgo(bin.lastUpdated),
+                image: bin.image ? bin.image : null,
+                remarks: bin.remarks || ""
+            })));
+        } catch (err) {
+            alert("Failed to fetch bins.");
+        }
+    };
+
+    const timeAgo = (dateString) => {
+        const now = new Date();
+        const date = new Date(dateString);
+        const diff = Math.floor((now - date) / 1000 / 60); // minutes
+        if (diff < 1) return "Just now";
+        if (diff < 60) return `${diff} minute${diff > 1 ? "s" : ""} ago`;
+        const hours = Math.floor(diff / 60);
+        if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+        const days = Math.floor(hours / 24);
+        return `${days} day${days > 1 ? "s" : ""} ago`;
+    };
+
+    const getSortedBins = () => {
         let sorted = [...bins];
         if (sortOption === "location") {
             sorted.sort((a, b) => a.location.localeCompare(b.location));
         } else if (sortOption === "status" && statusSubSort) {
-            // Show bins with selected status first, then the rest
             sorted.sort((a, b) => {
                 if (a.status === statusSubSort && b.status !== statusSubSort) return -1;
                 if (a.status !== statusSubSort && b.status === statusSubSort) return 1;
@@ -93,7 +85,7 @@ export default function EWasteBin() {
         return sorted;
     };
     
-      const logActivity = (message) => {
+    const logActivity = (message) => {
         const timestamp = new Date().toLocaleString('en-PH', {
             month: 'short',
             day: 'numeric',
@@ -106,8 +98,7 @@ export default function EWasteBin() {
         setRecentActivities(prevActivities => [{ message, timestamp }, ...prevActivities]);
     };
 
-
-      const isFormValid = location && status && (
+    const isFormValid = location && status && (
         selectedBin?.binId === 'new' ||
         location !== initialBinValues?.location ||
         status !== initialBinValues?.status ||
@@ -174,50 +165,92 @@ export default function EWasteBin() {
         setBinImg(null);
     };
 
-    const handleRemoveBin = (binToRemove) => {
-        const updatedBins = bins.filter(bin => bin.binId !== binToRemove.binId);
-        setBins(updatedBins);
-        if (selectedBin?.binId === binToRemove.binId) {
-            handleClosePanel();
+    const handleRemoveBin = async (binToRemove) => {
+        try {
+            await axios.delete(`/api/ecocollect/bins/${binToRemove.binId}`);
+            const updatedBins = bins.filter(bin => bin.binId !== binToRemove.binId);
+            setBins(updatedBins);
+            if (selectedBin?.binId === binToRemove.binId) {
+                handleClosePanel();
+            }
+            logActivity(`Admin removed BIN "${binToRemove.binId}"`);
+            alert(`Bin "${binToRemove.binId}" removed!`);
+        } catch (err) {
+            alert("Failed to remove bin.");
         }
-        logActivity(`Admin removed BIN "${binToRemove.binId}"`);
-        alert(`Bin "${binToRemove.binId}" removed!`);
     };
 
-    const handleUpdateBin = () => {
+    const handleUpdateBin = async () => {
         if (!isFormValid) {
             alert("No changes to update or fields are empty.");
             return;
         }
+        try {
+            const formData = new FormData();
+            formData.append("location", location);
+            formData.append("status", status);
+            formData.append("remarks", remarks);
+            if (binImg) formData.append("image", binImg);
 
-        const updatedBins = bins.map(bin =>
-            bin.binId === selectedBin.binId
-                ? { ...bin, location, status, remarks, image: imagePreview }
-                : bin
-        );
-        setBins(updatedBins);
-        logActivity(`Admin updated BIN "${selectedBin.binId}" (${selectedBin.location})`);
-        handleClosePanel();
-        alert(`Bin "${selectedBin.binId}" updated!`);
+            const res = await axios.put(`/api/ecocollect/bins/${selectedBin.binId}`, formData, {
+                headers: { "Content-Type": "multipart/form-data" }
+            });
+
+            const updatedBin = res.data;
+            setBins(bins.map(bin =>
+                bin.binId === selectedBin.binId
+                    ? {
+                        binId: updatedBin._id,
+                        location: updatedBin.location,
+                        status: updatedBin.status,
+                        lastUpdated: timeAgo(updatedBin.lastUpdated),
+                        image: updatedBin.image,
+                        remarks: updatedBin.remarks
+                    }
+                    : bin
+            ));
+            logActivity(`Admin updated BIN "${selectedBin.binId}" (${selectedBin.location})`);
+            handleClosePanel();
+            alert(`Bin "${selectedBin.binId}" updated!`);
+        } catch (err) {
+            alert("Failed to update bin.");
+        }
     };
 
-    const handleAddSubmitBin = () => {
+    const handleAddSubmitBin = async () => {
         if (!isFormValid) {
             alert("Please fill in all required fields.");
             return;
         }
-        const newBin = {
-            binId: `BIN-${Date.now().toString().slice(-3)}`,
-            location,
-            status,
-            lastUpdated: 'Just now',
-            image: imagePreview,
-            remarks
-        };
-        setBins([...bins, newBin]);
-        logActivity(`Admin added BIN "${newBin.binId}" (${location})`);
-        handleClosePanel();
-        alert(`New bin "${newBin.binId}" added!`);
+        try {
+            const formData = new FormData();
+            formData.append("location", location);
+            formData.append("status", status);
+            formData.append("remarks", remarks);
+            if (binImg) formData.append("image", binImg);
+
+            const res = await axios.post("/api/ecocollect/bins", formData, {
+                headers: { "Content-Type": "multipart/form-data" }
+            });
+
+            const bin = res.data;
+            setBins([
+                ...bins,
+                {
+                    binId: bin._id,
+                    location: bin.location,
+                    status: bin.status,
+                    lastUpdated: timeAgo(bin.lastUpdated),
+                    image: bin.image,
+                    remarks: bin.remarks
+                }
+            ]);
+            logActivity(`Admin added BIN "${bin._id}" (${location})`);
+            handleClosePanel();
+            alert(`New bin "${bin._id}" added!`);
+        } catch (err) {
+            alert("Failed to add bin.");
+        }
     };
 
     const handleSubmitBin = () => {
@@ -228,7 +261,7 @@ export default function EWasteBin() {
         }
     };
 
-     React.useEffect(() => {
+    React.useEffect(() => {
         function handleClickOutside(event) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setShowStatusSubmenu(false);
@@ -267,9 +300,9 @@ export default function EWasteBin() {
                                     <div className="image-section">
                                         <div className="upload-placeholder">
                                             {imagePreview ? (
-                                                <img src={imagePreview} alt="Bin Preview" />
+                                                <img src={getImageUrl(imagePreview)} alt="Bin Preview" />
                                             ) : (
-                                                <img src={selectedBin?.image || imgPlaceholder} alt="Placeholder" style={{ opacity: 0.5 }} />
+                                                <img src={getImageUrl(selectedBin?.image) || imgPlaceholder} alt="Placeholder" />
                                             )}
                                         </div>
                                         <input type="file" accept=".png, .jpg, .jpeg, .gif" onChange={handleImageChange} id="imageInput" style={{ display: 'none' }} />

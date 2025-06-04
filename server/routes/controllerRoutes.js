@@ -42,6 +42,15 @@ const {
     getBadgeById
 } = require('../controllers/badgeController');
 
+const {
+    getAllBins,
+    addBin,
+    updateBin,
+    deleteBin,
+    getBinCount,
+    getBinById
+} = require ('../controllers/binController');
+
 const { 
     submitEWaste, 
     userSubmitCount,
@@ -65,6 +74,12 @@ if (!fs.existsSync(rewardsDirectory)) {
 const badgesDirectory = path.join(__dirname, "..", "uploads", "badges");
 if (!fs.existsSync(badgesDirectory)) {
     fs.mkdirSync(badgesDirectory, { recursive: true });
+}
+
+// Ensure bins images folder exists
+const binsDirectory = path.join(__dirname, "..", "uploads", "bins");
+if (!fs.existsSync(binsDirectory)) {
+    fs.mkdirSync(binsDirectory, { recursive: true });
 }
 
 const storage = multer.diskStorage({
@@ -97,9 +112,20 @@ const badgesStorage = multer.diskStorage({
     }
 });
 
+const binsStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "uploads/bins/"); // Store bin images in a separate folder
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, 'bin-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
 const upload = multer({ storage: storage });
 const rewardsUpload = multer({ storage: rewardsStorage });
 const badgesUpload = multer({ storage: badgesStorage });
+const binsUpload = multer({ storage: binsStorage });
 
 // Admin Routes
 router.get("/user/ewastes", getEwastes);
@@ -126,6 +152,14 @@ router.get("/badges/:id", getBadgeById);
 router.post("/badges", badgesUpload.single("image"), addBadge);
 router.put("/badges/:id", badgesUpload.single("image"), updateBadge);
 router.delete("/badges/:id", deleteBadge);
+
+// --- Bin Management Routes ---
+router.get("/bins", getAllBins);
+router.get("/bins/count", getBinCount);
+router.get("/bins/:id", getBinById);
+router.post("/bins", binsUpload.single("image"), addBin);
+router.put("/bins/:id", binsUpload.single("image"), updateBin);
+router.delete("/bins/:id", deleteBin);
 
 // User Routes
 router.post("/ewaste", upload.array("attachments", 5), submitEWaste);
