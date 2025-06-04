@@ -6,8 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "preinstall": "npm config set loglevel warn",
-    "build": "npm install -g node-pre-gyp && npm install && npm rebuild bcrypt --build-from-source"
+    "build": "npm ci && npm rebuild bcrypt --build-from-source"
   },
   "author": "",
   "license": "ISC",
