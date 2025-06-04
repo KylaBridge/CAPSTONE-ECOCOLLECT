@@ -6,13 +6,6 @@ const fs = require("fs");
 
 // Import controllers
 const {
-    getAllBins,
-    addBin,
-    updateBin,
-    deleteBin,
-    getBinCount
-} = require('../controllers/binController');
-const {
     getEwastes,
     getAllSubmissions,
     updateSubmissionStatus,
@@ -74,12 +67,6 @@ if (!fs.existsSync(badgesDirectory)) {
     fs.mkdirSync(badgesDirectory, { recursive: true });
 }
 
-// Ensure bins images folder exists
-const binDirectory = path.join(__dirname, "..", "uploads", "bins");
-if (!fs.existsSync(binDirectory)) {
-    fs.mkdirSync(binDirectory, { recursive: true });
-}
-
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, "uploads/"); // this folder should exist or be created
@@ -110,20 +97,9 @@ const badgesStorage = multer.diskStorage({
     }
 });
 
-const binStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, "uploads/bins/"); // Store bin images in a separate folder
-    },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, 'bin-' + uniqueSuffix + path.extname(file.originalname));
-    }
-});
-
 const upload = multer({ storage: storage });
 const rewardsUpload = multer({ storage: rewardsStorage });
 const badgesUpload = multer({ storage: badgesStorage });
-const binUpload = multer({ storage: binStorage });
 
 // Admin Routes
 router.get("/user/ewastes", getEwastes);
@@ -142,11 +118,6 @@ router.get("/redeem/all", getAllRedemptions);
 router.get("/rewards/redemption-count", getRedemptionCount);
 router.get("/rewards/redemption-stats", getRewardRedemptionStats);
 router.get("/analytics/participation", getUserParticipationData);
-router.get("/bins", getAllBins);
-router.post("/bins", binUpload.single("image"), addBin);
-router.put("/bins/:id", binUpload.single("image"), updateBin);
-router.delete("/bins/:id", deleteBin);
-router.get("/bins/count", getBinCount);
 
 // Badge Management Routes
 router.get("/badges", getAllBadges);
