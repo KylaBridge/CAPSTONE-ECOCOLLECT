@@ -7,7 +7,7 @@ import BinTable from "../admin-components/BinTable";
 import AdminButton from "../admin-components/AdminButton";
 import axios from "axios";
 
-const BACKEND_URL = "http://localhost:3000";
+const BACKEND_URL = "https://capstone-ecocollect-production-b7e9.up.railway.app";
 
 // Helper to get full image URL
 const getImageUrl = (imagePath) => {

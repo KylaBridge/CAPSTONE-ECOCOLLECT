@@ -53,7 +53,7 @@ function AdminProtectedRoute({ children }) {
   return children
 }
 
-axios.defaults.baseURL = "http://capstone-ecocollect-production-da52.up.railway.app"
+axios.defaults.baseURL = "https://capstone-ecocollect-production-b7e9.up.railway.app"
 axios.defaults.withCredentials = true
 
 export default function App() {

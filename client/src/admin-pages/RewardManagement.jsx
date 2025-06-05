@@ -29,11 +29,11 @@ export default function RewardManagement() {
 
   const fetchRewards = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/ecocollect/rewards");
+      const response = await axios.get("/api/ecocollect/rewards");
       const rewardsWithImageUrls = response.data.map(reward => ({
         ...reward,
         id: reward._id,
-        image: reward.image ? `http://localhost:3000/${reward.image.path}` : null
+        image: reward.image ? `https://capstone-ecocollect-production-b7e9.up.railway.app/${reward.image.path}` : null
       }));
       setRewards(rewardsWithImageUrls);
       setLoading(false);
@@ -116,7 +116,7 @@ export default function RewardManagement() {
 
     try {
       if (!id.startsWith('new-')) {
-        await axios.delete(`http://localhost:3000/api/ecocollect/rewards/${id}`);
+        await axios.delete(`/api/ecocollect/rewards/${id}`);
         toast.success("Reward deleted successfully");
       }
       setRewards(prev => prev.filter(r => r.id !== id));
@@ -160,12 +160,12 @@ export default function RewardManagement() {
 
       let response;
       if (current.id.startsWith('new-')) {
-        response = await axios.post("http://localhost:3000/api/ecocollect/rewards", formData, {
+        response = await axios.post("/api/ecocollect/rewards", formData, {
           headers: { "Content-Type": "multipart/form-data" }
         });
         toast.success("Reward added successfully");
       } else {
-        response = await axios.put(`http://localhost:3000/api/ecocollect/rewards/${current.id}`, formData, {
+        response = await axios.put(`/api/ecocollect/rewards/${current.id}`, formData, {
           headers: { "Content-Type": "multipart/form-data" }
         });
         toast.success("Reward updated successfully");
