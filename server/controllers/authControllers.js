@@ -97,7 +97,7 @@ const loginUser = async (req, res) => {
                         if (err) throw err;
                         res.cookie("token", token, {
                             httpOnly: true,
-                            sameSite: "lax", // or "none" if cross-origin
+                            sameSite: "none", // or "none" if cross-origin
                             secure: process.env.NODE_ENV === "production"
                         }).json({
                             message: user.role === "admin" ? "User is an admin" : "User logged in",
