@@ -98,7 +98,7 @@ const loginUser = async (req, res) => {
                         res.cookie("token", token, {
                             httpOnly: true,
                             sameSite: "none", // or "none" if cross-origin
-                            secure: process.env.NODE_ENV === "production"
+                            secure: true
                         }).json({
                             message: user.role === "admin" ? "User is an admin" : "User logged in",
                             _id: user._id,
