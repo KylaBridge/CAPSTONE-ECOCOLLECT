@@ -94,7 +94,6 @@ export default function Achievements() {
     // Always show our custom share options first
     setShowShareOptions(true);
 
-    // If Web Share API is available, we'll use it as a fallback
     if (navigator.share) {
       try {
         const shareData = {
@@ -117,8 +116,6 @@ export default function Achievements() {
           }
         }
         
-        // We'll keep this as a fallback but won't use it by default
-        // await navigator.share(shareData);
       } catch (err) {
         console.error('Error preparing share data:', err);
       }

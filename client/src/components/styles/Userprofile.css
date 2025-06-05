@@ -25,6 +25,21 @@
     object-fit: cover; 
 }
 
+.profile-initial-avatar {
+    width: 80px;
+    height: 80px;
+    background: #40662c;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-right: 5px;
+    user-select: none;
+}
+
 .profile-details {
     flex-grow: 1;
     color: #386641;

@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import './styles/Header.css'; 
-import adminIcon from '../assets/icons/profile-pic.png';
 import { useContext } from "react";
 import { UserContext } from "../context/userContext";
 
 const Header = ({ pageTitle }) => {
     const { user } = useContext(UserContext);
+
+    // Get the first letter of the email, or "A" as fallback
+    const emailInitial = user?.email ? user.email.charAt(0).toUpperCase() : "A";
 
     return (
         <div className="header-container">
@@ -18,7 +20,12 @@ const Header = ({ pageTitle }) => {
                     <div className="admin-name">{user?.email || "Loading..." }</div>
                     <div className="admin-role">Admin</div>
                 </div>
-                <img src={adminIcon} alt="Admin Profile" className="admin-icon" />
+                {/* Show initial in a circle if no profilePicture */}
+                {user?.profilePicture ? (
+                    <img src={user.profilePicture} alt="Admin Profile" className="admin-icon" />
+                ) : (
+                    <div className="admin-initial-avatar">{emailInitial}</div>
+                )}
             </div>
         </div>
     );

@@ -148,6 +148,7 @@ export default function EWasteSubmission() {
                 <option value="Cords">Cords</option>
                 <option value="Powerbank">Powerbank</option>
                 <option value="USB">USB</option>
+                <option value="others">Others</option>
               </select>
             </div>
 

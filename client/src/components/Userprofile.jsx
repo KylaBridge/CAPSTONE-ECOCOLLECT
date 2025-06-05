@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/userContext";
 import "./styles/Userprofile.css";
-import ProfilePic from "../assets/icons/profile-pic.png";
 import axios from "axios";
 
 export default function Userprofile() {
@@ -32,10 +31,16 @@ export default function Userprofile() {
 
     const currentPoints = user?.exp || 0;
     const progressPercent = ((currentPoints - levelStart) / (levelEnd - levelStart)) * 100;
+    const emailInitial = user?.email ? user.email.charAt(0).toUpperCase() : "U";
 
     return (
         <div className="profile-container">
-            <img src={user?.profilePicture || ProfilePic} alt="profile picture" className="profile-pic" />
+            {/* Show profile picture if available, else show initial in a styled circle */}
+            {user?.profilePicture ? (
+                <img src={user.profilePicture} alt="profile picture" className="profile-pic" />
+            ) : (
+                <div className="profile-initial-avatar">{emailInitial}</div>
+            )}
             <div className="profile-details">
                 {!!user ? (
                     <>

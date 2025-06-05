@@ -12,6 +12,20 @@ export default function ContactPage() {
     company: "",
     message: "",
   });
+  const [errors, setErrors] = useState({});
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.name.trim()) newErrors.name = "Name is required.";
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required.";
+    } else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(formData.email)) {
+      newErrors.email = "Invalid email address.";
+    }
+    if (!formData.message.trim()) newErrors.message = "Message is required.";
+    return newErrors;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,11 +33,25 @@ export default function ContactPage() {
       ...prev,
       [name]: value,
     }));
+    setErrors((prev) => ({
+      ...prev,
+      [name]: undefined,
+    }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      setSubmitSuccess(false);
+      return;
+    }
+    setErrors({});
+    setSubmitSuccess(true);
+
+    // Placeholder for future backend/email logic
+
     setFormData({
       name: "",
       email: "",
@@ -46,8 +74,8 @@ export default function ContactPage() {
         <div className="form-section">
           <h2>PLEASE FILL IN THE FORM BELOW</h2>
           <p className="required-text">* Fields marked with an asterisk are mandatory</p>
-          
-          <form onSubmit={handleSubmit}>
+          {submitSuccess && <div className="success-message">Thank you for reaching us!</div>}
+          <form onSubmit={handleSubmit} noValidate>
             <div className="form-row">
               <div className="form-group">
                 <label>Name *</label>
@@ -59,6 +87,7 @@ export default function ContactPage() {
                   placeholder="Enter your name"
                   required
                 />
+                {errors.name && <span className="error-message">{errors.name}</span>}
               </div>
               <div className="form-group">
                 <label>Email *</label>
@@ -70,6 +99,7 @@ export default function ContactPage() {
                   placeholder="Enter your email"
                   required
                 />
+                {errors.email && <span className="error-message">{errors.email}</span>}
               </div>
             </div>
 
@@ -97,14 +127,16 @@ export default function ContactPage() {
             </div>
 
             <div className="form-group">
-              <label>Message</label>
+              <label>Message *</label>
               <textarea
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
                 placeholder="Enter message"
                 rows="4"
+                required
               ></textarea>
+              {errors.message && <span className="error-message">{errors.message}</span>}
             </div>
 
             <button type="submit" className="submit-btn">
@@ -131,8 +163,10 @@ export default function ContactPage() {
               <div className="info-item">
                 <FaMapMarkerAlt className="info-icon" />
                 <p>
-                  National University Manila<br />
-                  M.F. Jhocson Street, Sampaloc<br />
+                  National University Manila
+                  <br />
+                  M.F. Jhocson Street, Sampaloc
+                  <br />
                   Manila, Philippines
                 </p>
               </div>
