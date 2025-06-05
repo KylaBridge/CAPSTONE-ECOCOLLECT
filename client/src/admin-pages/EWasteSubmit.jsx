@@ -21,7 +21,7 @@ export default function EWasteSubmit() {
     const dropdownRef = useRef(null);
 
     useEffect(() => {
-        axios.get("http://localhost:3000/api/ecocollect/ewaste")
+        axios.get("http://capstone-ecocollect-production-da52.up.railway.app/api/ecocollect/ewaste")
             .then((res) => {
                 const formattedData = res.data
                     .filter(sub => sub.status === "Pending")
@@ -31,7 +31,7 @@ export default function EWasteSubmit() {
                         submissionDate: new Date(sub.createdAt).toLocaleDateString(),
                         status: sub.status || "Pending",
                         category: sub.category,
-                        images: sub.attachments.map(img => `http://localhost:3000/${img.path}`),
+                        images: sub.attachments.map(img => `http://capstone-ecocollect-production-da52.up.railway.app/${img.path}`),
                     }));
                 setSubmissions(formattedData);
             })
@@ -55,7 +55,7 @@ export default function EWasteSubmit() {
     const handleUpdateSubmission = async () => {
         try {
             // 1. Update status only (don't delete the document)
-            const updateRes = await axios.put(`http://localhost:3000/api/ecocollect/ewaste/${selectedSubmission.id}/status`, {
+            const updateRes = await axios.put(`http://capstone-ecocollect-production-da52.up.railway.app/api/ecocollect/ewaste/${selectedSubmission.id}/status`, {
                 status: statusValue,
             });
     

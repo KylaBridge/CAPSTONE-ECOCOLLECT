@@ -35,7 +35,7 @@ export default function Rewards() {
     if (!user?._id) return;
     
     try {
-      const response = await axios.get(`http://localhost:3000/api/ecocollect/redeem/user/${user._id}`);
+      const response = await axios.get(`http://capstone-ecocollect-production-da52.up.railway.app/api/ecocollect/redeem/user/${user._id}`);
       setRedemptionHistory(response.data);
     } catch (error) {
       console.error("Error fetching redemption history:", error);
@@ -45,13 +45,13 @@ export default function Rewards() {
 
   const fetchRewards = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/ecocollect/rewards");
+      const response = await axios.get("http://capstone-ecocollect-production-da52.up.railway.app/api/ecocollect/rewards");
       const formattedRewards = response.data.map(reward => ({
         id: reward._id,
         name: reward.name,
         price: reward.points,
         description: reward.description,
-        img: reward.image ? `http://localhost:3000/${reward.image.path}` : null
+        img: reward.image ? `http://capstone-ecocollect-production-da52.up.railway.app/${reward.image.path}` : null
       }));
       setRewards(formattedRewards);
       setLoading(false);
@@ -79,7 +79,7 @@ export default function Rewards() {
 
     if (currentPoints >= selectedReward.price) {
       try {
-        const response = await axios.post("http://localhost:3000/api/ecocollect/redeem", {
+        const response = await axios.post("http://capstone-ecocollect-production-da52.up.railway.app/api/ecocollect/redeem", {
           userId: user._id,
           rewardId: selectedReward.id
         });
