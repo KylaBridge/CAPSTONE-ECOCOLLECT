@@ -50,11 +50,11 @@ export default function BadgeManagement() {
     const fetchBadges = async () => {
         try {
             setLoading(true);
-            const response = await axios.get('http://capstone-ecocollect-production-da52.up.railway.app/api/ecocollect/badges');
+            const response = await axios.get('http://localhost:3000/api/ecocollect/badges');
             const badgesWithImageUrls = response.data.map(badge => ({
                 ...badge,
                 id: badge._id,
-                image: badge.image ? `http://capstone-ecocollect-production-da52.up.railway.app/${badge.image.path}` : null
+                image: badge.image ? `http://localhost:3000/${badge.image.path}` : null
             }));
             setBadges(badgesWithImageUrls);
             setError(null);
@@ -189,7 +189,7 @@ export default function BadgeManagement() {
                 const newBadge = {
                     ...response.data.badge,
                     id: response.data.badge._id,
-                    image: response.data.badge.image ? `http://capstone-ecocollect-production-da52.up.railway.app/${response.data.badge.image.path}` : null
+                    image: response.data.badge.image ? `http://localhost:3000/${response.data.badge.image.path}` : null
                 };
                 setBadges([...badges, newBadge]);
                 handleClosePanel();
@@ -202,7 +202,7 @@ export default function BadgeManagement() {
                 const updatedBadge = {
                     ...response.data.badge,
                     id: response.data.badge._id,
-                    image: response.data.badge.image ? `http://capstone-ecocollect-production-da52.up.railway.app/${response.data.badge.image.path}` : null
+                    image: response.data.badge.image ? `http://localhost:3000/${response.data.badge.image.path}` : null
                 };
                 setBadges(badges.map(badge =>
                     badge._id === selectedBadge._id ? updatedBadge : badge

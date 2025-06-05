@@ -53,7 +53,7 @@ export default function EWasteSubmission() {
   const fetchSubmissionLogs = async () => {
     if (!user?._id) return;
     try {
-      const res = await axios.get(`http://capstone-ecocollect-production-da52.up.railway.app/api/ecocollect/ewaste/user/${user._id}`);
+      const res = await axios.get(`http://localhost:3000/api/ecocollect/ewaste/user/${user._id}`);
       setSubmissionLogs(res.data);
     } catch (err) {
       console.error("Failed to fetch submission logs", err);
@@ -72,7 +72,7 @@ export default function EWasteSubmission() {
     attachments.forEach(file => formData.append("attachments", file));
 
     try {
-      const response = await axios.post("http://capstone-ecocollect-production-da52.up.railway.app/api/ecocollect/ewaste", formData, {
+      const response = await axios.post("http://localhost:3000/api/ecocollect/ewaste", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

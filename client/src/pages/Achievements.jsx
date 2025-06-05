@@ -36,7 +36,7 @@ export default function Achievements() {
         const response = await axios.get('/api/ecocollect/badges')
         const badgesWithImages = response.data.map(badge => ({
           ...badge,
-          img: badge.image ? `http://capstone-ecocollect-production-da52.up.railway.app/${badge.image.path}` : Badge1,
+          img: badge.image ? `http://localhost:3000/${badge.image.path}` : Badge1,
           requiredPoints: badge.pointsRequired
         }))
         // Sort badges by points required
