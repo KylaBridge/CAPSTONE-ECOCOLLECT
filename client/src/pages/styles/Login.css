@@ -5,7 +5,7 @@
 }
 
 .login-container {
-    background-image: url("./src/assets/bgphoto-ecocollect.png");
+    background-image: url("../../assets/bgphoto-ecocollect.png");
     background-position: center;
     display: flex;
     align-items: center;
