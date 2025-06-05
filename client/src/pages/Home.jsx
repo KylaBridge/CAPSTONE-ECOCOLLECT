@@ -44,7 +44,7 @@ export default function Home() {
                     if (current) {
                         setCurrentBadge({
                             ...current,
-                            image: current.image ? `http://localhost:3000/${current.image.path}` : Badge
+                            image: current.image ? `https://capstone-ecocollect-production-b7e9.up.railway.app/${current.image.path}` : Badge
                         });
                     }
 
@@ -54,7 +54,7 @@ export default function Home() {
                     if (next) {
                         setNextBadge({
                             ...next,
-                            image: next.image ? `http://localhost:3000/${next.image.path}` : NextBadge
+                            image: next.image ? `https://capstone-ecocollect-production-b7e9.up.railway.app/${next.image.path}` : NextBadge
                         });
                     }
                 })
