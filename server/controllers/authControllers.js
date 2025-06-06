@@ -143,7 +143,12 @@ const getProfile = async (req, res) => {
 };
 
 const logoutUser = (req, res) => {
-    res.clearCookie("token")
+    res.clearCookie("token", {
+        httpOnly: true,
+        sameSite: "none",
+        secure: true,
+        path: "/",
+    })
     res.json({ message: "Logged out successfully" })
 };
 
