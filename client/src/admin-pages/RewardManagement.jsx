@@ -33,7 +33,7 @@ export default function RewardManagement() {
       const rewardsWithImageUrls = response.data.map(reward => ({
         ...reward,
         id: reward._id,
-        image: reward.image ? `https://capstone-ecocollect-production-b7e9.up.railway.app/${reward.image.path}` : null
+        image: reward.image ? `${import.meta.env.VITE_API_URL}/${reward.image.path}` : null
       }));
       setRewards(rewardsWithImageUrls);
       setLoading(false);

@@ -7,13 +7,11 @@ import BinTable from "../admin-components/BinTable";
 import AdminButton from "../admin-components/AdminButton";
 import axios from "axios";
 
-const BACKEND_URL = "https://capstone-ecocollect-production-b7e9.up.railway.app";
-
 // Helper to get full image URL
 const getImageUrl = (imagePath) => {
     if (!imagePath) return null;
     if (imagePath.startsWith("/uploads")) {
-        return `${BACKEND_URL}${imagePath}`;
+        return `${import.meta.env.VITE_API_URL}${imagePath}`;
     }
     return imagePath;
 };

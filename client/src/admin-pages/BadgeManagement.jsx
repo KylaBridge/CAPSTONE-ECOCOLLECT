@@ -189,7 +189,7 @@ export default function BadgeManagement() {
                 const newBadge = {
                     ...response.data.badge,
                     id: response.data.badge._id,
-                    image: response.data.badge.image ? `https://capstone-ecocollect-production-b7e9.up.railway.app/${response.data.badge.image.path}` : null
+                    image: response.data.badge.image ? `${import.meta.env.VITE_API_URL}/${response.data.badge.image.path}` : null
                 };
                 setBadges([...badges, newBadge]);
                 handleClosePanel();
@@ -202,7 +202,7 @@ export default function BadgeManagement() {
                 const updatedBadge = {
                     ...response.data.badge,
                     id: response.data.badge._id,
-                    image: response.data.badge.image ? `https://capstone-ecocollect-production-b7e9.up.railway.app/${response.data.badge.image.path}` : null
+                    image: response.data.badge.image ? `${import.meta.env.VITE_API_URL}/${response.data.badge.image.path}` : null
                 };
                 setBadges(badges.map(badge =>
                     badge._id === selectedBadge._id ? updatedBadge : badge

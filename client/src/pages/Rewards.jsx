@@ -51,7 +51,7 @@ export default function Rewards() {
         name: reward.name,
         price: reward.points,
         description: reward.description,
-        img: reward.image ? `https://capstone-ecocollect-production-b7e9.up.railway.app/${reward.image.path}` : null
+        img: reward.image ? `${import.meta.env.VITE_API_URL}/${reward.image.path}` : null
       }));
       setRewards(formattedRewards);
       setLoading(false);

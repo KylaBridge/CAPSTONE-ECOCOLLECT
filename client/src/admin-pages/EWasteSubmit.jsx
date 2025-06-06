@@ -31,7 +31,7 @@ export default function EWasteSubmit() {
                         submissionDate: new Date(sub.createdAt).toLocaleDateString(),
                         status: sub.status || "Pending",
                         category: sub.category,
-                        images: sub.attachments.map(img => `https://capstone-ecocollect-production-b7e9.up.railway.app/${img.path}`),
+                        images: sub.attachments.map(img => `${import.meta.env.VITE_API_URL}/${img.path}`),
                     }));
                 setSubmissions(formattedData);
             })
