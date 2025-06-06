@@ -1,7 +1,7 @@
 .login-container .EcoCollect-logo {
   width: 15%;
   margin-bottom: 30px;
-  margin-top: 50px;
+  margin-top: 30px;
 }
 
 .login-container {
@@ -127,7 +127,7 @@
   @media screen and (max-width: 768px) {
     .login-container .EcoCollect-logo {
       margin-top: 50px;
-      width: 50%;
+      width: 40%;
     }
   
     .login-form {

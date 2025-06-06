@@ -8,7 +8,7 @@ export function UserContextProvider({ children }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get("https://capstone-ecocollect-production-b7e9.up.railway.app/api/ecocollect/auth/profile")
+        axios.get("/api/ecocollect/auth/profile")
             .then(({ data }) => {
                 setUser(data);
                 setLoading(false);

@@ -1,7 +1,7 @@
 .form-container .EcoCollect-logo {
   width: 15%;
   margin-bottom: 30px;
-  margin-top: 50px;
+  margin-top: 30px;
 }
 
 .form-container {
@@ -112,7 +112,7 @@
     @media screen and (max-width: 768px) {
     .form-container .EcoCollect-logo {
       margin-top: 50px;
-      width: 50%;
+      width: 40%;
     }
   
     .register-form {
