@@ -100,6 +100,7 @@ const loginUser = async (req, res) => {
                             sameSite: "none", // or "none" if cross-origin
                             secure: true,
                             path: "/",
+                            maxAge: 1000 * 60 * 30 // 30 minutes
                         }).json({
                             message: user.role === "admin" ? "User is an admin" : "User logged in",
                             _id: user._id,
