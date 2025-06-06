@@ -36,8 +36,7 @@ function ProtectedRoute({ children }) {
       <div className="loading-spinner"></div>
     </div>
   )
-  if(user) return <Navigate to="/home" replace /> // Redirect to home if user is already logged in
-  if (!user) return <Navigate to="/" replace /> // Redirect to login if user is not authenticated
+  if (!user) return <Navigate to="/" replace />
   return children
 }
 
@@ -50,7 +49,6 @@ function AdminProtectedRoute({ children }) {
       <div className="loading-spinner"></div>
     </div>
   )
-  if (user && user.role === "admin") return <Navigate to="/admin/dashboard" replace /> // Redirect to admin dashboard if user is already logged in as admin
   if (!user || user.role !== "admin") return <Navigate to="/admin/login" replace />
   return children
 }
