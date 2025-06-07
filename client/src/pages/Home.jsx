@@ -19,6 +19,9 @@ export default function Home() {
     const [submissionCount, setSubmissionCount] = useState(0);
     const [currentBadge, setCurrentBadge] = useState(null);
     const [nextBadge, setNextBadge] = useState(null);
+    const [leaderboard, setLeaderboard] = useState([]);
+    const [showLeaderboard, setShowLeaderboard] = useState(false);
+    const [userRank, setUserRank] = useState(null);
 
     const currentPoints = user?.points || 0;
 
@@ -61,6 +64,25 @@ export default function Home() {
                 .catch((error) => {
                     console.error("Error fetching badges:", error);
                 });
+
+            // Fetch leaderboard (top contributors)
+            axios
+                .get('/api/ecocollect/usermanagement')
+                .then((response) => {
+                    if (Array.isArray(response.data)) {
+                        // Sort by exp descending
+                        const sorted = [...response.data]
+                            .filter(u => u && typeof u === "object")
+                            .sort((a, b) => (b.exp || 0) - (a.exp || 0));
+                        setLeaderboard(sorted.slice(0, 10)); // Top 10
+                        // Find user's rank
+                        const index = sorted.findIndex(u => u._id === user._id);
+                        setUserRank(index !== -1 ? index + 1 : null);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching leaderboard:", error);
+                });
         }
     }, [user]);
 
@@ -83,7 +105,9 @@ export default function Home() {
                             <h2 className="rank-number-container">
                                 <span className="rank-label">Leaderboards</span>
                                 <div className="rank-icon-container">
-                                    <span className="user-rank-number">coming soon..</span>
+                                    <span className="user-rank-number">
+                                        {userRank ? `#${userRank}` : "Not ranked"}
+                                    </span>
                                 </div>
                             </h2>
                         </div>
