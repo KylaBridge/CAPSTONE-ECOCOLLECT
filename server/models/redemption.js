@@ -1,6 +1,12 @@
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
+const AutoIncrement = require('mongoose-sequence')(mongoose);
 
-const redemptionSchema = new mongoose.Schema({
+const redemptionSchema = new Schema({
+    id: {
+        type: Number,
+        unique: true
+    },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -19,13 +25,16 @@ const redemptionSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-}, {
-    timestamps: true
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now
+    }
 });
 
-// Index for faster queries
-redemptionSchema.index({ userId: 1, redemptionDate: -1 });
+redemptionSchema.plugin(AutoIncrement, { inc_field: 'id', id: 'redemption_id' });
 
-const Redemption = mongoose.model('Redemption', redemptionSchema);
-
-module.exports = Redemption;
+module.exports = mongoose.model('Redemption', redemptionSchema);
