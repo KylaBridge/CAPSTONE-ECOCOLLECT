@@ -1,5 +1,4 @@
-import React from "react";
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 import "./styles/LandingPage.css";
 import ChipIcon from '../assets/icons/chipandtrash.png'
 import { FaMapMarkerAlt, FaCamera, FaUpload, FaStar } from "react-icons/fa";
@@ -11,39 +10,32 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 export default function LandingPage() {
-  const sectionIds = ["hero", "transform", "how-it-works", "track-badge", "landing-reward"];
-  const sectionRefs = useRef([]);
-  
+  const sections = useRef([]);
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add("focused-section");
-          } else {
-            entry.target.classList.remove("focused-section");
+            entry.target.classList.add('fade-in');
           }
         });
       },
-      { threshold: 0.6 }
+      { threshold: 0.1 }
     );
 
-    sectionRefs.current.forEach((ref) => {
-      if (ref) observer.observe(ref);
+    sections.current.forEach((section) => {
+      if (section) observer.observe(section);
     });
 
-    return () => {
-      sectionRefs.current.forEach((ref) => {
-        if (ref) observer.unobserve(ref);
-      });
-    };
+    return () => observer.disconnect();
   }, []);
 
   return (
     <div className="landing-container">
       <Navbar />
 
-      <section className="landing-hero" id="hero" ref={(el) => (sectionRefs.current[0] = el)}>
+      <section className="landing-hero fade-section" id="hero" ref={el => (sections.current[0] = el)}>
         <div className="hero-content">
           <h1>Welcome to EcoCollect</h1>
           <p>Turning E-Waste into Eco Wins — One Drop at a Time.
@@ -52,7 +44,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="transform-section" id="transform" ref={(el) => (sectionRefs.current[1] = el)}> 
+      <section className="transform-section fade-section" id="transform" ref={el => (sections.current[1] = el)}> 
         <div className="transform-text">
           <h2>TRANSFORM E-WASTE<br />INTO <span className="highlight">SUSTAINABLE</span><br />SOLUTION</h2>
           <p>
@@ -66,7 +58,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="how-it-works" id="how-it-works" ref={(el) => (sectionRefs.current[2] = el)}>
+      <section className="how-it-works fade-section" id="how-it-works" ref={el => (sections.current[2] = el)}>
         <h2>HOW IT WORKS</h2>
         <div className="steps">
           <div className="step">
@@ -92,7 +84,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="track-badge" id="track-badge" ref={(el) => (sectionRefs.current[3] = el)}>
+      <section className="track-badge fade-section" id="track-badge" ref={el => (sections.current[3] = el)}>
         <div className="badges-wrapper">
           <div className="badge-images">
             <img src={Badge1} alt="Badge 1" />
@@ -110,7 +102,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="landing-reward-section" id="landing-reward" ref={(el) => (sectionRefs.current[4] = el)}>
+      <section className="landing-reward-section fade-section" id="landing-reward" ref={el => (sections.current[4] = el)}>
         <div className="rewards-text">
           <h2>E-WASTE TO REWARDS</h2>
           <p>
@@ -123,7 +115,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <Footer />
+      <Footer id="footer" ref={el => (sections.current[5] = el)}/>
     </div>
   );
 }

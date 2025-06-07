@@ -18,17 +18,17 @@
 section {
   padding: 4rem 6rem;
   color: var(--text-light);
-  transition: all 0.5s ease-in-out;
-  opacity: 0.4;
-  filter: blur(5px);
-  transform: scale(0.98);
 }
 
-.focused-section {
+.fade-section {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.fade-in {
   opacity: 1;
-  filter: blur(0);
-  transform: scale(1);
-  z-index: 2;
+  transform: translateY(0);
 }
 
 /* About Intro Section */
@@ -72,7 +72,6 @@ section {
   padding: 2rem;
   border-radius: 20px;
   text-align: center;
-  transition: transform 0.3s ease;
 }
 
 .mission:hover, .vision:hover {

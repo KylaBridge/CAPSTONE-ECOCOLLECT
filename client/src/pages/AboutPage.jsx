@@ -1,5 +1,4 @@
-import React from "react";
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
 import SmCaresxNuLogo from "../assets/NUxSmCaresLogo.png";
 import { FaFacebook, FaLinkedin } from "react-icons/fa";
@@ -10,39 +9,32 @@ import { teamData } from "../data/teamData";
 import "./styles/AboutPage.css";
 
 export default function AboutPage() {
-  const sectionIds = ["about-intro", "mission-vision", "collaborators", "dev-team"];
-  const sectionRefs = useRef([]);
-  
+  const sections = useRef([]);
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add("focused-section");
-          } else {
-            entry.target.classList.remove("focused-section");
+            entry.target.classList.add('fade-in');
           }
         });
       },
-      { threshold: 0.6 }
+      { threshold: 0.1 }
     );
 
-    sectionRefs.current.forEach((ref) => {
-      if (ref) observer.observe(ref);
+    sections.current.forEach((section) => {
+      if (section) observer.observe(section);
     });
 
-    return () => {
-      sectionRefs.current.forEach((ref) => {
-        if (ref) observer.unobserve(ref);
-      });
-    };
+    return () => observer.disconnect();
   }, []);
 
   return (
     <div className="about-container">
       <Navbar />
 
-      <section className="about-intro" id="about-intro" ref={(el) => (sectionRefs.current[0] = el)}>
+      <section className="about-intro fade-section" id="about-intro" ref={el => (sections.current[0] = el)}>
         <h1>About EcoCollect</h1>
         <p>
           EcoCollect is a gamified web-based mobile application initiated by National University College of Information Technology. 
@@ -62,7 +54,7 @@ export default function AboutPage() {
         </p>
       </section>
 
-      <section className="mission-vision" id="mission-vision" ref={(el) => (sectionRefs.current[1] = el)}>
+      <section className="mission-vision fade-section" id="mission-vision" ref={el => (sections.current[1] = el)}>
         <div className="mission">
           <h2>Our Mission</h2>
           <p>
@@ -79,7 +71,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="collaborators" id="collaborators" ref={(el) => (sectionRefs.current[2] = el)}>
+      <section className="collaborators fade-section" id="collaborators" ref={el => (sections.current[2] = el)}>
         <h2>Partnership</h2>
         <div className="partnership-container">
           <div className="partner-logos">
@@ -102,7 +94,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="dev-team" id="dev-team" ref={(el) => (sectionRefs.current[3] = el)}>
+      <section className="dev-team fade-section" id="dev-team" ref={el => (sections.current[3] = el)}>
         <h2>Meet the Team</h2>
         <div className="team-grid">
           {teamData.map((member) => (

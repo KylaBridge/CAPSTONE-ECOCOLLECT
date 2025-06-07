@@ -20,19 +20,24 @@ body {
 }
 
 section {
-  transition: all 0.5s ease-in-out;
-  opacity: 0.4;
-  filter: blur(5px);
-  transform: scale(0.98);
+  padding: 4rem 6rem;
 }
 
-/* When in focus */
-.focused-section {
-  opacity: 1;
-  filter: blur(0);
-  transform: scale(1);
-  z-index: 2;
+.fade-section {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
 }
+
+.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Simple scroll animation */
+/* .animate-section {
+  transform: translateY(0);
+} */
 
 .landing-hero {
   background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
