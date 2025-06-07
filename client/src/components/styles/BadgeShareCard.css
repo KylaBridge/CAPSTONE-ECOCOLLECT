@@ -68,14 +68,16 @@
 }
 
 .share-card-header .username {
-  color: #388e3c;
+  color: #154d31;
+  font-weight: bolder;
   font-size: 0.8rem;
   margin: 10px;
   text-shadow: 1px 1px 0 #fff;
 }
 
 .share-card-header p {
-  color: #388e3c;
+  color: #154d31;
+  font-weight: bolder;
   font-size: 0.8rem;
   margin: 0 0 10px 0;
   text-shadow: 1px 1px 0 #fff;
@@ -120,14 +122,16 @@
 .badge-description {
   margin: 10px 0 0 0;
   font-size: 0.8rem;
-  color: #388e3c;
+  color: #154d31;
+  font-weight: bolder;
   text-shadow: 1px 1px 0 #fff;
 }
 
 .badge-date {
   margin: 10px 0 30px 0;
   font-size: 0.8rem;
-  color: #388e3c;
+  color: #154d31;
+  font-weight: bolder;
   text-shadow: 1px 1px 0 #fff;
 }
 
