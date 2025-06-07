@@ -138,3 +138,52 @@
         margin-top: 15px;
     }
 }
+
+@media screen and (max-height: 700px) {
+    .form-container .EcoCollect-logo {
+        margin-top: 20px;
+        margin-bottom: 15px;
+        width: 25%;
+    }
+
+    .register-form {
+        padding: 20px;
+    }
+
+    .register-form h1 {
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+    }
+
+    .register-form .welcome-el {
+        margin-bottom: 15px;
+    }
+
+    .register-form label {
+        margin-bottom: 4px;
+    }
+
+    .register-form input {
+        margin-bottom: 10px;
+        padding: 5px 7px;
+    }
+
+    .register-form .register-btn2 {
+        margin-top: 15px;
+        margin-bottom: 10px;
+        padding: 5px;
+    }
+
+    .register-form .or-seperator {
+        margin: 10px 0;
+    }
+
+    .register-form .microsoftAcc-btn {
+        padding: 5px 30px;
+        margin: 5px auto;
+    }
+
+    .partnership-logo {
+        margin-top: 15px;
+    }
+}
