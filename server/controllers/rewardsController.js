@@ -2,6 +2,7 @@ const Reward = require('../models/rewards');
 const path = require("path");
 const fs = require("fs");
 const Redemption = require('../models/redemption');
+const ActivityLog = require('../models/activityLog');
 
 //
 // ------------------ REWARDS MANAGEMENT ------------------
@@ -36,6 +37,16 @@ const addReward = async (req, res) => {
     });
 
     await newReward.save();
+
+    // Log activity
+    await ActivityLog.create({
+      userId: req.user?._id || null,
+      userEmail: req.user?.email || 'Admin',
+      userRole: req.user?.role,
+      action: 'Reward Added',
+      details: `Added reward ${name}`,
+    });
+
     res.status(201).json({ message: "Reward added successfully", reward: newReward });
   } catch (error) {
     console.error(error);
@@ -77,6 +88,16 @@ const updateReward = async (req, res) => {
     reward.description = description;
 
     await reward.save();
+
+    // Log activity
+    await ActivityLog.create({
+      userId: req.user?._id || null,
+      userEmail: req.user?.email || 'Admin',
+      userRole: req.user?.role,
+      action: 'Reward Updated',
+      details: `Updated reward ${name}`,
+    });
+
     res.status(200).json({ message: "Reward updated successfully", reward });
   } catch (error) {
     console.error(error);
@@ -103,6 +124,16 @@ const deleteReward = async (req, res) => {
     }
 
     await Reward.findByIdAndDelete(id);
+
+    // Log activity
+    await ActivityLog.create({
+      userId: req.user?._id || null,
+      userEmail: req.user?.email || 'Admin',
+      userRole: req.user?.role,
+      action: 'Reward Deleted',
+      details: `Deleted reward ${reward.name}`,
+    });
+
     res.status(200).json({ message: "Reward deleted successfully" });
   } catch (error) {
     console.error(error);

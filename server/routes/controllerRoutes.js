@@ -51,12 +51,20 @@ const {
     getBinById
 } = require ('../controllers/binController');
 
+const {
+    getAllActivityLogs,
+    getUserActivityLogs,
+    addActivityLog
+} = require('../controllers/activityLogController');
+
 const { 
     submitEWaste, 
     userSubmitCount,
     getUserSubmissions,
     redeemReward,
 } = require('../controllers/userController');
+
+const authMiddleware = require('../middleware/authMiddleware'); 
 
 // Ensure uploads folder exists
 const uploadDirectory = path.join(__dirname, "..", "uploads");
@@ -127,49 +135,60 @@ const rewardsUpload = multer({ storage: rewardsStorage });
 const badgesUpload = multer({ storage: badgesStorage });
 const binsUpload = multer({ storage: binsStorage });
 
-// Admin Routes
-router.get("/user/ewastes", getEwastes);
-router.get("/usermanagement", getUserData);
-router.get("/user/role-count", countUsersByRole);
-router.delete("/usermanagement/:id", deleteUser);
-router.put("/ewaste/:id/status", updateSubmissionStatus);
-router.get("/ewaste", getAllSubmissions); 
-router.delete("/ewaste/:id", deleteEWaste);
-router.get("/rewards", getAllRewards);
-router.post("/rewards", rewardsUpload.single("image"), addReward);
-router.put("/rewards/:id", rewardsUpload.single("image"), updateReward);
-router.delete("/rewards/:id", deleteReward);
-router.get("/redeem/user/:userId", getUserRedemptions);
-router.get("/redeem/all", getAllRedemptions);
-router.get("/rewards/redemption-count", getRedemptionCount);
-router.get("/rewards/redemption-stats", getRewardRedemptionStats);
-router.get("/analytics/participation", getUserParticipationData);
+// ==================== ADMIN ROUTES ====================
+router.get("/user/ewastes", authMiddleware, getEwastes); // Ewaste counts by category
+router.get("/usermanagement", authMiddleware, getUserData); // All users
+router.get("/user/role-count", authMiddleware, countUsersByRole); // User/admin count
+router.delete("/usermanagement/:id", authMiddleware, deleteUser); // Delete user
+router.put("/ewaste/:id/status", authMiddleware, updateSubmissionStatus); // Update ewaste status
+router.get("/ewaste", authMiddleware, getAllSubmissions); // All ewaste submissions
+router.delete("/ewaste/:id", authMiddleware, deleteEWaste); // Delete ewaste
 
-// Badge Management Routes
-router.get("/badges", getAllBadges);
-router.get("/badges/count", getBadgeCount);
-router.get("/badges/:id", getBadgeById);
-router.post("/badges", badgesUpload.single("image"), addBadge);
-router.put("/badges/:id", badgesUpload.single("image"), updateBadge);
-router.delete("/badges/:id", deleteBadge);
+// --- Rewards Management ---
+router.get("/rewards", authMiddleware, getAllRewards);
+router.post("/rewards", authMiddleware, rewardsUpload.single("image"), addReward);
+router.put("/rewards/:id", authMiddleware, rewardsUpload.single("image"), updateReward);
+router.delete("/rewards/:id", authMiddleware, deleteReward);
+router.get("/rewards/redemption-count", authMiddleware, getRedemptionCount);
+router.get("/rewards/redemption-stats", authMiddleware, getRewardRedemptionStats);
 
-// --- Bin Management Routes ---
-router.get("/bins", getAllBins);
-router.get("/bins/count", getBinCount);
-router.get("/bins/:id", getBinById);
-router.post("/bins", binsUpload.single("image"), addBin);
-router.put("/bins/:id", binsUpload.single("image"), updateBin);
-router.delete("/bins/:id", deleteBin);
+// --- Redemption Management ---
+router.get("/redeem/user/:userId", authMiddleware, getUserRedemptions);
+router.get("/redeem/all", authMiddleware, getAllRedemptions);
 
-// User Routes
-router.post("/ewaste", upload.array("attachments", 5), submitEWaste);
-router.get("/ewaste/user/:userId/count", userSubmitCount);
-router.get("/ewaste/user/:userId", getUserSubmissions);
-router.post("/redeem", redeemReward);
+// --- Analytics ---
+router.get("/analytics/participation", authMiddleware, getUserParticipationData);
 
-// User Management Routes
-router.get("/users", getUserData);
-router.get("/users/count", countUsersByRole);
-router.delete("/users/:id", deleteUser);
+// ==================== BADGE MANAGEMENT ROUTES ====================
+router.get("/badges", authMiddleware, getAllBadges);
+router.get("/badges/count", authMiddleware, getBadgeCount);
+router.get("/badges/:id", authMiddleware, getBadgeById);
+router.post("/badges", authMiddleware, badgesUpload.single("image"), addBadge);
+router.put("/badges/:id", authMiddleware, badgesUpload.single("image"), updateBadge);
+router.delete("/badges/:id", authMiddleware, deleteBadge);
+
+// ==================== BIN MANAGEMENT ROUTES ====================
+router.get("/bins", authMiddleware, getAllBins);
+router.get("/bins/count", authMiddleware, getBinCount);
+router.get("/bins/:id", authMiddleware, getBinById);
+router.post("/bins", authMiddleware, binsUpload.single("image"), addBin);
+router.put("/bins/:id", authMiddleware, binsUpload.single("image"), updateBin);
+router.delete("/bins/:id", authMiddleware, deleteBin);
+
+// ==================== ACTIVITY LOG ROUTES ====================
+router.get("/activity-logs", authMiddleware, getAllActivityLogs);
+router.get("/activity-logs/user/:userId", authMiddleware, getUserActivityLogs);
+router.post("/activity-logs", authMiddleware, addActivityLog);
+
+// ==================== USER ROUTES ====================
+router.post("/ewaste", authMiddleware, upload.array("attachments", 5), submitEWaste);
+router.get("/ewaste/user/:userId/count", authMiddleware, userSubmitCount);
+router.get("/ewaste/user/:userId", authMiddleware, getUserSubmissions);
+router.post("/redeem", authMiddleware, redeemReward);
+
+// ==================== USER MANAGEMENT ROUTES ====================
+router.get("/users", authMiddleware, getUserData);
+router.get("/users/count", authMiddleware, countUsersByRole);
+router.delete("/users/:id", authMiddleware, deleteUser);
 
 module.exports = router;

@@ -3,6 +3,7 @@ const EWaste = require('../models/ewaste');
 const path = require("path");
 const fs = require("fs");
 const { updateUserRank } = require('./userController');
+const ActivityLog = require('../models/activityLog'); 
 
 //
 // ------------------ E-WASTE SUBMISSIONS ------------------
@@ -74,6 +75,16 @@ const updateSubmissionStatus = async (req, res) => {
     submission.status = status;
     await submission.save();
 
+    // Log activity
+    const user = await User.findById(submission.user);
+    await ActivityLog.create({
+      userId: user?._id,
+      userEmail: user?.email || 'Unknown',
+      userRole: user?.role,
+      action: status === "Approved" ? "EWaste Approved" : status === "Rejected" ? "EWaste Rejected" : "EWaste Updated",
+      details: `Submission ${submission.category} marked as ${status}`,
+    });
+
     if (status === "Approved") {
       const user = await User.findById(submission.user);
       if (user) {
@@ -106,7 +117,16 @@ const deleteEWaste = async (req, res) => {
       if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
     }
 
-    await EWaste.findByIdAndDelete(id); // actually delete the submission itself
+    await EWaste.findByIdAndDelete(id);
+
+    // Log activity
+    await ActivityLog.create({
+      userId: submission.user,
+      userEmail: 'Unknown', // Optionally fetch user for email
+      userRole: req.user?.role,
+      action: 'EWaste Deleted',
+      details: `Deleted submission of ${submission.category}`,
+    });
 
     res.status(200).json({ message: "E-waste submission deleted successfully" });
   } catch (err) {

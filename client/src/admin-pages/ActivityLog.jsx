@@ -20,32 +20,20 @@ export default function ActivityLog() {
     const fetchActivities = async () => {
       try {
         setLoading(true);
-        
-        // Fetch e-waste submissions
-        const submissionsResponse = await axios.get('/api/ecocollect/ewaste');
-        const formattedSubmissions = submissionsResponse.data.map(submission => ({
-          id: submission._id,
-          email: submission.user?.email || 'Unknown User',
-          role: submission.user?.role || 'User',
-          activity: 'Submitted E-Waste',
-          description: `Submitted ${submission.category} - ${submission.status}`,
-          dateTime: new Date(submission.createdAt).toLocaleString(),
+
+        // Fetch activity logs from backend
+        const response = await axios.get('/api/ecocollect/activity-logs');
+        const formattedLogs = response.data.map(log => ({
+          id: log._id,
+          email: log.userEmail || 'Unknown User',
+          role: (log.userRole || 'user').toLowerCase(), // <-- Use userRole
+          activity: log.action,
+          description: log.details,
+          dateTime: new Date(log.timestamp).toLocaleString(),
         }));
 
-        // Fetch reward redemptions
-        const redemptionsResponse = await axios.get('/api/ecocollect/redeem/all');
-        const formattedRedemptions = redemptionsResponse.data.map(redemption => ({
-          id: redemption._id,
-          email: redemption.userId?.email || 'Unknown User',
-          role: redemption.userId?.role || 'User',
-          activity: 'Redeemed Reward',
-          description: `Redeemed ${redemption.rewardId?.name || 'Unknown Reward'} for ${redemption.rewardId?.points || 0} points`,
-          dateTime: new Date(redemption.redemptionDate).toLocaleString(),
-        }));
-
-        // Combine and sort all activities by date (newest first)
-        const allActivities = [...formattedSubmissions, ...formattedRedemptions]
-          .sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
+        // Sort by date (newest first)
+        const allActivities = formattedLogs.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
 
         setActivities(allActivities);
       } catch (error) {
@@ -57,6 +45,12 @@ export default function ActivityLog() {
 
     fetchActivities();
   }, []);
+
+  // Get unique roles for filter dropdown
+  const roleOptions = useMemo(() => {
+    const roles = activities.map((log) => log.role && log.role.trim().toLowerCase());
+    return Array.from(new Set(roles)).filter(Boolean);
+  }, [activities]);
 
   // Get unique activity types for filter dropdown
   const activityTypes = useMemo(() => {
@@ -70,7 +64,7 @@ export default function ActivityLog() {
       const matchesSearch = log.email
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
-      const matchesRole = roleFilter === "All" || log.role === roleFilter;
+      const matchesRole = roleFilter === "All" || log.role === roleFilter.toLowerCase();
       const matchesActivity = activityTypeFilter === "All" || log.activity === activityTypeFilter;
 
       return matchesSearch && matchesRole && matchesActivity;
@@ -139,8 +133,11 @@ export default function ActivityLog() {
               onChange={(e) => setRoleFilter(e.target.value)}
             >
               <option value="All">All Roles</option>
-              <option value="admin">Admin</option>
-              <option value="user">User</option>
+              {roleOptions.map((role, idx) => (
+                <option key={idx} value={role}>
+                  {role.charAt(0).toUpperCase() + role.slice(1)}
+                </option>
+              ))}
             </select>
 
             <select className="activity-table-filter"

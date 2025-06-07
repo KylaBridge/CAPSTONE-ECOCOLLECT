@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const EWaste = require('../models/ewaste');
 const Redemption = require('../models/redemption');
+const ActivityLog = require('../models/activityLog');
 
 //
 // ------------------ USER MANAGEMENT ------------------
@@ -34,7 +35,23 @@ const countUsersByRole = async (req, res) => {
 const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-    await User.findByIdAndDelete(id);
+    const user = await User.findByIdAndDelete(id);
+
+    // Use admin's ID if available, otherwise fallback to deleted user's ID
+    const logUserId = req.user?._id;
+    const logUserEmail = req.user?.email || 'Unknown';
+
+    // Only log if we have a userId
+    if (logUserId) {
+      await ActivityLog.create({
+        userId: logUserId,
+        userEmail: logUserEmail,
+        userRole: req.user?.role,
+        action: 'User Deleted',
+        details: `Deleted user ${user?.email || id}`,
+      });
+    }
+
     res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
     console.error(error);

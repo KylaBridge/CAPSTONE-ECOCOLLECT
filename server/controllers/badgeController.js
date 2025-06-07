@@ -1,6 +1,7 @@
 const Badge = require('../models/badge');
 const path = require("path");
 const fs = require("fs");
+const ActivityLog = require('../models/activityLog'); 
 
 //
 // ------------------ BADGE MANAGEMENT ------------------
@@ -35,6 +36,16 @@ const addBadge = async (req, res) => {
     });
 
     await newBadge.save();
+
+    // Log activity
+    await ActivityLog.create({
+      userId: req.user?._id || null,
+      userEmail: req.user?.email || 'Admin',
+      userRole: req.user?.role,
+      action: 'Badge Added',
+      details: `Added badge ${name}`,
+    });
+
     res.status(201).json({ message: "Badge added successfully", badge: newBadge });
   } catch (error) {
     console.error(error);
@@ -76,6 +87,16 @@ const updateBadge = async (req, res) => {
     badge.pointsRequired = Number(pointsRequired);
 
     await badge.save();
+
+    // Log activity
+    await ActivityLog.create({
+      userId: req.user?._id || null,
+      userEmail: req.user?.email || 'Admin',
+      userRole: req.user?.role,
+      action: 'Badge Updated',
+      details: `Updated badge ${name}`,
+    });
+
     res.status(200).json({ message: "Badge updated successfully", badge });
   } catch (error) {
     console.error(error);
@@ -102,6 +123,16 @@ const deleteBadge = async (req, res) => {
     }
 
     await Badge.findByIdAndDelete(id);
+
+    // Log activity
+    await ActivityLog.create({
+      userId: req.user?._id || null,
+      userEmail: req.user?.email || 'Admin',
+      userRole: req.user?.role,
+      action: 'Badge Deleted',
+      details: `Deleted badge ${badge.name}`,
+    });
+
     res.status(200).json({ message: "Badge deleted successfully" });
   } catch (error) {
     console.error(error);

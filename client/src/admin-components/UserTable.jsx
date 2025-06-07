@@ -14,12 +14,47 @@ export default function UserTable({ onViewUser, viewedUser }) {
   const [roleSubSort, setRoleSubSort] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [showRoleSubmenu, setShowRoleSubmenu] = useState(false);
+  const [userActivities, setUserActivities] = useState({});
+  const [userContributions, setUserContributions] = useState({});
   const dropdownRef = useRef(null);
 
+  // Fetch users, activities, and contributions
   useEffect(() => {
-    fetchUsers();
+    const fetchAllData = async () => {
+      try {
+        const usersRes = await axios.get("/api/ecocollect/usermanagement");
+        setUsers(usersRes.data);
+        setShowAll(true);
+
+        const [activityRes, ewasteRes] = await Promise.all([
+          axios.get("/api/ecocollect/activity-logs"),
+          axios.get("/api/ecocollect/ewaste"),
+        ]);
+
+        // Group activity logs by userId
+        const grouped = {};
+        activityRes.data.forEach(log => {
+          if (!grouped[log.userId]) grouped[log.userId] = [];
+          grouped[log.userId].push(log);
+        });
+        setUserActivities(grouped);
+
+        // Count e-waste submissions per userId
+        const counts = {};
+        ewasteRes.data.forEach(sub => {
+          const uid = sub.user?._id || sub.user;
+          if (uid) counts[uid] = (counts[uid] || 0) + 1;
+        });
+        setUserContributions(counts);
+      } catch {
+        setUserActivities({});
+        setUserContributions({});
+      }
+    };
+    fetchAllData();
   }, []);
 
+  // Handle search/filter logic
   useEffect(() => {
     if (showAll) {
       setSearchResults(users);
@@ -27,9 +62,10 @@ export default function UserTable({ onViewUser, viewedUser }) {
     } else {
       handleSearch();
     }
+    // eslint-disable-next-line
   }, [users, showAll]);
 
-
+  // Sort results
   const sortedResults = useMemo(() => {
     let sorted = [...searchResults];
     if (sortOption === "name") {
@@ -40,6 +76,7 @@ export default function UserTable({ onViewUser, viewedUser }) {
     return sorted;
   }, [searchResults, sortOption, roleSubSort]);
 
+  // Handle dropdown close on outside click
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -51,24 +88,7 @@ export default function UserTable({ onViewUser, viewedUser }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const fetchUsers = () => {
-    axios
-      .get("/api/ecocollect/usermanagement")
-      .then((response) => {
-        setUsers(response.data);
-        setShowAll(true);
-      })
-      .catch((error) => console.error("Error fetching data:", error));
-  };
-
-  const handleView = (user) => {
-    if (viewedUser?._id === user._id) {
-      onViewUser(null);
-    } else {
-      onViewUser(user);
-    }
-  };
-
+  // Search helpers
   const handleSearchInputChange = (event) => {
     setSearchTerm(event.target.value);
     setShowAll(false);
@@ -86,12 +106,6 @@ export default function UserTable({ onViewUser, viewedUser }) {
     setSearchResults(results);
   };
 
-  const handleSearchSubmit = (event) => {
-    event.preventDefault();
-    setShowAll(false);
-    handleSearch();
-  };
-
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       setShowAll(false);
@@ -103,6 +117,7 @@ export default function UserTable({ onViewUser, viewedUser }) {
     setShowAll(true);
   };
 
+  // Render
   return (
     <div className="usertable">
       <div className="usertable-header">
@@ -179,7 +194,7 @@ export default function UserTable({ onViewUser, viewedUser }) {
               onChange={handleSearchInputChange}
               onKeyDown={handleKeyPress}
             />
-            <button type="submit" className="search-icon-button">
+            <button type="submit" className="search-icon-button" onClick={handleSearch}>
               <FaSearch style={{ fontSize: '16px', color: '#245a1e' }} />
             </button>
           </div>
@@ -206,26 +221,40 @@ export default function UserTable({ onViewUser, viewedUser }) {
           </thead>
           <tbody>
             {sortedResults.length > 0 ? (
-              sortedResults.map((user) => (
-                <tr key={user._id}>
-                  <td>{user._id}</td>
-                  <td>Placeholder</td> 
-                  <td>{user.email}</td>
-                  <td>{user.role}</td>
-                  <td>Placeholder</td> 
-                  <td>Placeholder</td>
-                  <td>
-                    <AdminButton 
-                      type="view" 
-                      size="small"
-                      isActive={viewedUser?._id === user._id}
-                      onClick={() => handleView(user)}
-                    >
-                      {viewedUser?._id === user._id ? 'CLOSE' : 'VIEW'}
-                    </AdminButton>
-                  </td>
-                </tr>
-              ))
+              sortedResults.map((user) => {
+                const activities = userActivities[user._id] || [];
+                const lastActivity = activities.length > 0
+                  ? activities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0]
+                  : null;
+                const totalContributions = userContributions[user._id] || 0;
+                return (
+                  <tr key={user._id}>
+                    <td>{user._id}</td>
+                    <td>{user.name || "N/A"}</td>
+                    <td>{user.email}</td>
+                    <td>{user.role}</td>
+                    <td>
+                      {lastActivity
+                        ? `${lastActivity.action} (${new Date(lastActivity.timestamp).toLocaleString()})`
+                        : "No activity"}
+                    </td>
+                    <td>{totalContributions}</td>
+                    <td>
+                      <AdminButton 
+                        type="view" 
+                        size="small"
+                        isActive={viewedUser?._id === user._id}
+                        onClick={() => {
+                          if (viewedUser?._id === user._id) onViewUser(null);
+                          else onViewUser(user);
+                        }}
+                      >
+                        {viewedUser?._id === user._id ? 'CLOSE' : 'VIEW'}
+                      </AdminButton>
+                    </td>
+                  </tr>
+                );
+              })
             ) : (
               <tr>
                 <td colSpan="7" className="no-users">No users found</td>

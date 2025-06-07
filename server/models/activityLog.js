@@ -11,6 +11,11 @@ const activityLogSchema = new Schema({
         type: String,
         required: true,
     },
+    userRole: {
+        type: String,
+        required: true,
+        enum: ['user', 'admin']
+    },
     action: {
         type: String,
         required: true,

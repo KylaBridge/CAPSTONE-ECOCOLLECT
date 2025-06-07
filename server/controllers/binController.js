@@ -1,6 +1,7 @@
 const Bin = require('../models/Bin');
 const fs = require('fs');
 const path = require('path');
+const ActivityLog = require('../models/activityLog'); 
 
 // Get all bins
 exports.getAllBins = async (req, res) => {
@@ -39,6 +40,16 @@ exports.addBin = async (req, res) => {
             lastUpdated: new Date()
         });
         await bin.save();
+
+        // Log activity
+        await ActivityLog.create({
+            userId: req.user?._id || null,
+            userEmail: req.user?.email || 'Admin',
+            userRole: req.user?.role,
+            action: 'Bin Added',
+            details: `Added bin at ${location}`,
+        });
+
         res.status(201).json(bin);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -65,6 +76,16 @@ exports.updateBin = async (req, res) => {
 
         const bin = await Bin.findByIdAndUpdate(req.params.id, updateData, { new: true });
         if (!bin) return res.status(404).json({ error: "Bin not found" });
+
+        // Log activity
+        await ActivityLog.create({
+            userId: req.user?._id || null,
+            userEmail: req.user?.email || 'Admin',
+            userRole: req.user?.role,
+            action: 'Bin Updated',
+            details: `Updated bin at ${location}`,
+        });
+
         res.json(bin);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -84,6 +105,16 @@ exports.deleteBin = async (req, res) => {
                 fs.unlinkSync(imagePath);
             }
         }
+
+        // Log activity
+        await ActivityLog.create({
+            userId: req.user?._id || null,
+            userEmail: req.user?.email || 'Admin',
+            userRole: req.user?.role,
+            action: 'Bin Deleted',
+            details: `Deleted bin at ${bin.location}`,
+        });
+
         res.json({ message: "Bin deleted" });
     } catch (err) {
         res.status(500).json({ error: err.message });

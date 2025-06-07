@@ -3,6 +3,7 @@ const Redemption = require('../models/redemption');
 const User = require('../models/user');
 const Reward = require('../models/rewards');
 const Badge = require('../models/badge');
+const ActivityLog = require('../models/activityLog');
 
 // Update user rank based on badges
 const updateUserRank = async (userId) => {
@@ -51,6 +52,16 @@ const submitEWaste = async (req, res) => {
         });
 
         await newSubmission.save();
+
+        // Log activity
+        const user = await User.findById(userId);
+        await ActivityLog.create({
+            userId,
+            userEmail: user?.email || 'Unknown',
+            userRole: req.user?.role,
+            action: 'EWaste Submitted',
+            details: `Submitted ${category}`,
+        });
 
         res.status(201).json({ message: "E-Waste submitted successfully" });
     } catch (err) {
@@ -119,6 +130,15 @@ const redeemReward = async (req, res) => {
             redemption.save(),
             user.save()
         ]);
+
+        // Log activity
+        await ActivityLog.create({
+            userId,
+            userEmail: user.email,
+            userRole: req.user?.role,
+            action: 'Reward Redeemed',
+            details: `Redeemed ${reward.name} for ${reward.points} points`,
+        });
 
         res.status(201).json({ 
             message: "Reward redeemed successfully",
