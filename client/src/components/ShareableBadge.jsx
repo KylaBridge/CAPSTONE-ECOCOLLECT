@@ -32,7 +32,7 @@ const ShareableBadge = () => {
         // Format the badge data to match the expected structure
         const formattedBadge = {
           ...response.data,
-          image: response.data.image ? `http://localhost:3000/${response.data.image.path}` : Badge1
+          image: response.data.image ? `${import.meta.env.VITE_API_URL}/${response.data.image.path}` : Badge1
         };
 
         setBadge(formattedBadge);

@@ -41,6 +41,41 @@ export default function EWasteBin() {
         fetchBins();
     }, []);
 
+    // Helper to format timestamp
+    const formatTimestamp = (dateString) => {
+        return new Date(dateString).toLocaleString('en-PH', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true,
+            timeZone: 'Asia/Manila'
+        });
+    };
+
+    // Generate activity log from bins data
+    const generateRecentActivities = (binsData) => {
+        let activities = [];
+        binsData.forEach(bin => {
+            if (bin.createdAt) {
+                activities.push({
+                    message: `Bin "${bin._id}" (${bin.location}) was created with status: ${bin.status}`,
+                    timestamp: formatTimestamp(bin.createdAt)
+                });
+            }
+            if (bin.lastUpdated && bin.lastUpdated !== bin.createdAt) {
+                activities.push({
+                    message: `Bin "${bin._id}" (${bin.location}) updated to status: ${bin.status}`,
+                    timestamp: formatTimestamp(bin.lastUpdated)
+                });
+            }
+        });
+        // Sort by timestamp descending
+        activities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        return activities;
+    };
+
     const fetchBins = async () => {
         try {
             const res = await axios.get("/api/ecocollect/bins");
@@ -52,6 +87,7 @@ export default function EWasteBin() {
                 image: bin.image ? bin.image : null,
                 remarks: bin.remarks || ""
             })));
+            setRecentActivities(generateRecentActivities(res.data));
         } catch (err) {
             alert("Failed to fetch bins.");
         }
@@ -81,19 +117,6 @@ export default function EWasteBin() {
         return sorted;
     };
     
-    const logActivity = (message) => {
-        const timestamp = new Date().toLocaleString('en-PH', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            hour12: true,
-            timeZone: 'Asia/Manila'
-        });
-        setRecentActivities(prevActivities => [{ message, timestamp }, ...prevActivities]);
-    };
-
     const isFormValid = location && status && (
         selectedBin?.binId === 'new' ||
         location !== initialBinValues?.location ||
@@ -169,7 +192,7 @@ export default function EWasteBin() {
             if (selectedBin?.binId === binToRemove.binId) {
                 handleClosePanel();
             }
-            logActivity(`Admin removed BIN "${binToRemove.binId}"`);
+            fetchBins(); // Refresh activities
             alert(`Bin "${binToRemove.binId}" removed!`);
         } catch (err) {
             alert("Failed to remove bin.");
@@ -205,7 +228,7 @@ export default function EWasteBin() {
                     }
                     : bin
             ));
-            logActivity(`Admin updated BIN "${selectedBin.binId}" (${selectedBin.location})`);
+            fetchBins(); // Refresh activities
             handleClosePanel();
             alert(`Bin "${selectedBin.binId}" updated!`);
         } catch (err) {
@@ -241,7 +264,7 @@ export default function EWasteBin() {
                     remarks: bin.remarks
                 }
             ]);
-            logActivity(`Admin added BIN "${bin._id}" (${location})`);
+            fetchBins(); // Refresh activities
             handleClosePanel();
             alert(`New bin "${bin._id}" added!`);
         } catch (err) {
@@ -285,7 +308,7 @@ export default function EWasteBin() {
 
                             <div className="fullbins-container">
                                 <h2>Bin Needs Emptying</h2>
-                                <p>{bins.filter(bin => bin.status === 'Needs Emptying').length}</p>
+                                <p>{bins.filter(bin => bin.status === 'Full').length}</p>
                             </div>
                         </div>
 

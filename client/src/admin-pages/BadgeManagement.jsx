@@ -54,7 +54,7 @@ export default function BadgeManagement() {
             const badgesWithImageUrls = response.data.map(badge => ({
                 ...badge,
                 id: badge._id,
-                image: badge.image ? `https://capstone-ecocollect-production-b7e9.up.railway.app/${badge.image.path}` : null
+                image: badge.image ? `${import.meta.env.VITE_API_URL}/${badge.image.path}` : null
             }));
             setBadges(badgesWithImageUrls);
             setError(null);
