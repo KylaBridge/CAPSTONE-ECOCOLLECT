@@ -145,7 +145,7 @@ const getProfile = async (req, res) => {
             if (err) throw err;
             const user = await User.findById(decoded.id);
             res.status(200).json({
-                _id: user._id,
+                _id: user.id,
                 name: user.name,
                 email: user.email,
                 role: user.role,

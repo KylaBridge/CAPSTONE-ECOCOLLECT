@@ -1,12 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const activityLogSchema = new Schema({
-    id: {
-        type: Number,
-        unique: true,
-    },
     userId: {
         type: Schema.Types.ObjectId,
         ref: 'User',
@@ -34,7 +29,5 @@ const activityLogSchema = new Schema({
         default: Date.now
     }
 });
-
-activityLogSchema.plugin(AutoIncrement, { inc_field: 'id', id: 'activitylog_id' });
 
 module.exports = mongoose.model('ActivityLog', activityLogSchema);

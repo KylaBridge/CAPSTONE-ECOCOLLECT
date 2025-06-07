@@ -1,12 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const redemptionSchema = new Schema({
-    id: {
-        type: Number,
-        unique: true
-    },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -34,7 +29,5 @@ const redemptionSchema = new Schema({
         default: Date.now
     }
 });
-
-redemptionSchema.plugin(AutoIncrement, { inc_field: 'id', id: 'redemption_id' });
 
 module.exports = mongoose.model('Redemption', redemptionSchema);

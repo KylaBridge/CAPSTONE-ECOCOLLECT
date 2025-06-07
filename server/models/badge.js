@@ -1,12 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const badgeSchema = new Schema({
-    id: {
-        type: Number,
-        unique: true
-    },
     name: {
         type: String,
         required: true,
@@ -40,7 +35,5 @@ const badgeSchema = new Schema({
         default: Date.now
     }
 });
-
-badgeSchema.plugin(AutoIncrement, { inc_field: 'id', id: 'badge_id' });
 
 module.exports = mongoose.model('Badge', badgeSchema);

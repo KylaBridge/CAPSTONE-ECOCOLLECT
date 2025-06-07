@@ -1,12 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
-const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const ewasteSchema = new Schema({
-    id: { 
-        type: Number, 
-        unique: true 
-    },
     user: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: "User", 
@@ -36,7 +31,5 @@ const ewasteSchema = new Schema({
         default: Date.now 
     }
 });
-
-ewasteSchema.plugin(AutoIncrement, { inc_field: 'id', id: 'ewaste_id' });
 
 module.exports = mongoose.model("EWaste", ewasteSchema);
