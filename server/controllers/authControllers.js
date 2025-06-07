@@ -7,18 +7,26 @@ const registerAdmin = async (req, res) => {
     try {
         const { email, password } = req.body;
 
+        // Email must contain '@'
+        if (!email || !/@/.test(email)) {
+            return res.json({
+                error: "Email must contain '@' character"
+            });
+        }
+
+        // Password: at least 8 chars, at least one number, at least one special char
+        const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+        if (!password || !passwordRegex.test(password)) {
+            return res.json({
+                error: "Password must be at least 8 characters, include at least one number and one special character"
+            });
+        }
+
         // Check if email exists
         const exist = await User.findOne({ email });
         if (exist) {
             return res.json({
                 error: "Email is already taken"
-            });
-        }
-
-        // Check if password is good
-        if (!password || password.length < 6) {
-            return res.json({
-                error: "Password should be at least 6 characters long"
             });
         }
 
@@ -41,18 +49,26 @@ const registerUser = async (req, res) => {
     try {
         const {email, password} = req.body
 
+        // Email must contain '@'
+        if (!email || !/@/.test(email)) {
+            return res.json({
+                error: "Email must contain '@' character"
+            });
+        }
+
+        // Password: at least 8 chars, at least one number, at least one special char
+        const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+        if (!password || !passwordRegex.test(password)) {
+            return res.json({
+                error: "Password must be at least 8 characters, include at least one number and one special character"
+            });
+        }
+
         // Check if email exists
         const exist = await User.findOne({email})
         if(exist) {
             return res.json({
                 error: "Email is already taken"
-            })
-        }
-
-        // Check if password is good
-        if(!password || password.length < 6 ) {
-            return res.json({
-                error: "password should be atleast 6 characters long"
             })
         }
 
