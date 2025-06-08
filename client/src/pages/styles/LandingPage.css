@@ -41,7 +41,7 @@ section {
 
 .landing-hero {
   background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-                    url('./src/assets/bgphoto-ecocollect.png');
+                    url('../../assets/bgphoto-ecocollect.png');
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
@@ -229,8 +229,10 @@ section {
   margin-bottom: 1rem;
 }
 
-.badge-description p {
+.badge-description .badge-text-landing {
   font-size: 1.1rem;
+  font-weight: lighter;
+  text-shadow: none;
 }
 
 /* E-WASTE TO REWARDS SECTION */

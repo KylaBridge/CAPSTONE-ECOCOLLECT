@@ -96,7 +96,7 @@ export default function LandingPage() {
         </div>
         <div className="badge-description">
           <h2>TRACK YOUR BADGES</h2>
-          <p>
+          <p className="badge-text-landing">
             Celebrate your progress! Earn fun badges as you submit <br /> more e-waste. Each badge unlocks new ranks and bragging rights.
           </p>
         </div>
