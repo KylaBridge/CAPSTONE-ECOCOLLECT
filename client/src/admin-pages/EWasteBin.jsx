@@ -61,7 +61,9 @@ export default function EWasteBin() {
     const fetchRecentActivities = async () => {
         try {
             const res = await axios.get("/api/ecocollect/activity-logs?limit=10");
-            setRecentActivities(res.data);
+            // Only keep bin management activities
+            const binActions = ["Bin Added", "Bin Updated", "Bin Deleted"];
+            setRecentActivities(res.data.filter(activity => binActions.includes(activity.action)));
         } catch (err) {
             setRecentActivities([]);
         }
