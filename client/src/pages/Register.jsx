@@ -22,7 +22,7 @@ export default function Register() {
             toast.error(data.error)
           } else {
             toast.success("Registration Successful")
-            navigate("/")
+            navigate("/login")
           }
         } catch (error) {
           console.log(error)
@@ -42,10 +42,10 @@ export default function Register() {
                 <input id="password" type="password" name="password" required />
 
                 <button className="register-btn2">REGISTER</button>
-                <p className="register-el">Already have an account? <Link className="login-btn2" to={"/"}>Login</Link></p>
+                <p className="register-el">Already have an account? <Link className="login-btn2" to={"/login"}>Login</Link></p>
                 <p className="or-seperator">or</p>
                 <button className="microsoftAcc-btn">Continue with Microsoft</button>
-                <Link className="go-back-btn" to={"/landing"}>Go Back to Main</Link>
+                <Link className="go-back-btn" to={"/"}>Go Back to Main</Link>
             </form>
             <img className="partnership-logo" src={PartnershipLogos} alt="NU x SM Cares Partnership" />
         </div>

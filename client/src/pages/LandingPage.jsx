@@ -40,7 +40,7 @@ export default function LandingPage() {
           <h1>Welcome to EcoCollect</h1>
           <p>Turning E-Waste into Eco Wins — One Drop at a Time.
           NU's gamified way to track, submit, and earn rewards for recycling right.</p>
-          <a href="/" className="hero-btn">Start Recycling Now!</a>
+          <a href="/login" className="hero-btn">Start Recycling Now!</a>
         </div>
       </section>
 

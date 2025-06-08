@@ -55,7 +55,7 @@ export default function Login() {
                     </p>
                 <p className="or-seperator">or</p>
                 <button className="microsoftAcc-btn">Continue with Microsoft</button>
-                <Link className="go-back-btn" to={"/landing"}>Go Back to Main</Link>
+                <Link className="go-back-btn" to={"/"}>Go Back to Main</Link>
             </form>
             <img className="partnership-logo" src={PartnershipLogos} alt="NU x SM Cares Partnership" />
         </div>
