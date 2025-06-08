@@ -113,8 +113,8 @@ const loginUser = async (req, res) => {
                         if (err) throw err;
                         res.cookie("token", token, {
                             httpOnly: true,
-                            sameSite: "none", // or "none" if cross-origin
-                            secure: true,
+                            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+                            secure: process.env.NODE_ENV === "production",
                             path: "/",
                             maxAge: 1000 * 60 * 30 // 30 minutes
                         }).json({
