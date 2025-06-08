@@ -113,8 +113,9 @@ const loginUser = async (req, res) => {
                         if (err) throw err;
                         res.cookie("token", token, {
                             httpOnly: true,
-                            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-                            secure: process.env.NODE_ENV === "production",
+                            sameSite: "none",
+                            secure: true,
+                            domain: ".ecocollect.online",
                             path: "/",
                             maxAge: 1000 * 60 * 30 // 30 minutes
                         }).json({
@@ -162,8 +163,8 @@ const getProfile = async (req, res) => {
 const logoutUser = (req, res) => {
     res.clearCookie("token", {
         httpOnly: true,
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-        secure: process.env.NODE_ENV === "production",
+        sameSite: none,
+        secure: true,
         path: "/",
     })
     res.json({ message: "Logged out successfully" })
