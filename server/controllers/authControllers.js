@@ -84,6 +84,17 @@ const registerUser = async (req, res) => {
     }
 }
 
+const getCookieOptions = () => {
+    const isProd = process.env.NODE_ENV === "production";
+    return {
+        httpOnly: true,
+        sameSite: isProd ? "none" : "lax",
+        secure: isProd,
+        path: "/",
+        maxAge: 1000 * 60 * 30 // 30 minutes
+    };
+}
+
 // Login user
 const loginUser = async (req, res) => {
     try {
@@ -111,13 +122,7 @@ const loginUser = async (req, res) => {
                     {},
                     (err, token) => {
                         if (err) throw err;
-                        res.cookie("token", token, {
-                            httpOnly: true,
-                            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-                            secure: process.env.NODE_ENV === "production",
-                            path: "/",
-                            maxAge: 1000 * 60 * 30 // 30 minutes
-                        }).json({
+                        res.cookie("token", token, getCookieOptions()).json({
                             message: user.role === "admin" ? "User is an admin" : "User logged in",
                             _id: user._id,
                             role: user.role,
@@ -160,12 +165,10 @@ const getProfile = async (req, res) => {
 };
 
 const logoutUser = (req, res) => {
-    res.clearCookie("token", {
-        httpOnly: true,
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-        secure: process.env.NODE_ENV === "production",
-        path: "/",
-    })
+    // Remove maxAge for clearCookie
+    const options = getCookieOptions();
+    delete options.maxAge;
+    res.clearCookie("token", options);
     res.json({ message: "Logged out successfully" })
 };
 
