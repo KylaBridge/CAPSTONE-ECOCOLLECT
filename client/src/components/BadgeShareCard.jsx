@@ -4,6 +4,10 @@ import Badge1 from "../assets/badges/current-badge.png";
 import ECOBADGEBackground from '../assets/ECOBADGE_background.png';
 
 const BadgeShareCard = ({ user, selectedBadge, shareCardRef }) => {
+  const badgeImage = selectedBadge?.image 
+    ? `${import.meta.env.VITE_API_URL}/${selectedBadge.image.path}`
+    : selectedBadge?.img || Badge1;
+
   return (
     <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
       <div
@@ -22,7 +26,7 @@ const BadgeShareCard = ({ user, selectedBadge, shareCardRef }) => {
 
           <div className="share-card-badge-section">
             <img 
-              src={selectedBadge?.img} 
+              src={badgeImage} 
               alt={selectedBadge?.name} 
               className="share-card-badge"
               crossOrigin="anonymous"
@@ -39,7 +43,7 @@ const BadgeShareCard = ({ user, selectedBadge, shareCardRef }) => {
           </div>
 
           <div className="share-card-footer">
-            {/* You can add hashtags or a call to action here if needed */}
+            {/* hashtags or a call to action here if needed */}
           </div>
         </div>
       </div>

@@ -12,7 +12,6 @@ import Sidebar from "../components/Sidebar"
 import Header from "../components/Header"
 import BadgeShareCard from "../components/BadgeShareCard"
 import { UserContext } from "../context/userContext"
-import ShareableBadge from "../components/ShareableBadge"
 
 //assets
 import Badge1 from "../assets/badges/current-badge.png"
@@ -234,14 +233,6 @@ export default function Achievements() {
         shareCardRef={shareCardRef}
         isVisible={showShareCard}
       />
-
-      {/* Shareable Badge Component */}
-      {selectedBadge && (
-        <ShareableBadge 
-          badgeId={selectedBadge._id}
-          isVisible={showShareOptions}
-        />
-      )}
 
       {/* Modal */}
       {selectedBadge && (
