@@ -30,6 +30,7 @@ export default function AdminDashboard() {
   });
 
   const totalEwastes = Object.values(ewasteCount).reduce((sum, val) => sum + val, 0);
+  const [binList, setBinList] = useState([]);
 
   useEffect(() => {
     const fetchRoleCount = async () => {
@@ -59,9 +60,19 @@ export default function AdminDashboard() {
       }
     };
 
+    const fetchBins = async () => {
+      try {
+        const response = await axios.get('/api/ecocollect/bins');
+        setBinList(response.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
     fetchRoleCount();
     fetchEwasteCount();
     fetchRedemptionCount();
+    fetchBins();
   }, []);
 
   const iconMap = {
@@ -82,12 +93,10 @@ export default function AdminDashboard() {
     .sort((a, b) => b[1] - a[1])
     .slice(0, 6);
 
-  const adminBinData = [
-    { binId: 'BIN-001', binName: 'NU Manila Gate Bin', location: 'Gate 2', status: 'Full', category: 'Plastic' },
-    { binId: 'BIN-002', binName: 'NU Fairview Hall A', location: 'Hall A', status: 'Overflowing', category: 'E-waste' },
-    { binId: 'BIN-003', binName: 'NU Fairview Hall B', location: 'Hall B', status: 'Overflowing', category: 'E-waste' },
-    { binId: 'BIN-004', binName: 'NU Fairview Hall C', location: 'Hall C', status: 'Overflowing', category: 'E-waste' }
-  ];
+  // Filter bins that need emptying
+  const binsNeedEmptying = binList.filter(
+    bin => bin.status === 'Full' || bin.status === 'Needs Emptying'
+  );
 
   return (
     <>
@@ -180,15 +189,18 @@ export default function AdminDashboard() {
             <div className="bin-content-wrapper">
               <div className="bin-table">
                 <BinTable
-                  columns={['binName', 'status']}
-                  data={adminBinData.filter(bin => bin.status === 'Full' || bin.status === 'Overflowing')}
+                  columns={['location', 'status']}
+                  data={binsNeedEmptying.map(bin => ({
+                    location: bin.location,
+                    status: bin.status
+                  }))}
                   maxHeight="150px"
                 />
               </div>
               <div className="bin-summary">
                 <div className="bintotal-bar">
                   <span>Total:</span>
-                  <strong>{adminBinData.filter(bin => bin.status === 'Full' || bin.status === 'Overflowing').length}</strong>
+                  <strong>{binsNeedEmptying.length}</strong>
                 </div>
                 <div className="bin-icons">
                   <img src={binIcon} alt="Trash Bin" className="bin-icon" />

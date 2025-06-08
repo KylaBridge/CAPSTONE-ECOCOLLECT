@@ -39,6 +39,7 @@ export default function EWasteBin() {
 
     useEffect(() => {
         fetchBins();
+        fetchRecentActivities();
     }, []);
 
     const fetchBins = async () => {
@@ -48,12 +49,21 @@ export default function EWasteBin() {
                 binId: bin._id,
                 location: bin.location,
                 status: bin.status,
-                lastUpdated: timeAgo(bin.lastUpdated),
+                lastUpdated: timeAgo(bin.updatedAt || bin.lastUpdated || bin.createdAt),
                 image: bin.image ? bin.image : null,
                 remarks: bin.remarks || ""
             })));
         } catch (err) {
             alert("Failed to fetch bins.");
+        }
+    };
+
+    const fetchRecentActivities = async () => {
+        try {
+            const res = await axios.get("/api/ecocollect/activity-logs?limit=10");
+            setRecentActivities(res.data);
+        } catch (err) {
+            setRecentActivities([]);
         }
     };
 
@@ -81,19 +91,6 @@ export default function EWasteBin() {
         return sorted;
     };
     
-    const logActivity = (message) => {
-        const timestamp = new Date().toLocaleString('en-PH', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            hour12: true,
-            timeZone: 'Asia/Manila'
-        });
-        setRecentActivities(prevActivities => [{ message, timestamp }, ...prevActivities]);
-    };
-
     const isFormValid = location && status && (
         selectedBin?.binId === 'new' ||
         location !== initialBinValues?.location ||
@@ -169,7 +166,7 @@ export default function EWasteBin() {
             if (selectedBin?.binId === binToRemove.binId) {
                 handleClosePanel();
             }
-            logActivity(`Admin removed BIN "${binToRemove.binId}"`);
+            await fetchRecentActivities();
             alert(`Bin "${binToRemove.binId}" removed!`);
         } catch (err) {
             alert("Failed to remove bin.");
@@ -199,13 +196,13 @@ export default function EWasteBin() {
                         binId: updatedBin._id,
                         location: updatedBin.location,
                         status: updatedBin.status,
-                        lastUpdated: timeAgo(updatedBin.lastUpdated),
+                        lastUpdated: timeAgo(updatedBin.updatedAt || updatedBin.lastUpdated || updatedBin.createdAt),
                         image: updatedBin.image,
                         remarks: updatedBin.remarks
                     }
                     : bin
             ));
-            logActivity(`Admin updated BIN "${selectedBin.binId}" (${selectedBin.location})`);
+            await fetchRecentActivities();
             handleClosePanel();
             alert(`Bin "${selectedBin.binId}" updated!`);
         } catch (err) {
@@ -236,12 +233,12 @@ export default function EWasteBin() {
                     binId: bin._id,
                     location: bin.location,
                     status: bin.status,
-                    lastUpdated: timeAgo(bin.lastUpdated),
+                    lastUpdated: timeAgo(bin.updatedAt || bin.lastUpdated || bin.createdAt),
                     image: bin.image,
                     remarks: bin.remarks
                 }
             ]);
-            logActivity(`Admin added BIN "${bin._id}" (${location})`);
+            await fetchRecentActivities();
             handleClosePanel();
             alert(`New bin "${bin._id}" added!`);
         } catch (err) {
@@ -504,8 +501,22 @@ export default function EWasteBin() {
                                 </div>
                             ) : (
                                 recentActivities.map((activity, index) => (
-                                    <div key={index} className="admin-activity-item">
-                                        <p>{activity.message} - {activity.timestamp}</p>
+                                    <div key={activity._id || index} className="admin-activity-item">
+                                        <p>
+                                            {activity.action} - {activity.details}
+                                            <br />
+                                            <span style={{ fontSize: "0.85em", color: "#888" }}>
+                                                {new Date(activity.timestamp).toLocaleString('en-PH', {
+                                                    month: 'short',
+                                                    day: 'numeric',
+                                                    year: 'numeric',
+                                                    hour: 'numeric',
+                                                    minute: 'numeric',
+                                                    hour12: true,
+                                                    timeZone: 'Asia/Manila'
+                                                })}
+                                            </span>
+                                        </p>
                                     </div>
                                 ))
                             )}
