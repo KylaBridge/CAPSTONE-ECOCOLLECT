@@ -12,7 +12,7 @@ app.use(express.urlencoded({extended: false}))
 app.use(
     cors({
         credentials: true,
-        origin: process.env.FRONTEND_URL || "http://localhost:5175",
+        origin: process.env.FRONTEND_URL,
     })
 )
 
