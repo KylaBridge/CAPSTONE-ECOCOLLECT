@@ -29,12 +29,18 @@
   margin-bottom: 1rem;
 }
 
-.user-profile-image {
-  width: 130px;
-  height: 140px;
-  object-fit: cover;
-  border: 2px solid #8fbc8f;
-  flex-shrink: 0;
+.user-initial-avatar {
+  width: 140px;
+  height: 160px;
+  background: #7d857e;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  border: 2px solid #e0e0e0;
 }
 
 .user-details p{

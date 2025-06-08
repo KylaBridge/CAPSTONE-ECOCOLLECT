@@ -7,7 +7,7 @@ export default function Navbar() {
 
   return (
     <header className={`navbar ${menuOpen ? "navbar-solid" : ""}`}>
-      <div className="logo">
+      <div className="nav-bar-logo">
         <img src={EcoCollectLogo} alt="EcoCollect Logo" className="logo-icon" />
         EcoCollect
       </div>

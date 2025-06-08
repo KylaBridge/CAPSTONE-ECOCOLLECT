@@ -92,11 +92,17 @@ export default function ViewUser({ user, onUserDeleted }) {
 
       <div className="details-wrapper">
         <div className="details-left">
-          <img
-            src={user?.profilePicture || defaultProfileImage}
-            alt="User Profile"
-            className="user-profile-image"
-          />
+          {user?.profilePicture ? (
+            <img
+              src={user.profilePicture}
+              alt="User Profile"
+              className="user-profile-image"
+            />
+          ) : (
+            <div className="user-initial-avatar">
+              {user?.email ? user.email.charAt(0).toUpperCase() : "?"}
+            </div>
+          )}
           <div className="user-details">
             <h3 className="username-title">Name</h3>
             <p className="userprofile-info">Email: {user?.email || 'N/A'}</p>
