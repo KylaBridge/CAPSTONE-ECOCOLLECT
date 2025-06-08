@@ -62,10 +62,10 @@ export default function App() {
       <Toaster position="bottom-right" toastOptions={{duration: 2000}} />
       <Routes>
         {/* Public User Routes */}
-        <Route path="/landing" element={<LandingPage />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/about" element={<AboutPage/>} />
         <Route path="/contact" element={<ContactPage/>} />
-        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/badge/:id" element={<ShareableBadge />} />
 

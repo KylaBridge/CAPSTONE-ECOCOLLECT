@@ -15,10 +15,10 @@ export default function Navbar() {
         ☰
       </button>
       <nav className={`nav-links ${menuOpen ? "active" : ""}`}>
-        <a href="/landing">Home</a>
+        <a href="/">Home</a>
         <a href="/about">About</a>
         <a href="/contact">Contact</a>
-        <a href="/">Log In</a>
+        <a href="/login">Log In</a>
       </nav>
     </header>
   );
