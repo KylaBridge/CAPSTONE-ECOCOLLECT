@@ -52,6 +52,32 @@ const getAllSubmissions = async (req, res) => {
   }
 };
 
+// Add points to user based on e-waste category
+const addPointsByCategory = async (userId, category) => {
+  // Define points per category
+  const categoryPoints = {
+    "Laptop": 20,
+    "Tablet": 15,
+    "Mobile Phone": 10,
+    "Telephone": 8,
+    "Router": 8,
+    "Charger": 5,
+    "Batteries": 5,
+    "Cords": 5,
+    "Powerbank": 10,
+    "USB": 5,
+  };
+  const points = categoryPoints[category] || 5; // Default to 5 if not found
+
+  const user = await User.findById(userId);
+  if (user) {
+    user.points += points;
+    user.exp += points * 4; // exp is 4x points, adjust as needed
+    await user.save();
+    await updateUserRank(user._id);
+  }
+};
+
 // Update submission status and manage related user points and image files
 const updateSubmissionStatus = async (req, res) => {
   try {
@@ -86,13 +112,8 @@ const updateSubmissionStatus = async (req, res) => {
     });
 
     if (status === "Approved") {
-      const user = await User.findById(submission.user);
-      if (user) {
-        user.points += 5;
-        user.exp += 20;
-        await user.save();
-        await updateUserRank(user._id);
-      }
+      // Add points based on category
+      await addPointsByCategory(submission.user, submission.category);
     }
 
     res.status(200).json({ message: "Status and image data updated successfully" });
