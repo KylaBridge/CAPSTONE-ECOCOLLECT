@@ -1,8 +1,11 @@
 .rewards-card {
-    width: 150px;
+    width: 148px;
     background-color: #e5e5e5da;
     text-align: left;
     box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    height: 210px; /* Set a fixed height for all cards */
   }
   
   .image-container {
@@ -25,10 +28,15 @@
   .details-container {
     padding: 10px;
     text-align: left;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 50px;
   }
   
   .reward-name {
-    font-size: 1rem;
+    font-size: 0.8rem;
     margin-bottom: 5px;
     font-weight: bold;
     color: #333;
