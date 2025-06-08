@@ -115,7 +115,6 @@ const loginUser = async (req, res) => {
                             httpOnly: true,
                             sameSite: "none",
                             secure: true,
-                            domain: ".ecocollect.online",
                             path: "/",
                             maxAge: 1000 * 60 * 30 // 30 minutes
                         }).json({
@@ -163,7 +162,7 @@ const getProfile = async (req, res) => {
 const logoutUser = (req, res) => {
     res.clearCookie("token", {
         httpOnly: true,
-        sameSite: none,
+        sameSite: "none",
         secure: true,
         path: "/",
     })
