@@ -20,10 +20,11 @@ const ShareableBadge = ({ badgeId }) => {
           setLoading(false);
           return;
         }
-        const apiUrl = import.meta.env.VITE_API_URL || '';
-        const response = await axios.get(`${apiUrl}/api/ecocollect/badges/${badgeIdToUse}`);
+        const apiUrl = import.meta.env.VITE_API_URL || window.location.origin;
+        const apiEndpoint = `${apiUrl}/api/ecocollect/badges/${badgeIdToUse}`;
+        const response = await axios.get(apiEndpoint);
         if (!response.data) {
-          setError("Badge not found");
+          setError("Badge not found (empty response)");
           setLoading(false);
           return;
         }
@@ -33,7 +34,7 @@ const ShareableBadge = ({ badgeId }) => {
         };
         setBadge(formattedBadge);
       } catch (err) {
-        setError("An error occurred while fetching the badge");
+        setError("fetch-failed");
       } finally {
         setLoading(false);
       }
@@ -42,6 +43,34 @@ const ShareableBadge = ({ badgeId }) => {
   }, [badgeId, urlId]);
 
   if (loading) return <div>Loading...</div>;
+
+  // Fallback: If fetch fails, render a default badge certificate
+  if (error === "fetch-failed") {
+    const fallbackBadge = {
+      name: "EcoCollect Badge",
+      description: "Congratulations! You have earned a badge for your eco-friendly actions.",
+      image: Badge1,
+      earnedBy: {
+        username: "Eco User",
+        email: "user@example.com"
+      },
+      dateEarned: new Date().toLocaleDateString()
+    };
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <BadgeShareCard
+          user={fallbackBadge.earnedBy}
+          selectedBadge={fallbackBadge}
+          shareCardRef={shareCardRef}
+          isVisible={true}
+        />
+        <div style={{ color: "#d32f2f", marginTop: "1rem" }}>
+          Could not fetch badge details. Showing a default certificate.
+        </div>
+      </div>
+    );
+  }
+
   if (error) return <div>{error}</div>;
   if (!badge) return <div>Badge Not Found</div>;
 
@@ -57,4 +86,4 @@ const ShareableBadge = ({ badgeId }) => {
   );
 };
 
-export default ShareableBadge; 
+export default ShareableBadge;

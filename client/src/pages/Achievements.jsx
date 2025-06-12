@@ -101,7 +101,6 @@ export default function Achievements() {
           url: shareUrl
         };
         
-        // If we have a share card image, include it
         if (shareCardRef.current) {
           const shareCardImage = await generateShareCard();
           if (shareCardImage) {

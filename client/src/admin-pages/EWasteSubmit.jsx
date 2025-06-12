@@ -18,6 +18,7 @@ export default function EWasteSubmit() {
     const [modalImageIndex, setModalImageIndex] = useState(0);
     const [sortOption, setSortOption] = useState("");
     const [showStatusSubmenu, setShowStatusSubmenu] = useState(false);
+    const [points, setPoints] = useState("");
     const dropdownRef = useRef(null);
 
     useEffect(() => {
@@ -54,16 +55,22 @@ export default function EWasteSubmit() {
 
     const handleUpdateSubmission = async () => {
         try {
-            // 1. Update status only (don't delete the document)
-            const updateRes = await axios.put(`/api/ecocollect/ewaste/${selectedSubmission.id}/status`, {
+            // Prepare update data
+            const updateData = {
                 status: statusValue,
-            });
+            };
+
+            // Add points if category is "others"
+            if (selectedSubmission.category === "others" && points) {
+                updateData.points = parseInt(points);
+            }
+
+            const updateRes = await axios.put(`/api/ecocollect/ewaste/${selectedSubmission.id}/status`, updateData);
     
             if (updateRes.status !== 200) {
                 throw new Error("Failed to update status");
             }
     
-            // 2. Remove it from the frontend table
             setSubmissions(prev => prev.filter(sub => sub.id !== selectedSubmission.id));
             setSelectedSubmission(null);
             setOpenSubmissionId(null);
@@ -74,6 +81,14 @@ export default function EWasteSubmit() {
             toast.error("An error occurred while updating the submission.");
         }
     };    
+
+    const handlePointsChange = (e) => {
+        const value = e.target.value;
+        // Only allow positive integers
+        if (value === "" || /^[1-9]\d*$/.test(value)) {
+            setPoints(value);
+        }
+    };
 
     const handleDetailsClick = (submission) => {
         if (openSubmissionId === submission.id) {
@@ -209,30 +224,30 @@ export default function EWasteSubmit() {
                         {selectedSubmission ? (
                             <div className="panel-grid">
                                 <div className="submitimage-container">
-                                <div className="submitimage-section">
-                                    {selectedSubmission?.images?.length > 1 && (
-                                        <button className="nav-button prev" onClick={handlePrevImage}>{'<'}</button>
-                                    )}
-                                    <div className="zoomable-image-wrapper" onClick={() => {
-                                        setModalImageIndex(currentImageIndex);
-                                        setImageModalOpen(true);
-                                    }}>
-                                        <img
-                                            src={selectedSubmission.images[currentImageIndex]}
-                                            alt="Submission"
-                                            onError={(e) => { e.target.src = "/assets/fallback.png"; }}
-                                            className="zoomable-image"
-                                        />
-                                        <div className="zoom-icon">
-                                            <MdOutlineZoomOutMap size={24} />
+                                    <div className="submitimage-section">
+                                        {selectedSubmission?.images?.length > 1 && (
+                                            <button className="nav-button prev" onClick={handlePrevImage}>{'<'}</button>
+                                        )}
+                                        <div className="zoomable-image-wrapper" onClick={() => {
+                                            setModalImageIndex(currentImageIndex);
+                                            setImageModalOpen(true);
+                                        }}>
+                                            <img
+                                                src={selectedSubmission.images[currentImageIndex]}
+                                                alt="Submission"
+                                                onError={(e) => { e.target.src = "/assets/fallback.png"; }}
+                                                className="zoomable-image"
+                                            />
+                                            <div className="zoom-icon">
+                                                <MdOutlineZoomOutMap size={24} />
+                                            </div>
                                         </div>
+                                        {selectedSubmission?.images?.length > 1 && (
+                                            <button className="nav-button next" onClick={handleNextImage}>{'>'}</button>
+                                        )}
                                     </div>
-                                    {selectedSubmission?.images?.length > 1 && (
-                                        <button className="nav-button next" onClick={handleNextImage}>{'>'}</button>
-                                    )}
                                 </div>
-                                </div>
-                                <div className="panel-form"> {/* The details form */}
+                                <div className="panel-form">
                                     <div className="panel-detail">
                                         <span>Submission ID:</span>
                                         <p>{selectedSubmission.id}</p>
@@ -249,6 +264,18 @@ export default function EWasteSubmit() {
                                         <span>E-Waste Category:</span>
                                         <p>{selectedSubmission.category}</p>
                                     </div>
+                                    {selectedSubmission.category === "others" && (
+                                        <div className="panel-detail">
+                                            <span>Points:</span>
+                                            <input
+                                                type="text"
+                                                value={points}
+                                                onChange={handlePointsChange}
+                                                placeholder="Enter points"
+                                                className="points-input"
+                                            />
+                                        </div>
+                                    )}
                                     <div className="panel-detail">
                                         <h4>Status:</h4>
                                         <select value={statusValue} onChange={(e) => setStatusValue(e.target.value)}>
@@ -258,14 +285,14 @@ export default function EWasteSubmit() {
                                         </select>
                                     </div>
                                     <div className="panel-button">
-                                    <AdminButton
-                                        type="update"
-                                        size="medium"
-                                        onClick={handleUpdateSubmission}
-                                        disabled={statusValue === originalStatus}
-                                    >
-                                        UPDATE
-                                    </AdminButton>
+                                        <AdminButton
+                                            type="update"
+                                            size="medium"
+                                            onClick={handleUpdateSubmission}
+                                            disabled={statusValue === originalStatus || (selectedSubmission.category === "others" && !points)}
+                                        >
+                                            UPDATE
+                                        </AdminButton>
                                     </div>
                                 </div>
                             </div>

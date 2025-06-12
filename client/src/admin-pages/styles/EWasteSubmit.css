@@ -134,7 +134,7 @@ html, body {
 .submitewaste-panel-container h3{
   text-align: center;
   font-size: 1rem;
-  margin: 0 0 25px 0;
+  margin: 0 0 20px 0;
   color: #154d31;
   flex-shrink: 0;
 }
@@ -217,7 +217,7 @@ html, body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   color: black;
 }
 
@@ -243,7 +243,7 @@ html, body {
 
 .panel-button {
   text-align: center;
-  margin:auto
+  margin:0 auto 10px auto;
 }
 
 .panel-form select {
@@ -439,6 +439,14 @@ html, body {
 
 .submit-table-submenu-item:hover {
   background: #e6f2ea;
+}
+
+.points-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.8rem;
 }
 
 @media (max-width: 1024px) {
