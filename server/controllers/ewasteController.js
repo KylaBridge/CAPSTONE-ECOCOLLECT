@@ -82,7 +82,7 @@ const addPointsByCategory = async (userId, category) => {
 const updateSubmissionStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, points } = req.body;
 
     const submission = await EWaste.findById(id);
     if (!submission) {
@@ -112,8 +112,19 @@ const updateSubmissionStatus = async (req, res) => {
     });
 
     if (status === "Approved") {
-      // Add points based on category
-      await addPointsByCategory(submission.user, submission.category);
+      if (submission.category === "others" && points) {
+        // Add manually specified points for "others" category
+        const user = await User.findById(submission.user);
+        if (user) {
+          user.points += parseInt(points);
+          user.exp += parseInt(points) * 4; // exp is 4x points
+          await user.save();
+          await updateUserRank(user._id);
+        }
+      } else {
+        // Add points based on predefined category
+        await addPointsByCategory(submission.user, submission.category);
+      }
     }
 
     res.status(200).json({ message: "Status and image data updated successfully" });
