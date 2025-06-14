@@ -143,8 +143,33 @@ export default function Achievements() {
     }
   };
 
+  const updateMetaTags = (badge) => {
+    const baseUrl = window.location.origin;
+    const shareUrl = `${baseUrl}/badge/${badge._id}`;
+    const shareTitle = `${badge.name} - EcoCollect Badge`;
+    const shareDescription = badge.description;
+    const shareImage = badge.img;
+
+    // Update Open Graph meta tags
+    document.querySelector('meta[property="og:title"]').setAttribute('content', shareTitle);
+    document.querySelector('meta[property="og:description"]').setAttribute('content', shareDescription);
+    document.querySelector('meta[property="og:image"]').setAttribute('content', shareImage);
+    document.querySelector('meta[property="og:url"]').setAttribute('content', shareUrl);
+
+    // Update Twitter Card meta tags
+    document.querySelector('meta[name="twitter:title"]').setAttribute('content', shareTitle);
+    document.querySelector('meta[name="twitter:description"]').setAttribute('content', shareDescription);
+    document.querySelector('meta[name="twitter:image"]').setAttribute('content', shareImage);
+  };
+
   const shareToSocialMedia = async (platform, badge) => {
     try {
+      // Generate the share card image first
+      const shareCardImage = await generateShareCard();
+      if (!shareCardImage) {
+        throw new Error('Failed to generate share card');
+      }
+
       const baseUrl = window.location.origin;
       const shareUrl = `${baseUrl}/badge/${badge._id}`;
       const shareTitle = encodeURIComponent(`${badge.name} - EcoCollect Badge`);
@@ -153,22 +178,29 @@ export default function Achievements() {
       let shareLink = '';
       switch (platform) {
         case 'facebook':
-          shareLink = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${shareTitle}`;
+          // Direct Facebook sharing URL
+          shareLink = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+          window.open(shareLink, '_blank', 'width=600,height=400');
           break;
         case 'twitter':
           shareLink = `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${shareTitle}`;
+          window.open(shareLink, '_blank', 'width=600,height=400');
           break;
         case 'whatsapp':
           shareLink = `https://api.whatsapp.com/send?text=${shareTitle}%20${encodeURIComponent(shareUrl)}`;
+          window.open(shareLink, '_blank', 'width=600,height=400');
           break;
         case 'telegram':
           shareLink = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${shareTitle}`;
+          window.open(shareLink, '_blank', 'width=600,height=400');
           break;
         case 'linkedin':
           shareLink = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
+          window.open(shareLink, '_blank', 'width=600,height=400');
           break;
         case 'pinterest':
           shareLink = `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(shareUrl)}&description=${shareTitle}`;
+          window.open(shareLink, '_blank', 'width=600,height=400');
           break;
         case 'copy':
           await navigator.clipboard.writeText(shareUrl);
@@ -179,7 +211,6 @@ export default function Achievements() {
           return;
       }
 
-      window.open(shareLink, '_blank', 'width=600,height=400');
       setShowShareOptions(false);
     } catch (error) {
       console.error('Error sharing:', error);

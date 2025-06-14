@@ -11,6 +11,25 @@ const ShareableBadge = ({ badgeId }) => {
   const [error, setError] = useState(null);
   const shareCardRef = useRef(null);
 
+  const updateMetaTags = (badgeData) => {
+    const baseUrl = window.location.origin;
+    const shareUrl = `${baseUrl}/badge/${badgeData._id}`;
+    const shareTitle = `${badgeData.name} - EcoCollect Badge`;
+    const shareDescription = badgeData.description;
+    const shareImage = badgeData.image ? `${baseUrl}/${badgeData.image.path}` : Badge1;
+
+    // Update Open Graph meta tags
+    document.querySelector('meta[property="og:title"]').setAttribute('content', shareTitle);
+    document.querySelector('meta[property="og:description"]').setAttribute('content', shareDescription);
+    document.querySelector('meta[property="og:image"]').setAttribute('content', shareImage);
+    document.querySelector('meta[property="og:url"]').setAttribute('content', shareUrl);
+
+    // Update Twitter Card meta tags
+    document.querySelector('meta[name="twitter:title"]').setAttribute('content', shareTitle);
+    document.querySelector('meta[name="twitter:description"]').setAttribute('content', shareDescription);
+    document.querySelector('meta[name="twitter:image"]').setAttribute('content', shareImage);
+  };
+
   useEffect(() => {
     const fetchBadge = async () => {
       try {
@@ -33,6 +52,9 @@ const ShareableBadge = ({ badgeId }) => {
           image: response.data.image ? `${apiUrl}/${response.data.image.path}` : Badge1
         };
         setBadge(formattedBadge);
+        
+        // Update meta tags with the fetched badge data
+        updateMetaTags(formattedBadge);
       } catch (err) {
         setError("fetch-failed");
       } finally {
@@ -56,6 +78,10 @@ const ShareableBadge = ({ badgeId }) => {
       },
       dateEarned: new Date().toLocaleDateString()
     };
+    
+    // Update meta tags with fallback badge data
+    updateMetaTags(fallbackBadge);
+    
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <BadgeShareCard
