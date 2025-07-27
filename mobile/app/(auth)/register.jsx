@@ -1,29 +1,58 @@
-import { StyleSheet } from "react-native";
+import { Keyboard, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { Link } from "expo-router";
+import { useState } from "react";
 
 // Themed Components
 import Spacer from "../../components/Spacer";
 import ThemedText from "../../components/ThemedText";
 import ThemedView from "../../components/ThemedView";
 import ThemedButton from "../../components/ThemedButton";
+import ThemedTextInput from "../../components/ThemedTextInput";
 
 const Register = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = () => {
+    console.log(email, password);
+  };
+
   return (
-    <ThemedView style={styles.container}>
-      <ThemedText title={true} style={styles.title}>
-        Register An Account
-      </ThemedText>
-      <Spacer />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <ThemedView style={styles.container}>
+        <ThemedText title={true} style={styles.title}>
+          Register An Account
+        </ThemedText>
+        <Spacer />
 
-      <ThemedButton>
-        <ThemedText style={{ color: "#fff" }}>Register</ThemedText>
-      </ThemedButton>
-      <Spacer />
+        <ThemedTextInput
+          style={{ width: "80%" }}
+          placeholder="Email"
+          keyboardType="email-address"
+          onChangeText={setEmail}
+          value={email}
+        />
+        <Spacer height={20} />
 
-      <ThemedText style={styles.link}>
-        <Link href="/login">login an account instead</Link>
-      </ThemedText>
-    </ThemedView>
+        <ThemedTextInput
+          style={{ width: "80%" }}
+          placeholder="Password"
+          secureTextEntry
+          onChangeText={setPassword}
+          value={password}
+        />
+        <Spacer />
+
+        <ThemedButton onPress={handleSubmit}>
+          <ThemedText style={{ color: "#fff" }}>Register</ThemedText>
+        </ThemedButton>
+        <Spacer />
+
+        <ThemedText style={styles.link}>
+          <Link href="/login">login an account instead</Link>
+        </ThemedText>
+      </ThemedView>
+    </TouchableWithoutFeedback>
   );
 };
 

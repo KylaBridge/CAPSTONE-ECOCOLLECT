@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Keyboard, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { Link } from "expo-router";
 import { useState } from "react";
 
@@ -16,41 +16,43 @@ const Login = () => {
   const handleSubmit = () => {
     console.log(email, password);
   };
-  1;
+
   return (
-    <ThemedView style={styles.container}>
-      <ThemedText title={true} style={styles.title}>
-        Login An Account
-      </ThemedText>
-      <Spacer />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <ThemedView style={styles.container}>
+        <ThemedText title={true} style={styles.title}>
+          Login An Account
+        </ThemedText>
+        <Spacer />
 
-      <ThemedTextInput
-        style={{ width: "80%" }}
-        placeholder="Email"
-        keyboardType="email-address"
-        onChangeText={setEmail}
-        value="email"
-      />
-      <Spacer height={20} />
+        <ThemedTextInput
+          style={{ width: "80%" }}
+          placeholder="Email"
+          keyboardType="email-address"
+          onChangeText={setEmail}
+          value={email}
+        />
+        <Spacer height={20} />
 
-      <ThemedTextInput
-        style={{ width: "80%" }}
-        placeholder="Password"
-        secureTextEntry
-        onChangeText={setPassword}
-        value="password"
-      />
-      <Spacer />
+        <ThemedTextInput
+          style={{ width: "80%" }}
+          placeholder="Password"
+          secureTextEntry
+          onChangeText={setPassword}
+          value={password}
+        />
+        <Spacer />
 
-      <ThemedButton>
-        <ThemedText style={{ color: "#fff" }}>Login</ThemedText>
-      </ThemedButton>
-      <Spacer />
+        <ThemedButton onPress={handleSubmit}>
+          <ThemedText style={{ color: "#fff" }}>Login</ThemedText>
+        </ThemedButton>
+        <Spacer />
 
-      <ThemedText style={styles.link}>
-        <Link href="/register">register an account instead</Link>
-      </ThemedText>
-    </ThemedView>
+        <ThemedText style={styles.link}>
+          <Link href="/register">register an account instead</Link>
+        </ThemedText>
+      </ThemedView>
+    </TouchableWithoutFeedback>
   );
 };
 

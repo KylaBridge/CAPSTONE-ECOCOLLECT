@@ -9,7 +9,7 @@ const ThemedTextInput = ({ style, ...props }) => {
     <TextInput
       style={[
         {
-          backgroundColor: theme.backgroundColor,
+          backgroundColor: theme.uiBackground,
           color: theme.text,
           padding: 20,
           borderRadius: 6,
