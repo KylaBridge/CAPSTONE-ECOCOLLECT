@@ -6,7 +6,7 @@ const Colors = {
     text: "#dce5db",
     title: "#e9f7ef",
     uiBackground: "#1e5e3f",
-    background: "#121212",
+    background: "#272727ff",
     iconColor: "#a1c9a1",
     iconColorFocused: "#b8f2b8",
     navBackground: "#2e7d32",
