@@ -1,6 +1,7 @@
 import { Keyboard, StyleSheet, TouchableWithoutFeedback } from "react-native";
-import { Link } from "expo-router";
-import { useState } from "react";
+import { Link, useRouter } from "expo-router";
+import { useState, useContext } from "react";
+import { UserContext } from "../../contexts/userContext";
 
 // Themed Components
 import Spacer from "../../components/Spacer";
@@ -8,13 +9,23 @@ import ThemedText from "../../components/ThemedText";
 import ThemedView from "../../components/ThemedView";
 import ThemedButton from "../../components/ThemedButton";
 import ThemedTextInput from "../../components/ThemedTextInput";
+import Colors from "../../constants/colors";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const { login } = useContext(UserContext);
+  const router = useRouter();
 
-  const handleSubmit = () => {
-    console.log(email, password);
+  const handleSubmit = async () => {
+    try {
+      console.log(email, password);
+      await login(email, password);
+      router.replace("/home");
+    } catch (err) {
+      setError(err.message || "Invalid Credentials");
+    }
   };
 
   return (
@@ -51,6 +62,13 @@ const Login = () => {
         <ThemedText style={styles.link}>
           <Link href="/register">register an account instead</Link>
         </ThemedText>
+        <Spacer />
+
+        {error ? (
+          <ThemedView style={styles.errorBg}>
+            <ThemedText style={{ color: Colors.warning }}>{error}</ThemedText>
+          </ThemedView>
+        ) : null}
       </ThemedView>
     </TouchableWithoutFeedback>
   );
@@ -70,5 +88,11 @@ const styles = StyleSheet.create({
   },
   link: {
     borderBottomWidth: 1,
+  },
+  errorBg: {
+    borderWidth: 2,
+    borderColor: Colors.warning,
+    backgroundColor: "rgba(255, 200, 200, 1)",
+    padding: 10,
   },
 });

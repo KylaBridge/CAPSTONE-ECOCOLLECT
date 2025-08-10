@@ -24,11 +24,6 @@ const Index = () => {
         <Link href="/register">Register an acccount</Link>
       </ThemedText>
       <Spacer height={10} />
-
-      <ThemedText style={styles.link}>
-        <Link href="/home">Home Page</Link>
-      </ThemedText>
-      <Spacer height={10} />
     </ThemedView>
   );
 };
