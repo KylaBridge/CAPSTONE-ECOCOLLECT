@@ -1,24 +1,75 @@
-import { StyleSheet, View } from "react-native";
-import { useContext, useEffect } from "react";
+import { StyleSheet, View, Image } from "react-native";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/userContext";
 import { useRouter } from "expo-router";
+import axios from "axios";
+
+// Images
+import Header from "../../assets/images/home-header.png";
 
 // Themed Components
 import Spacer from "../../components/Spacer";
 import ThemedView from "../../components/ThemedView";
 import ThemedText from "../../components/ThemedText";
 import ThemedButton from "../../components/ThemedButton";
+import ThemedCard from "../../components/ThemedCard";
+import ProfileAvatar from "../../components/ProfileAvatar";
 
 const Home = () => {
-  const { user, loading } = useContext(UserContext);
+  const { user, loading, token } = useContext(UserContext);
   const { logout } = useContext(UserContext);
+  const [currentBadgeUri, setCurrentBadgeUri] = useState(null);
+  const [nextBadgeUri, setNextBadgeUri] = useState(null);
   const router = useRouter();
+
+  const SERVER_BASE = "http://192.168.100.5:3000";
+  const API_BASE = `${SERVER_BASE}/api/ecocollect`;
 
   useEffect(() => {
     if (!user && !loading) {
-      router.replace("/index");
+      router.replace("/");
     }
-  }, [user, loading]);
+
+    if (user) {
+      axios
+        .get(`${API_BASE}/badges`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        })
+        .then((response) => {
+          const badges = response.data;
+
+          const current = badges.find((badge) => badge.name === user.rank);
+
+          if (current?.image?.path) {
+            // Fix: Replace backslashes with forward slashes for URL
+            const imagePath = current.image.path.replace(/\\/g, "/");
+            const imageUrl = `${SERVER_BASE}/${imagePath}`;
+            setCurrentBadgeUri(imageUrl);
+          } else {
+            setCurrentBadgeUri(null);
+          }
+
+          const sortedBadges = badges.sort(
+            (a, b) => a.pointsRequired - b.pointsRequired
+          );
+          const next = sortedBadges.find(
+            (badge) => badge.pointsRequired > user.exp
+          );
+
+          if (next?.image?.path) {
+            // Fix: Replace backslashes with forward slashes for URL
+            const imagePath = next.image.path.replace(/\\/g, "/");
+            const imageUrl = `${SERVER_BASE}/${imagePath}`;
+            setNextBadgeUri(imageUrl);
+          } else {
+            setNextBadgeUri(null);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching badges:", error);
+        });
+    }
+  }, [user, loading, token]);
 
   const handleLogout = async () => {
     try {
@@ -34,17 +85,72 @@ const Home = () => {
       <ThemedText title={true} style={styles.title}>
         Home
       </ThemedText>
+      <Image source={Header} style={styles.headerText} />
+
+      <ThemedCard height={80} width={"90%"}>
+        <View
+          style={{ flexDirection: "row", alignItems: "center", padding: 15 }}
+        >
+          <ProfileAvatar text={user?.email} />
+          <ThemedText
+            style={[styles.semiTitle, { marginLeft: 16, fontSize: 16 }]}
+          >
+            {user?.email || "user"}
+          </ThemedText>
+        </View>
+      </ThemedCard>
+      <Spacer height={10} />
+
+      <View style={{ flexDirection: "row", gap: 17 }}>
+        <ThemedCard width={"43%"} style={{ alignItems: "center" }}>
+          <ThemedText style={styles.semiTitle}>Rank</ThemedText>
+          <ThemedText style={styles.semiTitle}>
+            {user?.rank || "loading"}
+          </ThemedText>
+        </ThemedCard>
+        <ThemedCard width={"43%"} style={{ alignItems: "center" }}>
+          <ThemedText style={styles.semiTitle}>
+            Points: {user?.points || "0"}
+          </ThemedText>
+        </ThemedCard>
+      </View>
       <Spacer />
 
-      <ThemedText>Welcome {user?.email || "user"}</ThemedText>
-      <Spacer height={20} />
+      <View style={{ flexDirection: "row", gap: 17 }}>
+        <ThemedCard width={"43%"} style={{ alignItems: "center" }}>
+          <ThemedText>Current Badge</ThemedText>
+          {currentBadgeUri ? (
+            <Image
+              source={{ uri: currentBadgeUri }}
+              style={styles.badgeImage}
+              accessibilityLabel="Current Badge"
+            />
+          ) : (
+            <ThemedText>No badge</ThemedText>
+          )}
+        </ThemedCard>
 
-      <ThemedText>This is the homepage</ThemedText>
-      <Spacer />
+        <ThemedCard width={"43%"} style={{ alignItems: "center" }}>
+          <ThemedText>Next Badge</ThemedText>
+          {nextBadgeUri ? (
+            <Image
+              source={{ uri: nextBadgeUri }}
+              style={styles.badgeImage}
+              accessibilityLabel="Next Badge"
+            />
+          ) : (
+            <ThemedText>—</ThemedText>
+          )}
+        </ThemedCard>
+      </View>
 
-      <ThemedButton onPress={handleLogout}>
-        <ThemedText>Logout</ThemedText>
-      </ThemedButton>
+      <View style={styles.logoutContainer}>
+        <ThemedButton onPress={handleLogout} width={"80%"}>
+          <ThemedText title={true} style={{ fontWeight: 800, fontSize: 16 }}>
+            Logout
+          </ThemedText>
+        </ThemedButton>
+      </View>
     </ThemedView>
   );
 };
@@ -61,4 +167,20 @@ const styles = StyleSheet.create({
     fontWeight: 800,
     fontSize: 18,
   },
+  semiTitle: {
+    fontWeight: 600,
+    fontSize: 14,
+  },
+  logoutContainer: {
+    position: "absolute",
+    bottom: 30,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+  },
+  headerText: {
+    width: 300,
+    height: 100,
+  },
+  badgeImage: { width: 150, height: 150 },
 });

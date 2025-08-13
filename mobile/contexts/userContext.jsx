@@ -6,15 +6,18 @@ export const UserContext = createContext();
 export const UserProvider = ({ children }) => {
   const API_BASE = "http://192.168.100.5:3000/api/ecocollect/auth"; // use your systems ip address and port 3000 to connect to backend
   const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Fetch profile on mount
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await axios.get(`${API_BASE}/profile`, {
-          withCredentials: true,
-        });
+        const config = { withCredentials: true };
+        if (token) {
+          config.headers = { Authorization: `Bearer ${token}` };
+        }
+        const res = await axios.get(`${API_BASE}/profile`, config);
         setUser(res.data);
       } catch (err) {
         setUser(null);
@@ -23,7 +26,7 @@ export const UserProvider = ({ children }) => {
       }
     };
     fetchProfile();
-  }, []);
+  }, [token]);
 
   // Login function
   const login = async (email, password) => {
@@ -34,6 +37,7 @@ export const UserProvider = ({ children }) => {
         { withCredentials: true }
       );
       if (res.data.error) throw new Error(res.data.error);
+      if (res.data.token) setToken(res.data.token);
       setUser(res.data);
       return res.data;
     } catch (err) {
@@ -68,7 +72,9 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, loading, login, register, logout }}>
+    <UserContext.Provider
+      value={{ user, token, loading, login, register, logout }}
+    >
       {children}
     </UserContext.Provider>
   );

@@ -10,6 +10,8 @@ const Colors = {
     iconColor: "#a1c9a1",
     iconColorFocused: "#b8f2b8",
     navBackground: "#2e7d32",
+    borderColor: "#8eee8eff",
+    cardBackground: "#f5e9d7",
   },
   light: {
     text: "#2f4f2f",
@@ -19,6 +21,8 @@ const Colors = {
     iconColor: "#4e944f",
     iconColorFocused: "#1b5e20",
     navBackground: "#66bb6a",
+    borderColor: "#08580dff",
+    cardBackground: "#FFFDD0",
   },
 };
 

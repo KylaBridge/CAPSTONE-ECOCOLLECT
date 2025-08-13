@@ -13,8 +13,7 @@ const RootLayout = () => {
       <StatusBar value="auto" />
       <Stack
         screenOptions={{
-          headerStyle: { backgroundColor: theme.navBackground },
-          headerTintColor: theme.title,
+          headerShown: false,
         }}
       >
         <Stack.Screen name="index" options={{ title: "EcoCollect" }} />

@@ -1,30 +1,40 @@
-import { StyleSheet, Image } from "react-native";
-import { Link } from "expo-router";
+import { StyleSheet, Image, ImageBackground, View } from "react-native";
+import { useRouter } from "expo-router";
 
 // Assets
 import Logo from "../assets/images/EcoCollect-Logo.png";
+import BgImg from "../assets/images/bgphoto-ecocollect.png";
 
 // Themed Components
 import Spacer from "../components/Spacer";
 import ThemedView from "../components/ThemedView";
 import ThemedText from "../components/ThemedText";
+import ThemedButton from "../components/ThemedButton";
 
 const Index = () => {
+  const router = useRouter();
+
   return (
-    <ThemedView style={styles.container}>
+    <ImageBackground source={BgImg} style={styles.container}>
       <Image source={Logo} style={styles.logo} />
-      <Spacer />
+      <Spacer height={300} />
 
-      <ThemedText style={styles.link}>
-        <Link href="/login">Login an account</Link>
-      </ThemedText>
-      <Spacer height={10} />
+      <View style={{ gap: 5 }}>
+        <ThemedButton onPress={() => router.push("/login")}>
+          <ThemedText style={{ color: "#e0ffccff", fontWeight: 800 }}>
+            Login an account
+          </ThemedText>
+        </ThemedButton>
+        <Spacer height={10} />
 
-      <ThemedText style={styles.link}>
-        <Link href="/register">Register an acccount</Link>
-      </ThemedText>
-      <Spacer height={10} />
-    </ThemedView>
+        <ThemedButton onPress={() => router.push("/register")}>
+          <ThemedText style={{ color: "#e0ffccff", fontWeight: 800 }}>
+            Register an account
+          </ThemedText>
+        </ThemedButton>
+        <Spacer height={10} />
+      </View>
+    </ImageBackground>
   );
 };
 
@@ -37,11 +47,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logo: {
-    width: 250,
-    height: 250,
+    width: 300,
+    height: 300,
     resizeMode: "contain",
-  },
-  link: {
-    borderBottomWidth: 1,
   },
 });
