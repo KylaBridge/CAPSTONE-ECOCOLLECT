@@ -11,9 +11,12 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(
   cors({
+    // Allow all origins for development
+
+    // If deployment use specific allowed origins
+    // process.env.FRONTEND_URL; web app URL
     credentials: true,
-    // "*" : for mobile development
-    origin: "*", //process.env.FRONTEND_URL,
+    origin: true,
   })
 );
 
