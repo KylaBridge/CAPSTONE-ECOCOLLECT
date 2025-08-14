@@ -6,6 +6,7 @@ import axios from "axios";
 
 // Images
 import Header from "../../assets/images/home-header.png";
+import HeaderBg from "../../assets/images/header-bg.png"
 
 // Themed Components
 import Spacer from "../../components/Spacer";
@@ -22,7 +23,7 @@ const Home = () => {
   const [nextBadgeUri, setNextBadgeUri] = useState(null);
   const router = useRouter();
 
-  const SERVER_BASE = "http://192.168.100.5:3000";
+  const SERVER_BASE = "http://10.80.155.68:3000"; // Change to you system's IP address
   const API_BASE = `${SERVER_BASE}/api/ecocollect`;
 
   useEffect(() => {
@@ -82,10 +83,9 @@ const Home = () => {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText title={true} style={styles.title}>
-        Home
-      </ThemedText>
+      <Image source={HeaderBg} />
       <Image source={Header} style={styles.headerText} />
+      <Spacer height={30}/>
 
       <ThemedCard height={80} width={"90%"}>
         <View
@@ -181,6 +181,14 @@ const styles = StyleSheet.create({
   headerText: {
     width: 300,
     height: 100,
+  },
+  headerBg : {
+    width: "50%",
+    zIndex: -1,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
   },
   badgeImage: { width: 150, height: 150 },
 });
