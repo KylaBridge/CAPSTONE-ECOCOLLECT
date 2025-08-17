@@ -21,14 +21,14 @@ const Index = () => {
 
       <View style={{ gap: 5 }}>
         <ThemedButton onPress={() => router.push("/login")}>
-          <ThemedText style={{ color: "#e0ffccff", fontWeight: 800 }}>
+          <ThemedText title={true} style={{ fontWeight: 800 }}>
             Login an account
           </ThemedText>
         </ThemedButton>
         <Spacer height={10} />
 
         <ThemedButton onPress={() => router.push("/register")}>
-          <ThemedText style={{ color: "#e0ffccff", fontWeight: 800 }}>
+          <ThemedText title={true} style={{ fontWeight: 800 }}>
             Register an account
           </ThemedText>
         </ThemedButton>

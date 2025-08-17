@@ -55,7 +55,7 @@ const Login = () => {
         <Spacer />
 
         <ThemedButton onPress={handleSubmit}>
-          <ThemedText style={{ color: "#fff" }}>Login</ThemedText>
+          <ThemedText>Login</ThemedText>
         </ThemedButton>
         <Spacer />
 
@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
   },
   errorBg: {
     borderWidth: 2,
+    borderRadius: 10,
     borderColor: Colors.warning,
     backgroundColor: "rgba(255, 200, 200, 1)",
     padding: 10,

@@ -1,5 +1,5 @@
-import React from "react";
-import { View } from "react-native";
+import { View, useColorScheme } from "react-native";
+import Colors from "../constants/colors";
 import ThemedText from "./ThemedText";
 
 const ProfileAvatar = ({
@@ -8,6 +8,8 @@ const ProfileAvatar = ({
   backgroundColor = "#b7e4c7",
   color = "#1e4620",
 }) => {
+  const colorScheme = useColorScheme();
+  const theme = Colors[colorScheme] ?? Colors.light;
   const initial = text ? text[0].toUpperCase() : "U";
   return (
     <View
@@ -15,6 +17,8 @@ const ProfileAvatar = ({
         width: size,
         height: size,
         borderRadius: size / 2,
+        borderWidth: 2,
+        borderColor: theme.borderColor,
         backgroundColor,
         justifyContent: "center",
         alignItems: "center",

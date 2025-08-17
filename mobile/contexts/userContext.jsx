@@ -4,7 +4,7 @@ import axios from "axios";
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const API_BASE = "http://10.80.155.68:3000/api/ecocollect/auth"; // use your systems ip address and port 3000 to connect to backend
+  const API_BASE = "http://192.168.100.5:3000/api/ecocollect/auth"; // use your systems ip address and port 3000 to connect to backend
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);

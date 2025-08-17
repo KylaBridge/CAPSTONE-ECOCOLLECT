@@ -6,7 +6,7 @@ import axios from "axios";
 
 // Images
 import Header from "../../assets/images/home-header.png";
-import HeaderBg from "../../assets/images/header-bg.png"
+import HeaderBg from "../../assets/images/header-bg.png";
 
 // Themed Components
 import Spacer from "../../components/Spacer";
@@ -15,15 +15,18 @@ import ThemedText from "../../components/ThemedText";
 import ThemedButton from "../../components/ThemedButton";
 import ThemedCard from "../../components/ThemedCard";
 import ProfileAvatar from "../../components/ProfileAvatar";
+import ExperienceBar from "../../components/ExperienceBar";
 
 const Home = () => {
   const { user, loading, token } = useContext(UserContext);
   const { logout } = useContext(UserContext);
   const [currentBadgeUri, setCurrentBadgeUri] = useState(null);
   const [nextBadgeUri, setNextBadgeUri] = useState(null);
+  const [levelEnd, setLevelEnd] = useState(100);
+  const [levelStart, setLevelStart] = useState(0);
   const router = useRouter();
 
-  const SERVER_BASE = "http://10.80.155.68:3000"; // Change to you system's IP address
+  const SERVER_BASE = "http://192.168.100.5:3000"; // Change to you system's IP address
   const API_BASE = `${SERVER_BASE}/api/ecocollect`;
 
   useEffect(() => {
@@ -32,6 +35,13 @@ const Home = () => {
     }
 
     if (user) {
+      // Calculate level boundaries based on user's points
+      const currentPoints = user?.exp || 0;
+      const level = Math.floor(currentPoints / 100);
+      setLevelStart(level * 100);
+      setLevelEnd((level + 1) * 100);
+
+      // Fetch User Badge and Next Badge
       axios
         .get(`${API_BASE}/badges`, {
           headers: token ? { Authorization: `Bearer ${token}` } : undefined,
@@ -83,20 +93,35 @@ const Home = () => {
 
   return (
     <ThemedView style={styles.container}>
-      <Image source={HeaderBg} />
+      <Image source={HeaderBg} style={styles.headerBg} />
       <Image source={Header} style={styles.headerText} />
-      <Spacer height={30}/>
 
-      <ThemedCard height={80} width={"90%"}>
+      {/* User Profile*/}
+      <ThemedCard height={100} width={"90%"}>
         <View
-          style={{ flexDirection: "row", alignItems: "center", padding: 15 }}
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            padding: 15,
+            gap: 20,
+          }}
         >
           <ProfileAvatar text={user?.email} />
-          <ThemedText
-            style={[styles.semiTitle, { marginLeft: 16, fontSize: 16 }]}
+          <View
+            style={{
+              flexDirection: "column",
+              width: "80%",
+            }}
           >
-            {user?.email || "user"}
-          </ThemedText>
+            <ThemedText style={[styles.semiTitle, { fontSize: 16 }]}>
+              {user?.email || "user"}
+            </ThemedText>
+            <ExperienceBar
+              currentExp={user?.exp || 0}
+              levelStart={levelStart}
+              levelEnd={levelEnd}
+            />
+          </View>
         </View>
       </ThemedCard>
       <Spacer height={10} />
@@ -182,13 +207,12 @@ const styles = StyleSheet.create({
     width: 300,
     height: 100,
   },
-  headerBg : {
-    width: "50%",
-    zIndex: -1,
+  headerBg: {
+    width: "100%",
+    height: "60%",
+    resizeMode: "cover",
     position: "absolute",
     top: 0,
-    left: 0,
-    right: 0,
   },
   badgeImage: { width: 150, height: 150 },
 });

@@ -19,6 +19,7 @@ const DashboardLayout = () => {
           },
           tabBarActiveTintColor: theme.iconColorFocused,
           tabBarInactiveTintColor: theme.iconColor,
+          animation: "shift",
         }}
       >
         <Tabs.Screen
