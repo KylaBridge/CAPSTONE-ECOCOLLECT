@@ -4,27 +4,42 @@ import axios from "axios";
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const API_BASE = "http://192.168.100.5:3000/api/ecocollect/auth"; // use your systems ip address and port 3000 to connect to backend
+  const API_BASE = "http://192.168.100.5:3000/api/ecocollect/auth";
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Fetch profile function
+  const fetchProfile = async () => {
+    try {
+      const config = { withCredentials: true };
+      if (token) {
+        config.headers = { Authorization: `Bearer ${token}` };
+      }
+      const res = await axios.get(`${API_BASE}/profile`, config);
+      setUser(res.data);
+      return res.data;
+    } catch (err) {
+      setUser(null);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Refresh user data function
+  const refreshUser = async () => {
+    if (token) {
+      try {
+        await fetchProfile();
+      } catch (err) {
+        console.error("Failed to refresh user data:", err);
+      }
+    }
+  };
+
   // Fetch profile on mount
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const config = { withCredentials: true };
-        if (token) {
-          config.headers = { Authorization: `Bearer ${token}` };
-        }
-        const res = await axios.get(`${API_BASE}/profile`, config);
-        setUser(res.data);
-      } catch (err) {
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchProfile();
   }, [token]);
 
@@ -66,6 +81,7 @@ export const UserProvider = ({ children }) => {
     try {
       await axios.post(`${API_BASE}/logout`, {}, { withCredentials: true });
       setUser(null);
+      setToken(null);
     } catch (err) {
       throw err;
     }
@@ -73,7 +89,7 @@ export const UserProvider = ({ children }) => {
 
   return (
     <UserContext.Provider
-      value={{ user, token, loading, login, register, logout }}
+      value={{ user, token, loading, login, register, logout, refreshUser }}
     >
       {children}
     </UserContext.Provider>

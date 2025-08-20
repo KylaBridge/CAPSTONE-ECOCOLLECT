@@ -2,6 +2,8 @@ import { StyleSheet, View, Image } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../contexts/userContext";
 import { useRouter } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
+import React from "react";
 import axios from "axios";
 
 // Images
@@ -18,7 +20,7 @@ import ProfileAvatar from "../../components/ProfileAvatar";
 import ExperienceBar from "../../components/ExperienceBar";
 
 const Home = () => {
-  const { user, loading, token } = useContext(UserContext);
+  const { user, loading, token, refreshUser } = useContext(UserContext);
   const { logout } = useContext(UserContext);
   const [currentBadgeUri, setCurrentBadgeUri] = useState(null);
   const [nextBadgeUri, setNextBadgeUri] = useState(null);
@@ -28,6 +30,15 @@ const Home = () => {
 
   const SERVER_BASE = "http://192.168.100.5:3000"; // Change to you system's IP address
   const API_BASE = `${SERVER_BASE}/api/ecocollect`;
+
+  // Refresh user data when screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      if (token) {
+        refreshUser();
+      }
+    }, [token, refreshUser])
+  );
 
   useEffect(() => {
     if (!user && !loading) {
@@ -86,7 +97,7 @@ const Home = () => {
     try {
       console.log("Logout user");
       await logout();
-    } catch {
+    } catch (err) {
       console.log("Logout error", err.message);
     }
   };
