@@ -15,10 +15,6 @@ import axios from "axios";
 import { UserContext } from "../../contexts/userContext";
 import Colors from "../../constants/colors";
 
-// Images
-import HeaderBg from "../../assets/images/header-bg.png";
-import Header from "../../assets/images/add-header.png";
-
 // Themed Components
 import Spacer from "../../components/Spacer";
 import ThemedView from "../../components/ThemedView";
@@ -349,17 +345,6 @@ export default Add;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  headerBg: {
-    width: "100%",
-    height: "60%",
-    resizeMode: "cover",
-    position: "absolute",
-    top: 0,
-  },
-  headerText: {
-    width: 350,
-    height: 100,
   },
   scrollView: {
     flex: 1,
