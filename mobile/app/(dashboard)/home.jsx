@@ -89,6 +89,11 @@ const Home = () => {
         })
         .catch((error) => {
           console.error("Error fetching badges:", error);
+          // Handle 401 Unauthorized error (token expired)
+          if (error.response?.status === 401) {
+            console.log("Token expired, redirecting to login");
+            router.replace("/");
+          }
         });
     }
   }, [user, loading, token]);

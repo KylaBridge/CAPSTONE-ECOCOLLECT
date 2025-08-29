@@ -9,6 +9,25 @@ export const UserProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Global axios interceptor to handle 401 errors
+  useEffect(() => {
+    const interceptor = axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response?.status === 401) {
+          console.log("Global 401 error detected, clearing user data");
+          setUser(null);
+          setToken(null);
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    return () => {
+      axios.interceptors.response.eject(interceptor);
+    };
+  }, []);
+
   // Fetch profile function
   const fetchProfile = async () => {
     try {
@@ -20,7 +39,14 @@ export const UserProvider = ({ children }) => {
       setUser(res.data);
       return res.data;
     } catch (err) {
-      setUser(null);
+      // Handle 401 Unauthorized error (token expired)
+      if (err.response?.status === 401) {
+        console.log("Token expired, clearing user data");
+        setUser(null);
+        setToken(null);
+      } else {
+        setUser(null);
+      }
       throw err;
     } finally {
       setLoading(false);

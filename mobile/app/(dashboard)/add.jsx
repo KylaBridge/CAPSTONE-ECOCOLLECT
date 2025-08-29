@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import {
   StyleSheet,
-  Image,
   View,
   useColorScheme,
   ScrollView,
@@ -283,7 +282,7 @@ const Add = () => {
               dropdownIconColor={theme.text}
               mode="dropdown"
             >
-              <Picker.Item label="Select E-Waste Category" value="" />
+              <Picker.Item label="Scroll Me" value="" />
               <Picker.Item label="Telephone" value="Telephone" />
               <Picker.Item label="Router" value="Router" />
               <Picker.Item label="Mobile Phone" value="Mobile Phone" />
