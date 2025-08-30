@@ -20,7 +20,6 @@ const Login = () => {
 
   const handleSubmit = async () => {
     try {
-      console.log(email, password);
       await login(email, password);
       router.replace("/home");
     } catch (err) {

@@ -105,17 +105,36 @@ export const UserProvider = ({ children }) => {
   // Logout function
   const logout = async () => {
     try {
-      await axios.post(`${API_BASE}/logout`, {}, { withCredentials: true });
+      // Clear user data immediately to prevent other API calls
       setUser(null);
       setToken(null);
+
+      // Then make the logout API call (but don't wait for it)
+      axios
+        .post(`${API_BASE}/logout`, {}, { withCredentials: true })
+        .catch((err) => {
+          console.log("Logout API call failed:", err.message);
+          // Don't throw error since we already cleared the data
+        });
     } catch (err) {
-      throw err;
+      console.log("Logout error:", err.message);
+      // Ensure user data is cleared even if there's an error
+      setUser(null);
+      setToken(null);
     }
   };
 
   return (
     <UserContext.Provider
-      value={{ user, token, loading, login, register, logout, refreshUser }}
+      value={{
+        user,
+        token,
+        loading,
+        login,
+        register,
+        logout,
+        refreshUser,
+      }}
     >
       {children}
     </UserContext.Provider>

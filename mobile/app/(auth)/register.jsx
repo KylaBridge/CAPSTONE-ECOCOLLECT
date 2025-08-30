@@ -20,7 +20,6 @@ const Register = () => {
 
   const handleSubmit = async () => {
     try {
-      console.log(email, password);
       await register(email, password);
       router.replace("/login");
     } catch (err) {
