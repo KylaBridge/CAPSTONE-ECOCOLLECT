@@ -1,4 +1,6 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef, useContext } from "react";
+import { UserContext } from "../context/userContext";
+import { useNavigate } from "react-router-dom";
 import "./styles/LandingPage.css";
 import ChipIcon from '../assets/icons/chipandtrash.png'
 import { FaMapMarkerAlt, FaCamera, FaUpload, FaStar } from "react-icons/fa";
@@ -11,6 +13,8 @@ import Footer from "../components/Footer";
 
 export default function LandingPage() {
   const sections = useRef([]);
+  const { user } = useContext(UserContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -31,6 +35,15 @@ export default function LandingPage() {
     return () => observer.disconnect();
   }, []);
 
+  function checkUser() {
+    if (user) {
+      return navigate("/home");
+    } else {
+      return navigate("/login");
+    }
+  }
+
+
   return (
     <div className="landing-container">
       <Navbar />
@@ -40,7 +53,7 @@ export default function LandingPage() {
           <h1>Welcome to EcoCollect</h1>
           <p>Turning E-Waste into Eco Wins — One Drop at a Time.
           NU's gamified way to track, submit, and earn rewards for recycling right.</p>
-          <a href="/login" className="hero-btn">Start Recycling Now!</a>
+          <a onClick={checkUser} className="hero-btn">Start Recycling Now!</a>
         </div>
       </section>
 

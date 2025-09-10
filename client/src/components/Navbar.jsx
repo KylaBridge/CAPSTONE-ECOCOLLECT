@@ -1,9 +1,21 @@
-import React, { useState } from "react";
+import { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../context/userContext";
 import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
 import "./styles/Navbar.css";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user } = useContext(UserContext);
+  const navigate = useNavigate();
+
+  function checkUser() {
+    if (user) {
+      return navigate("/home");
+    } else {
+      return navigate("/login");
+    }
+  }
 
   return (
     <header className={`navbar ${menuOpen ? "navbar-solid" : ""}`}>
@@ -18,7 +30,7 @@ export default function Navbar() {
         <a href="/">Home</a>
         <a href="/about">About</a>
         <a href="/contact">Contact</a>
-        <a href="/login">Log In</a>
+        <a onClick={checkUser}>Log In</a>
       </nav>
     </header>
   );

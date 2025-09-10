@@ -78,6 +78,7 @@ section {
   border-radius: 50px;
   width: fit-content;
   font-weight: 600;
+  cursor: pointer;
 }
 
 /* Transform Section */
