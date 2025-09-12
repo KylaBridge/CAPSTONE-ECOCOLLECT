@@ -7,6 +7,7 @@ import { useContext } from "react";
 import { UserContext } from "../context/userContext";
 import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
 import PartnershipLogos from "../assets/partnershiplogos.png";
+import GoogleIcon from "../assets/google-icon.svg";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -60,7 +61,14 @@ export default function Login() {
                     <Link className="register-link" to="/register"> Register</Link>
                     </p>
                 <p className="or-seperator">or</p>
-                <button onClick={handleGoogleLogin} type="button" className="microsoftAcc-btn">Continue with Google</button>
+                <button
+                    onClick={handleGoogleLogin}
+                    type="button"
+                    className="google-btn"
+                >
+                    <img src={GoogleIcon} alt="Google" className="google-icon" />
+                    Continue with Google
+                </button>
                 <Link className="go-back-btn" to={"/"}>Go Back to Main</Link>
             </form>
             <img className="partnership-logo" src={PartnershipLogos} alt="NU x SM Cares Partnership" />
