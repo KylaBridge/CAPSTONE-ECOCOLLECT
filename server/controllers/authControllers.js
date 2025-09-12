@@ -1,7 +1,8 @@
 const User = require("../models/user");
 const { comparePassword, hashPassword } = require("../helpers/auth");
 const { signToken, verifyToken } = require("../helpers/jwt");
-const passport = require('passport');
+const { sendVerificationEmail } = require("../helpers/mail");
+const passport = require("passport");
 
 // Register admin
 const registerAdmin = async (req, res) => {
@@ -47,45 +48,114 @@ const registerAdmin = async (req, res) => {
   }
 };
 
-// Register user
+// Register Email and Name
+const registerEmailName = async (req, res) => {
+  try {
+    const { email, name } = req.body;
+
+    if (!email || !name)
+      return res.status(400).json({ error: "Missing fields" });
+
+    const exists = await User.findOne({ email });
+
+    if (exists) return res.status(400).json({ error: "Email Already Exists" });
+
+    const tempToken = await signToken({ email, name }, { expiresIn: "5m" });
+
+    return res.status(200).json({ message: "Email Accepted", tempToken });
+  } catch (error) {
+    return res.status(500).json({ error: "Server error" });
+  }
+};
+
+// Register Password
+const registerPassword = async (req, res) => {
+  try {
+    const { password, tempToken } = req.body;
+
+    if (!tempToken)
+      return res.status(400).json({ error: "Missing temp token" });
+    if (!password) return res.status(400).json({ error: "Password required" });
+
+    const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+
+    if (
+      password.length < 10 ||
+      !specialCharRegex.test(password) ||
+      !/\d/.test(password)
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Password does not meet requirements" });
+    }
+
+    let decoded;
+    try {
+      decoded = await verifyToken(tempToken);
+    } catch {
+      return res
+        .status(400)
+        .json({ error: "Expired or invalid registration token" });
+    }
+
+    const { email, name } = decoded;
+    const verificationCode = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
+
+    try {
+      await sendVerificationEmail(email, verificationCode);
+    } catch (e) {
+      return res.status(500).json({ error: "Failed to send email" });
+    }
+
+    const newTempToken = await signToken(
+      { password, email, name, verificationCode },
+      { expiresIn: "5m" }
+    );
+
+    return res.status(200).json({ message: "Password accepted", newTempToken });
+  } catch (error) {
+    return res.status(500).json({ error: "Server error" });
+  }
+};
+
+// Register User (final step)
 const registerUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { code, newTempToken } = req.body;
 
-    // Email must contain '@'
-    if (!email || !/@/.test(email)) {
-      return res.json({
-        error: "Email must contain '@' character",
-      });
+    if (!code || !newTempToken)
+      return res.status(400).json({ error: "Missing code or token" });
+
+    let decoded;
+    try {
+      decoded = await verifyToken(newTempToken);
+    } catch {
+      return res
+        .status(400)
+        .json({ error: "Expired or invalid verification token" });
     }
 
-    // Password: at least 8 chars, at least one number, at least one special char
-    const passwordRegex =
-      /^(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
-    if (!password || !passwordRegex.test(password)) {
-      return res.json({
-        error:
-          "Password must be at least 8 characters, include at least one number and one special character",
-      });
-    }
+    const { verificationCode, email, name, password } = decoded;
 
-    // Check if email exists
-    const exist = await User.findOne({ email });
-    if (exist) {
-      return res.json({
-        error: "Email is already taken",
-      });
-    }
+    if (code !== verificationCode)
+      return res.status(400).json({ error: "Invalid verification code" });
 
-    // Creates the user in the database
+    const exists = await User.findOne({ email });
+    if (exists)
+      return res.status(400).json({ error: "Email already registered" });
+
     const hashedPassword = await hashPassword(password);
-    const user = await User.create({
-      email,
-      password: hashedPassword,
-    });
-    return res.json(user);
+
+    const user = await User.create({ email, name, password: hashedPassword });
+    const { password: pwd, ...userWithoutPassword } = user.toObject();
+
+    return res
+      .status(201)
+      .json({ message: "Account Registered", user: userWithoutPassword });
   } catch (error) {
-    console.log(error);
+    return res.status(500).json({ error: "Server error" });
   }
 };
 
@@ -122,7 +192,8 @@ const loginUser = async (req, res) => {
             })
             .json({
               token,
-              message: user.role === "admin" ? "User is an admin" : "User logged in",
+              message:
+                user.role === "admin" ? "User is an admin" : "User logged in",
               _id: user._id,
               role: user.role,
               name: user.name,
@@ -158,12 +229,12 @@ const getProfile = async (req, res) => {
 
   try {
     const decoded = await verifyToken(token);
-    const user = await User.findById(decoded.id).select('-password');
-    if (!user) return res.status(404).json({ error: 'User not found' });
-    
+    const user = await User.findById(decoded.id).select("-password");
+    if (!user) return res.status(404).json({ error: "User not found" });
+
     res.status(200).json(user);
   } catch (err) {
-    return res.status(401).json({ error: 'Unauthorized' });
+    return res.status(401).json({ error: "Unauthorized" });
   }
 };
 
@@ -178,37 +249,38 @@ const logoutUser = (req, res) => {
 };
 
 // Initiate Google OAuth (delegates to passport)
-const googleAuthStart = passport.authenticate('google', {
-  scope: ['profile', 'email'],
-  prompt: 'select_account'
+const googleAuthStart = passport.authenticate("google", {
+  scope: ["profile", "email"],
+  prompt: "select_account",
 });
 
 // Google OAuth callback handler (after passport authenticates)
 const googleAuthCallback = (req, res) => {
   const user = req.user;
-  if (!user) return res.redirect(process.env.GOOGLE_FAIL_REDIRECT || '/');
+  if (!user) return res.redirect(process.env.GOOGLE_FAIL_REDIRECT || "/");
   signToken({ email: user.email, id: user._id })
-    .then(token => {
-      res.cookie('token', token, {
+    .then((token) => {
+      res.cookie("token", token, {
         httpOnly: true,
-        sameSite: 'none',
+        sameSite: "none",
         secure: true,
-        path: '/',
+        path: "/",
         maxAge: 1000 * 60 * 30,
       });
-      const base = process.env.GOOGLE_SUCCESS_REDIRECT || process.env.FRONTEND_URL || '/';
-      const redirectUrl = `${base.replace(/\/$/, '')}/?auth=google`;
+      const base =
+        process.env.GOOGLE_SUCCESS_REDIRECT || process.env.FRONTEND_URL || "/";
+      const redirectUrl = `${base.replace(/\/$/, "")}/?auth=google`;
       res.redirect(redirectUrl);
     })
-    .catch(err => {
-      console.error('JWT sign error', err);
-      return res.redirect(process.env.GOOGLE_FAIL_REDIRECT || '/');
+    .catch((err) => {
+      console.error("JWT sign error", err);
+      return res.redirect(process.env.GOOGLE_FAIL_REDIRECT || "/");
     });
 };
 
 // Provide user profile after Google auth (if needed in popup flows)
 const googleProfile = (req, res) => {
-  if (!req.user) return res.status(401).json({ error: 'Not authenticated' });
+  if (!req.user) return res.status(401).json({ error: "Not authenticated" });
   res.json({
     _id: req.user._id,
     name: req.user.name,
@@ -220,6 +292,8 @@ const googleProfile = (req, res) => {
 
 module.exports = {
   registerAdmin,
+  registerEmailName,
+  registerPassword,
   registerUser,
   loginUser,
   getProfile,
