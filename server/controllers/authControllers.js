@@ -154,25 +154,16 @@ const getProfile = async (req, res) => {
     token = req.cookies.token;
   }
 
-  if (token) {
-    try {
-      const decoded = await verifyToken(token);
-      const user = await User.findById(decoded.id);
-      if (!user) return res.status(404).json({ error: "User not found" });
-      res.status(200).json({
-          _id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          exp: user.exp,
-          points: user.points,
-          rank: user.rank,
-        });
-    } catch (err) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-  } else {
-    res.json(null);
+  if (!token) return res.json(null);
+
+  try {
+    const decoded = await verifyToken(token);
+    const user = await User.findById(decoded.id).select('-password');
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    
+    res.status(200).json(user);
+  } catch (err) {
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 };
 
