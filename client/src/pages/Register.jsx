@@ -29,7 +29,13 @@ export default function Register() {
         }
     }
 
-    return (
+  function handleGoogleRegister(e){
+    e.preventDefault();
+    const base = import.meta.env.VITE_API_URL || '';
+    window.location.href = `${base}/api/ecocollect/auth/google`;
+  }
+
+  return (
         <div className="form-container">
             <img className="EcoCollect-logo" src={EcoCollectLogo} alt="EcoCollect-Logo" />
             <form className = "register-form" action={getRegisterData}>
@@ -44,7 +50,7 @@ export default function Register() {
                 <button className="register-btn2">REGISTER</button>
                 <p className="register-el">Already have an account? <Link className="login-btn2" to={"/login"}>Login</Link></p>
                 <p className="or-seperator">or</p>
-                <button className="microsoftAcc-btn">Continue with Microsoft</button>
+                <button onClick={handleGoogleRegister} type="button" className="microsoftAcc-btn">Continue with Google</button>
                 <Link className="go-back-btn" to={"/"}>Go Back to Main</Link>
             </form>
             <img className="partnership-logo" src={PartnershipLogos} alt="NU x SM Cares Partnership" />

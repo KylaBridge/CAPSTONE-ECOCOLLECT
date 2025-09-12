@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const { comparePassword, hashPassword } = require("../helpers/auth");
-const jwt = require("jsonwebtoken");
+const { signToken, verifyToken } = require("../helpers/jwt");
+const passport = require('passport');
 
 // Register admin
 const registerAdmin = async (req, res) => {
@@ -109,34 +110,31 @@ const loginUser = async (req, res) => {
     if (match) {
       // Only set token if not admin login or user is admin
       if (!isAdminLogin || user.role === "admin") {
-        jwt.sign(
-          { email: user.email, id: user._id },
-          process.env.JWT_SECRET,
-          {},
-          (err, token) => {
-            if (err) throw err;
-            res
-              .cookie("token", token, {
-                httpOnly: true,
-                sameSite: "none",
-                secure: true,
-                path: "/",
-                maxAge: 1000 * 60 * 30, // 30 minutes
-              })
-              .json({
-                token, // include token for mobile clients
-                message:
-                  user.role === "admin" ? "User is an admin" : "User logged in",
-                _id: user._id,
-                role: user.role,
-                name: user.name,
-                email: user.email,
-                exp: user.exp,
-                points: user.points,
-                rank: user.rank,
-              });
-          }
-        );
+        try {
+          const token = await signToken({ email: user.email, id: user._id });
+          res
+            .cookie("token", token, {
+              httpOnly: true,
+              sameSite: "none",
+              secure: true,
+              path: "/",
+              maxAge: 1000 * 60 * 30, // 30 minutes
+            })
+            .json({
+              token,
+              message: user.role === "admin" ? "User is an admin" : "User logged in",
+              _id: user._id,
+              role: user.role,
+              name: user.name,
+              email: user.email,
+              exp: user.exp,
+              points: user.points,
+              rank: user.rank,
+            });
+        } catch (err) {
+          console.error(err);
+          return res.status(500).json({ error: "Token generation failed" });
+        }
       }
     } else {
       res.json({ error: "Email or password is invalid" });
@@ -157,19 +155,22 @@ const getProfile = async (req, res) => {
   }
 
   if (token) {
-    jwt.verify(token, process.env.JWT_SECRET, {}, async (err, decoded) => {
-      if (err) return res.status(401).json({ error: "Unauthorized" });
+    try {
+      const decoded = await verifyToken(token);
       const user = await User.findById(decoded.id);
+      if (!user) return res.status(404).json({ error: "User not found" });
       res.status(200).json({
-        _id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        exp: user.exp,
-        points: user.points,
-        rank: user.rank,
-      });
-    });
+          _id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          exp: user.exp,
+          points: user.points,
+          rank: user.rank,
+        });
+    } catch (err) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
   } else {
     res.json(null);
   }
@@ -185,10 +186,54 @@ const logoutUser = (req, res) => {
   res.json({ message: "Logged out successfully" });
 };
 
+// Initiate Google OAuth (delegates to passport)
+const googleAuthStart = passport.authenticate('google', {
+  scope: ['profile', 'email'],
+  prompt: 'select_account'
+});
+
+// Google OAuth callback handler (after passport authenticates)
+const googleAuthCallback = (req, res) => {
+  const user = req.user;
+  if (!user) return res.redirect(process.env.GOOGLE_FAIL_REDIRECT || '/');
+  signToken({ email: user.email, id: user._id })
+    .then(token => {
+      res.cookie('token', token, {
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+        path: '/',
+        maxAge: 1000 * 60 * 30,
+      });
+      const base = process.env.GOOGLE_SUCCESS_REDIRECT || process.env.FRONTEND_URL || '/';
+      const redirectUrl = `${base.replace(/\/$/, '')}/?auth=google`;
+      res.redirect(redirectUrl);
+    })
+    .catch(err => {
+      console.error('JWT sign error', err);
+      return res.redirect(process.env.GOOGLE_FAIL_REDIRECT || '/');
+    });
+};
+
+// Provide user profile after Google auth (if needed in popup flows)
+const googleProfile = (req, res) => {
+  if (!req.user) return res.status(401).json({ error: 'Not authenticated' });
+  res.json({
+    _id: req.user._id,
+    name: req.user.name,
+    email: req.user.email,
+    role: req.user.role,
+    avatar: req.user.avatar,
+  });
+};
+
 module.exports = {
   registerAdmin,
   registerUser,
   loginUser,
   getProfile,
   logoutUser,
+  googleAuthStart,
+  googleAuthCallback,
+  googleProfile,
 };

@@ -4,9 +4,18 @@ const { Schema } = mongoose;
 const userSchema = new Schema({
     email: {
         type: String,
-        unique: true
+        unique: true,
+        sparse: true
     },
     password: String,
+    googleId: {
+        type: String,
+        index: true,
+        unique: true,
+        sparse: true
+    },
+    name: String,
+    avatar: String,
     role: {
         type: String,
         default: "user"

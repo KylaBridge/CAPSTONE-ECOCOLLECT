@@ -35,6 +35,12 @@ export default function Login() {
         }
     }
 
+    function handleGoogleLogin(e){
+        e.preventDefault();
+        const base = import.meta.env.VITE_API_URL || '';
+        window.location.href = `${base}/api/ecocollect/auth/google`;
+    }
+
     return (
         <div className="login-container">
             <img className="EcoCollect-logo" src={EcoCollectLogo} alt="EcoCollect-Logo" />
@@ -54,7 +60,7 @@ export default function Login() {
                     <Link className="register-link" to="/register"> Register</Link>
                     </p>
                 <p className="or-seperator">or</p>
-                <button className="microsoftAcc-btn">Continue with Microsoft</button>
+                <button onClick={handleGoogleLogin} type="button" className="microsoftAcc-btn">Continue with Google</button>
                 <Link className="go-back-btn" to={"/"}>Go Back to Main</Link>
             </form>
             <img className="partnership-logo" src={PartnershipLogos} alt="NU x SM Cares Partnership" />

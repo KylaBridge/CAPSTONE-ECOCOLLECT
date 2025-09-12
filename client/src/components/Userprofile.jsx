@@ -33,18 +33,21 @@ export default function Userprofile() {
     const progressPercent = ((currentPoints - levelStart) / (levelEnd - levelStart)) * 100;
     const emailInitial = user?.email ? user.email.charAt(0).toUpperCase() : "U";
 
+    // Decide which avatar image (if any) to show
+    const displayAvatar = user?.profilePicture || user?.avatar || null;
+
     return (
         <div className="profile-container">
             {/* Show profile picture if available, else show initial in a styled circle */}
-            {user?.profilePicture ? (
-                <img src={user.profilePicture} alt="profile picture" className="profile-pic" />
+            {displayAvatar ? (
+                <img src={displayAvatar} alt="profile avatar" className="profile-pic" />
             ) : (
                 <div className="profile-initial-avatar">{emailInitial}</div>
             )}
             <div className="profile-details">
                 {!!user ? (
                     <>
-                        <h2 className="username">{user.username || 'USERNAME'}</h2>
+                        <h2 className="username">{user.name || 'USERNAME'}</h2>
                         <p className="user-id">ID: {user._id ? user._id.slice(-8) : 'ID Placeholder'}</p>
                         <p className="user-email">Email: {user.email || 'email@example.com'}</p>
                         <div className="progress-bar-container">

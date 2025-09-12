@@ -4,11 +4,13 @@ const cors = require("cors");
 const app = express();
 const { mongoose } = require("mongoose");
 const cookieParser = require("cookie-parser");
+const passport = require('./config/passport');
 
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
+app.use(passport.initialize());
 app.use(
   cors({
     // Allow all origins for development
