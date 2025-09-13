@@ -1,7 +1,7 @@
-const User = require('../models/user');
-const EWaste = require('../models/ewaste');
-const Redemption = require('../models/redemption');
-const ActivityLog = require('../models/activityLog');
+const User = require("../models/user");
+const EWaste = require("../models/ewaste");
+const Redemption = require("../models/redemption");
+const ActivityLog = require("../models/activityLog");
 
 //
 // ------------------ USER MANAGEMENT ------------------
@@ -39,7 +39,7 @@ const deleteUser = async (req, res) => {
 
     // Use admin's ID if available, otherwise fallback to deleted user's ID
     const logUserId = req.user?._id;
-    const logUserEmail = req.user?.email || 'Unknown';
+    const logUserEmail = req.user?.email || "Unknown";
 
     // Only log if we have a userId
     if (logUserId) {
@@ -47,7 +47,7 @@ const deleteUser = async (req, res) => {
         userId: logUserId,
         userEmail: logUserEmail,
         userRole: req.user?.role,
-        action: 'User Deleted',
+        action: "User Deleted",
         details: `Deleted user ${user?.email || id}`,
       });
     }
@@ -70,15 +70,15 @@ const getUserParticipationData = async (req, res) => {
     let dateFormat;
 
     switch (viewType) {
-      case 'Daily':
+      case "Daily":
         groupBy = { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } };
         dateFormat = "%Y-%m-%d";
         break;
-      case 'Weekly':
+      case "Weekly":
         groupBy = { $dateToString: { format: "%Y-%U", date: "$createdAt" } };
         dateFormat = "%Y-%U";
         break;
-      case 'Monthly':
+      case "Monthly":
         groupBy = { $dateToString: { format: "%Y-%m", date: "$createdAt" } };
         dateFormat = "%Y-%m";
         break;
@@ -91,60 +91,60 @@ const getUserParticipationData = async (req, res) => {
     const submissions = await EWaste.aggregate([
       {
         $match: {
-          createdAt: { $gte: startDate, $lte: endDate }
-        }
+          createdAt: { $gte: startDate, $lte: endDate },
+        },
       },
       {
         $group: {
           _id: groupBy,
-          count: { $sum: 1 }
-        }
+          count: { $sum: 1 },
+        },
       },
       {
-        $sort: { _id: 1 }
-      }
+        $sort: { _id: 1 },
+      },
     ]);
 
     // Get redemptions count
     const redemptions = await Redemption.aggregate([
       {
         $match: {
-          redemptionDate: { $gte: startDate, $lte: endDate }
-        }
+          redemptionDate: { $gte: startDate, $lte: endDate },
+        },
       },
       {
         $group: {
           _id: groupBy,
-          count: { $sum: 1 }
-        }
+          count: { $sum: 1 },
+        },
       },
       {
-        $sort: { _id: 1 }
-      }
+        $sort: { _id: 1 },
+      },
     ]);
 
     // Get signups count
     const signups = await User.aggregate([
       {
         $match: {
-          createdAt: { $gte: startDate, $lte: endDate }
-        }
+          createdAt: { $gte: startDate, $lte: endDate },
+        },
       },
       {
         $group: {
           _id: groupBy,
-          count: { $sum: 1 }
-        }
+          count: { $sum: 1 },
+        },
       },
       {
-        $sort: { _id: 1 }
-      }
+        $sort: { _id: 1 },
+      },
     ]);
 
     res.status(200).json({
       submissions,
       redemptions,
-      signups
+      signups,
     });
   } catch (error) {
     console.error(error);
