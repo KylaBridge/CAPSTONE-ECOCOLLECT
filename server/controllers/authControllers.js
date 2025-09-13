@@ -4,50 +4,6 @@ const { signToken, verifyToken } = require("../helpers/jwt");
 const { sendVerificationEmail } = require("../helpers/mail");
 const passport = require("passport");
 
-// Register admin
-const registerAdmin = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    // Email must contain '@'
-    if (!email || !/@/.test(email)) {
-      return res.json({
-        error: "Email must contain '@' character",
-      });
-    }
-
-    // Password: at least 8 chars, at least one number, at least one special char
-    const passwordRegex =
-      /^(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
-    if (!password || !passwordRegex.test(password)) {
-      return res.json({
-        error:
-          "Password must be at least 8 characters, include at least one number and one special character",
-      });
-    }
-
-    // Check if email exists
-    const exist = await User.findOne({ email });
-    if (exist) {
-      return res.json({
-        error: "Email is already taken",
-      });
-    }
-
-    // Creates the admin user in the database
-    const hashedPassword = await hashPassword(password);
-    const admin = await User.create({
-      email,
-      password: hashedPassword,
-      role: "admin", // Set role to admin
-    });
-    return res.json(admin);
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ error: "Internal server error" });
-  }
-};
-
 // Register Email and Name
 const registerEmailName = async (req, res) => {
   try {
@@ -123,7 +79,7 @@ const registerPassword = async (req, res) => {
 // Register User (final step)
 const registerUser = async (req, res) => {
   try {
-    const { code, newTempToken } = req.body;
+    const { code, newTempToken, role } = req.body;
 
     if (!code || !newTempToken)
       return res.status(400).json({ error: "Missing code or token" });
@@ -148,14 +104,19 @@ const registerUser = async (req, res) => {
 
     const hashedPassword = await hashPassword(password);
 
-    const user = await User.create({ email, name, password: hashedPassword });
+    const user = await User.create({
+      email,
+      name,
+      password: hashedPassword,
+      role,
+    });
     const { password: pwd, ...userWithoutPassword } = user.toObject();
 
     return res
       .status(201)
       .json({ message: "Account Registered", user: userWithoutPassword });
   } catch (error) {
-    return res.status(500).json({ error: "Server error" });
+    return res.status(500).json(error);
   }
 };
 
@@ -291,7 +252,6 @@ const googleProfile = (req, res) => {
 };
 
 module.exports = {
-  registerAdmin,
   registerEmailName,
   registerPassword,
   registerUser,

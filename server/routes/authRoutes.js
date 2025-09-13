@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const passport = require("passport");
 const {
-  registerAdmin,
   registerEmailName,
   registerPassword,
   registerUser,
@@ -14,7 +13,6 @@ const {
   googleProfile,
 } = require("../controllers/authControllers");
 
-router.post("/register-admin", registerAdmin);
 router.post("/register/email", registerEmailName);
 router.post("/register/password", registerPassword);
 router.post("/register", registerUser);

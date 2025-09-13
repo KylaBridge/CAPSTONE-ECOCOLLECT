@@ -18,11 +18,14 @@ export default function AdminLogIn() {
     const { email, password } = data;
 
     try {
-      const { data: response } = await axios.post("/api/ecocollect/auth/login", {
-        email,
-        password,
-        isAdminLogin: true,
-      });
+      const { data: response } = await axios.post(
+        "/api/ecocollect/auth/login",
+        {
+          email,
+          password,
+          isAdminLogin: true,
+        }
+      );
 
       console.log("Server Response:", response);
 
@@ -38,12 +41,6 @@ export default function AdminLogIn() {
     } catch (error) {
       console.log(error);
     }
-  }
-
-  function handleGoogleLogin(e) {
-    e.preventDefault();
-    const base = import.meta.env.VITE_API_URL || "";
-    window.location.href = `${base}/api/ecocollect/auth/google-admin`;
   }
 
   return (
@@ -77,14 +74,6 @@ export default function AdminLogIn() {
               </Link>
             </p>
             <p className="or-separator">or</p>
-            <button
-              onClick={handleGoogleLogin}
-              type="button"
-              className="google-btn"
-            >
-              <img src={GoogleIcon} alt="Google" className="google-icon" />
-              Continue with Google
-            </button>
             <Link className="go-home-btn" to={"/"}>
               Go to Home
             </Link>

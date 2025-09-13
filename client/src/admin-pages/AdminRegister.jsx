@@ -28,6 +28,7 @@ export default function AdminRegister() {
     name: "",
     password: "",
     code: "",
+    role: "admin",
   });
   const [loading, setLoading] = useState(false);
 
@@ -46,7 +47,7 @@ export default function AdminRegister() {
       return;
     }
     try {
-      const { data } = await axios.post("/api/ecocollect/auth/register-admin/email", {
+      const { data } = await axios.post("/api/ecocollect/auth/register/email", {
         email: form.email,
         name: form.name,
       });
@@ -67,7 +68,7 @@ export default function AdminRegister() {
     setLoading(true);
     try {
       const { data } = await axios.post(
-        "/api/ecocollect/auth/register-admin/password",
+        "/api/ecocollect/auth/register/password",
         {
           password: form.password,
           tempToken,
@@ -88,9 +89,10 @@ export default function AdminRegister() {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await axios.post("/api/ecocollect/auth/register-admin", {
+      const { data } = await axios.post("/api/ecocollect/auth/register", {
         code: form.code,
         newTempToken,
+        role: form.role,
       });
       if (data.error) return toast.error(data.error);
       toast.success("Admin registered successfully");
@@ -102,17 +104,15 @@ export default function AdminRegister() {
     }
   }
 
-  function handleGoogleRegister(e) {
-    e.preventDefault();
-    const base = import.meta.env.VITE_API_URL || "";
-    window.location.href = `${base}/api/ecocollect/auth/google-admin`;
-  }
-
   return (
     <div className="admin-register-page">
       <div className="bg-form-container">
         <div className="admin-register-left">
-          <img className="forest-characters" src={BackgroundImage} alt="EcoCollect Characters" />
+          <img
+            className="forest-characters"
+            src={BackgroundImage}
+            alt="EcoCollect Characters"
+          />
         </div>
         <div className="admin-register-right">
           <img className="logo" src={EcoCollectLogo} alt="EcoCollect Logo" />
@@ -218,7 +218,9 @@ export default function AdminRegister() {
                   onChange={handleChange}
                   required
                 />
-                <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+                <div
+                  style={{ display: "flex", gap: "10px", marginTop: "10px" }}
+                >
                   <button
                     type="button"
                     className="back-btn2"
@@ -238,19 +240,15 @@ export default function AdminRegister() {
               </>
             )}
             <p className="or-separator">or</p>
-            <button
-              onClick={handleGoogleRegister}
-              type="button"
-              className="google-btn"
-            >
-              <img src={GoogleIcon} alt="Google" className="google-icon" />
-              Continue with Google
-            </button>
             <p className="login-link">
               Already have an account? <Link to="/admin/login">Login</Link>
             </p>
           </form>
-          <img className="partnership-logos" src={PartnershipLogos} alt="Partnership Logos" />
+          <img
+            className="partnership-logos"
+            src={PartnershipLogos}
+            alt="Partnership Logos"
+          />
         </div>
       </div>
     </div>
