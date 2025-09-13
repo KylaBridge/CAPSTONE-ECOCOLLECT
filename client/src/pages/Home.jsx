@@ -147,15 +147,28 @@ export default function Home() {
             <div className="current-reward-item">
               <h1>Current Badge</h1>
               <div className="current-reward-image-container">
-                <img
-                  src={currentBadge?.image || Badge}
-                  alt={currentBadge?.name || "Current Badge"}
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = Badge;
-                  }}
-                />
-                <p>{currentBadge?.description || "Get after joining"}</p>
+                {currentBadge ? (
+                  <>
+                    <img
+                      src={currentBadge.image}
+                      alt={currentBadge.name}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = Badge;
+                      }}
+                    />
+                    <p>{currentBadge?.description}</p>
+                  </>
+                ) : (
+                  <>
+                    <img
+                      style={{ width: "50%"}}
+                      src={LockIcon}
+                      alt={"No Badge yet"}
+                    />
+                    <p>No Badge Yet</p>
+                  </>
+                )}
               </div>
             </div>
             <div className="next-reward-item">
@@ -171,7 +184,7 @@ export default function Home() {
                 />
                 <p>
                   {nextBadge
-                    ? `Earn ${nextBadge.pointsRequired} points to unlock`
+                    ? `Earn ${nextBadge.pointsRequired} exp to unlock`
                     : "Earn 100 points to unlock"}
                 </p>
               </div>
