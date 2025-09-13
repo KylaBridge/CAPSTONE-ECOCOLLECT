@@ -53,19 +53,45 @@
     border: 1px solid white;
   }
   
-  .register-form .register-btn2 {
+  .register-form .register-btn2,
+.back-btn2 {
     font-size: 0.7rem;
     padding: 5px;
     border-radius: 50px;
-    border: 2px  solid white;
-    background-color: #284c42;
-    color: white;
+    border: 2px solid white;
     font-weight: 500;
     cursor: pointer;
     margin-bottom: 10px;
     margin-top: 20px;
-  }
-  
+    width: 100%;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    min-width: 100px;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.register-btn2 {
+    background-color: #284c42;
+    color: white;
+    border-color: #284c42;
+}
+
+.register-btn2:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.back-btn2 {
+    background-color: #497460;
+    color: white;
+    border-color: #497460;
+}
+
+.back-btn2:hover:not(:disabled) {
+    background-color: #355a4a;
+    border-color: #355a4a;
+}
+
   .register-form .register-el {
     text-align: center;
     font-size: 0.8rem;

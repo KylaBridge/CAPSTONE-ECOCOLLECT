@@ -10,8 +10,9 @@ import GoogleIcon from "../assets/google-icon.svg";
 const passwordRequirements = [
   { label: "At least 10 characters", test: (pw) => pw.length >= 10 },
   {
-    label: "At least one special character",
-    test: (pw) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pw),
+    label: "At least one special character and one upper case",
+    test: (pw) =>
+      /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pw) && /[A-Z]/.test(pw),
   },
   { label: "At least one number", test: (pw) => /\d/.test(pw) },
 ];
@@ -215,13 +216,23 @@ export default function Register() {
               onChange={handleChange}
               required
             />
-            <button
-              className="register-btn2"
-              type="submit"
-              disabled={loading || !form.code}
-            >
-              {loading ? "Registering..." : "Register"}
-            </button>
+            <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+              <button
+                type="button"
+                className="back-btn2"
+                onClick={() => setStep(1)}
+                disabled={loading}
+              >
+                Back
+              </button>
+              <button
+                className="register-btn2"
+                type="submit"
+                disabled={loading || !form.code}
+              >
+                {loading ? "Registering..." : "Register"}
+              </button>
+            </div>
           </>
         )}
         <p className="or-seperator">or</p>
