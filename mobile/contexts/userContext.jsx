@@ -102,6 +102,54 @@ export const UserProvider = ({ children }) => {
     }
   };
 
+  // --- Multi-step registration flow helpers (mobile wizard) ---
+  const startRegistration = async (email, name) => {
+    try {
+      const { data } = await axios.post(
+        `${API_BASE}/register/email`,
+        { email, name },
+        { withCredentials: true }
+      );
+      if (data.error) throw new Error(data.error);
+      // Returns tempToken (do not set user yet)
+      return data.tempToken;
+    } catch (err) {
+      throw err.response.data.error;
+    }
+  };
+
+  const setRegistrationPassword = async (password, tempToken) => {
+    try {
+      const { data } = await axios.post(
+        `${API_BASE}/register/password`,
+        { password, tempToken },
+        { withCredentials: true }
+      );
+      if (data.error) throw new Error(data.error);
+      // Returns newTempToken for code verification
+      return data.newTempToken;
+    } catch (err) {
+      throw err.response.data.error;
+    }
+  };
+
+  const completeRegistration = async (code, newTempToken) => {
+    try {
+      const { data } = await axios.post(
+        `${API_BASE}/register`,
+        { code, newTempToken },
+        { withCredentials: true }
+      );
+      if (data.error) throw new Error(data.error);
+      // Optionally set user & token if backend returns them (depends on API spec)
+      if (data.token) setToken(data.token);
+      if (data.user) setUser(data.user);
+      return data;
+    } catch (err) {
+      throw err.response.data.error;
+    }
+  };
+
   // Logout function
   const logout = async () => {
     try {
@@ -132,6 +180,9 @@ export const UserProvider = ({ children }) => {
         loading,
         login,
         register,
+        startRegistration,
+        setRegistrationPassword,
+        completeRegistration,
         logout,
         refreshUser,
       }}

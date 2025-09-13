@@ -4,7 +4,7 @@ import ThemedText from "./ThemedText";
 
 const ProfileAvatar = ({
   text,
-  size = 50,
+  size = 70,
   backgroundColor = "#b7e4c7",
   color = "#1e4620",
 }) => {

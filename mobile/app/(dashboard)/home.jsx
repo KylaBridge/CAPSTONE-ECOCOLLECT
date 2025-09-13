@@ -113,7 +113,7 @@ const Home = () => {
       <Image source={Header} style={styles.headerText} />
 
       {/* User Profile*/}
-      <ThemedCard height={100} width={"90%"}>
+      <ThemedCard height={110} width={"90%"}>
         <View
           style={{
             flexDirection: "row",
@@ -122,15 +122,18 @@ const Home = () => {
             gap: 20,
           }}
         >
-          <ProfileAvatar text={user?.email} />
+          <ProfileAvatar text={user?.name} />
           <View
             style={{
               flexDirection: "column",
-              width: "80%",
+              width: "70%",
             }}
           >
             <ThemedText style={[styles.semiTitle, { fontSize: 16 }]}>
-              {user?.email || "user"}
+              {user?.name || "user"}
+            </ThemedText>
+            <ThemedText style={[styles.semiTitle, { fontSize: 10 }]}>
+              {user?.email || "user email"}
             </ThemedText>
             <ExperienceBar
               currentExp={user?.exp || 0}
@@ -163,11 +166,14 @@ const Home = () => {
           {currentBadgeUri ? (
             <Image
               source={{ uri: currentBadgeUri }}
-              style={styles.badgeImage}
+              style={styles.currentBadgeImage}
               accessibilityLabel="Current Badge"
             />
           ) : (
-            <ThemedText>No badge</ThemedText>
+            <>
+              <Spacer height={20} />
+              <ThemedText>No badge Yet</ThemedText>
+            </>
           )}
         </ThemedCard>
 
@@ -176,7 +182,7 @@ const Home = () => {
           {nextBadgeUri ? (
             <Image
               source={{ uri: nextBadgeUri }}
-              style={styles.badgeImage}
+              style={styles.nextBadgeImage}
               accessibilityLabel="Next Badge"
             />
           ) : (
@@ -230,5 +236,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 0,
   },
-  badgeImage: { width: 150, height: 150 },
+  currentBadgeImage: { width: 150, height: 150 },
+  nextBadgeImage: { width: 150, height: 150, opacity: 0.5 },
 });
