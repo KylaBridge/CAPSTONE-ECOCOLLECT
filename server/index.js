@@ -17,8 +17,8 @@ app.use(
 
     // If deployment use specific allowed origins
     // process.env.FRONTEND_URL; web app URL
-    credentials: process.env.FRONTEND_URL || true,
-    origin: true,
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
   })
 );
 
