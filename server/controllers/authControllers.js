@@ -218,7 +218,7 @@ const googleAuthStart = passport.authenticate("google", {
 // Google OAuth callback handler (after passport authenticates)
 const googleAuthCallback = (req, res) => {
   const user = req.user;
-  if (!user) return res.redirect(process.env.GOOGLE_FAIL_REDIRECT || "/");
+  if (!user) return res.redirect(`${process.env.FRONTEND_URL}/login`);
   signToken({ email: user.email, id: user._id })
     .then((token) => {
       res.cookie("token", token, {
@@ -228,8 +228,7 @@ const googleAuthCallback = (req, res) => {
         path: "/",
         maxAge: 1000 * 60 * 30,
       });
-      const base =
-        process.env.GOOGLE_SUCCESS_REDIRECT || process.env.FRONTEND_URL || "/";
+      const base = process.env.process.env.FRONTEND_URL;
       const redirectUrl = `${base.replace(/\/$/, "")}/?auth=google`;
       res.redirect(redirectUrl);
     })
