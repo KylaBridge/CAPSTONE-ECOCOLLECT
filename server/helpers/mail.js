@@ -26,7 +26,7 @@ const sendVerificationEmail = async (to, code) => {
   transporter.options.auth.accessToken = at;
 
   return await transporter.sendMail({
-    from: `EcoCollect NU ${process.env.GMAIL_USER}`,
+    from: `EcoCollect NU <no-reply@ecocollect.com>`,
     to,
     subject: "EcoCollect Account Verification",
     text: `This is the email verification code for your account ${code}`,
