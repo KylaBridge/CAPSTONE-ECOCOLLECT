@@ -23,6 +23,9 @@ app.use(
 );
 
 // Routes
+app.get("/", (req, res) => {
+  res.json({ message: "Deployed " });
+});
 app.use("/api/ecocollect", require("./routes/controllerRoutes"));
 app.use("/api/ecocollect/auth", require("./routes/authRoutes"));
 app.use("/uploads", express.static("uploads"));
