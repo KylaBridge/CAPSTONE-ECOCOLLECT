@@ -148,14 +148,7 @@ export default function AdminRegister() {
                   onChange={handleChange}
                   required
                 />
-                <div
-                  style={{
-                    fontSize: "0.7rem",
-                    color: "#fff",
-                    marginBottom: "10px",
-                    marginLeft: "5px",
-                  }}
-                >
+                <div className="name-hint">
                   This name will appear on your profile
                 </div>
                 <button
@@ -199,14 +192,7 @@ export default function AdminRegister() {
             )}
             {step === 3 && (
               <>
-                <div
-                  style={{
-                    fontSize: "0.8rem",
-                    color: "#fff",
-                    marginBottom: "10px",
-                    textAlign: "center",
-                  }}
-                >
+                <div className="verification-info">
                   A verification code has been sent to <b>{form.email}</b>.
                 </div>
                 <label htmlFor="code">Enter Verification Code</label>
@@ -218,9 +204,7 @@ export default function AdminRegister() {
                   onChange={handleChange}
                   required
                 />
-                <div
-                  style={{ display: "flex", gap: "10px", marginTop: "10px" }}
-                >
+                <div className="step-actions">
                   <button
                     type="button"
                     className="back-btn2"
@@ -230,7 +214,7 @@ export default function AdminRegister() {
                     Back
                   </button>
                   <button
-                    className="register-btn"
+                    className="register-btn2"
                     type="submit"
                     disabled={loading || !form.code}
                   >

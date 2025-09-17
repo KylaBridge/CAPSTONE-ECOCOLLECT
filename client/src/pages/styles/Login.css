@@ -1,5 +1,5 @@
 .login-container .EcoCollect-logo {
-  width: 15%;
+  width: 10%;
   margin-bottom: 30px;
   margin-top: 30px;
 }
@@ -93,9 +93,19 @@
   }
   
   .login-form .or-seperator {
-    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
     margin: 10px 0;
     font-size: 0.7rem;
+  }
+
+  .login-form .or-seperator::before,
+  .login-form .or-seperator::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.6);
   }
   
   .login-form .microsoftAcc-btn {

@@ -60,7 +60,7 @@ export default function AdminLogIn() {
             <h1>Admin Login</h1>
             <p className="welcome-title">Welcome to EcoCollect!</p>
 
-            <label htmlFor="email">Admin Email ID</label>
+            <label htmlFor="email">Admin Email</label>
             <input id="email" type="email" name="email" required />
 
             <label htmlFor="password">Password</label>

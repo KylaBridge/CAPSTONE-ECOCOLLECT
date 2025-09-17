@@ -117,9 +117,19 @@
   }
   
   .or-separator {
-    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
     margin: 5px 0;
     color: white;
+  }
+
+  .or-separator::before,
+  .or-separator::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.6);
   }
   
   .partnership-logos {

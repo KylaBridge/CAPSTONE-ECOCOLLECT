@@ -76,12 +76,72 @@
     margin-bottom: 5px;
     margin-left: 5px;
   }
+
+  .name-hint {
+    font-size: 0.7rem;
+    color: #fff;
+    margin-bottom: 10px;
+    margin-left: 5px;
+  }
   
   form input {
     margin-bottom: 15px;
     padding: 10px;
     border-radius: 50px;
     border: 1px solid white;
+  }
+
+  .verification-info {
+    font-size: 0.8rem;
+    color: #fff;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .step-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  /* Reuse user button styles for consistency */
+  .register-btn2,
+  .back-btn2 {
+    font-size: 0.7rem;
+    padding: 5px;
+    border-radius: 50px;
+    border: 2px solid white;
+    font-weight: 500;
+    cursor: pointer;
+    margin-bottom: 10px;
+    margin-top: 20px;
+    width: 100%;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    min-width: 100px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .register-btn2 {
+    background-color: #284c42;
+    color: white;
+    border-color: #284c42;
+  }
+
+  .register-btn2:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  .back-btn2 {
+    background-color: #497460;
+    color: white;
+    border-color: #497460;
+  }
+
+  .back-btn2:hover:not(:disabled) {
+    background-color: #355a4a;
+    border-color: #355a4a;
   }
   
   .register-btn {
@@ -117,9 +177,19 @@
   }
   
   .or-separator {
-    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
     margin: 15px 0;
     color: white;
+  }
+
+  .or-separator::before,
+  .or-separator::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.6);
   }
   
   .partnership-logos {
