@@ -229,7 +229,7 @@ const googleAuthCallback = (req, res) => {
         maxAge: 1000 * 60 * 30,
       });
       const base = process.env.FRONTEND_URL;
-      const redirectUrl = `${base.replace(/\/$/, "")}/?auth=google`;
+      const redirectUrl = `${base.replace(/\/$/, "")}/home/?auth=google`;
       res.redirect(redirectUrl);
     })
     .catch((err) => {
