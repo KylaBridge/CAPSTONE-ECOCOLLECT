@@ -1,7 +1,8 @@
 const User = require("../models/user");
 const { comparePassword, hashPassword } = require("../helpers/auth");
 const { signToken, verifyToken } = require("../helpers/jwt");
-const { sendVerificationEmail } = require("../helpers/mail");
+// const { sendVerificationEmail } = require("../helpers/mail");
+const { sendEmailBrevoVerify } = require("../helpers/nodemailer");
 const passport = require("passport");
 
 // Register Email and Name
@@ -60,7 +61,7 @@ const registerPassword = async (req, res) => {
     ).toString();
 
     try {
-      await sendVerificationEmail(email, verificationCode);
+      await sendEmailBrevoVerify(email, verificationCode); // use google oauth mail api if necessary, currently using brevo api
     } catch (e) {
       return res.status(500).json({ error: "Failed to send email" });
     }
