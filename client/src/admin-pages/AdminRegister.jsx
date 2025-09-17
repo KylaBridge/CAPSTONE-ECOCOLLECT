@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useState } from "react";
+import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineArrowLeft } from "react-icons/ai";
 
 const passwordRequirements = [
   { label: "At least 10 characters", test: (pw) => pw.length >= 10 },
@@ -31,9 +32,14 @@ export default function AdminRegister() {
     role: "admin",
   });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
+  }
+
+  function isValidEmail(email) {
+    return /[^\s@]+@[^\s@]+\.[^\s@]+/.test(email);
   }
 
   function allPasswordValid() {
@@ -44,6 +50,10 @@ export default function AdminRegister() {
     e.preventDefault();
     if (!form.email || !form.name) {
       toast.error("Please fill in all fields.");
+      return;
+    }
+    if (!isValidEmail(form.email)) {
+      toast.error("Please enter a valid email address.");
       return;
     }
     try {
@@ -130,6 +140,9 @@ export default function AdminRegister() {
             <p className="welcome-title">Welcome to EcoCollect!</p>
             {step === 1 && (
               <>
+                <div className="step-header">
+                  <span className="step-indicator">Step 1 of 3</span>
+                </div>
                 <label htmlFor="email">Admin Email</label>
                 <input
                   id="email"
@@ -154,7 +167,9 @@ export default function AdminRegister() {
                 <button
                   className="register-btn"
                   type="submit"
-                  disabled={loading || !form.email || !form.name}
+                  disabled={
+                    loading || !form.name || !form.email || !isValidEmail(form.email)
+                  }
                 >
                   Next
                 </button>
@@ -162,15 +177,36 @@ export default function AdminRegister() {
             )}
             {step === 2 && (
               <>
+                <div className="step-header">
+                  <button
+                    type="button"
+                    className="step-back"
+                    aria-label="Back to previous step"
+                    onClick={() => setStep(1)}
+                  >
+                    <AiOutlineArrowLeft size={20} />
+                  </button>
+                  <span className="step-indicator">Step 2 of 3</span>
+                </div>
                 <label htmlFor="password">Create Password</label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  value={form.password}
-                  onChange={handleChange}
-                  required
-                />
+                <div className="password-input">
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    value={form.password}
+                    onChange={handleChange}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="admin-register-password-toggle-visibility"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    onClick={() => setShowPassword((v) => !v)}
+                  >
+                    {showPassword ? <AiOutlineEye size={20} /> : <AiOutlineEyeInvisible size={20} />}
+                  </button>
+                </div>
                 <div className="password-checklist">
                   {passwordRequirements.map((req, idx) => (
                     <div
@@ -192,6 +228,17 @@ export default function AdminRegister() {
             )}
             {step === 3 && (
               <>
+                <div className="step-header">
+                  <button
+                    type="button"
+                    className="step-back"
+                    aria-label="Back to previous step"
+                    onClick={() => setStep(2)}
+                  >
+                    <AiOutlineArrowLeft size={20} />
+                  </button>
+                  <span className="step-indicator">Step 3 of 3</span>
+                </div>
                 <div className="verification-info">
                   A verification code has been sent to <b>{form.email}</b>.
                 </div>
@@ -204,23 +251,13 @@ export default function AdminRegister() {
                   onChange={handleChange}
                   required
                 />
-                <div className="step-actions">
-                  <button
-                    type="button"
-                    className="back-btn2"
-                    onClick={() => setStep(1)}
-                    disabled={loading}
-                  >
-                    Back
-                  </button>
-                  <button
-                    className="register-btn2"
-                    type="submit"
-                    disabled={loading || !form.code}
-                  >
-                    {loading ? "Registering..." : "Register"}
-                  </button>
-                </div>
+                <button
+                  className="register-btn2"
+                  type="submit"
+                  disabled={loading || !form.code}
+                >
+                  {loading ? "Registering..." : "Register"}
+                </button>
               </>
             )}
             <p className="or-separator">or</p>

@@ -2,16 +2,18 @@ import "./styles/AdminLoginPage.css";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import axios from "axios";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { UserContext } from "../context/userContext";
 import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
 import BackgroundImage from "../assets/bgphoto-ecocollect.png";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import PartnershipLogos from "../assets/partnershiplogos.png";
 import GoogleIcon from "../assets/google-icon.svg";
 
 export default function AdminLogIn() {
   const navigate = useNavigate();
   const { setUser } = useContext(UserContext);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function loggingIn(formData) {
     const data = Object.fromEntries(formData);
@@ -64,7 +66,17 @@ export default function AdminLogIn() {
             <input id="email" type="email" name="email" required />
 
             <label htmlFor="password">Password</label>
-            <input id="password" type="password" name="password" required />
+            <div className="password-input">
+              <input id="password" type={showPassword ? "text" : "password"} name="password" required />
+              <button
+                type="button"
+                className="admin-login-password-toggle-visibility"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                onClick={() => setShowPassword((v) => !v)}
+              >
+                {showPassword ? <AiOutlineEye size={20} /> : <AiOutlineEyeInvisible size={20} />}
+              </button>
+            </div>
 
             <button className="login-btn">LOG IN</button>
             <p className="register-admin-el">

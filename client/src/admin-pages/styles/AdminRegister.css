@@ -55,6 +55,7 @@
     width: 100%;
     display: flex;
     flex-direction: column;
+    position: relative;
   }
   
   form h1, label, p {
@@ -89,6 +90,46 @@
     padding: 10px;
     border-radius: 50px;
     border: 1px solid white;
+  }
+
+  .password-input {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .password-input input {
+    width: 100%;
+    padding-right: 44px;
+  }
+
+  .admin-register-password-toggle-visibility {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-70%);
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    width: 24px;
+    height: 24px;
+    color: black;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+
+  .step-back {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
   }
 
   .verification-info {
@@ -160,6 +201,11 @@
   .register-btn:hover {
     background-color: #3d6c5b;
   }
+
+  .register-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
   
   .microsoftAcc-btn {
     font-weight: 700;
@@ -218,3 +264,8 @@
         width: 100px;
     }
   } 
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}

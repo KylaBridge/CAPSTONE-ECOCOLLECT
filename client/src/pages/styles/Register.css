@@ -23,9 +23,39 @@
     height: fit-content;
     padding: 30px;
     border-radius: 30px;
+    position: relative;
+  }
+  .register-form .step-back {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
   }
   .register-form h1, label, p {
     color: white;
+  }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .step-header .step-back {
+    position: static;
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+  }
+
+  .step-indicator {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.9);
   }
   
   .register-form h1 {
@@ -59,6 +89,41 @@
     border-radius: 50px;
     border: 1px solid white;
   }
+
+  .password-input {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .password-input input {
+    width: 100%;
+    padding-right: 44px;
+  }
+
+  .register-password-toggle-visibility {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-65%);
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    width: 24px;
+    height: 24px;
+    color: black;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* .toggle-visibility svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+  } */
 
   .verification-info {
     font-size: 0.8rem;
@@ -283,4 +348,9 @@
     .partnership-logo {
         margin-top: 15px;
     }
+}
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
 }
