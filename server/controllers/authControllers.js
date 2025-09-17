@@ -61,15 +61,9 @@ const registerPassword = async (req, res) => {
     ).toString();
 
     try {
-      await sendEmailBrevoVerify(email, verificationCode); // using Brevo SMTP currently
+      await sendEmailBrevoVerify(email, verificationCode); // use google oauth mail api if necessary, currently using brevo api
     } catch (e) {
-      console.error(
-        "[Auth] Verification email send failure",
-        JSON.stringify({ email, reason: e.message })
-      );
-      return res
-        .status(500)
-        .json({ error: "Failed to send verification email" });
+      return res.status(500).json(e);
     }
 
     const newTempToken = await signToken(
