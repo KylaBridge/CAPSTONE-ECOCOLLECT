@@ -228,13 +228,13 @@ const googleAuthCallback = (req, res) => {
         path: "/",
         maxAge: 1000 * 60 * 30,
       });
-      const base = process.env.process.env.FRONTEND_URL;
+      const base = process.env.FRONTEND_URL;
       const redirectUrl = `${base.replace(/\/$/, "")}/?auth=google`;
       res.redirect(redirectUrl);
     })
     .catch((err) => {
       console.error("JWT sign error", err);
-      return res.redirect(process.env.GOOGLE_FAIL_REDIRECT || "/");
+      return res.redirect(`${process.env.FRONTEND_URL}/login`);
     });
 };
 
