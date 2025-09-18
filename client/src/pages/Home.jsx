@@ -161,12 +161,15 @@ export default function Home() {
                   </>
                 ) : (
                   <>
-                    <img
-                      style={{ width: "50%"}}
-                      src={LockIcon}
-                      alt={"No Badge yet"}
-                    />
-                    <p>No Badge Yet</p>
+                    <h1
+                      style={{
+                        color: "white",
+                        fontFamily: "Tahoma",
+                        fontWeight: 400,
+                      }}
+                    >
+                      No Badge Yet
+                    </h1>
                   </>
                 )}
               </div>
