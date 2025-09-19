@@ -5,6 +5,7 @@ const app = express();
 const { mongoose } = require("mongoose");
 const cookieParser = require("cookie-parser");
 const passport = require("./config/passport");
+const path = require("path");
 
 // Middleware
 app.use(express.json());
@@ -22,10 +23,18 @@ app.use(
   })
 );
 
-// Routes
+// Serve static files from the dist folder inside server
+app.use(express.static(path.join(__dirname, "dist")));
+
+// routes
 app.use("/api/ecocollect", require("./routes/controllerRoutes"));
 app.use("/api/ecocollect/auth", require("./routes/authRoutes"));
 app.use("/uploads", express.static("uploads"));
+
+// Catch-all: serve index.html for SPA (after API routes)
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
+});
 
 //database connection
 mongoose
