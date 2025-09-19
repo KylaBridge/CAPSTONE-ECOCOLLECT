@@ -25,8 +25,7 @@ export default function AdminSidebar() {
   function loggingOut() {
     // Clear session on server, then immediately clear local state and navigate
     logout()
-      .then(() => refreshProfile())
-      .finally(() => {
+      .then(() => {
         toast.success("User logged Out");
         navigate("/admin/login");
       });

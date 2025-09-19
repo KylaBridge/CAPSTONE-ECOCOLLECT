@@ -1,10 +1,9 @@
-import { Link, useNavigate, useLocation } from "react-router";
+import { Link, useLocation } from "react-router-dom";
 import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
 import {
   AiOutlineHome,
   AiOutlineTrophy,
   AiOutlineCrown,
-  AiOutlineSetting,
   AiOutlineFileDone,
   AiOutlineLogout,
 } from "react-icons/ai";
@@ -14,21 +13,17 @@ import { useContext } from "react";
 import { UserContext } from "../context/userContext";
 
 export default function Sidebar({ isShown, setIsShown }) {
-  const navigate = useNavigate();
   const location = useLocation();
-  const { logout, refreshProfile } = useContext(UserContext);
+  const { logout } = useContext(UserContext);
 
   function toggleNavbar() {
     setIsShown((prev) => !prev);
   }
 
   function loggingOut() {
-    logout()
-      .then(() => refreshProfile())
-      .finally(() => {
-        toast.success("User logged Out");
-        navigate("/login");
-      });
+    logout().then(() => {
+      toast.success("User logged Out");
+    });
   }
 
   return (
