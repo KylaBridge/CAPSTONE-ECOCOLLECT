@@ -1,9 +1,13 @@
 import "./styles/Register.css";
-import { useState } from "react";
-import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineArrowLeft } from "react-icons/ai";
+import { useState, useContext } from "react";
+import {
+  AiOutlineEye,
+  AiOutlineEyeInvisible,
+  AiOutlineArrowLeft,
+} from "react-icons/ai";
 import { toast } from "react-hot-toast";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+import { UserContext } from "../context/userContext";
 import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
 import PartnershipLogos from "../assets/partnershiplogos.png";
 import GoogleIcon from "../assets/google-icon.svg";
@@ -20,6 +24,12 @@ const passwordRequirements = [
 
 export default function Register() {
   const navigate = useNavigate();
+  const {
+    registerEmailName,
+    registerPassword,
+    registerUserFinal,
+    getGoogleAuthUrl,
+  } = useContext(UserContext);
   const [tempToken, setTempToken] = useState("");
   const [newTempToken, setNewTempToken] = useState("");
   const [step, setStep] = useState(1);
@@ -47,7 +57,7 @@ export default function Register() {
       return;
     }
     try {
-      const { data } = await axios.post("/api/ecocollect/auth/register/email", {
+      const data = await registerEmailName({
         email: form.email,
         name: form.name,
       });
@@ -55,7 +65,7 @@ export default function Register() {
       setTempToken(data.tempToken);
       setStep(2);
     } catch (err) {
-      toast.error(err.response.data.error);
+      toast.error(err?.response?.data?.error || "Request failed");
     }
   }
 
@@ -67,13 +77,10 @@ export default function Register() {
     }
     setLoading(true);
     try {
-      const { data } = await axios.post(
-        "/api/ecocollect/auth/register/password",
-        {
-          password: form.password,
-          tempToken,
-        }
-      );
+      const data = await registerPassword({
+        password: form.password,
+        tempToken,
+      });
       if (data.error) return toast.error(data.error);
       setNewTempToken(data.newTempToken);
       setStep(3);
@@ -89,10 +96,7 @@ export default function Register() {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await axios.post("/api/ecocollect/auth/register", {
-        code: form.code,
-        newTempToken,
-      });
+      const data = await registerUserFinal({ code: form.code, newTempToken });
       if (data.error) return toast.error(data.error);
       toast.success("Registration successful!");
       navigate("/login");
@@ -105,8 +109,7 @@ export default function Register() {
 
   function handleGoogleRegister(e) {
     e.preventDefault();
-    const base = import.meta.env.VITE_API_URL || "";
-    window.location.href = `${base}/api/ecocollect/auth/google`;
+    window.location.href = getGoogleAuthUrl();
   }
 
   return (
@@ -192,7 +195,11 @@ export default function Register() {
                 aria-label={showPassword ? "Hide password" : "Show password"}
                 onClick={() => setShowPassword((v) => !v)}
               >
-                {showPassword ? <AiOutlineEye size={20} /> : <AiOutlineEyeInvisible size={20} />}
+                {showPassword ? (
+                  <AiOutlineEye size={20} />
+                ) : (
+                  <AiOutlineEyeInvisible size={20} />
+                )}
               </button>
             </div>
             <div className="password-checklist">

@@ -1,18 +1,16 @@
 import "./styles/AdminLoginPage.css";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import axios from "axios";
 import { useContext, useState } from "react";
 import { UserContext } from "../context/userContext";
 import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
 import BackgroundImage from "../assets/bgphoto-ecocollect.png";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import PartnershipLogos from "../assets/partnershiplogos.png";
-import GoogleIcon from "../assets/google-icon.svg";
 
 export default function AdminLogIn() {
   const navigate = useNavigate();
-  const { setUser } = useContext(UserContext);
+  const { login } = useContext(UserContext);
   const [showPassword, setShowPassword] = useState(false);
 
   async function loggingIn(formData) {
@@ -20,23 +18,13 @@ export default function AdminLogIn() {
     const { email, password } = data;
 
     try {
-      const { data: response } = await axios.post(
-        "/api/ecocollect/auth/login",
-        {
-          email,
-          password,
-          isAdminLogin: true,
-        }
-      );
-
+      const response = await login({ email, password, isAdminLogin: true });
       console.log("Server Response:", response);
-
-      if (response.error) {
+      if (response?.error) {
         toast.error(response.error);
       } else if (response.role === "user") {
         toast.error("You are not authorized to access this page");
       } else {
-        setUser(response);
         toast.success("Admin logged in");
         navigate("/admin/dashboard");
       }
@@ -67,14 +55,23 @@ export default function AdminLogIn() {
 
             <label htmlFor="password">Password</label>
             <div className="password-input">
-              <input id="password" type={showPassword ? "text" : "password"} name="password" required />
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                name="password"
+                required
+              />
               <button
                 type="button"
                 className="admin-login-password-toggle-visibility"
                 aria-label={showPassword ? "Hide password" : "Show password"}
                 onClick={() => setShowPassword((v) => !v)}
               >
-                {showPassword ? <AiOutlineEye size={20} /> : <AiOutlineEyeInvisible size={20} />}
+                {showPassword ? (
+                  <AiOutlineEye size={20} />
+                ) : (
+                  <AiOutlineEyeInvisible size={20} />
+                )}
               </button>
             </div>
 

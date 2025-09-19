@@ -129,12 +129,15 @@ const loginUser = async (req, res) => {
     // Check if the user exists
     const user = await User.findOne({ email });
     if (!user) {
-      return res.json({ error: "No user found" });
+      // Avoid user enumeration
+      return res.status(401).json({ error: "Invalid email or password" });
     }
 
     // If this is an admin login, only allow admins
     if (isAdminLogin && user.role !== "admin") {
-      return res.json({ error: "You are not authorized to access this page" });
+      return res
+        .status(403)
+        .json({ error: "You are not authorized to access this page" });
     }
 
     // Check if passwords match
@@ -144,7 +147,8 @@ const loginUser = async (req, res) => {
       if (!isAdminLogin || user.role === "admin") {
         try {
           const token = await signToken({ email: user.email, id: user._id });
-          res
+          return res
+            .status(200)
             .cookie("token", token, {
               httpOnly: true,
               sameSite: "none",
@@ -170,10 +174,11 @@ const loginUser = async (req, res) => {
         }
       }
     } else {
-      res.json({ error: "Email or password is invalid" });
+      return res.status(401).json({ error: "Invalid email or password" });
     }
   } catch (error) {
     console.log(error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -187,14 +192,14 @@ const getProfile = async (req, res) => {
     token = req.cookies.token;
   }
 
-  if (!token) return res.json(null);
+  if (!token) return res.status(200).json(null);
 
   try {
     const decoded = await verifyToken(token);
     const user = await User.findById(decoded.id).select("-password");
     if (!user) return res.status(404).json({ error: "User not found" });
 
-    res.status(200).json(user);
+    return res.status(200).json(user);
   } catch (err) {
     return res.status(401).json({ error: "Unauthorized" });
   }
@@ -207,7 +212,7 @@ const logoutUser = (req, res) => {
     secure: true,
     path: "/",
   });
-  res.json({ message: "Logged out successfully" });
+  return res.status(200).json({ message: "Logged out successfully" });
 };
 
 // Initiate Google OAuth (delegates to passport)
@@ -242,7 +247,7 @@ const googleAuthCallback = (req, res) => {
 // Provide user profile after Google auth (if needed in popup flows)
 const googleProfile = (req, res) => {
   if (!req.user) return res.status(401).json({ error: "Not authenticated" });
-  res.json({
+  return res.status(200).json({
     _id: req.user._id,
     name: req.user.name,
     email: req.user.email,

@@ -2,12 +2,15 @@ import "./styles/AdminRegister.css";
 import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
 import BackgroundImage from "../assets/bgphoto-ecocollect.png";
 import PartnershipLogos from "../assets/partnershiplogos.png";
-import GoogleIcon from "../assets/google-icon.svg";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-hot-toast";
-import { useState } from "react";
-import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineArrowLeft } from "react-icons/ai";
+import { useState, useContext } from "react";
+import { UserContext } from "../context/userContext";
+import {
+  AiOutlineEye,
+  AiOutlineEyeInvisible,
+  AiOutlineArrowLeft,
+} from "react-icons/ai";
 
 const passwordRequirements = [
   { label: "At least 10 characters", test: (pw) => pw.length >= 10 },
@@ -21,6 +24,8 @@ const passwordRequirements = [
 
 export default function AdminRegister() {
   const navigate = useNavigate();
+  const { registerEmailName, registerPassword, registerUserFinal } =
+    useContext(UserContext);
   const [tempToken, setTempToken] = useState("");
   const [newTempToken, setNewTempToken] = useState("");
   const [step, setStep] = useState(1);
@@ -57,7 +62,7 @@ export default function AdminRegister() {
       return;
     }
     try {
-      const { data } = await axios.post("/api/ecocollect/auth/register/email", {
+      const data = await registerEmailName({
         email: form.email,
         name: form.name,
       });
@@ -65,7 +70,7 @@ export default function AdminRegister() {
       setTempToken(data.tempToken);
       setStep(2);
     } catch (err) {
-      toast.error(err.response?.data?.error || "Error");
+      toast.error("Error");
     }
   }
 
@@ -77,13 +82,10 @@ export default function AdminRegister() {
     }
     setLoading(true);
     try {
-      const { data } = await axios.post(
-        "/api/ecocollect/auth/register/password",
-        {
-          password: form.password,
-          tempToken,
-        }
-      );
+      const data = await registerPassword({
+        password: form.password,
+        tempToken,
+      });
       if (data.error) return toast.error(data.error);
       setNewTempToken(data.newTempToken);
       setStep(3);
@@ -99,7 +101,7 @@ export default function AdminRegister() {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await axios.post("/api/ecocollect/auth/register", {
+      const data = await registerUserFinal({
         code: form.code,
         newTempToken,
         role: form.role,
@@ -168,7 +170,10 @@ export default function AdminRegister() {
                   className="register-btn"
                   type="submit"
                   disabled={
-                    loading || !form.name || !form.email || !isValidEmail(form.email)
+                    loading ||
+                    !form.name ||
+                    !form.email ||
+                    !isValidEmail(form.email)
                   }
                 >
                   Next
@@ -201,10 +206,16 @@ export default function AdminRegister() {
                   <button
                     type="button"
                     className="admin-register-password-toggle-visibility"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
                     onClick={() => setShowPassword((v) => !v)}
                   >
-                    {showPassword ? <AiOutlineEye size={20} /> : <AiOutlineEyeInvisible size={20} />}
+                    {showPassword ? (
+                      <AiOutlineEye size={20} />
+                    ) : (
+                      <AiOutlineEyeInvisible size={20} />
+                    )}
                   </button>
                 </div>
                 <div className="password-checklist">
