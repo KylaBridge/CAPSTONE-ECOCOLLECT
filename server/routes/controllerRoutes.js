@@ -66,6 +66,7 @@ const {
 } = require("../controllers/userController");
 
 const authMiddleware = require("../middleware/authMiddleware");
+const { sendContactMessage } = require("../controllers/sendEmailController");
 
 // Ensure uploads folder exists
 const uploadDirectory = path.join(__dirname, "..", "uploads");
@@ -215,6 +216,10 @@ router.get("/ewaste/user/:userId/count", authMiddleware, userSubmitCount);
 router.get("/ewaste/user/:userId", authMiddleware, getUserSubmissions);
 router.post("/redeem", authMiddleware, redeemReward);
 router.get("/leaderboards", authMiddleware, getAllUserLeaderboards);
+
+// ==================== PUBLIC ROUTES ====================
+// Contact Us form submission (no auth required)
+router.post("/contact", sendContactMessage);
 
 // ==================== USER MANAGEMENT ROUTES ====================
 router.get("/users", authMiddleware, getUserData);

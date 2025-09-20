@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import axios from "axios";
 import { FaMapMarkerAlt, FaPhone, FaEnvelope } from "react-icons/fa";
+import { toast } from "react-hot-toast";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "./styles/ContactPage.css";
@@ -14,6 +16,8 @@ export default function ContactPage() {
   });
   const [errors, setErrors] = useState({});
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const validate = () => {
     const newErrors = {};
@@ -39,26 +43,43 @@ export default function ContactPage() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitError("");
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       setSubmitSuccess(false);
       return;
     }
-    setErrors({});
-    setSubmitSuccess(true);
-
-    // Placeholder for future backend/email logic
-
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      company: "",
-      message: "",
-    });
+    try {
+      setSubmitting(true);
+      setErrors({});
+      const payload = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        message: formData.message,
+      };
+      await axios.post("/api/ecocollect/contact", payload);
+      setSubmitSuccess(true);
+      toast.success("Your message has been sent.");
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        company: "",
+        message: "",
+      });
+    } catch (err) {
+      const msg = err?.response?.data?.error || "Failed to send message. Please try again later.";
+      setSubmitError(msg);
+      setSubmitSuccess(false);
+      toast.error(msg);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -74,7 +95,8 @@ export default function ContactPage() {
         <div className="form-section">
           <h2>PLEASE FILL IN THE FORM BELOW</h2>
           <p className="required-text">* Fields marked with an asterisk are mandatory</p>
-          {submitSuccess && <div className="success-message">Thank you for reaching us!</div>}
+          {submitSuccess && <div className="success-message">Thanks! Your message has been sent.</div>}
+          {submitError && <div className="error-banner">{submitError}</div>}
           <form onSubmit={handleSubmit} noValidate>
             <div className="form-row">
               <div className="form-group">
@@ -139,8 +161,8 @@ export default function ContactPage() {
               {errors.message && <span className="error-message">{errors.message}</span>}
             </div>
 
-            <button type="submit" className="submit-btn">
-              Submit
+            <button type="submit" className="submit-btn" disabled={submitting}>
+              {submitting ? "Sending..." : "Submit"}
             </button>
           </form>
         </div>
@@ -150,7 +172,7 @@ export default function ContactPage() {
             <h3>Reach Us</h3>
             <div className="info-item">
               <FaEnvelope className="info-icon" />
-              <p>ecocollect@national-u.edu.ph</p>
+              <p>ecocollectnu@gmail.com</p>
             </div>
             <div className="info-item">
               <FaPhone className="info-icon" />
