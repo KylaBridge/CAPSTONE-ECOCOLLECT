@@ -4,7 +4,7 @@ import axios from "axios";
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const API_BASE = "http://192.168.100.5:3000/api/ecocollect/auth";
+  const API_BASE = "https://www.ecocollect.online/api/ecocollect/auth";
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);

@@ -28,7 +28,7 @@ const Home = () => {
   const [levelStart, setLevelStart] = useState(0);
   const router = useRouter();
 
-  const SERVER_BASE = "http://192.168.100.5:3000"; // Change to you system's IP address
+  const SERVER_BASE = "http://www.ecocollect.online"; // Change to you system's IP address
   const API_BASE = `${SERVER_BASE}/api/ecocollect`;
 
   // Refresh user data when screen comes into focus

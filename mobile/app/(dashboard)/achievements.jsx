@@ -26,7 +26,7 @@ const Achievements = () => {
 
   const router = useRouter();
 
-  const SERVER_BASE = "http://192.168.100.5:3000"; // Change to your system's IP address
+  const SERVER_BASE = "http://www.ecocollect.online"; // Change to your system's IP address
   const API_BASE = `${SERVER_BASE}/api/ecocollect`;
 
   useEffect(() => {

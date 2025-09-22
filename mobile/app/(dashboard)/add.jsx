@@ -31,7 +31,7 @@ const Add = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [submissionLogs, setSubmissionLogs] = useState([]);
 
-  const API_BASE = "http://192.168.100.5:3000/api/ecocollect"; // Update with your API base URL
+  const API_BASE = "http://www.ecocollect.online/api/ecocollect"; // Update with your API base URL
 
   const handleUploadPress = async () => {
     try {
