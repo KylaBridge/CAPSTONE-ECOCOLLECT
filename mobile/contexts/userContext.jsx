@@ -82,7 +82,7 @@ export const UserProvider = ({ children }) => {
       setUser(res.data);
       return res.data;
     } catch (err) {
-      throw err;
+      throw err.response.data.error;
     }
   };
 
@@ -98,7 +98,7 @@ export const UserProvider = ({ children }) => {
       setUser(res.data);
       return res.data;
     } catch (err) {
-      throw err;
+      throw err.response.data.error;
     }
   };
 

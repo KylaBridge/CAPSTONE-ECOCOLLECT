@@ -19,11 +19,20 @@ const Login = () => {
   const router = useRouter();
 
   const handleSubmit = async () => {
+    // Basic validation: ensure fields are not empty
+    const emailTrimmed = email.trim();
+    const passwordTrimmed = password.trim();
+    if (!emailTrimmed || !passwordTrimmed) {
+      setError("Please enter both email and password.");
+      return;
+    }
+
     try {
-      await login(email, password);
+      await login(emailTrimmed, passwordTrimmed);
+      setError("");
       router.replace("/home");
     } catch (err) {
-      setError(err.message || "Invalid Credentials");
+      setError(err);
     }
   };
 
@@ -39,7 +48,10 @@ const Login = () => {
           style={{ width: "80%" }}
           placeholder="Email"
           keyboardType="email-address"
-          onChangeText={setEmail}
+          onChangeText={(text) => {
+            setEmail(text);
+            if (error) setError("");
+          }}
           value={email}
         />
         <Spacer height={20} />
@@ -48,7 +60,10 @@ const Login = () => {
           style={{ width: "80%" }}
           placeholder="Password"
           secureTextEntry
-          onChangeText={setPassword}
+          onChangeText={(text) => {
+            setPassword(text);
+            if (error) setError("");
+          }}
           value={password}
         />
         <Spacer />
