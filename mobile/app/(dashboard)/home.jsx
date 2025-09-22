@@ -7,8 +7,8 @@ import React from "react";
 import axios from "axios";
 
 // Images
-import Header from "../../assets/images/home-header.png";
-import HeaderBg from "../../assets/images/header-bg.png";
+import Header from "../../assets/images/home_header.png";
+import HeaderBg from "../../assets/images/header_bg.png";
 
 // Themed Components
 import Spacer from "../../components/Spacer";

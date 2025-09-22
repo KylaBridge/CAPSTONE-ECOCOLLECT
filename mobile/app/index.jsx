@@ -2,8 +2,8 @@ import { StyleSheet, Image, ImageBackground, View } from "react-native";
 import { useRouter } from "expo-router";
 
 // Assets
-import Logo from "../assets/images/EcoCollect-Logo.png";
-import BgImg from "../assets/images/bgphoto-ecocollect.png";
+import Logo from "../assets/images/ecocollect_logo.png";
+import BgImg from "../assets/images/bgphoto_ecocollect.png";
 
 // Themed Components
 import Spacer from "../components/Spacer";
