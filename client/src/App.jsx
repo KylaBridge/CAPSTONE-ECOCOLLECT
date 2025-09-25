@@ -93,7 +93,6 @@ export default function App() {
 
         {/* Admin Auth Routes */}
         <Route path="/admin/login" element={<AdminLogIn />} />
-        <Route path="/admin/register" element={<AdminRegister />} />
 
         {/* Protected Admin Routes */}
         <Route path="/admin/dashboard" element={
