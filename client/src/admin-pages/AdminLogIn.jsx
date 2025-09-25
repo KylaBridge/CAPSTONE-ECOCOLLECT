@@ -76,13 +76,6 @@ export default function AdminLogIn() {
             </div>
 
             <button className="login-btn">LOG IN</button>
-            <p className="register-admin-el">
-              Don't have an account?{" "}
-              <Link to="/admin/register" className="register-link">
-                Register
-              </Link>
-            </p>
-            <p className="or-separator">or</p>
             <Link className="go-home-btn" to={"/"}>
               Go to Home
             </Link>
