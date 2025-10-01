@@ -10,6 +10,29 @@ export function UserContextProvider({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Initialize auth token on app start
+  useEffect(() => {
+    const savedToken = localStorage.getItem("authToken");
+    if (savedToken) {
+      console.log("Restoring saved auth token");
+      axios.defaults.headers.common["Authorization"] = `Bearer ${savedToken}`;
+    }
+  }, []);
+
+  // Helper to set and persist auth token
+  const setAuthToken = (token) => {
+    console.log("Setting auth token");
+    localStorage.setItem("authToken", token);
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  };
+
+  // Helper to clear auth token
+  const clearAuthToken = () => {
+    console.log("Clearing auth token");
+    localStorage.removeItem("authToken");
+    delete axios.defaults.headers.common["Authorization"];
+  };
+
   // Exposed helper to re-fetch profile and sync user state
   const refreshProfile = async () => {
     try {
@@ -34,10 +57,8 @@ export function UserContextProvider({ children }) {
     } finally {
       // Clear user state
       setUser(null);
-      // Clear Authorization header for iOS Chrome users
-      if (axios.defaults.headers.common["Authorization"]) {
-        delete axios.defaults.headers.common["Authorization"];
-      }
+      // Clear auth token and authorization header
+      clearAuthToken();
     }
   };
 
@@ -51,6 +72,11 @@ export function UserContextProvider({ children }) {
       });
       if (!data?.error) {
         setUser(data);
+        // If the response includes a token and we're on iOS Chrome, persist it
+        if (data.token && /CriOS/i.test(navigator.userAgent)) {
+          console.log("iOS Chrome detected - persisting login token");
+          setAuthToken(data.token);
+        }
       }
       return data;
     } catch (e) {
@@ -117,28 +143,27 @@ export function UserContextProvider({ children }) {
       // Clean URL immediately
       window.history.replaceState({}, document.title, window.location.pathname);
 
-      // For iOS Chrome, we need to use Bearer token for all requests since cookies don't work
-      axios.defaults.headers.common["Authorization"] = `Bearer ${urlToken}`;
+      // For iOS Chrome, persist the token and set it in axios headers
+      setAuthToken(urlToken);
 
       // Verify token and get user profile
       refreshProfile()
         .then((data) => {
           if (data) {
             console.log("iOS Chrome OAuth success:", data.name);
-            // Success - keep using Bearer token for iOS Chrome
-            // DON'T reset the Authorization header since cookies don't work
+            // Success - token is already persisted, navigate to home
             navigate("/home", { replace: true });
           } else {
             console.log("iOS Chrome OAuth failed - no user data");
             // Failed - cleanup
-            delete axios.defaults.headers.common["Authorization"];
+            clearAuthToken();
             navigate("/login", { replace: true });
           }
         })
         .catch((error) => {
           console.error("iOS Chrome OAuth error:", error);
           // Error - cleanup
-          delete axios.defaults.headers.common["Authorization"];
+          clearAuthToken();
           navigate("/login", { replace: true });
         });
     } else {
@@ -171,10 +196,8 @@ export function UserContextProvider({ children }) {
         if (!didRedirect) {
           didRedirect = true;
           setUser(null);
-          // Clear Authorization header for iOS Chrome users
-          if (axios.defaults.headers.common["Authorization"]) {
-            delete axios.defaults.headers.common["Authorization"];
-          }
+          // Clear auth token and authorization header
+          clearAuthToken();
           const path = location.pathname || "";
           const target = path.startsWith("/admin") ? "/admin/login" : "/login";
           if (path !== target) {
