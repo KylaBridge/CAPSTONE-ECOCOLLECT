@@ -192,6 +192,28 @@ router.put(
 );
 router.delete("/badges/:id", authMiddleware, deleteBadge);
 
+// Public route for badge sharing (no authentication required)
+router.get("/badges/public/:id", async (req, res) => {
+  try {
+    const { getBadgeById } = require("../controllers/badgeController");
+    // Create a mock req object with the badge ID
+    const mockReq = { params: { id: req.params.id } };
+    const mockRes = {
+      status: (code) => ({
+        json: (data) => {
+          res.status(code).json(data);
+        },
+      }),
+      json: (data) => res.json(data),
+    };
+
+    await getBadgeById(mockReq, mockRes);
+  } catch (error) {
+    console.error("Error fetching public badge:", error);
+    res.status(500).json({ error: "Failed to fetch badge" });
+  }
+});
+
 // ==================== BIN MANAGEMENT ROUTES ====================
 router.get("/bins", authMiddleware, getAllBins);
 router.get("/bins/count", authMiddleware, getBinCount);
