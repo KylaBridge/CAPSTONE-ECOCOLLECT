@@ -2,6 +2,7 @@ const User = require("../models/user");
 const EWaste = require("../models/ewaste");
 const Redemption = require("../models/redemption");
 const ActivityLog = require("../models/activityLog");
+const { hashPassword } = require("../helpers/auth");
 const path = require("path");
 const fs = require("fs");
 
@@ -38,18 +39,21 @@ const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
     const user = await User.findById(id);
-    
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
     // Find and delete all pending e-waste submissions for this user
-    const pendingSubmissions = await EWaste.find({ user: id, status: "Pending" });
-    
+    const pendingSubmissions = await EWaste.find({
+      user: id,
+      status: "Pending",
+    });
+
     // Delete associated image files for pending submissions
     for (const submission of pendingSubmissions) {
       if (submission.attachments && submission.attachments.length > 0) {
-        submission.attachments.forEach(file => {
+        submission.attachments.forEach((file) => {
           const filePath = path.join(__dirname, "..", file.path);
           if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath);
@@ -75,13 +79,15 @@ const deleteUser = async (req, res) => {
         userEmail: logUserEmail,
         userRole: req.user?.role,
         action: "User Deleted",
-        details: `Deleted user ${user?.email || id} and ${pendingSubmissions.length} pending e-waste submissions`,
+        details: `Deleted user ${user?.email || id} and ${
+          pendingSubmissions.length
+        } pending e-waste submissions`,
       });
     }
 
-    res.status(200).json({ 
-      message: "User deleted successfully", 
-      deletedSubmissions: pendingSubmissions.length 
+    res.status(200).json({
+      message: "User deleted successfully",
+      deletedSubmissions: pendingSubmissions.length,
     });
   } catch (error) {
     console.error(error);
@@ -182,9 +188,68 @@ const getUserParticipationData = async (req, res) => {
   }
 };
 
+const addAdmin = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    // Input validation
+    if (!name || !email || !password) {
+      return res
+        .status(400)
+        .json({ error: "Name, email, and password are required" });
+    }
+
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ error: "Password must be at least 6 characters long" });
+    }
+
+    const exist = await User.findOne({ email });
+
+    if (exist) {
+      return res.status(400).json({ error: "Email Already Exists" });
+    }
+
+    const hashedPassword = await hashPassword(password);
+
+    const admin = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      role: "admin",
+    });
+
+    // Log the admin creation activity
+    const logUserId = req.user?._id;
+    const logUserEmail = req.user?.email || "System";
+
+    if (logUserId) {
+      await ActivityLog.create({
+        userId: logUserId,
+        userEmail: logUserEmail,
+        userRole: req.user?.role,
+        action: "Admin Created",
+        details: `Created new admin account for ${email}`,
+      });
+    }
+
+    // Don't return the password in the response
+    const { password: _, ...adminResponse } = admin.toObject();
+
+    res
+      .status(201)
+      .json({ message: "Admin Created Successfully", admin: adminResponse });
+  } catch (error) {
+    console.error("Error creating admin:", error);
+    res.status(500).json({ error: "Failed to create admin account" });
+  }
+};
+
 module.exports = {
   getUserData,
   countUsersByRole,
   deleteUser,
   getUserParticipationData,
+  addAdmin,
 };
