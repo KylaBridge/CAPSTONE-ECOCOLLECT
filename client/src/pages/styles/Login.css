@@ -290,3 +290,74 @@ input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
   display: none;
 }
+
+/* Forgot Password Styles */
+.forgot-password-btn {
+  background: none;
+  border: none;
+  color: #92bf9e;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.7rem;
+  text-align: right;
+  margin: 5px 0 15px 0;
+  padding: 0;
+  align-self: flex-end;
+}
+
+.forgot-password-btn:hover {
+  color: #a8e6a1;
+}
+
+/* Multi-step form styles (reused from Register) */
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.step-back {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
+  transition: background 0.2s;
+}
+
+.step-back:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.step-indicator {
+  color: #92bf9e;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.verification-info {
+  background: rgba(146, 191, 158, 0.2);
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  font-size: 0.7rem;
+  color: white;
+  text-align: center;
+}
+
+.password-checklist {
+  margin: 10px 0;
+  font-size: 0.65rem;
+}
+
+.password-checklist div {
+  margin: 5px 0;
+  color: #ff6b6b;
+  transition: color 0.2s;
+}
+
+.password-checklist div.valid {
+  color: #51cf66;
+}
