@@ -12,6 +12,7 @@ import {
 } from "react-icons/ai";
 import PartnershipLogos from "../assets/partnershiplogos.png";
 import GoogleIcon from "../assets/google-icon.svg";
+import { initiateGoogleAuth } from "../utils/googleAuth";
 
 const passwordRequirements = [
   { label: "At least 10 characters", test: (pw) => pw.length >= 10 },
@@ -63,7 +64,7 @@ export default function Login() {
 
   function handleGoogleLogin(e) {
     e.preventDefault();
-    window.location.href = getGoogleAuthUrl();
+    initiateGoogleAuth(getGoogleAuthUrl);
   }
 
   function handleForgotPassword() {

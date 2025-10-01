@@ -11,6 +11,7 @@ import { UserContext } from "../context/userContext";
 import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
 import PartnershipLogos from "../assets/partnershiplogos.png";
 import GoogleIcon from "../assets/google-icon.svg";
+import { initiateGoogleAuth } from "../utils/googleAuth";
 
 const passwordRequirements = [
   { label: "At least 10 characters", test: (pw) => pw.length >= 10 },
@@ -109,7 +110,7 @@ export default function Register() {
 
   function handleGoogleRegister(e) {
     e.preventDefault();
-    window.location.href = getGoogleAuthUrl();
+    initiateGoogleAuth(getGoogleAuthUrl);
   }
 
   return (

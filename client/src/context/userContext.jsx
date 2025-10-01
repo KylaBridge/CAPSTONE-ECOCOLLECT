@@ -13,6 +13,7 @@ export function UserContextProvider({ children }) {
   // Exposed helper to re-fetch profile and sync user state
   const refreshProfile = async () => {
     try {
+      // Use default axios configuration (which includes Authorization header if set)
       const { data } = await axios.get("/api/ecocollect/auth/profile");
       setUser(data || null);
       return data || null;
@@ -31,7 +32,12 @@ export function UserContextProvider({ children }) {
     } catch (e) {
       // Ignore network or server errors here; we still clear local state
     } finally {
+      // Clear user state
       setUser(null);
+      // Clear Authorization header for iOS Chrome users
+      if (axios.defaults.headers.common["Authorization"]) {
+        delete axios.defaults.headers.common["Authorization"];
+      }
     }
   };
 
@@ -103,18 +109,55 @@ export function UserContextProvider({ children }) {
     // If coming from Google redirect with token param, we still rely on cookie.
     const params = new URLSearchParams(window.location.search);
     const fromGoogle = params.get("auth") === "google";
-    refreshProfile().then((data) => {
-      if (fromGoogle && data) {
-        // Navigate to home and clean query
-        navigate("/home", { replace: true });
-      } else if (fromGoogle) {
-        window.history.replaceState(
-          {},
-          document.title,
-          window.location.pathname
-        );
-      }
-    });
+    const urlToken = params.get("token"); // For iOS Chrome fallback
+
+    // Handle iOS Chrome token from URL
+    if (fromGoogle && urlToken) {
+      console.log("Detected iOS Chrome OAuth flow with URL token");
+      // Clean URL immediately
+      window.history.replaceState({}, document.title, window.location.pathname);
+
+      // For iOS Chrome, we need to use Bearer token for all requests since cookies don't work
+      axios.defaults.headers.common["Authorization"] = `Bearer ${urlToken}`;
+
+      // Verify token and get user profile
+      refreshProfile()
+        .then((data) => {
+          if (data) {
+            console.log("iOS Chrome OAuth success:", data.name);
+            // Success - keep using Bearer token for iOS Chrome
+            // DON'T reset the Authorization header since cookies don't work
+            navigate("/home", { replace: true });
+          } else {
+            console.log("iOS Chrome OAuth failed - no user data");
+            // Failed - cleanup
+            delete axios.defaults.headers.common["Authorization"];
+            navigate("/login", { replace: true });
+          }
+        })
+        .catch((error) => {
+          console.error("iOS Chrome OAuth error:", error);
+          // Error - cleanup
+          delete axios.defaults.headers.common["Authorization"];
+          navigate("/login", { replace: true });
+        });
+    } else {
+      // Standard flow - check for cookies
+      refreshProfile().then((data) => {
+        if (fromGoogle && data) {
+          console.log("Standard OAuth success:", data.name);
+          // Navigate to home and clean query
+          navigate("/home", { replace: true });
+        } else if (fromGoogle) {
+          console.log("Standard OAuth failed - cleaning URL");
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+          );
+        }
+      });
+    }
   }, []);
 
   // Global 401 handler: clear user and redirect without reload
@@ -128,6 +171,10 @@ export function UserContextProvider({ children }) {
         if (!didRedirect) {
           didRedirect = true;
           setUser(null);
+          // Clear Authorization header for iOS Chrome users
+          if (axios.defaults.headers.common["Authorization"]) {
+            delete axios.defaults.headers.common["Authorization"];
+          }
           const path = location.pathname || "";
           const target = path.startsWith("/admin") ? "/admin/login" : "/login";
           if (path !== target) {
