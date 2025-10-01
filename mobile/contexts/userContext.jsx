@@ -1,10 +1,11 @@
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
+import { AUTH_API_URL } from '@env';
 
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const API_BASE = "https://www.ecocollect.online/api/ecocollect/auth";
+  const API_BASE = AUTH_API_URL;
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);

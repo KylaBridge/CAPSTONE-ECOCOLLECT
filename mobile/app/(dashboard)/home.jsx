@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import React from "react";
 import axios from "axios";
+import { SERVER_BASE_URL, API_BASE_URL } from '@env';
 
 // Images
 import Header from "../../assets/images/home_header.png";
@@ -28,8 +29,8 @@ const Home = () => {
   const [levelStart, setLevelStart] = useState(0);
   const router = useRouter();
 
-  const SERVER_BASE = "https://www.ecocollect.online"; // Change to you system's IP address
-  const API_BASE = `${SERVER_BASE}/api/ecocollect`;
+  const SERVER_BASE = SERVER_BASE_URL;
+  const API_BASE = API_BASE_URL;
 
   // Refresh user data when screen comes into focus
   useFocusEffect(
