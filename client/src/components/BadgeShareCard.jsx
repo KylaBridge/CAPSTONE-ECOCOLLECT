@@ -9,6 +9,9 @@ const BadgeShareCard = ({
   shareCardRef,
   isVisible = false,
 }) => {
+  console.log("BadgeShareCard received user data:", user); // Debug log
+  console.log("BadgeShareCard received badge data:", selectedBadge); // Debug log
+
   const badgeImage = selectedBadge?.image
     ? typeof selectedBadge.image === "string"
       ? selectedBadge.image.startsWith("http")

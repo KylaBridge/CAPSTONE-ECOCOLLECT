@@ -97,8 +97,18 @@ export default function Achievements() {
   const handleShare = async () => {
     if (!selectedBadge) return;
 
-    // Generate a shareable URL for the badge
-    const shareUrl = `${window.location.origin}/badge/${selectedBadge._id}`;
+    // Generate a shareable URL for the badge with user information
+    const baseUrl = window.location.origin;
+    const userParams = new URLSearchParams();
+
+    if (user?._id) userParams.append("userId", user._id);
+    if (user?.name) userParams.append("userName", user.name);
+    else if (user?.email) userParams.append("userName", user.email);
+    if (user?.email) userParams.append("userEmail", user.email);
+
+    const shareUrl = `${baseUrl}/badge/${selectedBadge._id}${
+      userParams.toString() ? `?${userParams.toString()}` : ""
+    }`;
     const shareText = `I earned the ${selectedBadge.name} badge on EcoCollect!`;
 
     // Always show our custom share options first
@@ -136,15 +146,36 @@ export default function Achievements() {
     if (!selectedBadge) return;
 
     try {
-      // Generate the share card image
-      const shareCardImage = await generateShareCard();
-      if (!shareCardImage) {
-        throw new Error("Failed to generate share card");
+      if (!shareCardRef.current) {
+        throw new Error("Share card not available");
       }
+
+      // Wait a bit for the component to render fully
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      // Temporarily reset any scaling transforms to capture original size
+      const originalTransform = shareCardRef.current.style.transform;
+      shareCardRef.current.style.transform = "none";
+
+      // Ensure the certificate renders at its original size (900x850)
+      const canvas = await html2canvas(shareCardRef.current, {
+        backgroundColor: null,
+        scale: 2, // Higher quality
+        logging: false,
+        useCORS: true,
+        allowTaint: true,
+        width: 900, // Force original width
+        height: 850, // Force original height
+        windowWidth: 900,
+        windowHeight: 850,
+      });
+
+      // Restore the original transform
+      shareCardRef.current.style.transform = originalTransform;
 
       // Create a temporary link element
       const link = document.createElement("a");
-      link.href = shareCardImage;
+      link.href = canvas.toDataURL("image/png");
       link.download = `eco-collect-badge-certificate-${selectedBadge.name
         .toLowerCase()
         .replace(/\s+/g, "-")}.png`;
@@ -159,7 +190,16 @@ export default function Achievements() {
 
   const updateMetaTags = (badge) => {
     const baseUrl = window.location.origin;
-    const shareUrl = `${baseUrl}/badge/${badge._id}`;
+    const userParams = new URLSearchParams();
+
+    if (user?._id) userParams.append("userId", user._id);
+    if (user?.name) userParams.append("userName", user.name);
+    else if (user?.email) userParams.append("userName", user.email);
+    if (user?.email) userParams.append("userEmail", user.email);
+
+    const shareUrl = `${baseUrl}/badge/${badge._id}${
+      userParams.toString() ? `?${userParams.toString()}` : ""
+    }`;
     const shareTitle = `${badge.name} - EcoCollect Badge`;
     const shareDescription = badge.description;
     const shareImage = badge.img;
@@ -193,7 +233,17 @@ export default function Achievements() {
   const shareToSocialMedia = async (platform, badge) => {
     try {
       const baseUrl = window.location.origin;
-      const shareUrl = `${baseUrl}/badge/${badge._id}`;
+
+      // Use the same user parameter logic as in handleShare
+      const userParams = new URLSearchParams();
+      if (user?._id) userParams.append("userId", user._id);
+      if (user?.name) userParams.append("userName", user.name);
+      else if (user?.email) userParams.append("userName", user.email);
+      if (user?.email) userParams.append("userEmail", user.email);
+
+      const shareUrl = `${baseUrl}/badge/${badge._id}${
+        userParams.toString() ? `?${userParams.toString()}` : ""
+      }`;
       const shareTitle = `🏆 ${badge.name} Badge - EcoCollect`;
       const shareDescription = `I've earned the "${
         badge.name

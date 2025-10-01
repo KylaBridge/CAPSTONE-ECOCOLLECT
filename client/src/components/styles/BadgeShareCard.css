@@ -20,7 +20,7 @@
 .share-card-template {
   width: 900px;
   height: 850px;
-  background: url('../assets/ECOBADGE_background.png') no-repeat center center;
+  background: url("../assets/ECOBADGE_background.png") no-repeat center center;
   background-size: contain;
   position: relative;
   min-width: 900px;
@@ -31,7 +31,7 @@
   border-radius: 20px;
   padding: 0;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  font-family: 'Luckiest Guy', cursive;
+  font-family: "Luckiest Guy", cursive;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -59,7 +59,7 @@
   text-shadow: 3px 3px 2px rgba(39, 39, 39, 0.616);
   -webkit-text-stroke: 0.1px rgba(0, 0, 0, 0.749);
   font-weight: bolder;
-  font-family: 'Luckiest Guy';
+  font-family: "Luckiest Guy";
   color: #48bf50;
   font-size: 1.6rem;
   margin-bottom: 0px;
@@ -102,7 +102,7 @@
   text-shadow: 3px 3px 2px rgba(39, 39, 39, 0.616);
   -webkit-text-stroke: 0.1px rgba(0, 0, 0, 0.749);
   font-weight: bolder;
-  font-family: 'Luckiest Guy';
+  font-family: "Luckiest Guy";
   color: #48bf50;
   font-size: 1rem;
   text-align: center;
@@ -115,7 +115,7 @@
   color: #333;
   line-height: 1.2;
   font-size: 0.8rem;
-  font-family: 'Luckiest Guy', cursive;
+  font-family: "Luckiest Guy", cursive;
   margin-bottom: 0;
 }
 
@@ -140,6 +140,7 @@
     width: 100%;
     height: auto;
     min-height: 500px;
+    min-width: 320px;
   }
   .share-card-header h1 {
     font-size: 1.5rem;
@@ -147,12 +148,51 @@
   .badge-title {
     font-size: 1rem;
   }
-  .badge-details, .badge-description, .badge-date {
+  .badge-details,
+  .badge-description,
+  .badge-date {
     font-size: 0.8rem;
   }
   .share-card-badge {
     width: 100px;
     height: 100px;
+  }
+}
+
+/* Mobile auto-resize - keeps original proportions like viewing an image */
+@media (max-width: 768px) {
+  .certificate-wrapper {
+    width: 100%;
+    height: auto;
+    padding: 1rem;
+    overflow: auto;
+  }
+
+  .certificate-scaler {
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .share-card-template {
+    width: 900px;
+    height: 850px;
+    max-width: 100%;
+    max-height: none;
+    margin: 0 auto;
+    /* This will auto-resize while maintaining aspect ratio */
+    transform: scale(
+      calc(100vw / 950)
+    ); /* Slightly smaller than viewport to account for padding */
+    transform-origin: center center;
+  }
+}
+
+@media (max-width: 480px) {
+  .share-card-template {
+    transform: scale(calc(100vw / 950));
   }
 }
 
@@ -163,4 +203,4 @@
     max-width: 100vw;
     max-height: 100vh;
   }
-} 
+}

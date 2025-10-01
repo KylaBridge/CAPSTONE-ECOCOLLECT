@@ -195,19 +195,31 @@ router.delete("/badges/:id", authMiddleware, deleteBadge);
 // Public route for badge sharing (no authentication required)
 router.get("/badges/public/:id", async (req, res) => {
   try {
-    const { getBadgeById } = require("../controllers/badgeController");
-    // Create a mock req object with the badge ID
-    const mockReq = { params: { id: req.params.id } };
-    const mockRes = {
-      status: (code) => ({
-        json: (data) => {
-          res.status(code).json(data);
-        },
-      }),
-      json: (data) => res.json(data),
-    };
+    const Badge = require("../models/badge");
+    const User = require("../models/user");
 
-    await getBadgeById(mockReq, mockRes);
+    const { id } = req.params;
+    const { userId, userName, userEmail } = req.query;
+
+    const badge = await Badge.findById(id);
+
+    if (!badge) {
+      return res.status(404).json({ message: "Badge not found" });
+    }
+
+    // If user information is provided in query params, include it
+    let badgeWithUser = { ...badge.toObject() };
+
+    if (userId || userName || userEmail) {
+      badgeWithUser.earnedBy = {
+        name: userName || "EcoCollect Champion",
+        email: userEmail || "champion@ecocollect.com",
+        _id: userId,
+      };
+      badgeWithUser.dateEarned = new Date().toISOString();
+    }
+
+    res.status(200).json(badgeWithUser);
   } catch (error) {
     console.error("Error fetching public badge:", error);
     res.status(500).json({ error: "Failed to fetch badge" });

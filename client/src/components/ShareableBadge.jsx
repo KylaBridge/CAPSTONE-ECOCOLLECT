@@ -69,17 +69,25 @@ const ShareableBadge = ({ badgeId }) => {
       // Wait a bit for the component to render fully
       await new Promise((resolve) => setTimeout(resolve, 100));
 
+      // Temporarily reset any scaling transforms to capture original size
+      const originalTransform = shareCardRef.current.style.transform;
+      shareCardRef.current.style.transform = "none";
+
+      // Ensure the certificate renders at its original size (900x850)
       const canvas = await html2canvas(shareCardRef.current, {
         backgroundColor: null,
         scale: 2, // Higher quality
         logging: false,
         useCORS: true,
         allowTaint: true,
-        width: shareCardRef.current.offsetWidth,
-        height: shareCardRef.current.offsetHeight,
-        windowWidth: shareCardRef.current.scrollWidth,
-        windowHeight: shareCardRef.current.scrollHeight,
+        width: 900, // Force original width
+        height: 850, // Force original height
+        windowWidth: 900,
+        windowHeight: 850,
       });
+
+      // Restore the original transform
+      shareCardRef.current.style.transform = originalTransform;
 
       const link = document.createElement("a");
       link.download = `${badge.name}-badge-certificate.png`;
@@ -104,9 +112,30 @@ const ShareableBadge = ({ badgeId }) => {
         }
 
         const apiUrl = import.meta.env.VITE_API_URL || window.location.origin;
-        // Use the public endpoint that doesn't require authentication
-        const apiEndpoint = `${apiUrl}/api/ecocollect/badges/public/${badgeIdToUse}`;
+
+        // Get user information from URL query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get("userId");
+        const userName = urlParams.get("userName");
+        const userEmail = urlParams.get("userEmail");
+
+        console.log("URL Params:", { userId, userName, userEmail }); // Debug log
+
+        // Build API endpoint with user parameters if available
+        let apiEndpoint = `${apiUrl}/api/ecocollect/badges/public/${badgeIdToUse}`;
+        if (userId || userName || userEmail) {
+          const queryParams = new URLSearchParams();
+          if (userId) queryParams.append("userId", userId);
+          if (userName) queryParams.append("userName", userName);
+          if (userEmail) queryParams.append("userEmail", userEmail);
+          apiEndpoint += `?${queryParams.toString()}`;
+        }
+
+        console.log("API Endpoint:", apiEndpoint); // Debug log
+
         const response = await axios.get(apiEndpoint);
+
+        console.log("API Response:", response.data); // Debug log
 
         if (!response.data) {
           setError("Badge not found (empty response)");
@@ -122,10 +151,30 @@ const ShareableBadge = ({ badgeId }) => {
           img: response.data.image
             ? `${apiUrl}/${response.data.image.path}`
             : Badge1,
+          // Ensure user data is properly formatted
+          earnedBy: response.data.earnedBy || {
+            name:
+              response.data.earnedByName ||
+              response.data.userDetails?.name ||
+              "EcoCollect Champion",
+            username:
+              response.data.earnedByUsername ||
+              response.data.userDetails?.username,
+            email:
+              response.data.earnedByEmail ||
+              response.data.userDetails?.email ||
+              "champion@ecocollect.com",
+          },
         };
 
         setBadge(formattedBadge);
         updateMetaTags(formattedBadge);
+
+        console.log("Final formatted badge with user data:", formattedBadge); // Debug log
+        console.log(
+          "User data being passed to BadgeShareCard:",
+          formattedBadge.earnedBy
+        ); // Debug log
       } catch (err) {
         console.error("Fetch error:", err);
         setError("fetch-failed");
@@ -170,19 +219,22 @@ const ShareableBadge = ({ badgeId }) => {
           <p>EcoCollect Environmental Badge</p>
         </div>
 
-        <div className="certificate-display">
+        {/* Hidden certificate for download functionality only */}
+        <div style={{ position: "absolute", left: "-9999px", top: "-9999px" }}>
           <BadgeShareCard
             user={fallbackBadge.earnedBy}
             selectedBadge={fallbackBadge}
             shareCardRef={shareCardRef}
-            isVisible={true}
+            isVisible={false}
           />
         </div>
 
         <div className="certificate-details">
           <div className="badge-info">
             <h2>{fallbackBadge.name}</h2>
-            <p className="shareablebadge-description">{fallbackBadge.description}</p>
+            <p className="shareablebadge-description">
+              {fallbackBadge.description}
+            </p>
 
             <div className="badge-metadata">
               <div className="badge-earned-date">
@@ -241,22 +293,20 @@ const ShareableBadge = ({ badgeId }) => {
         <p>EcoCollect Environmental Badge</p>
       </div>
 
-      <div className="certificate-display">
+      {/* Hidden certificate for download functionality only */}
+      <div style={{ position: "absolute", left: "-9999px", top: "-9999px" }}>
         <BadgeShareCard
-          user={badge.earnedBy || { 
-            name: badge.earnedByName || "EcoCollect Champion",
-            email: badge.earnedByEmail || "champion@ecocollect.com"
-          }}
+          user={badge.earnedBy}
           selectedBadge={badge}
           shareCardRef={shareCardRef}
-          isVisible={true}
+          isVisible={false}
         />
       </div>
 
       <div className="certificate-details">
         <div className="badge-info">
           <h2>{badge.name}</h2>
-          <p className="badge-description">
+          <p className="shareablebadge-description">
             {badge.description || badge.milestoneCondition}
           </p>
 
@@ -294,7 +344,8 @@ const ShareableBadge = ({ badgeId }) => {
                 <strong>Earned By:</strong>{" "}
                 {badge.earnedBy.name ||
                   badge.earnedBy.username ||
-                  badge.earnedBy.email}
+                  badge.earnedBy.email ||
+                  "EcoCollect Champion"}
               </div>
             )}
           </div>
