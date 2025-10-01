@@ -18,6 +18,7 @@ const {
   deleteUser,
   getUserParticipationData,
   addAdmin,
+  addUser,
 } = require("../controllers/userManageController");
 
 const {
@@ -147,6 +148,7 @@ router.put("/ewaste/:id/status", authMiddleware, updateSubmissionStatus); // Upd
 router.get("/ewaste", authMiddleware, getAllSubmissions); // All ewaste submissions
 router.delete("/ewaste/:id", authMiddleware, deleteEWaste); // Delete ewaste
 router.post("/add/admin", authMiddleware, addAdmin); // Add admin
+router.post("/add/user", authMiddleware, addUser); // Add user
 
 // --- Rewards Management ---
 router.get("/rewards", authMiddleware, getAllRewards);

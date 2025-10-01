@@ -246,10 +246,69 @@ const addAdmin = async (req, res) => {
   }
 };
 
+const addUser = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    // Input validation
+    if (!name || !email || !password) {
+      return res
+        .status(400)
+        .json({ error: "Name, email, and password are required" });
+    }
+
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ error: "Password must be at least 6 characters long" });
+    }
+
+    const exist = await User.findOne({ email });
+
+    if (exist) {
+      return res.status(400).json({ error: "Email Already Exists" });
+    }
+
+    const hashedPassword = await hashPassword(password);
+
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      role: "user",
+    });
+
+    // Log the admin creation activity
+    const logUserId = req.user?._id;
+    const logUserEmail = req.user?.email || "System";
+
+    if (logUserId) {
+      await ActivityLog.create({
+        userId: logUserId,
+        userEmail: logUserEmail,
+        userRole: req.user?.role,
+        action: "User Created",
+        details: `Created new user account for ${email}`,
+      });
+    }
+
+    // Don't return the password in the response
+    const { password: _, ...userResponse } = user.toObject();
+
+    res
+      .status(201)
+      .json({ message: "User Created Successfully", user: userResponse });
+  } catch (error) {
+    console.error("Error creating user:", error);
+    res.status(500).json({ error: "Failed to create user account" });
+  }
+};
+
 module.exports = {
   getUserData,
   countUsersByRole,
   deleteUser,
   getUserParticipationData,
   addAdmin,
+  addUser,
 };
