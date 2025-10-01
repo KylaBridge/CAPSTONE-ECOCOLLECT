@@ -4,41 +4,54 @@
     margin-left: -20px;
 }
 
-.navShown {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 280px;
-    z-index: 999;
-    background-color: #8dd7d7;
-    transition: 0.5s;
-    border-right: 2px solid rgba(0, 0, 0, 0.3);
-    overflow: hidden;
-}
-
-.navHidden {
+/* Sidebar states: use transform instead of width collapse to avoid squishing content */
+.navShown, .navHidden {
     position: fixed;
     top: 0;
     left: 0;
     height: 100vh;
-    width: 0%;
+    width: 280px; /* keep natural width so children keep layout */
     z-index: 999;
-    background-color: #8dd7d7;
+    background-color: rgba(141, 215, 215, 0.95); /* slight transparency */
+    border-right: 2px solid rgba(0, 0, 0, 0.3);
     overflow: hidden;
-    transition: 0.5s;
+    will-change: transform;
+    transition: transform 0.45s ease;
+    display: flex;              /* enable vertical layout */
+    flex-direction: column;
+}
+
+.navShown { 
+    transform: translateX(0);
+}
+
+.navHidden { 
+    transform: translateX(-100%); /* slide out of view instead of shrinking */
+    pointer-events: none; /* prevent interaction when hidden */
 }
 
 .toggleBtn {
     cursor: pointer;
     position: fixed;
-    top: 0;
-    left: 0;
-    margin-left: 20px;
-    margin-top: 20px;
+    top: 30px;
+    left: 30px;
     font-size: 2.5rem;
+    line-height: 1;
+    padding: 0; /* pure icon, no box background */
+    background: transparent;
     color: #70cf00;
+    border: none;
+    z-index: 1100; /* above sidebar */
     text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    transition: transform .25s;
+}
+
+.toggleBtn:hover {
+    transform: scale(1.08);
+}
+
+.toggleBtn.open {
+    color: #ffeb3b;
 }
 
 .divider {
@@ -53,6 +66,7 @@
     padding: 0;
     list-style: none;
     transition: 0.5s;
+    flex-grow: 1; /* push logout button to bottom */
 }
 
 
@@ -91,7 +105,7 @@ nav button {
     gap: 8px;
     width: 80%;
     height: 40px;
-    margin: 20px auto; 
+    margin: 10px auto 24px; 
     font-size: 20px;
     font-weight: bolder;
     color: white;
@@ -100,9 +114,34 @@ nav button {
     background-color: #3abc7d;
     cursor: pointer;
     border: 2px solid rgba(0, 0, 0, 0.25);
-    transition: 0.3s;
+    transition: background-color .25s ease, transform .25s ease, box-shadow .25s ease;
 }
 
 nav button:hover {
-    background-color: #3abc7d;
+    background-color: #34a86e; /* slightly darker */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+
+nav button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* Overlay behind sidebar when open */
+.sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .35s ease;
+    z-index: 900; /* just below sidebar (999) and toggleBtn (1100) */
+    pointer-events: none;
+}
+
+.sidebar-overlay.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
 }

@@ -289,7 +289,7 @@ export default function EWasteSubmit() {
                                             type="update"
                                             size="medium"
                                             onClick={handleUpdateSubmission}
-                                            disabled={statusValue === originalStatus || (selectedSubmission.category === "others" && !points)}
+                                            disabled={statusValue === originalStatus || (selectedSubmission.category === "others" && statusValue === "Approved" && !points)}
                                         >
                                             UPDATE
                                         </AdminButton>

@@ -2,6 +2,8 @@ const User = require("../models/user");
 const EWaste = require("../models/ewaste");
 const Redemption = require("../models/redemption");
 const ActivityLog = require("../models/activityLog");
+const path = require("path");
+const fs = require("fs");
 
 //
 // ------------------ USER MANAGEMENT ------------------
@@ -35,7 +37,32 @@ const countUsersByRole = async (req, res) => {
 const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findByIdAndDelete(id);
+    const user = await User.findById(id);
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Find and delete all pending e-waste submissions for this user
+    const pendingSubmissions = await EWaste.find({ user: id, status: "Pending" });
+    
+    // Delete associated image files for pending submissions
+    for (const submission of pendingSubmissions) {
+      if (submission.attachments && submission.attachments.length > 0) {
+        submission.attachments.forEach(file => {
+          const filePath = path.join(__dirname, "..", file.path);
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+          }
+        });
+      }
+    }
+
+    // Delete all pending e-waste submissions for this user
+    await EWaste.deleteMany({ user: id, status: "Pending" });
+
+    // Delete the user
+    await User.findByIdAndDelete(id);
 
     // Use admin's ID if available, otherwise fallback to deleted user's ID
     const logUserId = req.user?._id;
@@ -48,11 +75,14 @@ const deleteUser = async (req, res) => {
         userEmail: logUserEmail,
         userRole: req.user?.role,
         action: "User Deleted",
-        details: `Deleted user ${user?.email || id}`,
+        details: `Deleted user ${user?.email || id} and ${pendingSubmissions.length} pending e-waste submissions`,
       });
     }
 
-    res.status(200).json({ message: "User deleted successfully" });
+    res.status(200).json({ 
+      message: "User deleted successfully", 
+      deletedSubmissions: pendingSubmissions.length 
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error deleting user" });

@@ -38,7 +38,7 @@ export default function Navbar() {
         EcoCollect
       </div>
       <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
-        ☰
+        {menuOpen ? "✕" : "☰"}
       </button>
       <nav className={`nav-links ${menuOpen ? "active" : ""}`}>
         <a href="/">Home</a>

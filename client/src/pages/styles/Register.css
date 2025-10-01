@@ -24,6 +24,8 @@
     padding: 30px;
     border-radius: 30px;
     position: relative;
+  opacity: 0;
+  animation: fadeSlideIn .65s cubic-bezier(.4,0,.2,1) forwards;
   }
   .register-form .step-back {
     position: absolute;
@@ -353,4 +355,23 @@
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
   display: none;
+}
+
+@keyframes fadeSlideIn {
+  0% { opacity: 0; transform: translateY(28px) scale(.97); }
+  60% { opacity: 1; transform: translateY(-4px) scale(1); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.form-container .EcoCollect-logo { 
+  animation: logoPop .6s cubic-bezier(.4,0,.2,1) .05s both;
+}
+
+@keyframes logoPop {
+  0% { opacity: 0; transform: translateY(-12px) scale(.9); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .register-form, .form-container .EcoCollect-logo { animation: none; opacity: 1; transform: none; }
 }

@@ -26,6 +26,8 @@
   height: fit-content;
   padding: 30px;
   border-radius: 30px;
+    opacity: 0; /* start hidden for animation */
+    animation: fadeSlideIn .65s cubic-bezier(.4,0,.2,1) forwards;
 }
 
 .login-form h1,
@@ -291,11 +293,33 @@ input[type="password"]::-ms-clear {
   display: none;
 }
 
+/* Fade + slide-in animation */
+@keyframes fadeSlideIn {
+  0% { opacity: 0; transform: translateY(28px) scale(.97); }
+  60% { opacity: 1; transform: translateY(-4px) scale(1); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Slight stagger for elements inside (logo + form children) */
+.login-container .EcoCollect-logo { 
+  animation: logoPop .6s cubic-bezier(.4,0,.2,1) .05s both;
+}
+
+@keyframes logoPop {
+  0% { opacity: 0; transform: translateY(-12px) scale(.9); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .login-form, .login-container .EcoCollect-logo { animation: none; opacity: 1; transform: none; }
+}
+
 /* Forgot Password Styles */
 .forgot-password-btn {
   background: none;
   border: none;
-  color: #92bf9e;
+  color: white;
   text-decoration: underline;
   cursor: pointer;
   font-size: 0.7rem;

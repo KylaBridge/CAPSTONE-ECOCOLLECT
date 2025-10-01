@@ -27,53 +27,66 @@ export default function Sidebar({ isShown, setIsShown }) {
   }
 
   return (
-    <nav className={isShown ? "navShown" : "navHidden"}>
-      <h1 className="toggleBtn" onClick={toggleNavbar}>
-        ☰
-      </h1>
-      <img
-        className="user-sidebar-logo"
-        src={EcoCollectLogo}
-        alt="EcoCollect-Logo"
+    <>
+      {/* Dark translucent overlay */}
+      <div
+        className={`sidebar-overlay ${isShown ? 'show' : ''}`}
+        onClick={() => setIsShown(false)}
+        aria-hidden={!isShown}
       />
-      <div className="divider"></div>
-      <ul className="user-sidebar-ul">
-        <Link
-          to="/home"
-          className={location.pathname === "/home" ? "active" : ""}
-        >
-          <li>
-            <AiOutlineHome size={20} /> HOME
-          </li>
-        </Link>
-        <Link
-          to="/ewastesubmission"
-          className={location.pathname === "/ewastesubmission" ? "active" : ""}
-        >
-          <li>
-            <AiOutlineFileDone size={20} /> E-WASTE SUBMISSION
-          </li>
-        </Link>
-        <Link
-          to="/achievements"
-          className={location.pathname === "/achievements" ? "active" : ""}
-        >
-          <li>
-            <AiOutlineCrown size={20} /> ACHIEVEMENTS & BADGES
-          </li>
-        </Link>
-        <Link
-          to="/rewards"
-          className={location.pathname === "/rewards" ? "active" : ""}
-        >
-          <li>
-            <AiOutlineTrophy size={20} /> REWARDS
-          </li>
-        </Link>
-      </ul>
-      <button onClick={loggingOut}>
-        <AiOutlineLogout size={18} /> LOG OUT
+      {/* Toggle button placed outside nav so it stays visible when sidebar is hidden */}
+      <button
+        className={`toggleBtn ${isShown ? 'open' : ''}`}
+        onClick={toggleNavbar}
+        aria-label={isShown ? 'Close navigation menu' : 'Open navigation menu'}
+      >
+        {isShown ? '×' : '☰'}
       </button>
-    </nav>
+      <nav className={isShown ? "navShown" : "navHidden"}>
+        <img
+          className="user-sidebar-logo"
+          src={EcoCollectLogo}
+          alt="EcoCollect-Logo"
+        />
+        <div className="divider"></div>
+        <ul className="user-sidebar-ul">
+          <Link
+            to="/home"
+            className={location.pathname === "/home" ? "active" : ""}
+          >
+            <li>
+              <AiOutlineHome size={20} /> HOME
+            </li>
+          </Link>
+          <Link
+            to="/ewastesubmission"
+            className={location.pathname === "/ewastesubmission" ? "active" : ""}
+          >
+            <li>
+              <AiOutlineFileDone size={20} /> E-WASTE SUBMISSION
+            </li>
+          </Link>
+          <Link
+            to="/achievements"
+            className={location.pathname === "/achievements" ? "active" : ""}
+          >
+            <li>
+              <AiOutlineCrown size={20} /> ACHIEVEMENTS & BADGES
+            </li>
+          </Link>
+          <Link
+            to="/rewards"
+            className={location.pathname === "/rewards" ? "active" : ""}
+          >
+            <li>
+              <AiOutlineTrophy size={20} /> REWARDS
+            </li>
+          </Link>
+        </ul>
+        <button onClick={loggingOut}>
+          <AiOutlineLogout size={18} /> LOG OUT
+        </button>
+      </nav>
+    </>
   );
 }
