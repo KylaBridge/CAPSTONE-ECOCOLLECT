@@ -56,6 +56,21 @@
   cursor: pointer;
 }
 
+.get-app-btn {
+  color: var(--text-light) !important;
+  font-weight: 600 !important;
+  position: relative;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.get-app-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  text-decoration: none !important;
+  transform: translateY(-1px);
+}
+
 @media (max-width: 768px) {
   .menu-toggle {
     display: block;
@@ -99,4 +114,4 @@
   .navbar {
     height: 60px;
   }
-} 
+}

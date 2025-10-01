@@ -182,7 +182,7 @@ const ShareableBadge = ({ badgeId }) => {
         <div className="certificate-details">
           <div className="badge-info">
             <h2>{fallbackBadge.name}</h2>
-            <p className="badge-description">{fallbackBadge.description}</p>
+            <p className="shareablebadge-description">{fallbackBadge.description}</p>
 
             <div className="badge-metadata">
               <div className="badge-earned-date">

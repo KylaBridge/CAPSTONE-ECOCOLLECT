@@ -17,6 +17,20 @@ export default function Navbar() {
     }
   }
 
+  function handleAppDownload() {
+    // Placeholder for APK download - replace with actual download logic when APK is ready
+    alert(
+      "Android APK download will be available soon! Stay tuned for updates."
+    );
+
+    // Uncomment and update this when APK is ready:
+    // const apkUrl = '/downloads/ecocollect.apk';
+    // const link = document.createElement('a');
+    // link.href = apkUrl;
+    // link.download = 'EcoCollect.apk';
+    // link.click();
+  }
+
   return (
     <header className={`navbar ${menuOpen ? "navbar-solid" : ""}`}>
       <div className="nav-bar-logo">
@@ -31,7 +45,10 @@ export default function Navbar() {
         <a href="/about">About</a>
         <a href="/contact">Contact</a>
         <a onClick={checkUser}>Log In</a>
+        <a onClick={handleAppDownload} className="get-app-btn">
+          Get App
+        </a>
       </nav>
     </header>
   );
-} 
+}

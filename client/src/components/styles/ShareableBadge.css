@@ -67,16 +67,14 @@
   text-shadow: 0 1px 2px rgba(31, 74, 28, 0.1);
 }
 
-.badge-description {
+.shareablebadge-description {
   color: #4a5a4a;
   font-size: 1.2rem;
   line-height: 1.7;
   margin: 0 0 2rem 0;
   font-style: italic;
-  border-left: 4px solid #66cc66;
   padding-left: 1rem;
   text-align: left;
-  background: rgba(168, 230, 161, 0.1);
   padding: 1rem 1rem 1rem 2rem;
   border-radius: 8px;
 }
