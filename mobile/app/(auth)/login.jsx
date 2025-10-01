@@ -74,7 +74,7 @@ const Login = () => {
         <Spacer />
 
         <ThemedText style={styles.link}>
-          <Link href="/register">register an account instead</Link>
+          <Link href="/register">Register An Account Instead</Link>
         </ThemedText>
         <Spacer />
 

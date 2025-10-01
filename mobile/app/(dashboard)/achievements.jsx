@@ -10,6 +10,7 @@ import { UserContext } from "../../contexts/userContext";
 import { useRouter } from "expo-router";
 import React from "react";
 import axios from "axios";
+import { SERVER_BASE_URL, API_BASE_URL } from '@env';
 
 // Images
 import LockIcon from "../../assets/images/lockicon.png";
@@ -26,8 +27,8 @@ const Achievements = () => {
 
   const router = useRouter();
 
-  const SERVER_BASE = "https://www.ecocollect.online";
-  const API_BASE = `${SERVER_BASE}/api/ecocollect`;
+  const SERVER_BASE = SERVER_BASE_URL;
+  const API_BASE = API_BASE_URL;
 
   useEffect(() => {
     if (!user && !loading) {

@@ -13,6 +13,7 @@ import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
 import { UserContext } from "../../contexts/userContext";
 import Colors from "../../constants/colors";
+import { API_BASE_URL } from '@env';
 
 // Themed Components
 import Spacer from "../../components/Spacer";
@@ -31,7 +32,7 @@ const Add = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [submissionLogs, setSubmissionLogs] = useState([]);
 
-  const API_BASE = "https://www.ecocollect.online/api/ecocollect"; // Update with your API base URL
+  const API_BASE = API_BASE_URL;
 
   const handleUploadPress = async () => {
     try {
