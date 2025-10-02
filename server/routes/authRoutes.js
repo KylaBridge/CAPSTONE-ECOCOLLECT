@@ -11,6 +11,7 @@ const {
   googleAuthStart,
   googleAuthCallback,
   googleProfile,
+  verifyPassword,
 } = require("../controllers/authControllers");
 
 router.post("/register/email", registerEmailName);
@@ -19,6 +20,7 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.get("/profile", getProfile);
 router.post("/logout", logoutUser);
+router.post("/verify-password", verifyPassword);
 
 // Google OAuth start
 router.get("/google", googleAuthStart);

@@ -1,0 +1,216 @@
+/* AddUserModal.css */
+.add-user-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.add-user-modal-content {
+  background: white;
+  border-radius: 8px;
+  padding: 0;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.add-user-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 25px;
+  border-bottom: 1px solid #e0e0e0;
+  background: #f8f9fa;
+  border-radius: 8px 8px 0 0;
+}
+
+.add-user-modal-header h2 {
+  margin: 0;
+  color: #245a1e;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.add-user-modal-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  padding: 5px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.add-user-modal-close-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.add-user-modal-form {
+  padding: 25px;
+}
+
+.add-user-form-group {
+  margin-bottom: 20px;
+}
+
+.add-user-form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.add-user-form-group input,
+.add-user-form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.add-user-form-group input:focus,
+.add-user-form-group select:focus {
+  outline: none;
+  border-color: #245a1e;
+  box-shadow: 0 0 0 2px rgba(36, 90, 30, 0.1);
+}
+
+.add-user-password-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.add-user-password-input input {
+  padding-right: 45px;
+}
+
+.add-user-password-toggle {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-user-password-toggle:hover {
+  color: #245a1e;
+}
+
+.add-user-password-requirements {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.add-user-password-requirements small {
+  font-size: 0.75rem;
+  transition: color 0.2s;
+}
+
+.add-user-requirement-valid {
+  color: #28a745;
+}
+
+.add-user-requirement-invalid {
+  color: #dc3545;
+}
+
+.add-user-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.add-user-cancel-btn,
+.add-user-submit-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.add-user-cancel-btn {
+  background-color: #6c757d;
+  color: white;
+}
+
+.add-user-cancel-btn:hover {
+  background-color: #5a6268;
+}
+
+.add-user-submit-btn {
+  background-color: #245a1e;
+  color: white;
+}
+
+.add-user-submit-btn:hover:not(:disabled) {
+  background-color: #1d4819;
+}
+
+.add-user-submit-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.add-user-cancel-btn:active,
+.add-user-submit-btn:active {
+  transform: translateY(1px);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  .add-user-modal-content {
+    width: 95%;
+    margin: 10px;
+  }
+
+  .add-user-modal-header {
+    padding: 15px 20px;
+  }
+
+  .add-user-modal-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .add-user-modal-form {
+    padding: 20px;
+  }
+
+  .add-user-modal-actions {
+    flex-direction: column;
+  }
+
+  .add-user-cancel-btn,
+  .add-user-submit-btn {
+    width: 100%;
+  }
+}

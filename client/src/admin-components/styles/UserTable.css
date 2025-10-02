@@ -14,22 +14,22 @@
   position: relative;
 }
 
-.usertable-wrapper{
+.usertable-wrapper {
   max-height: 400px;
   overflow-y: auto;
 }
 
-.usertable-wrapper::-webkit-scrollbar{
+.usertable-wrapper::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
-.usertable-wrapper::-webkit-scrollbar-track{
+.usertable-wrapper::-webkit-scrollbar-track {
   background: #dfe0d0;
   border-radius: 10px;
 }
 
-.usertable-wrapper::-webkit-scrollbar-thumb{
+.usertable-wrapper::-webkit-scrollbar-thumb {
   background-color: #aaa;
   border-radius: 10px;
 }
@@ -57,6 +57,30 @@
 .search-container {
   justify-content: flex-end;
   align-items: center;
+  gap: 10px;
+}
+
+.add-user-button {
+  background-color: #245a1e;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 15px;
+  font-size: 0.9em;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.add-user-button:hover {
+  background-color: #1d4819;
+}
+
+.add-user-button:active {
+  transform: translateY(1px);
 }
 
 .search-input-wrapper {
@@ -185,7 +209,7 @@
   background-color: #dfe0d0;
   border: 1px solid #ccc;
   border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   min-width: 120px;
 }
@@ -211,7 +235,7 @@
   background-color: #dfe0d0;
   border-radius: 5px;
   border: 1px solid #ccc;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   min-width: 120px;
 }
 

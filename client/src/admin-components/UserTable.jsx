@@ -2,10 +2,16 @@ import { toast } from "react-hot-toast";
 import { useEffect, useState, useRef, useMemo } from "react";
 import axios from "axios";
 import "./styles/UserTable.css";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaPlus } from "react-icons/fa";
 import AdminButton from "./AdminButton";
 
-export default function UserTable({ onViewUser, viewedUser }) {
+export default function UserTable({
+  onViewUser,
+  viewedUser,
+  currentUserRole,
+  refreshTrigger,
+  onAddUser,
+}) {
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -23,7 +29,20 @@ export default function UserTable({ onViewUser, viewedUser }) {
     const fetchAllData = async () => {
       try {
         const usersRes = await axios.get("/api/ecocollect/usermanagement");
-        setUsers(usersRes.data);
+
+        // Filter users based on current user role
+        let filteredUsers = usersRes.data;
+        if (currentUserRole === "admin") {
+          // Admin can only see users, not other admins or superadmins
+          filteredUsers = usersRes.data.filter((user) => user.role === "user");
+        } else if (currentUserRole === "superadmin") {
+          // Super admin can see users and admins, but not other superadmins
+          filteredUsers = usersRes.data.filter(
+            (user) => user.role === "user" || user.role === "admin"
+          );
+        }
+
+        setUsers(filteredUsers);
         setShowAll(true);
 
         const [activityRes, ewasteRes] = await Promise.all([
@@ -33,7 +52,7 @@ export default function UserTable({ onViewUser, viewedUser }) {
 
         // Group activity logs by userId
         const grouped = {};
-        activityRes.data.forEach(log => {
+        activityRes.data.forEach((log) => {
           if (!grouped[log.userId]) grouped[log.userId] = [];
           grouped[log.userId].push(log);
         });
@@ -41,7 +60,7 @@ export default function UserTable({ onViewUser, viewedUser }) {
 
         // Count e-waste submissions per userId
         const counts = {};
-        ewasteRes.data.forEach(sub => {
+        ewasteRes.data.forEach((sub) => {
           const uid = sub.user?._id || sub.user;
           if (uid) counts[uid] = (counts[uid] || 0) + 1;
         });
@@ -52,7 +71,7 @@ export default function UserTable({ onViewUser, viewedUser }) {
       }
     };
     fetchAllData();
-  }, []);
+  }, [currentUserRole, refreshTrigger]);
 
   // Handle search/filter logic
   useEffect(() => {
@@ -71,7 +90,7 @@ export default function UserTable({ onViewUser, viewedUser }) {
     if (sortOption === "name") {
       sorted.sort((a, b) => a.email.localeCompare(b.email));
     } else if (sortOption === "role" && roleSubSort) {
-      sorted = sorted.filter(user => user.role === roleSubSort);
+      sorted = sorted.filter((user) => user.role === roleSubSort);
     }
     return sorted;
   }, [searchResults, sortOption, roleSubSort]);
@@ -96,7 +115,7 @@ export default function UserTable({ onViewUser, viewedUser }) {
 
   const handleSearch = () => {
     const results = users.filter((user) => {
-      const searchRegex = new RegExp(searchTerm, 'i');
+      const searchRegex = new RegExp(searchTerm, "i");
       return (
         searchRegex.test(user.email) ||
         searchRegex.test(user.role) ||
@@ -107,7 +126,7 @@ export default function UserTable({ onViewUser, viewedUser }) {
   };
 
   const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       setShowAll(false);
       handleSearch();
     }
@@ -130,7 +149,9 @@ export default function UserTable({ onViewUser, viewedUser }) {
             >
               Sort By
               {sortOption === "name" && " : Name"}
-              {sortOption === "role" && roleSubSort && ` : Role (${roleSubSort})`}
+              {sortOption === "role" &&
+                roleSubSort &&
+                ` : Role (${roleSubSort})`}
             </button>
             {showDropdown && (
               <div className="usertable-dropdown-menu">
@@ -174,6 +195,19 @@ export default function UserTable({ onViewUser, viewedUser }) {
                       >
                         User
                       </div>
+                      {currentUserRole === "superadmin" && (
+                        <div
+                          className="usertable-submenu-item"
+                          onClick={() => {
+                            setSortOption("role");
+                            setRoleSubSort("superadmin");
+                            setShowDropdown(false);
+                            setShowRoleSubmenu(false);
+                          }}
+                        >
+                          Super Admin
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -185,6 +219,15 @@ export default function UserTable({ onViewUser, viewedUser }) {
         <h2 className="user-title">Users</h2>
 
         <div className="search-container">
+          {currentUserRole === "superadmin" && (
+            <button
+              type="button"
+              className="add-user-button"
+              onClick={onAddUser}
+            >
+              <FaPlus size={14} /> Add User
+            </button>
+          )}
           <div className="search-input-wrapper">
             <input
               type="text"
@@ -194,12 +237,20 @@ export default function UserTable({ onViewUser, viewedUser }) {
               onChange={handleSearchInputChange}
               onKeyDown={handleKeyPress}
             />
-            <button type="submit" className="search-icon-button" onClick={handleSearch}>
-              <FaSearch style={{ fontSize: '16px', color: '#245a1e' }} />
+            <button
+              type="submit"
+              className="search-icon-button"
+              onClick={handleSearch}
+            >
+              <FaSearch style={{ fontSize: "16px", color: "#245a1e" }} />
             </button>
           </div>
           {!showAll && (
-            <button type="button" className="show-all-button" onClick={handleShowAll}>
+            <button
+              type="button"
+              className="show-all-button"
+              onClick={handleShowAll}
+            >
               Show All
             </button>
           )}
@@ -223,9 +274,12 @@ export default function UserTable({ onViewUser, viewedUser }) {
             {sortedResults.length > 0 ? (
               sortedResults.map((user) => {
                 const activities = userActivities[user._id] || [];
-                const lastActivity = activities.length > 0
-                  ? activities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0]
-                  : null;
+                const lastActivity =
+                  activities.length > 0
+                    ? activities.sort(
+                        (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+                      )[0]
+                    : null;
                 const totalContributions = userContributions[user._id] || 0;
                 return (
                   <tr key={user._id}>
@@ -235,13 +289,15 @@ export default function UserTable({ onViewUser, viewedUser }) {
                     <td>{user.role}</td>
                     <td>
                       {lastActivity
-                        ? `${lastActivity.action} (${new Date(lastActivity.timestamp).toLocaleString()})`
+                        ? `${lastActivity.action} (${new Date(
+                            lastActivity.timestamp
+                          ).toLocaleString()})`
                         : "No activity"}
                     </td>
                     <td>{totalContributions}</td>
                     <td>
-                      <AdminButton 
-                        type="view" 
+                      <AdminButton
+                        type="view"
                         size="small"
                         isActive={viewedUser?._id === user._id}
                         onClick={() => {
@@ -249,7 +305,7 @@ export default function UserTable({ onViewUser, viewedUser }) {
                           else onViewUser(user);
                         }}
                       >
-                        {viewedUser?._id === user._id ? 'CLOSE' : 'VIEW'}
+                        {viewedUser?._id === user._id ? "CLOSE" : "VIEW"}
                       </AdminButton>
                     </td>
                   </tr>
@@ -257,7 +313,9 @@ export default function UserTable({ onViewUser, viewedUser }) {
               })
             ) : (
               <tr>
-                <td colSpan="7" className="no-users">No users found</td>
+                <td colSpan="7" className="no-users">
+                  No users found
+                </td>
               </tr>
             )}
           </tbody>

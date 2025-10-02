@@ -29,4 +29,12 @@ const authMiddleware = async (req, res, next) => {
   }
 };
 
-module.exports = authMiddleware;
+// Middleware to check if user is superadmin
+const superAdminMiddleware = (req, res, next) => {
+  if (req.user.role !== "superadmin") {
+    return res.status(403).json({ error: "Super admin access required" });
+  }
+  next();
+};
+
+module.exports = { authMiddleware, superAdminMiddleware };

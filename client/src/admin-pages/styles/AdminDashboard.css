@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   margin: 0;
   height: 100%;
   background-color: #c4cfc5;
@@ -10,232 +11,243 @@ html, body {
   margin-left: 18%;
 }
 
-.admin-dashboard-top-section, .admin-dashboard-bottom-section {
+.admin-dashboard-top-section,
+.admin-dashboard-bottom-section {
   display: flex;
-  justify-content: flex-start;     
-  gap: 20px;         
+  justify-content: flex-start;
+  gap: 20px;
   max-width: 1400px;
   margin-left: auto;
   margin-right: auto;
   flex-wrap: wrap;
 }
 
-.admin-dashboard-top-section{
-    padding: 15px;
-    font-size: 1.6rem;
+.admin-dashboard-top-section {
+  padding: 15px;
+  font-size: 1.6rem;
 }
 
-.admin-dashboard-bottom-section{
+.admin-dashboard-bottom-section {
   padding: 0px 15px;
   margin-bottom: 5px !important;
 }
 
-.total-users-container{
-    background-color: #dfe0d0;
-    height: fit-content;
-    width: fit-content;
-    justify-content: center;
-    max-width: 100%;
-    padding: 20px;
-    border-radius: 30px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    flex-shrink: 0; /* Prevent shrinking */
+.total-users-container {
+  background-color: #dfe0d0;
+  min-height: 300px;
+  max-height: 400px;;
+  width: fit-content;
+  justify-content: center;
+  max-width: 100%;
+  padding: 15px;
+  border-radius: 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0; /* Prevent shrinking */
+  display: flex;
+  flex-direction: column;
 }
 
-.ewaste-collected-container{
-    background-color: #dfe0d0;
-    flex: 1;
-    min-width: 350px;
-    min-height: 300px;
-    max-height: 400px;
-    padding: 20px;
-    border-radius: 30px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.ewaste-collected-container {
+  background-color: #dfe0d0;
+  flex: 1;
+  min-width: 350px;
+  min-height: 300px;
+  max-height: 400px;
+  padding: 20px;
+  border-radius: 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.total-users-container h2, .ewaste-collected-container h2, .reward-container h2, .ewastebin-container h2{
-    padding: 15px;
-    text-align: center;
-    font-size: 1rem;
-    color:  #154d31; 
-    border-bottom: 3px solid rgb(211, 211, 211);
+.total-users-container h2,
+.ewaste-collected-container h2,
+.reward-container h2,
+.ewastebin-container h2 {
+  padding: 15px;
+  text-align: center;
+  font-size: 1rem;
+  color: #154d31;
+  border-bottom: 3px solid rgb(211, 211, 211);
 }
 
-.ewaste-collected-container h2{
-    padding: 10px !important;
+.ewaste-collected-container h2 {
+  padding: 10px !important;
 }
-
 
 .user-grid {
-    display: grid;
-    padding: 15px;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
-    justify-items: center;
+  display: grid;
+  padding: 25px 10px 10px 10px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.3rem;
+  justify-items: center;
+  align-items: start;
 }
-  
+
 .user-card {
-    text-align: center;
-    color: #1a3b34;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  text-align: center;
+  color: #1a3b34;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 70px;
+  padding: 5px;
 }
-  
+
 .user-card .icon {
-    font-size: 0.7rem;
-    margin-bottom: 0.25rem;
-    display: block;
+  font-size: 0.5rem;
+  margin-bottom: 0.3rem;
+  display: block;
 }
-  
+
 .user-card p {
-    margin: 0;
-    font-weight: 500;
-    font-size: 1rem;
-    color: #1a3b34;
+  margin: 0 0 0.2rem 0;
+  font-weight: 500;
+  font-size: 0.85rem;
+  color: #1a3b34;
+  white-space: nowrap;
 }
-  
+
 .user-card h3 {
-    margin: 0.25rem 0 0;
-    font-size: 2rem;
-    font-weight: bold;
-}
-  
-
-.total-bar, .rewardtotal-bar{
-    background: linear-gradient(90deg, #76b082, #284c42);
-    color: white;
-    text-align: center;
-    margin: 12px;
-    width: 90%;
-    padding: 0.75rem;
-    border-radius: 9px;
-    font-weight: bold;
+  margin: 0.1rem 0 0;
+  font-size: 1.6rem;
+  font-weight: bold;
+  line-height: 1;
 }
 
+.total-bar,
+.rewardtotal-bar {
+  background: linear-gradient(90deg, #76b082, #284c42);
+  color: white;
+  text-align: center;
+  margin: auto 12px 12px 12px;
+  width: 90%;
+  padding: 0.75rem;
+  border-radius: 9px;
+  font-weight: bold;
+}
 
 .ewaste-grid {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 0.3rem;
-    align-items:center;
-  }
-  
-  .ewaste-total {
-    background: linear-gradient(90deg, #76b082, #284c42);
-    color: white;
-    padding: 15px;
-    width: 100%;
-    border-radius: 15px;
-    text-align: start;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin-left: 12px;
-    margin-top: 15px;
-  }
-  
-  .ewaste-total h3 {
-    font-size: 1rem;
-    margin: 0;
-  }
-  
-  .total-number {
-    font-size: 3rem;
-    font-weight: bold;
-    margin: 0.5rem 0;
-    text-align: center !important;
-  }
-
-  .ewaste-total p{
-    text-align: right !important;
-  }
-  
-  .ewaste-total a {
-    margin-top: 1rem;
-    color: #f4f4f4;
-    text-decoration: underline;
-    font-size: 1rem;
-  }
-  
-  .ewaste-breakdown {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.7rem;
-    justify-items: center;
-    position: relative;
-    min-height: 50px;
-  }
-  
-  .ewaste-item {
-    text-align: center;
-    color: #1a3b34;
-  }
-  
-  .ewaste-icon {
-    display: block;
-    margin: 0 auto 0.2rem auto;
-    color: #1a3b34;
-  }
-  
-  .ewaste-item p {
-    font-weight: 600;
-    color: #656464;
-    font-size: 0.8rem;
-  }
-  
-  .ewaste-item span {
-    font-size: 0.8rem;
-    color: #333;
-    margin-top: 0  !important;
-  }
-
-  .ewaste-label, .rewards-label {
-    font-weight: 600;
-    font-size: 1rem;
-    margin: 5px 0 10px 0;
-    text-align: center;
-    color: #333;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 0.3rem;
+  align-items: center;
 }
-.ewaste-categories{
-    width: 100%;
-    padding: 10px;
+
+.ewaste-total {
+  background: linear-gradient(90deg, #76b082, #284c42);
+  color: white;
+  padding: 15px;
+  width: 100%;
+  border-radius: 15px;
+  text-align: start;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 12px;
+  margin-top: 15px;
+}
+
+.ewaste-total h3 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.total-number {
+  font-size: 3rem;
+  font-weight: bold;
+  margin: 0.5rem 0;
+  text-align: center !important;
+}
+
+.ewaste-total p {
+  text-align: right !important;
+}
+
+.ewaste-total a {
+  margin-top: 1rem;
+  color: #f4f4f4;
+  text-decoration: underline;
+  font-size: 1rem;
+}
+
+.ewaste-breakdown {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.7rem;
+  justify-items: center;
+  position: relative;
+  min-height: 50px;
+}
+
+.ewaste-item {
+  text-align: center;
+  color: #1a3b34;
+}
+
+.ewaste-icon {
+  display: block;
+  margin: 0 auto 0.2rem auto;
+  color: #1a3b34;
+}
+
+.ewaste-item p {
+  font-weight: 600;
+  color: #656464;
+  font-size: 0.8rem;
+}
+
+.ewaste-item span {
+  font-size: 0.8rem;
+  color: #333;
+  margin-top: 0 !important;
+}
+
+.ewaste-label,
+.rewards-label {
+  font-weight: 600;
+  font-size: 1rem;
+  margin: 5px 0 10px 0;
+  text-align: center;
+  color: #333;
+}
+.ewaste-categories {
+  width: 100%;
+  padding: 10px;
 }
 
 .ewaste-total-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
 .view-details-container {
-    margin-top: 10px;
-    text-align: center;
+  margin-top: 10px;
+  text-align: center;
 }
 
 .view-details-container a {
-    text-decoration: underline;
-    font-size: 1rem;
-    color: #333;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-weight: 500;
-    transition: background-color 0.2s ease-in-out;
+  text-decoration: underline;
+  font-size: 1rem;
+  color: #333;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background-color 0.2s ease-in-out;
 }
 
-.rewardtotal-bar{
-    margin: 10px auto;
-    width: 80% !important;
-    height: fit-content;
-    font-size: 1.3rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+.rewardtotal-bar {
+  margin: 10px auto;
+  width: 80% !important;
+  height: fit-content;
+  font-size: 1.3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-.reward-container{
+.reward-container {
   background-color: #dfe0d0;
   height: fit-content;
   width: fit-content;
@@ -267,12 +279,12 @@ html, body {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-.reward-item p{
+.reward-item p {
   color: #343a40;
   font-size: 0.7rem !important;
 }
 
-.ewastebin-container{
+.ewastebin-container {
   background-color: #dfe0d0;
   height: fit-content;
   width: fit-content;
@@ -297,13 +309,12 @@ html, body {
   position: relative;
 }
 
-
 .bin-table table {
   width: 100%;
   font-size: 0.8rem;
 }
 
-.admin-dashboard-bintable{
+.admin-dashboard-bintable {
   height: 100px;
 }
 
@@ -316,7 +327,7 @@ html, body {
   width: fit-content;
 }
 
-.bintotal-bar{
+.bintotal-bar {
   background: linear-gradient(90deg, #76b082, #284c42);
   color: white;
   padding: 15px 20px;
@@ -336,11 +347,10 @@ html, body {
   font-size: 1.5rem;
 }
 
-
 .bin-icons {
-display: flex;
-justify-content: center;
-width: 100%;
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .bin-icon {
@@ -348,7 +358,6 @@ width: 100%;
   height: 90px;
   object-fit: contain;
 }
-
 
 .no-items-msg {
   text-align: center;
@@ -360,4 +369,52 @@ width: 100%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 100%;
+}
+
+/* Responsive styles for user cards */
+@media (max-width: 768px) {
+  .user-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.2rem;
+    padding: 8px;
+  }
+
+  .user-card .icon {
+    font-size: 0.4rem;
+  }
+
+  .user-card p {
+    font-size: 0.75rem;
+  }
+
+  .user-card h3 {
+    font-size: 1.4rem;
+  }
+
+  .total-users-container {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-grid {
+    gap: 0.15rem;
+    padding: 6px;
+  }
+
+  .user-card .icon {
+    font-size: 0.35rem;
+  }
+
+  .user-card p {
+    font-size: 0.7rem;
+  }
+
+  .user-card h3 {
+    font-size: 1.2rem;
+  }
+
+  .total-users-container {
+    padding: 10px;
+  }
 }

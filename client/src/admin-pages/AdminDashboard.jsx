@@ -2,19 +2,32 @@ import AdminSidebar from "../admin-components/AdminSidebar";
 import Header from "../admin-components/Header";
 import BinTable from "../admin-components/BinTable";
 import {
-  FaLaptop, FaMobileAlt, FaPlug, FaBatteryHalf, FaTshirt, FaMobile, FaUserAlt, FaTrash
+  FaLaptop,
+  FaMobileAlt,
+  FaPlug,
+  FaBatteryHalf,
+  FaTshirt,
+  FaMobile,
+  FaUserAlt,
+  FaTrash,
+  FaUserShield,
 } from "react-icons/fa";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { MdCable, MdOutlineRouter } from "react-icons/md";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import binIcon from "../assets/icons/binIcon.png";
-import './styles/AdminDashboard.css';
+import "./styles/AdminDashboard.css";
 
 export default function AdminDashboard() {
-  const [roleCounts, setRoleCounts] = useState({ userCount: 0, adminCount: 0 });
+  const [roleCounts, setRoleCounts] = useState({
+    userCount: 0,
+    adminCount: 0,
+    superadminCount: 0,
+  });
   const [redemptionCount, setRedemptionCount] = useState(0);
-  const totalUsers = roleCounts.userCount + roleCounts.adminCount;
+  const totalUsers =
+    roleCounts.userCount + roleCounts.adminCount + roleCounts.superadminCount;
 
   const [ewasteCount, setEwasteCount] = useState({
     telephoneCount: 0,
@@ -26,16 +39,19 @@ export default function AdminDashboard() {
     batteryCount: 0,
     cordCount: 0,
     powerbankCount: 0,
-    usbCount: 0
+    usbCount: 0,
   });
 
-  const totalEwastes = Object.values(ewasteCount).reduce((sum, val) => sum + val, 0);
+  const totalEwastes = Object.values(ewasteCount).reduce(
+    (sum, val) => sum + val,
+    0
+  );
   const [binList, setBinList] = useState([]);
 
   useEffect(() => {
     const fetchRoleCount = async () => {
       try {
-        const response = await axios.get('/api/ecocollect/user/role-count');
+        const response = await axios.get("/api/ecocollect/user/role-count");
         setRoleCounts(response.data);
       } catch (err) {
         console.error(err);
@@ -44,7 +60,7 @@ export default function AdminDashboard() {
 
     const fetchEwasteCount = async () => {
       try {
-        const response = await axios.get('/api/ecocollect/user/ewastes');
+        const response = await axios.get("/api/ecocollect/user/ewastes");
         setEwasteCount(response.data);
       } catch (err) {
         console.error(err);
@@ -53,7 +69,9 @@ export default function AdminDashboard() {
 
     const fetchRedemptionCount = async () => {
       try {
-        const response = await axios.get('/api/ecocollect/rewards/redemption-count');
+        const response = await axios.get(
+          "/api/ecocollect/rewards/redemption-count"
+        );
         setRedemptionCount(response.data.count);
       } catch (err) {
         console.error(err);
@@ -62,7 +80,7 @@ export default function AdminDashboard() {
 
     const fetchBins = async () => {
       try {
-        const response = await axios.get('/api/ecocollect/bins');
+        const response = await axios.get("/api/ecocollect/bins");
         setBinList(response.data);
       } catch (err) {
         console.error(err);
@@ -76,16 +94,46 @@ export default function AdminDashboard() {
   }, []);
 
   const iconMap = {
-    telephoneCount: { label: "Telephone", icon: <BsFillTelephoneFill size={30} className="ewaste-icon" /> },
-    routerCount: { label: "Router", icon: <MdOutlineRouter size={30} className="ewaste-icon" /> },
-    mobileCount: { label: "Mobile", icon: <FaMobileAlt size={30} className="ewaste-icon" /> },
-    tabletCount: { label: "Tablet", icon: <FaMobile size={30} className="ewaste-icon" /> },
-    laptopCount: { label: "Laptop", icon: <FaLaptop size={30} className="ewaste-icon" /> },
-    chargerCount: { label: "Charger", icon: <FaPlug size={30} className="ewaste-icon" /> },
-    batteryCount: { label: "Battery", icon: <FaBatteryHalf size={30} className="ewaste-icon" /> },
-    cordCount: { label: "Cords", icon: <MdCable size={30} className="ewaste-icon" /> },
-    powerbankCount: { label: "Powerbank", icon: <FaBatteryHalf size={30} className="ewaste-icon" /> },
-    usbCount: { label: "USB", icon: <FaPlug size={30} className="ewaste-icon" /> }
+    telephoneCount: {
+      label: "Telephone",
+      icon: <BsFillTelephoneFill size={30} className="ewaste-icon" />,
+    },
+    routerCount: {
+      label: "Router",
+      icon: <MdOutlineRouter size={30} className="ewaste-icon" />,
+    },
+    mobileCount: {
+      label: "Mobile",
+      icon: <FaMobileAlt size={30} className="ewaste-icon" />,
+    },
+    tabletCount: {
+      label: "Tablet",
+      icon: <FaMobile size={30} className="ewaste-icon" />,
+    },
+    laptopCount: {
+      label: "Laptop",
+      icon: <FaLaptop size={30} className="ewaste-icon" />,
+    },
+    chargerCount: {
+      label: "Charger",
+      icon: <FaPlug size={30} className="ewaste-icon" />,
+    },
+    batteryCount: {
+      label: "Battery",
+      icon: <FaBatteryHalf size={30} className="ewaste-icon" />,
+    },
+    cordCount: {
+      label: "Cords",
+      icon: <MdCable size={30} className="ewaste-icon" />,
+    },
+    powerbankCount: {
+      label: "Powerbank",
+      icon: <FaBatteryHalf size={30} className="ewaste-icon" />,
+    },
+    usbCount: {
+      label: "USB",
+      icon: <FaPlug size={30} className="ewaste-icon" />,
+    },
   };
 
   const topCategories = Object.entries(ewasteCount)
@@ -95,7 +143,7 @@ export default function AdminDashboard() {
 
   // Filter bins that need emptying
   const binsNeedEmptying = binList.filter(
-    bin => bin.status === 'Full' || bin.status === 'Needs Emptying'
+    (bin) => bin.status === "Full" || bin.status === "Needs Emptying"
   );
 
   return (
@@ -110,14 +158,19 @@ export default function AdminDashboard() {
             <h2>Total Users Registered</h2>
             <div className="user-grid">
               <div className="user-card">
-                <FaUserAlt className="icon" size={40} />
+                <FaUserAlt className="icon" size={28} />
                 <p>Users</p>
                 <h3>{roleCounts.userCount || "..."}</h3>
               </div>
               <div className="user-card">
-                <FaUserAlt className="icon" size={40} />
+                <FaUserAlt className="icon" size={28} />
                 <p>Admin</p>
                 <h3>{roleCounts.adminCount || "..."}</h3>
+              </div>
+              <div className="user-card">
+                <FaUserShield className="icon" size={28} />
+                <p>Super Admin</p>
+                <h3>{roleCounts.superadminCount || "..."}</h3>
               </div>
             </div>
             <div className="total-bar">
@@ -132,7 +185,9 @@ export default function AdminDashboard() {
               <div className="ewaste-total-wrapper">
                 <div className="ewaste-total">
                   <h3>Total:</h3>
-                  <span className="total-number">{totalEwastes || "Loading.."}</span>
+                  <span className="total-number">
+                    {totalEwastes || "Loading.."}
+                  </span>
                   <p>pcs</p>
                 </div>
                 <div className="view-details-container">
@@ -189,10 +244,10 @@ export default function AdminDashboard() {
             <div className="bin-content-wrapper">
               <div className="bin-table">
                 <BinTable
-                  columns={['location', 'status']}
-                  data={binsNeedEmptying.map(bin => ({
+                  columns={["location", "status"]}
+                  data={binsNeedEmptying.map((bin) => ({
                     location: bin.location,
-                    status: bin.status
+                    status: bin.status,
                   }))}
                   maxHeight="150px"
                 />

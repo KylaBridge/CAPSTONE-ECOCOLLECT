@@ -26,8 +26,9 @@ const countUsersByRole = async (req, res) => {
   try {
     const userCount = await User.countDocuments({ role: "user" });
     const adminCount = await User.countDocuments({ role: "admin" });
+    const superadminCount = await User.countDocuments({ role: "superadmin" });
 
-    res.status(200).json({ userCount, adminCount });
+    res.status(200).json({ userCount, adminCount, superadminCount });
   } catch (error) {
     console.error("Error counting roles:", error);
     res.status(500).json({ message: "Failed to count roles" });
@@ -304,6 +305,32 @@ const addUser = async (req, res) => {
   }
 };
 
+// Change user role (superadmin only)
+const changeUserRole = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { role } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      { role },
+      { new: true, select: "_id name email role" }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      message: `User role changed to ${role} successfully`,
+      user,
+    });
+  } catch (error) {
+    console.error("Error changing user role:", error);
+    res.status(500).json({ message: "Failed to change user role" });
+  }
+};
+
 module.exports = {
   getUserData,
   countUsersByRole,
@@ -311,4 +338,5 @@ module.exports = {
   getUserParticipationData,
   addAdmin,
   addUser,
+  changeUserRole,
 };

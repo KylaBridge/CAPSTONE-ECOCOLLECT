@@ -19,6 +19,7 @@ const {
   getUserParticipationData,
   addAdmin,
   addUser,
+  changeUserRole,
 } = require("../controllers/userManageController");
 
 const {
@@ -67,7 +68,10 @@ const {
   getAllUserLeaderboards,
 } = require("../controllers/userController");
 
-const authMiddleware = require("../middleware/authMiddleware");
+const {
+  authMiddleware,
+  superAdminMiddleware,
+} = require("../middleware/authMiddleware");
 const { sendContactMessage } = require("../controllers/sendEmailController");
 
 // Ensure uploads folder exists
@@ -144,11 +148,22 @@ router.get("/user/ewastes", authMiddleware, getEwastes); // Ewaste counts by cat
 router.get("/usermanagement", authMiddleware, getUserData); // All users
 router.get("/user/role-count", authMiddleware, countUsersByRole); // User/admin count
 router.delete("/usermanagement/:id", authMiddleware, deleteUser); // Delete user
+router.patch(
+  "/usermanagement/role/:id",
+  authMiddleware,
+  superAdminMiddleware,
+  changeUserRole
+); // Change user role
 router.put("/ewaste/:id/status", authMiddleware, updateSubmissionStatus); // Update ewaste status
 router.get("/ewaste", authMiddleware, getAllSubmissions); // All ewaste submissions
 router.delete("/ewaste/:id", authMiddleware, deleteEWaste); // Delete ewaste
 router.post("/add/admin", authMiddleware, addAdmin); // Add admin
-router.post("/add/user", authMiddleware, addUser); // Add user
+router.post(
+  "/usermanagement/add",
+  authMiddleware,
+  superAdminMiddleware,
+  addUser
+); // Add user
 
 // --- Rewards Management ---
 router.get("/rewards", authMiddleware, getAllRewards);

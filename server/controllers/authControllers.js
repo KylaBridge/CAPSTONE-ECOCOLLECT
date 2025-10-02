@@ -201,7 +201,6 @@ const getProfile = async (req, res) => {
 
     return res.status(200).json(user);
   } catch (err) {
-    console.log("Token verification failed:", err.message);
     return res.status(401).json({ error: "Unauthorized" });
   }
 };
@@ -225,63 +224,19 @@ const googleAuthStart = passport.authenticate("google", {
 // Google OAuth callback handler (after passport authenticates)
 const googleAuthCallback = (req, res) => {
   const user = req.user;
-  console.log("Google OAuth callback - User:", user ? "Found" : "Not found");
-  console.log("User-Agent:", req.headers["user-agent"]);
-
   if (!user) return res.redirect(`${process.env.FRONTEND_URL}/login`);
-
   signToken({ email: user.email, id: user._id })
     .then((token) => {
-      // Detect user agent to handle iOS Chrome differently
-      const userAgent = req.headers["user-agent"] || "";
-      const isIOSChrome = /CriOS/i.test(userAgent);
-      const isIOSSafari =
-        /Safari/i.test(userAgent) &&
-        !/CriOS/i.test(userAgent) &&
-        /iPhone|iPad/i.test(userAgent);
-
-      console.log(
-        "Browser detection - iOS Chrome:",
-        isIOSChrome,
-        "iOS Safari:",
-        isIOSSafari
-      );
-
-      // For iOS Chrome, use different cookie settings and URL-based token passing
-      if (isIOSChrome) {
-        console.log("Setting cookie with sameSite: lax for iOS Chrome");
-        // Try to set cookie with lax sameSite for iOS Chrome
-        res.cookie("token", token, {
-          httpOnly: true,
-          sameSite: "lax",
-          secure: true,
-          path: "/",
-          maxAge: 1000 * 60 * 30,
-        });
-
-        // Also pass token in URL for iOS Chrome as fallback
-        const base = process.env.FRONTEND_URL;
-        const redirectUrl = `${base.replace(
-          /\/$/,
-          ""
-        )}/home/?auth=google&token=${encodeURIComponent(token)}`;
-        console.log("Redirecting iOS Chrome to:", redirectUrl);
-        res.redirect(redirectUrl);
-      } else {
-        console.log("Setting cookie with sameSite: none for standard browser");
-        // Standard cookie approach for other browsers
-        res.cookie("token", token, {
-          httpOnly: true,
-          sameSite: "none",
-          secure: true,
-          path: "/",
-          maxAge: 1000 * 60 * 30,
-        });
-        const base = process.env.FRONTEND_URL;
-        const redirectUrl = `${base.replace(/\/$/, "")}/home/?auth=google`;
-        console.log("Redirecting standard browser to:", redirectUrl);
-        res.redirect(redirectUrl);
-      }
+      res.cookie("token", token, {
+        httpOnly: true,
+        sameSite: "none",
+        secure: true,
+        path: "/",
+        maxAge: 1000 * 60 * 30,
+      });
+      const base = process.env.FRONTEND_URL;
+      const redirectUrl = `${base.replace(/\/$/, "")}/home/?auth=google`;
+      res.redirect(redirectUrl);
     })
     .catch((err) => {
       console.error("JWT sign error", err);
@@ -301,6 +256,35 @@ const googleProfile = (req, res) => {
   });
 };
 
+// Verify Password for sensitive operations
+const verifyPassword = async (req, res) => {
+  try {
+    const { password } = req.body;
+
+    if (!password) {
+      return res.status(400).json({ error: "Password required" });
+    }
+
+    // Use the authenticated user's information from the request
+    const user = req.user;
+    if (!user) {
+      return res.status(401).json({ error: "User not authenticated" });
+    }
+
+    const isMatch = await comparePassword(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ error: "Invalid password" });
+    }
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Password verified" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Server error" });
+  }
+};
+
 module.exports = {
   registerEmailName,
   registerPassword,
@@ -311,4 +295,5 @@ module.exports = {
   googleAuthStart,
   googleAuthCallback,
   googleProfile,
+  verifyPassword,
 };

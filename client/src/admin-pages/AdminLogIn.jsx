@@ -24,12 +24,17 @@ export default function AdminLogIn() {
         toast.error(response.error);
       } else if (response.role === "user") {
         toast.error("You are not authorized to access this page");
-      } else {
-        toast.success("Admin logged in");
+      } else if (response.role === "admin" || response.role === "superadmin") {
+        const roleText =
+          response.role === "superadmin" ? "Super Admin" : "Admin";
+        toast.success(`${roleText} logged in`);
         navigate("/admin/dashboard");
+      } else {
+        toast.error("Invalid user role");
       }
     } catch (error) {
       console.log(error);
+      toast.error("Login failed. Please try again.");
     }
   }
 
