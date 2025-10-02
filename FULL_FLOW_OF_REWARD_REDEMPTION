@@ -1,0 +1,113 @@
+1. User Redeems Reward
+
+User selects a reward in the app.
+
+System deducts points immediately.
+
+A new record is created in Redemptions table with status = "Issued".
+
+A QR code + redemption details are generated and sent to the user’s email (and viewable in their redemption history).
+
+QR code validity: e.g., 3–7 days (stored in expiryDate).
+
+2. User Presents Reward at Store
+
+User shows the QR code at Bulldog’s Exchange (physical store).
+
+Staff scans the QR code with their phone.
+
+QR redirects to a simple validation page hosted by EcoCollect.
+
+3. Validation Page Flow (Frontend)
+
+Page loads and displays:
+
+Reward name + description
+
+Unique redemption code
+
+User’s email/name (optional for context)
+
+Expiry date / issued date
+
+Page shows a "Mark as Claimed" button.
+
+Button is locked until staff enters a shared store PIN/password (assigned internally, not given to users).
+
+Once staff enters the password and clicks confirm → frontend calls backend API to update redemption status.
+
+4. Backend Claim Update
+
+Backend validates:
+
+QR code is valid (exists, status = Issued, not expired).
+
+Store PIN is correct.
+
+If valid → redemption status changes from "Issued" → "Claimed".
+
+Timestamp of claim is logged.
+
+If QR already used → frontend displays "Reward already claimed".
+
+5. Expiry Handling (Automated – Node Cron)
+
+A cron job runs daily (backend only):
+
+Finds redemptions where status = Issued and expiryDate < today.
+
+Updates status to "Expired".
+
+Refunds points to the user’s account.
+
+Adds a note: "Redemption expired, X points refunded".
+
+Users see this update in their redemption history.
+
+6. User History & Transparency
+
+Redemption History shows one of:
+
+✅ Claimed (with timestamp)
+
+⏳ Issued (awaiting claim)
+
+❌ Expired (with refunded points message)
+
+Keeps things fair for both users and admins.
+
+
+
+/-------------------------------------------------------------------------------------/
+Checklist for Frontend Changes
+
+Build validation page UI: show details + "Mark as Claimed" button.✅
+
+Add password modal before confirming claim. ✅
+
+API call to backend → update redemption status.
+
+Handle UI states:
+
+Success → “Reward claimed successfully!”
+
+Already used → “This reward is already claimed.”
+
+Expired → “This reward has expired. Points refunded.”
+
+
+
+/-------------------------------------------------------------------------------------/
+Checklist for Backend Changes
+
+Update Redemption model → fields for status, expiryDate, pointsUsed, note.
+
+Add endpoint:
+
+GET /redemption/:code → fetch details for QR validation page.
+
+POST /redemption/:code/claim → mark as claimed (with staff password check).
+
+Integrate node-cron in backend to auto-expire and refund points.
+
+Update User model points when expired.

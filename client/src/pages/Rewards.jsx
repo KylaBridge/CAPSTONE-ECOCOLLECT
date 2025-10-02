@@ -46,7 +46,7 @@ export default function Rewards() {
   const fetchRewards = async () => {
     try {
       const response = await axios.get("/api/ecocollect/rewards");
-      const formattedRewards = response.data.map(reward => ({
+      const formattedRewards = response.data.map((reward) => ({
         id: reward._id,
         name: reward.name,
         price: reward.points,
@@ -81,7 +81,7 @@ export default function Rewards() {
       try {
         const response = await axios.post("/api/ecocollect/redeem", {
           userId: user._id,
-          rewardId: selectedReward.id
+          rewardId: selectedReward.id,
         });
 
         if (response.status === 201) {
@@ -105,6 +105,32 @@ export default function Rewards() {
         setInsufficientPoints(false);
       }, 3000);
     }
+  };
+
+  const getRedemptionStatus = (redemption) => {
+    if (redemption.status === "Claimed") {
+      return { text: "Claimed", className: "status-claimed", icon: "✅" };
+    }
+    if (redemption.status === "Expired") {
+      return { text: "Expired", className: "status-expired", icon: "❌" };
+    }
+    if (redemption.expiresAt && new Date() > new Date(redemption.expiresAt)) {
+      return { text: "Expired", className: "status-expired", icon: "❌" };
+    }
+    return { text: "Active", className: "status-active", icon: "🕒" };
+  };
+
+  const formatRedemptionHistory = () => {
+    return redemptionHistory.map((redemption) => {
+      const status = getRedemptionStatus(redemption);
+      return {
+        _id: redemption._id,
+        category: redemption.rewardName,
+        createdAt: redemption.redemptionDate,
+        status: status,
+        redemption: redemption,
+      };
+    });
   };
 
   return (
@@ -156,12 +182,8 @@ export default function Rewards() {
                 </div>
               ) : (
                 <div className="redemption-history">
-                  <Logs 
-                    submissionLogs={redemptionHistory.map(redemption => ({
-                      _id: redemption._id,
-                      category: redemption.rewardName,
-                      createdAt: redemption.redemptionDate,
-                    }))} 
+                  <Logs
+                    submissionLogs={formatRedemptionHistory()}
                     type="redemption"
                     showTitle={false}
                   />

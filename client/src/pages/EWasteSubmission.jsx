@@ -22,10 +22,10 @@ export default function EWasteSubmission() {
 
   const handleUpload = (event) => {
     const files = Array.from(event.target.files);
-    const allowedTypes = ['image/jpeg', 'image/png'];
+    const allowedTypes = ["image/jpeg", "image/png"];
     const maxSize = 5 * 1024 * 1024;
 
-    files.forEach(file => {
+    files.forEach((file) => {
       if (!allowedTypes.includes(file.type)) {
         alert(`Invalid file type: ${file.name}`);
         return;
@@ -36,7 +36,7 @@ export default function EWasteSubmission() {
         return;
       }
 
-      setAttachments(prev => [...prev, file]);
+      setAttachments((prev) => [...prev, file]);
     });
   };
 
@@ -69,7 +69,7 @@ export default function EWasteSubmission() {
     const formData = new FormData();
     formData.append("userId", user._id);
     formData.append("category", selectedCategory);
-    attachments.forEach(file => formData.append("attachments", file));
+    attachments.forEach((file) => formData.append("attachments", file));
 
     try {
       const response = await axios.post("/api/ecocollect/ewaste", formData, {
@@ -103,7 +103,14 @@ export default function EWasteSubmission() {
         <div className="drop-ewaste-container">
           <h1>Drop your E-Waste!</h1>
           <div className="upload-button-container">
-            <input type="file" id="file-upload" style={{ display: "none" }} onChange={handleUpload} multiple />
+            <input
+              type="file"
+              id="file-upload"
+              style={{ display: "none" }}
+              accept="image/jpeg,image/png,image/jpg"
+              onChange={handleUpload}
+              multiple
+            />
             <label htmlFor="file-upload">
               <FaCamera className="camera-icon" />
               UPLOAD

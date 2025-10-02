@@ -25,6 +25,7 @@ import LandingPage from "./pages/LandingPage.jsx";
 import AboutPage from "./pages/AboutPage.jsx";
 import ContactPage from "./pages/ContactPage.jsx";
 import ShareableBadge from "./components/ShareableBadge.jsx";
+import ValidateRedeem from "./pages/ValidateRedeem.jsx";
 
 // Protected route for authenticated users
 function ProtectedRoute({ children }) {
@@ -70,6 +71,7 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/badge/:id" element={<ShareableBadge />} />
+        <Route path="/redemption/validate/:id" element={<ValidateRedeem />} />
 
         {/* Protected User Routes */}
         <Route

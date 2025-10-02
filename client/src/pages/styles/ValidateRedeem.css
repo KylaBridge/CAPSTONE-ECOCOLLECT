@@ -1,0 +1,522 @@
+/* ValidateRedeem.css - Specific styling for ValidateRedeem component */
+
+.validate-redeem-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #2c5530 0%, #4a7c59 50%, #68a85c 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.validate-redeem-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  width: 100%;
+  overflow: hidden;
+  animation: validate-redeem-fadeIn 0.6s ease-out;
+}
+
+@keyframes validate-redeem-fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Header Section */
+.validate-redeem-header {
+  background: linear-gradient(135deg, #2c5530, #4a7c59);
+  color: white;
+  padding: 24px;
+  text-align: center;
+}
+
+.validate-redeem-header h1 {
+  margin: 0 0 16px 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.validate-redeem-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.validate-redeem-status-issued {
+  background-color: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.validate-redeem-status-claimed {
+  background-color: rgba(40, 167, 69, 0.2);
+  color: #28a745;
+  border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.validate-redeem-status-expired {
+  background-color: rgba(220, 53, 69, 0.2);
+  color: #dc3545;
+  border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+.validate-redeem-status-unknown {
+  background-color: rgba(108, 117, 125, 0.2);
+  color: #6c757d;
+  border: 1px solid rgba(108, 117, 125, 0.3);
+}
+
+.validate-redeem-status-icon {
+  font-size: 1.1rem;
+}
+
+/* Loading and Error States */
+.validate-redeem-loading,
+.validate-redeem-error {
+  padding: 40px 24px;
+  text-align: center;
+}
+
+.validate-redeem-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #4a7c59;
+  border-radius: 50%;
+  animation: validate-redeem-spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes validate-redeem-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.validate-redeem-error h2 {
+  color: #dc3545;
+  margin-bottom: 16px;
+}
+
+/* Details Section */
+.validate-redeem-details {
+  padding: 24px;
+}
+
+.validate-redeem-image-container {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.validate-redeem-image {
+  max-width: 200px;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.validate-redeem-reward-name {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2c5530;
+  margin: 0 0 20px 0;
+  text-align: center;
+}
+
+.validate-redeem-info-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.validate-redeem-info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #4a7c59;
+}
+
+.validate-redeem-info-label {
+  font-weight: 600;
+  color: #495057;
+  flex: 0 0 auto;
+  margin-right: 12px;
+}
+
+.validate-redeem-info-value {
+  color: #2c5530;
+  font-weight: 500;
+  text-align: right;
+  flex: 1;
+  word-break: break-word;
+}
+
+.validate-redeem-expired {
+  color: #dc3545 !important;
+  font-weight: 600;
+}
+
+/* Action Buttons */
+.validate-redeem-actions {
+  padding: 24px;
+  background: #f8f9fa;
+  text-align: center;
+}
+
+.validate-redeem-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 140px;
+}
+
+.validate-redeem-btn-primary {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+}
+
+.validate-redeem-btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #218838, #1fa085);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(40, 167, 69, 0.3);
+}
+
+.validate-redeem-btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.validate-redeem-btn-secondary:hover:not(:disabled) {
+  background: #5a6268;
+  transform: translateY(-2px);
+}
+
+.validate-redeem-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Success and Status Messages */
+.validate-redeem-success {
+  padding: 20px;
+  background: linear-gradient(
+    135deg,
+    rgba(40, 167, 69, 0.1),
+    rgba(32, 201, 151, 0.1)
+  );
+  border: 2px solid #28a745;
+  border-radius: 12px;
+}
+
+.validate-redeem-success h3 {
+  color: #28a745;
+  margin: 0 0 8px 0;
+  font-size: 1.3rem;
+}
+
+.validate-redeem-success p {
+  margin: 0;
+  color: #155724;
+}
+
+.validate-redeem-already-claimed {
+  padding: 16px;
+  background: rgba(40, 167, 69, 0.1);
+  border: 1px solid #28a745;
+  border-radius: 8px;
+  color: #155724;
+}
+
+.validate-redeem-expired-notice {
+  padding: 16px;
+  background: rgba(220, 53, 69, 0.1);
+  border: 1px solid #dc3545;
+  border-radius: 8px;
+  color: #721c24;
+}
+
+.validate-redeem-expired-notice p {
+  margin: 8px 0;
+}
+
+/* Modal Styles */
+.validate-redeem-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.validate-redeem-modal {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  max-width: 400px;
+  width: 100%;
+  overflow: hidden;
+  animation: validate-redeem-modalFadeIn 0.3s ease-out;
+}
+
+@keyframes validate-redeem-modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.validate-redeem-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #2c5530, #4a7c59);
+  color: white;
+}
+
+.validate-redeem-modal-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.validate-redeem-modal-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.validate-redeem-modal-close:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.validate-redeem-modal-body {
+  padding: 20px;
+}
+
+.validate-redeem-modal-body p {
+  margin: 0 0 16px 0;
+  color: #495057;
+}
+
+.validate-redeem-form-group {
+  margin-bottom: 16px;
+}
+
+.validate-redeem-form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.validate-redeem-password-input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+  box-sizing: border-box;
+}
+
+.validate-redeem-password-input:focus {
+  outline: none;
+  border-color: #4a7c59;
+  box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.1);
+}
+
+.validate-redeem-error-message {
+  color: #dc3545;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: rgba(220, 53, 69, 0.1);
+  border-radius: 6px;
+  border-left: 3px solid #dc3545;
+}
+
+.validate-redeem-modal-footer {
+  display: flex;
+  gap: 12px;
+  padding: 20px;
+  background: #f8f9fa;
+  justify-content: flex-end;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .validate-redeem-container {
+    padding: 16px;
+  }
+
+  .validate-redeem-card {
+    margin: 0;
+  }
+
+  .validate-redeem-header {
+    padding: 20px 16px;
+  }
+
+  .validate-redeem-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .validate-redeem-details {
+    padding: 20px 16px;
+  }
+
+  .validate-redeem-reward-name {
+    font-size: 1.3rem;
+  }
+
+  .validate-redeem-info-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .validate-redeem-info-value {
+    text-align: left;
+  }
+
+  .validate-redeem-actions {
+    padding: 20px 16px;
+  }
+
+  .validate-redeem-btn {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .validate-redeem-modal-footer {
+    flex-direction: column;
+  }
+
+  .validate-redeem-modal-footer .validate-redeem-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .validate-redeem-container {
+    padding: 12px;
+  }
+
+  .validate-redeem-header {
+    padding: 16px 12px;
+  }
+
+  .validate-redeem-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .validate-redeem-details {
+    padding: 16px 12px;
+  }
+
+  .validate-redeem-actions {
+    padding: 16px 12px;
+  }
+
+  .validate-redeem-modal-overlay {
+    padding: 12px;
+  }
+
+  .validate-redeem-modal-header,
+  .validate-redeem-modal-body,
+  .validate-redeem-modal-footer {
+    padding: 16px;
+  }
+
+  .validate-redeem-status {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+}
+
+/* Additional utility classes */
+.validate-redeem-text-center {
+  text-align: center;
+}
+
+.validate-redeem-text-success {
+  color: #28a745;
+}
+
+.validate-redeem-text-danger {
+  color: #dc3545;
+}
+
+.validate-redeem-text-warning {
+  color: #ffc107;
+}
+
+.validate-redeem-mb-0 {
+  margin-bottom: 0;
+}
+
+.validate-redeem-mt-2 {
+  margin-top: 16px;
+}
+
+/* Print styles for QR validation */
+@media print {
+  .validate-redeem-container {
+    background: white;
+    min-height: auto;
+  }
+
+  .validate-redeem-actions,
+  .validate-redeem-modal-overlay {
+    display: none;
+  }
+
+  .validate-redeem-card {
+    box-shadow: none;
+    border: 1px solid #dee2e6;
+  }
+}
