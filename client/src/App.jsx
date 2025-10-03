@@ -62,7 +62,10 @@ axios.defaults.withCredentials = true;
 export default function App() {
   return (
     <UserContextProvider>
-      <Toaster position="bottom-right" toastOptions={{ duration: 2000 }} />
+      <Toaster 
+        position="bottom-right" 
+        toastOptions={{ duration: 5000 }} 
+      />
       <Routes>
         {/* Public User Routes */}
         <Route path="/" element={<LandingPage />} />

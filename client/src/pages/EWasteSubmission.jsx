@@ -18,6 +18,7 @@ export default function EWasteSubmission() {
   const [attachments, setAttachments] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [submissionLogs, setSubmissionLogs] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useContext(UserContext);
 
   const handleUpload = (event) => {
@@ -66,6 +67,8 @@ export default function EWasteSubmission() {
       return;
     }
 
+    setIsSubmitting(true);
+
     const formData = new FormData();
     formData.append("userId", user._id);
     formData.append("category", selectedCategory);
@@ -87,6 +90,8 @@ export default function EWasteSubmission() {
     } catch (err) {
       console.error(err);
       alert("An error occurred while submitting.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -161,10 +166,10 @@ export default function EWasteSubmission() {
 
             <button 
               onClick={handleSubmit} 
-              disabled={!attachments.length || !selectedCategory}
-              className={!attachments.length || !selectedCategory ? 'disabled-button' : ''}
+              disabled={!attachments.length || !selectedCategory || isSubmitting}
+              className={(!attachments.length || !selectedCategory || isSubmitting) ? 'disabled-button' : ''}
             >
-              SUBMIT
+              {isSubmitting ? 'SUBMITTING...' : 'SUBMIT'}
             </button>
           </div>
         </div>

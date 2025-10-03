@@ -15,6 +15,7 @@ export default function Rewards() {
   const [selectedReward, setSelectedReward] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [redeemSuccess, setRedeemSuccess] = useState(false);
+  const [isRedeeming, setIsRedeeming] = useState(false);
   const [insufficientPoints, setInsufficientPoints] = useState(false);
   const [rewards, setRewards] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -66,6 +67,7 @@ export default function Rewards() {
     setSelectedReward(reward);
     setIsModalOpen(true);
     setRedeemSuccess(false);
+    setIsRedeeming(false);
     setInsufficientPoints(false);
   };
 
@@ -75,9 +77,10 @@ export default function Rewards() {
   };
 
   const handleRedeem = async () => {
-    if (!selectedReward) return;
+    if (!selectedReward || isRedeeming) return;
 
     if (currentPoints >= selectedReward.price) {
+      setIsRedeeming(true);
       try {
         const response = await axios.post("/api/ecocollect/redeem", {
           userId: user._id,
@@ -92,11 +95,15 @@ export default function Rewards() {
           // Refresh rewards list and redemption history
           fetchRewards();
           fetchRedemptionHistory();
-          toast.success("Reward redeemed successfully!");
+          toast.success("Reward redeemed successfully! Check your email for the QR code.", {
+            duration: 6000, // 6 seconds for important success message
+          });
         }
       } catch (error) {
         console.error("Error redeeming reward:", error);
         toast.error("Failed to redeem reward");
+      } finally {
+        setIsRedeeming(false);
       }
     } else {
       setInsufficientPoints(true);
@@ -212,14 +219,14 @@ export default function Rewards() {
               <button
                 className="modal-redeem-button"
                 onClick={handleRedeem}
-                disabled={redeemSuccess}
+                disabled={redeemSuccess || isRedeeming}
               >
-                Redeem
+                {isRedeeming ? 'Redeeming...' : 'Redeem'}
               </button>
             ) : (
               <div className="redeem-success">
                 <h3>Purchased!</h3>
-                <p>Thank you for your purchase.</p>
+                <p>Thank you for your purchase. Check your email for the QR code!</p>
               </div>
             )}
 

@@ -19,6 +19,7 @@ export default function EWasteSubmit() {
     const [sortOption, setSortOption] = useState("");
     const [showStatusSubmenu, setShowStatusSubmenu] = useState(false);
     const [points, setPoints] = useState("");
+    const [isUpdating, setIsUpdating] = useState(false);
     const dropdownRef = useRef(null);
 
     useEffect(() => {
@@ -54,6 +55,10 @@ export default function EWasteSubmit() {
     };
 
     const handleUpdateSubmission = async () => {
+        if (isUpdating) return; // Prevent multiple submissions
+        
+        setIsUpdating(true);
+        
         try {
             // Prepare update data
             const updateData = {
@@ -79,6 +84,8 @@ export default function EWasteSubmit() {
         } catch (error) {
             console.error("Error updating submission:", error);
             toast.error("An error occurred while updating the submission.");
+        } finally {
+            setIsUpdating(false);
         }
     };    
 
@@ -289,9 +296,9 @@ export default function EWasteSubmit() {
                                             type="update"
                                             size="medium"
                                             onClick={handleUpdateSubmission}
-                                            disabled={statusValue === originalStatus || (selectedSubmission.category === "others" && statusValue === "Approved" && !points)}
+                                            disabled={isUpdating || statusValue === originalStatus || (selectedSubmission.category === "others" && statusValue === "Approved" && !points)}
                                         >
-                                            UPDATE
+                                            {isUpdating ? 'UPDATING...' : 'UPDATE'}
                                         </AdminButton>
                                     </div>
                                 </div>

@@ -131,7 +131,7 @@ export default function Home() {
                 <div className="submission-items-display">
                   <h2>Submissions:</h2>
                   <span className="submission-count">
-                    {submissionCount} Items
+                    {submissionCount}
                   </span>
                 </div>
               </div>

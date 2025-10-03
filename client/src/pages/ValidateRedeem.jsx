@@ -9,6 +9,7 @@ export default function ValidateRedeem() {
   const navigate = useNavigate();
   const [redemptionData, setRedemptionData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [validating, setValidating] = useState(false);
   const [error, setError] = useState(null);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [storePassword, setStorePassword] = useState("");
@@ -24,6 +25,7 @@ export default function ValidateRedeem() {
   const fetchRedemptionData = async () => {
     try {
       setLoading(true);
+      setValidating(true);
       const response = await axios.get(`/api/ecocollect/redeem/validate/${id}`);
       setRedemptionData(response.data);
       setError(null);
@@ -38,6 +40,7 @@ export default function ValidateRedeem() {
       }
     } finally {
       setLoading(false);
+      setValidating(false);
     }
   };
 
@@ -173,7 +176,8 @@ export default function ValidateRedeem() {
         <div className="validate-redeem-card">
           <div className="validate-redeem-loading">
             <div className="validate-redeem-spinner"></div>
-            <p>Loading redemption details...</p>
+            <p>{validating ? 'Validating redemption...' : 'Loading redemption details...'}</p>
+            <small>Please wait while we verify your QR code</small>
           </div>
         </div>
       </div>
@@ -322,8 +326,9 @@ export default function ValidateRedeem() {
             <button
               className="validate-redeem-btn validate-redeem-btn-primary"
               onClick={handleConfirmRedemption}
+              disabled={validating}
             >
-              Confirm Redemption
+              {validating ? 'Validating...' : 'Confirm Redemption'}
             </button>
           ) : redemptionData.status === "Claimed" ? (
             <div className="validate-redeem-already-claimed">
