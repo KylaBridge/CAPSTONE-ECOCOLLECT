@@ -6,6 +6,7 @@ import {
   ScrollView,
   Alert,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -31,6 +32,7 @@ const Add = () => {
   const [attachments, setAttachments] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [submissionLogs, setSubmissionLogs] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const API_BASE = API_BASE_URL;
 
@@ -133,6 +135,8 @@ const Add = () => {
       return;
     }
 
+    setIsSubmitting(true);
+
     const formData = new FormData();
     formData.append("userId", user._id);
     formData.append("category", selectedCategory);
@@ -154,14 +158,27 @@ const Add = () => {
       });
 
       if (response.status === 201) {
-        Alert.alert("Success", "E-Waste submitted successfully!");
-        setAttachments([]);
-        setSelectedCategory(null);
-        fetchSubmissionLogs();
+        Alert.alert(
+          "Success", 
+          "E-Waste submitted successfully! Your submission is now under review.",
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                setAttachments([]);
+                setSelectedCategory(null);
+                fetchSubmissionLogs();
+              }
+            }
+          ]
+        );
       }
     } catch (err) {
       console.error(err);
-      Alert.alert("Error", "An error occurred while submitting.");
+      const errorMessage = err.response?.data?.message || "An error occurred while submitting.";
+      Alert.alert("Submission Failed", errorMessage);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -189,12 +206,14 @@ const Add = () => {
             icon={"cloud-upload-outline"}
             onPress={handleUploadPress}
             style={styles.uploadButton}
+            disabled={isSubmitting}
           />
           <AddImageButton
             name={"Camera"}
             icon={"camera-outline"}
             onPress={handleCameraPress}
             style={styles.uploadButton}
+            disabled={isSubmitting}
           />
         </View>
 
@@ -247,6 +266,11 @@ const Add = () => {
                   </ThemedText>
                   <TouchableOpacity
                     onPress={() => handleRemoveAttachment(index)}
+                    disabled={isSubmitting}
+                    style={[
+                      styles.removeButton,
+                      isSubmitting && styles.disabledRemoveButton
+                    ]}
                   >
                     <Ionicons name="trash-outline" size={20} color="#ff4444" />
                   </TouchableOpacity>
@@ -282,6 +306,7 @@ const Add = () => {
               style={[styles.picker, { color: theme.text }]}
               dropdownIconColor={theme.text}
               mode="dropdown"
+              enabled={!isSubmitting}
             >
               <Picker.Item label="Scroll Me" value="" />
               <Picker.Item label="Telephone" value="Telephone" />
@@ -304,13 +329,24 @@ const Add = () => {
         {/* Submit Button */}
         <ThemedButton
           onPress={handleSubmit}
-          disabled={!attachments.length || !selectedCategory}
+          disabled={!attachments.length || !selectedCategory || isSubmitting}
           style={[
             styles.submitButton,
-            (!attachments.length || !selectedCategory) && styles.disabledButton,
+            (!attachments.length || !selectedCategory || isSubmitting) && styles.disabledButton,
           ]}
         >
-          <ThemedText style={styles.submitButtonText}>SUBMIT</ThemedText>
+          {isSubmitting ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator 
+                size="small" 
+                color="#FFFFFF" 
+                style={styles.loadingSpinner}
+              />
+              <ThemedText style={styles.submitButtonText}>SUBMITTING...</ThemedText>
+            </View>
+          ) : (
+            <ThemedText style={styles.submitButtonText}>SUBMIT</ThemedText>
+          )}
         </ThemedButton>
 
         <Spacer height={20} />
@@ -435,6 +471,21 @@ const styles = StyleSheet.create({
   submitButtonText: {
     fontSize: 16,
     fontWeight: "600",
+    color: "#FFFFFF",
+  },
+  loadingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  loadingSpinner: {
+    marginRight: 8,
+  },
+  removeButton: {
+    padding: 4,
+  },
+  disabledRemoveButton: {
+    opacity: 0.5,
   },
   logsCard: {
     padding: 20,
