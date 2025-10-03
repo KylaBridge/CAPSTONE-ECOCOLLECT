@@ -33,6 +33,8 @@ const {
   getUserRedemptions,
   getRedemptionCount,
   getAllRedemptions,
+  getRedemptionForValidation,
+  confirmRedemption,
 } = require("../controllers/redemptionController");
 
 const {
@@ -183,6 +185,10 @@ router.get(
 // --- Redemption Management ---
 router.get("/redeem/user/:userId", authMiddleware, getUserRedemptions);
 router.get("/redeem/all", authMiddleware, getAllRedemptions);
+
+// --- QR Code Validation Routes (Public - No Auth Required) ---
+router.get("/redeem/validate/:id", getRedemptionForValidation);
+router.post("/redeem/confirm/:id", confirmRedemption);
 
 // --- Analytics ---
 router.get(

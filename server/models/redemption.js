@@ -20,6 +20,30 @@ const redemptionSchema = new Schema({
         type: Date,
         default: Date.now
     },
+    status: {
+        type: String,
+        enum: ['Issued', 'Claimed', 'Expired'],
+        default: 'Issued'
+    },
+    expiresAt: {
+        type: Date,
+        required: true
+    },
+    pointsSpent: {
+        type: Number,
+        required: true
+    },
+    claimedAt: {
+        type: Date
+    },
+    redemptionId: {
+        type: String,
+        unique: true,
+        required: true
+    },
+    note: {
+        type: String
+    },
     createdAt: {
         type: Date,
         default: Date.now

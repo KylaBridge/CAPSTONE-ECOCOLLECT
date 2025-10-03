@@ -4,6 +4,8 @@ const User = require("../models/user");
 const Reward = require("../models/rewards");
 const Badge = require("../models/badge");
 const ActivityLog = require("../models/activityLog");
+const { sendRedemptionEmail } = require("../helpers/mail");
+const crypto = require("crypto");
 
 // Update user rank based on badges
 const updateUserRank = async (userId) => {
@@ -112,16 +114,28 @@ const redeemReward = async (req, res) => {
     }
 
     // Check if user has enough points
-    if (user.points < reward.pointsCost) {
+    if (user.points < reward.points) {
       return res.status(400).json({ message: "Insufficient points" });
     }
 
-    // Create redemption record
+    // Generate unique redemption ID
+    const redemptionId = crypto.randomUUID();
+    
+    // Set expiry date (7 days from now)
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + 7);
+
+    // Create redemption record with new fields
     const redemption = new Redemption({
       userId,
       rewardId,
       rewardName: reward.name,
       redemptionDate: new Date(),
+      status: 'Issued',
+      expiresAt: expiryDate,
+      pointsSpent: reward.points,
+      redemptionId: redemptionId,
+      note: `Redemption issued via app on ${new Date().toISOString()}`
     });
 
     // Update user points
@@ -130,21 +144,44 @@ const redeemReward = async (req, res) => {
     // Save both redemption and updated user points
     await Promise.all([redemption.save(), user.save()]);
 
+    // Prepare email data
+    const validationUrl = `${process.env.FRONTEND_URL}/redemption/validate/${redemptionId}`;
+    const redemptionData = {
+      userFirstName: user.firstName || user.name?.split(' ')[0],
+      rewardName: reward.name,
+      pointsSpent: reward.points,
+      redemptionId: redemptionId,
+      expiryDate: expiryDate,
+      validationUrl: validationUrl
+    };
+
+    // Send redemption email with QR code
+    try {
+      await sendRedemptionEmail(user.email, redemptionData);
+      console.log(`Redemption email sent to ${user.email} for redemption ${redemptionId}`);
+    } catch (emailError) {
+      console.error('Failed to send redemption email:', emailError);
+      // Don't fail the redemption if email fails, just log it
+    }
+
     // Log activity
     await ActivityLog.create({
       userId,
       userEmail: user.email,
       userRole: req.user?.role,
       action: "Reward Redeemed",
-      details: `Redeemed ${reward.name} for ${reward.points} points`,
+      details: `Redeemed ${reward.name} for ${reward.points} points. Redemption ID: ${redemptionId}`,
     });
 
     res.status(201).json({
-      message: "Reward redeemed successfully",
+      message: "Reward redeemed successfully! Check your email for the QR code.",
       remainingPoints: user.points,
+      redemptionId: redemptionId,
+      expiresAt: expiryDate,
+      validationUrl: validationUrl
     });
   } catch (err) {
-    console.error(err);
+    console.error('Error in redeemReward:', err);
     res.status(500).json({ message: "Failed to redeem reward" });
   }
 };

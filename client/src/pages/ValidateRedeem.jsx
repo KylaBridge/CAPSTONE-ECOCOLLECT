@@ -12,6 +12,7 @@ export default function ValidateRedeem() {
   const [error, setError] = useState(null);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [storePassword, setStorePassword] = useState("");
+  const [storeEmail, setStoreEmail] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirming, setConfirming] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
@@ -54,8 +55,12 @@ export default function ValidateRedeem() {
   };
 
   const handlePasswordSubmit = async () => {
+    if (!storeEmail.trim()) {
+      setPasswordError("Please enter the admin email");
+      return;
+    }
     if (!storePassword.trim()) {
-      setPasswordError("Please enter the store password");
+      setPasswordError("Please enter the admin password");
       return;
     }
 
@@ -64,6 +69,7 @@ export default function ValidateRedeem() {
       const response = await axios.post(
         `/api/ecocollect/redeem/confirm/${id}`,
         {
+          storeEmail: storeEmail.trim(),
           storePassword: storePassword.trim(),
         }
       );
@@ -82,7 +88,7 @@ export default function ValidateRedeem() {
     } catch (error) {
       console.error("Error confirming redemption:", error);
       if (error.response?.status === 401) {
-        setPasswordError("Invalid store password. Please try again.");
+        setPasswordError("Invalid admin credentials. Please try again.");
       } else if (error.response?.status === 409) {
         setPasswordError("This reward has already been claimed.");
       } else {
@@ -95,6 +101,7 @@ export default function ValidateRedeem() {
 
   const handleCloseModal = () => {
     setShowPasswordModal(false);
+    setStoreEmail("");
     setStorePassword("");
     setPasswordError("");
   };
@@ -342,7 +349,7 @@ export default function ValidateRedeem() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="validate-redeem-modal-header">
-              <h3>Store Password Required</h3>
+              <h3>Admin Authentication Required</h3>
               <button
                 className="validate-redeem-modal-close"
                 onClick={handleCloseModal}
@@ -352,10 +359,22 @@ export default function ValidateRedeem() {
             </div>
 
             <div className="validate-redeem-modal-body">
-              <p>Please enter the store password to confirm this redemption:</p>
+              <p>Please enter admin credentials to confirm this redemption:</p>
 
               <div className="validate-redeem-form-group">
-                <label htmlFor="storePassword">Store Password:</label>
+                <label htmlFor="storeEmail">Admin Email:</label>
+                <input
+                  type="email"
+                  id="storeEmail"
+                  value={storeEmail}
+                  onChange={(e) => setStoreEmail(e.target.value)}
+                  placeholder="Enter admin email"
+                  className="validate-redeem-password-input"
+                />
+              </div>
+
+              <div className="validate-redeem-form-group">
+                <label htmlFor="storePassword">Admin Password:</label>
                 <input
                   type="password"
                   id="storePassword"
@@ -364,7 +383,7 @@ export default function ValidateRedeem() {
                   onKeyPress={(e) =>
                     e.key === "Enter" && handlePasswordSubmit()
                   }
-                  placeholder="Enter store password"
+                  placeholder="Enter admin password"
                   className="validate-redeem-password-input"
                 />
               </div>
@@ -387,7 +406,7 @@ export default function ValidateRedeem() {
               <button
                 className="validate-redeem-btn validate-redeem-btn-primary"
                 onClick={handlePasswordSubmit}
-                disabled={confirming || !storePassword.trim()}
+                disabled={confirming || !storeEmail.trim() || !storePassword.trim()}
               >
                 {confirming ? "Confirming..." : "Confirm"}
               </button>

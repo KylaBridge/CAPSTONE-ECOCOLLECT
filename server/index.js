@@ -6,6 +6,7 @@ const { mongoose } = require("mongoose");
 const cookieParser = require("cookie-parser");
 const passport = require("./config/passport");
 const path = require("path");
+const { startCronJobs } = require("./cronJobs");
 
 // Middleware
 app.use(express.json());
@@ -40,8 +41,13 @@ app.get("*", (req, res) => {
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => {
+    console.log("DB connected");
+    
+    // Start cron jobs after database connection
+    startCronJobs();
+    
     app.listen(process.env.PORT, () => {
-      console.log("DB connected and Server is running on", process.env.PORT);
+      console.log("Server is running on", process.env.PORT);
     });
   })
   .catch((err) => console.log("Database Not Connected", err));
