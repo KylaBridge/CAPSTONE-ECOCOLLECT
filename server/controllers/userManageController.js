@@ -189,67 +189,9 @@ const getUserParticipationData = async (req, res) => {
   }
 };
 
-const addAdmin = async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-
-    // Input validation
-    if (!name || !email || !password) {
-      return res
-        .status(400)
-        .json({ error: "Name, email, and password are required" });
-    }
-
-    if (password.length < 6) {
-      return res
-        .status(400)
-        .json({ error: "Password must be at least 6 characters long" });
-    }
-
-    const exist = await User.findOne({ email });
-
-    if (exist) {
-      return res.status(400).json({ error: "Email Already Exists" });
-    }
-
-    const hashedPassword = await hashPassword(password);
-
-    const admin = await User.create({
-      name,
-      email,
-      password: hashedPassword,
-      role: "admin",
-    });
-
-    // Log the admin creation activity
-    const logUserId = req.user?._id;
-    const logUserEmail = req.user?.email || "System";
-
-    if (logUserId) {
-      await ActivityLog.create({
-        userId: logUserId,
-        userEmail: logUserEmail,
-        userRole: req.user?.role,
-        action: "Admin Created",
-        details: `Created new admin account for ${email}`,
-      });
-    }
-
-    // Don't return the password in the response
-    const { password: _, ...adminResponse } = admin.toObject();
-
-    res
-      .status(201)
-      .json({ message: "Admin Created Successfully", admin: adminResponse });
-  } catch (error) {
-    console.error("Error creating admin:", error);
-    res.status(500).json({ error: "Failed to create admin account" });
-  }
-};
-
 const addUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role = "user" } = req.body;
 
     // Input validation
     if (!name || !email || !password) {
@@ -262,6 +204,17 @@ const addUser = async (req, res) => {
       return res
         .status(400)
         .json({ error: "Password must be at least 6 characters long" });
+    }
+
+    // Validate role
+    const validRoles = ["user", "admin", "superadmin"];
+    if (!validRoles.includes(role)) {
+      return res.status(400).json({ error: "Invalid role specified" });
+    }
+
+    // Check permissions - only superadmin can create admin/superadmin accounts
+    if ((role === "admin" || role === "superadmin") && req.user?.role !== "superadmin") {
+      return res.status(403).json({ error: "Only superadmins can create admin accounts" });
     }
 
     const exist = await User.findOne({ email });
@@ -276,29 +229,31 @@ const addUser = async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      role: "user",
+      role,
     });
 
-    // Log the admin creation activity
+    // Log the user creation activity
     const logUserId = req.user?._id;
     const logUserEmail = req.user?.email || "System";
 
     if (logUserId) {
+      const actionText = role === "admin" ? "Admin Created" : role === "superadmin" ? "Superadmin Created" : "User Created";
       await ActivityLog.create({
         userId: logUserId,
         userEmail: logUserEmail,
         userRole: req.user?.role,
-        action: "User Created",
-        details: `Created new user account for ${email}`,
+        action: actionText,
+        details: `Created new ${role} account for ${email}`,
       });
     }
 
     // Don't return the password in the response
     const { password: _, ...userResponse } = user.toObject();
 
+    const roleText = role === "admin" ? "Admin" : role === "superadmin" ? "Superadmin" : "User";
     res
       .status(201)
-      .json({ message: "User Created Successfully", user: userResponse });
+      .json({ message: `${roleText} Created Successfully`, user: userResponse });
   } catch (error) {
     console.error("Error creating user:", error);
     res.status(500).json({ error: "Failed to create user account" });
@@ -336,7 +291,6 @@ module.exports = {
   countUsersByRole,
   deleteUser,
   getUserParticipationData,
-  addAdmin,
   addUser,
   changeUserRole,
 };

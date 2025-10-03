@@ -14,7 +14,7 @@ const activityLogSchema = new Schema({
     userRole: {
         type: String,
         required: true,
-        enum: ['user', 'admin']
+        enum: ['user', 'admin', 'superadmin']
     },
     action: {
         type: String,
@@ -23,7 +23,7 @@ const activityLogSchema = new Schema({
                 'EWaste Submitted', 'EWaste Approved', 'EWaste Rejected',
                 'Badge Added', 'Badge Updated', 'Badge Deleted',
                 'Reward Added', 'Reward Updated', 'Reward Deleted', 'Reward Redeemed',
-                'User Registered', 'User Deleted']
+                'User Registered', 'User Created', 'User Deleted', 'Admin Created']
     },
     details: {
         type: String,

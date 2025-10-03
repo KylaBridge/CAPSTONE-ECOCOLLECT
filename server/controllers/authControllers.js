@@ -134,7 +134,7 @@ const loginUser = async (req, res) => {
     }
 
     // If this is an admin login, only allow admins
-    if (isAdminLogin && user.role !== "admin") {
+    if (isAdminLogin && (user.role !== "admin" && user.role !== "superadmin")) {
       return res
         .status(403)
         .json({ error: "You are not authorized to access this page" });
@@ -143,8 +143,8 @@ const loginUser = async (req, res) => {
     // Check if passwords match
     const match = await comparePassword(password, user.password);
     if (match) {
-      // Only set token if not admin login or user is admin
-      if (!isAdminLogin || user.role === "admin") {
+      // Only set token if not admin login or user is admin/superadmin
+      if (!isAdminLogin || user.role === "admin" || user.role === "superadmin") {
         try {
           const token = await signToken({ email: user.email, id: user._id });
           return res
@@ -159,7 +159,7 @@ const loginUser = async (req, res) => {
             .json({
               token,
               message:
-                user.role === "admin" ? "User is an admin" : "User logged in",
+                user.role === "admin" || user.role === "superadmin" ? "User is an admin" : "User logged in",
               _id: user._id,
               role: user.role,
               name: user.name,
@@ -309,10 +309,30 @@ const verifyPassword = async (req, res) => {
       return res.status(400).json({ error: "Password required" });
     }
 
-    // Use the authenticated user's information from the request
-    const user = req.user;
-    if (!user) {
+    // Support Authorization header (Bearer) and cookie
+    const authHeader = req.headers.authorization;
+    let token = null;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      token = authHeader.split(" ")[1];
+    } else if (req.cookies && req.cookies.token) {
+      token = req.cookies.token;
+    }
+
+    if (!token) {
       return res.status(401).json({ error: "User not authenticated" });
+    }
+
+    // Verify token and get user
+    let decoded;
+    try {
+      decoded = await verifyToken(token);
+    } catch (err) {
+      return res.status(401).json({ error: "Invalid or expired token" });
+    }
+
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
     }
 
     const isMatch = await comparePassword(password, user.password);

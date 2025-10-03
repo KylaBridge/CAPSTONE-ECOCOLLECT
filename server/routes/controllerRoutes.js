@@ -17,7 +17,6 @@ const {
   countUsersByRole,
   deleteUser,
   getUserParticipationData,
-  addAdmin,
   addUser,
   changeUserRole,
 } = require("../controllers/userManageController");
@@ -157,13 +156,7 @@ router.patch(
 router.put("/ewaste/:id/status", authMiddleware, updateSubmissionStatus); // Update ewaste status
 router.get("/ewaste", authMiddleware, getAllSubmissions); // All ewaste submissions
 router.delete("/ewaste/:id", authMiddleware, deleteEWaste); // Delete ewaste
-router.post("/add/admin", authMiddleware, addAdmin); // Add admin
-router.post(
-  "/usermanagement/add",
-  authMiddleware,
-  superAdminMiddleware,
-  addUser
-); // Add user
+router.post("/usermanagement/add", authMiddleware, addUser); // Add user/admin (role-based)
 
 // --- Rewards Management ---
 router.get("/rewards", authMiddleware, getAllRewards);
