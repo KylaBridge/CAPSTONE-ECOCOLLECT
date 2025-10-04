@@ -36,6 +36,25 @@ const Add = () => {
 
   const API_BASE = API_BASE_URL;
 
+  // Helper function to get status color
+  const getStatusColor = (status) => {
+    switch (status?.toLowerCase()) {
+      case 'approved':
+      case 'completed':
+        return '#4CAF50'; // Green
+      case 'pending':
+      case 'under review':
+        return '#FFC107'; // Amber
+      case 'rejected':
+      case 'declined':
+        return '#E53935'; // Red
+      case 'processing':
+        return '#29B6F6'; // Blue
+      default:
+        return '#FFC107'; // Default to amber for pending
+    }
+  };
+
   const handleUploadPress = async () => {
     try {
       // Request permissions first
@@ -226,25 +245,25 @@ const Add = () => {
           </ThemedText>
           <View style={styles.instructionList}>
             <View style={styles.instructionItem}>
-              <Ionicons name="checkmark-circle" size={16} color={theme.text} />
+              <Ionicons name="checkmark-circle" size={16} color={theme.iconColor} />
               <ThemedText style={styles.instructionText}>
                 Let's focus on one e-waste item per submission.
               </ThemedText>
             </View>
             <View style={styles.instructionItem}>
-              <Ionicons name="checkmark-circle" size={16} color={theme.text} />
+              <Ionicons name="checkmark-circle" size={16} color={theme.iconColor} />
               <ThemedText style={styles.instructionText}>
                 Tell us what kind of e-waste you're sending.
               </ThemedText>
             </View>
             <View style={styles.instructionItem}>
-              <Ionicons name="checkmark-circle" size={16} color={theme.text} />
+              <Ionicons name="checkmark-circle" size={16} color={theme.iconColor} />
               <ThemedText style={styles.instructionText}>
                 Add as many pics as you need.
               </ThemedText>
             </View>
             <View style={styles.instructionItem}>
-              <Ionicons name="checkmark-circle" size={16} color={theme.text} />
+              <Ionicons name="checkmark-circle" size={16} color={theme.iconColor} />
               <ThemedText style={styles.instructionText}>
                 We'll give it a once-over and let you know it's good to go!
               </ThemedText>
@@ -272,7 +291,7 @@ const Add = () => {
                       isSubmitting && styles.disabledRemoveButton
                     ]}
                   >
-                    <Ionicons name="trash-outline" size={20} color="#ff4444" />
+                    <Ionicons name="trash-outline" size={20} color={Colors.warning} />
                   </TouchableOpacity>
                 </View>
               ))}
@@ -332,6 +351,7 @@ const Add = () => {
           disabled={!attachments.length || !selectedCategory || isSubmitting}
           style={[
             styles.submitButton,
+            { backgroundColor: theme.buttonColorBg },
             (!attachments.length || !selectedCategory || isSubmitting) && styles.disabledButton,
           ]}
         >
@@ -342,10 +362,10 @@ const Add = () => {
                 color="#FFFFFF" 
                 style={styles.loadingSpinner}
               />
-              <ThemedText style={styles.submitButtonText}>SUBMITTING...</ThemedText>
+              <ThemedText title style={styles.submitButtonText}>SUBMITTING...</ThemedText>
             </View>
           ) : (
-            <ThemedText style={styles.submitButtonText}>SUBMIT</ThemedText>
+            <ThemedText title style={styles.submitButtonText}>SUBMIT</ThemedText>
           )}
         </ThemedButton>
 
@@ -359,9 +379,25 @@ const Add = () => {
             </ThemedText>
             {submissionLogs.slice(0, 5).map((log, index) => (
               <View key={index} style={styles.logItem}>
-                <ThemedText style={styles.logCategory}>
-                  {log.category}
-                </ThemedText>
+                <View style={styles.logInfo}>
+                  <ThemedText style={styles.logCategory}>
+                    {log.category}
+                  </ThemedText>
+                  <View style={styles.statusContainer}>
+                    <View 
+                      style={[
+                        styles.statusIndicator, 
+                        { backgroundColor: getStatusColor(log.status) }
+                      ]} 
+                    />
+                    <ThemedText style={[
+                      styles.logStatus,
+                      { color: getStatusColor(log.status) }
+                    ]}>
+                      {log.status || 'Pending'}
+                    </ThemedText>
+                  </View>
+                </View>
                 <ThemedText style={styles.logDate}>
                   {new Date(log.createdAt).toLocaleDateString()}
                 </ThemedText>
@@ -438,7 +474,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 10,
     borderRadius: 6,
-    backgroundColor: "rgba(0,0,0,0.05)",
+    backgroundColor: "rgba(76, 175, 80, 0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(76, 175, 80, 0.2)",
   },
   attachmentName: {
     flex: 1,
@@ -464,6 +502,13 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     marginHorizontal: 20,
+    borderRadius: 25,
+    paddingVertical: 15,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   disabledButton: {
     opacity: 0.5,
@@ -495,15 +540,37 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 10,
+    paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(0,0,0,0.1)",
+    borderBottomColor: "rgba(76, 175, 80, 0.2)",
+  },
+  logInfo: {
+    flex: 1,
+    marginRight: 10,
   },
   logCategory: {
+    fontWeight: "600",
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  statusContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  statusIndicator: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 6,
+  },
+  logStatus: {
+    fontSize: 12,
     fontWeight: "500",
+    textTransform: "capitalize",
   },
   logDate: {
-    fontSize: 12,
+    fontSize: 11,
     opacity: 0.7,
+    textAlign: "right",
   },
 });

@@ -18,6 +18,7 @@ const Colors = {
 
     textInputBg: "#1E392A", // muted dark green input
     textInputBorder: "#4CAF50", // green border highlight
+    placeholderTextColor: "#A5D6A7", // soft green for placeholder
   },
 
   light: {
@@ -33,6 +34,7 @@ const Colors = {
 
     textInputBg: "#C8E6C9", // pale green input field
     textInputBorder: "#388E3C", // dark green border
+    placeholderTextColor: "#2E7D32", // darker green for placeholder
   },
 };
 
