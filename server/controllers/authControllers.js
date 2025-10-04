@@ -216,10 +216,60 @@ const logoutUser = (req, res) => {
 };
 
 // Initiate Google OAuth (delegates to passport)
-const googleAuthStart = passport.authenticate("google", {
-  scope: ["profile", "email"],
-  prompt: "select_account",
-});
+const googleAuthStart = (req, res, next) => {
+  // Security: Strictly validate query parameters to prevent RFI attacks
+  // Allow ONLY standard OAuth parameters
+  const allowedParams = [
+    'state', 'response_type', 'client_id', 'redirect_uri', 'scope', 
+    'access_type', 'prompt', 'include_granted_scopes', 'hd'
+  ];
+  const queryParams = Object.keys(req.query);
+  
+  // First, reject any parameters that are not explicitly allowed
+  for (const param of queryParams) {
+    if (!allowedParams.includes(param)) {
+      console.warn(`Unauthorized query parameter detected and blocked: ${param}`);
+      return res.status(400).json({ 
+        error: "Unauthorized parameter detected",
+        code: "INVALID_PARAMETER",
+        parameter: param
+      });
+    }
+  }
+  
+  // Second, validate values of allowed parameters for suspicious patterns
+  for (const [param, value] of Object.entries(req.query)) {
+    if (typeof value === 'string') {
+      const suspiciousPatterns = [
+        /^https?:\/\/(?!accounts\.google\.com|www\.google\.com)/i, // External URLs except Google
+        /^ftp:\/\//i,
+        /^file:\/\//i,
+        /javascript:/i,
+        /data:/i,
+        /vbscript:/i,
+        /\.\.\/|\.\.%2F/i,  // Directory traversal
+        /%2e%2e/i           // URL encoded dots
+      ];
+      
+      for (const pattern of suspiciousPatterns) {
+        if (pattern.test(value)) {
+          console.warn(`Suspicious parameter value detected and blocked: ${param}=${value}`);
+          return res.status(400).json({ 
+            error: "Suspicious parameter value detected",
+            code: "SECURITY_VIOLATION",
+            parameter: param
+          });
+        }
+      }
+    }
+  }
+  
+  // Proceed with passport authentication only if all validations pass
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    prompt: "select_account",
+  })(req, res, next);
+};
 
 // Google OAuth callback handler (after passport authenticates)
 const googleAuthCallback = (req, res) => {

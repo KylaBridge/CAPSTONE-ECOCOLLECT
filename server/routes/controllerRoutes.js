@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const { sanitizeFilePaths, validateUrlParameters } = require("../middleware/securityMiddleware");
 
 // Import controllers
 const {
@@ -144,6 +145,18 @@ const rewardsUpload = multer({ storage: rewardsStorage });
 const badgesUpload = multer({ storage: badgesStorage });
 const binsUpload = multer({ storage: binsStorage });
 
+// Apply security middleware to all routes except OAuth
+router.use((req, res, next) => {
+  // Skip security validation for OAuth routes
+  if (req.path.includes('/auth/') || req.originalUrl.includes('/auth/')) {
+    return next();
+  }
+  // Apply security middleware to other routes
+  sanitizeFilePaths(req, res, () => {
+    validateUrlParameters(req, res, next);
+  });
+});
+
 // ==================== ADMIN ROUTES ====================
 router.get("/user/ewastes", authMiddleware, getEwastes); // Ewaste counts by category
 router.get("/usermanagement", authMiddleware, getUserData); // All users
@@ -218,6 +231,19 @@ router.get("/badges/public/:id", async (req, res) => {
 
     const { id } = req.params;
     const { userId, userName, userEmail } = req.query;
+
+    // Additional security: Validate query parameters for badge sharing
+    if (userId && (typeof userId !== 'string' || !/^[a-fA-F0-9]{24}$/.test(userId))) {
+      return res.status(400).json({ error: "Invalid userId format" });
+    }
+    
+    if (userName && (typeof userName !== 'string' || userName.length > 100)) {
+      return res.status(400).json({ error: "Invalid userName format" });
+    }
+    
+    if (userEmail && (typeof userEmail !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEmail))) {
+      return res.status(400).json({ error: "Invalid userEmail format" });
+    }
 
     const badge = await Badge.findById(id);
 
