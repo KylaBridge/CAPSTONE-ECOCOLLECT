@@ -66,9 +66,7 @@
     padding: 0;
     list-style: none;
     transition: 0.5s;
-    flex-grow: 1; /* push logout button to bottom */
 }
-
 
 .user-sidebar-ul  li {
     display: flex;
@@ -97,7 +95,6 @@
     width: 100%;
 }
 
-
 nav button {
     display: flex;
     align-items: center;
@@ -105,7 +102,7 @@ nav button {
     gap: 8px;
     width: 80%;
     height: 40px;
-    margin: 10px auto 24px; 
+    margin: 50% auto 24px; 
     font-size: 20px;
     font-weight: bolder;
     color: white;

@@ -3,6 +3,7 @@ import axios from "axios";
 import { Toaster } from "react-hot-toast";
 import { useContext } from "react";
 import { UserContextProvider, UserContext } from "./context/userContext.jsx";
+import "./toast.css"; // Import custom toast styles
 
 // Components and Pages
 import Home from "./pages/Home.jsx";
@@ -64,7 +65,21 @@ export default function App() {
     <UserContextProvider>
       <Toaster 
         position="bottom-right" 
-        toastOptions={{ duration: 5000 }} 
+        containerClassName="toaster-container"
+        toastOptions={{
+          duration: 5000,
+          className: 'custom-toast',
+          style: {}, // Explicitly remove inline styles
+          success: {
+            className: 'custom-toast toast-success',
+          },
+          error: {
+            className: 'custom-toast toast-error',
+          },
+          loading: {
+            className: 'custom-toast toast-loading',
+          },
+        }}
       />
       <Routes>
         {/* Public User Routes */}
