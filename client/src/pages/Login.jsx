@@ -52,7 +52,14 @@ export default function Login() {
     try {
       const response = await login({ email, password });
       if (response?.error) {
-        toast.error(response.error);
+        // Special handling for Google OAuth users
+        if (response.error.includes("Google")) {
+          toast.error(response.error, {
+            duration: 5000,
+          });
+        } else {
+          toast.error(response.error);
+        }
       } else {
         toast.success("User logged in");
         navigate("/home");

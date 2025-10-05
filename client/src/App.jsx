@@ -32,12 +32,13 @@ import ValidateRedeem from "./pages/ValidateRedeem.jsx";
 function ProtectedRoute({ children }) {
   const { user, loading } = useContext(UserContext);
   // Wait for the authentication check to finish
-  if (loading)
+  if (loading) {
     return (
-      <div className="loading">
-        <div className="loading-spinner"></div>
+      <div className="app-loading-overlay">
+        <div className="app-loading-spinner"></div>
       </div>
     );
+  }
   if (!user) return <Navigate to="/" replace />;
   return children;
 }
@@ -46,12 +47,13 @@ function ProtectedRoute({ children }) {
 function AdminProtectedRoute({ children }) {
   const { user, loading } = useContext(UserContext);
   // Wait for the authentication check to finish
-  if (loading)
+  if (loading) {
     return (
-      <div className="loading">
-        <div className="loading-spinner"></div>
+      <div className="app-loading-overlay">
+        <div className="app-loading-spinner"></div>
       </div>
     );
+  }
   if (!user || (user.role !== "admin" && user.role !== "superadmin"))
     return <Navigate to="/admin/login" replace />;
   return children;

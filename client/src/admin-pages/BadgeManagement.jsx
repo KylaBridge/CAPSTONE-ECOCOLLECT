@@ -25,6 +25,8 @@ export default function BadgeManagement() {
     const [sortOption, setSortOption] = useState("");
     const [sortedBadges, setSortedBadges] = useState([]);
     const [showStatusSubmenu, setShowStatusSubmenu] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const [isRemoving, setIsRemoving] = useState(false);
     const dropdownRef = useRef(null);
 
     // Fetch badges on component mount
@@ -151,6 +153,7 @@ export default function BadgeManagement() {
     };
 
     const handleRemoveBadge = async (badgeToRemove) => {
+        setIsRemoving(true);
         try {
             await axios.delete(`/api/ecocollect/badges/${badgeToRemove._id}`);
             setBadges(badges.filter(badge => badge._id !== badgeToRemove._id));
@@ -161,6 +164,8 @@ export default function BadgeManagement() {
         } catch (err) {
             console.error('Error deleting badge:', err);
             alert('Failed to delete badge');
+        } finally {
+            setIsRemoving(false);
         }
     };
 
@@ -171,6 +176,8 @@ export default function BadgeManagement() {
             alert('Points Required must be a non-negative number.');
             return;
         }
+        
+        setIsSaving(true);
         try {
             const formData = new FormData();
             formData.append('name', badgeName);
@@ -213,6 +220,8 @@ export default function BadgeManagement() {
         } catch (err) {
             console.error('Error saving badge:', err);
             alert('Failed to save badge');
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -456,16 +465,29 @@ export default function BadgeManagement() {
                                                     type={selectedBadge?.id === 'new' ? 'save' : 'update'}
                                                     size="medium"
                                                     onClick={handleSubmitBadge}
-                                                    disabled={!isFormValid}
+                                                    disabled={!isFormValid || isSaving || isRemoving}
                                                 >
-                                                    {selectedBadge?.id === 'new' ? 'SAVE' : 'UPDATE'}
+                                                    {isSaving 
+                                                        ? (selectedBadge?.id === 'new' ? 'SAVING...' : 'UPDATING...') 
+                                                        : (selectedBadge?.id === 'new' ? 'SAVE' : 'UPDATE')
+                                                    }
                                                 </AdminButton>
                                                 {viewedFromTable && selectedBadge ? (
-                                                    <AdminButton type="remove" size="medium" onClick={() => handleRemoveBadge(selectedBadge)}>
-                                                        REMOVE
+                                                    <AdminButton 
+                                                        type="remove" 
+                                                        size="medium" 
+                                                        onClick={() => handleRemoveBadge(selectedBadge)}
+                                                        disabled={isSaving || isRemoving}
+                                                    >
+                                                        {isRemoving ? 'REMOVING...' : 'REMOVE'}
                                                     </AdminButton>
                                                 ) : (
-                                                    <AdminButton type="cancel" size="medium" onClick={handleClosePanel}>
+                                                    <AdminButton 
+                                                        type="cancel" 
+                                                        size="medium" 
+                                                        onClick={handleClosePanel}
+                                                        disabled={isSaving || isRemoving}
+                                                    >
                                                         CANCEL
                                                     </AdminButton>
                                                 )}

@@ -2,7 +2,6 @@ const User = require("../models/user");
 const { comparePassword, hashPassword } = require("../helpers/auth");
 const { signToken, verifyToken } = require("../helpers/jwt");
 const { sendVerificationEmail } = require("../helpers/mail");
-// const { sendEmailBrevoVerify } = require("../helpers/nodemailer");
 const passport = require("passport");
 
 // Register Email and Name
@@ -61,7 +60,7 @@ const registerPassword = async (req, res) => {
     ).toString();
 
     try {
-      await sendVerificationEmail(email, verificationCode); // use brevo smtp if gmail fail, currently using gmail api
+      await sendVerificationEmail(email, verificationCode);
     } catch (e) {
       return res.status(500).json(e);
     }
@@ -140,7 +139,18 @@ const loginUser = async (req, res) => {
         .json({ error: "You are not authorized to access this page" });
     }
 
-    // Check if passwords match
+    // Check if this is a Google OAuth user (no traditional password)
+    if (!user.password && user.googleId) {
+      return res.status(400).json({ 
+        error: "This account was created with Google. Please use 'Continue with Google' to sign in." 
+      });
+    }
+
+    // Check if passwords match (only if user has a password)
+    if (!user.password) {
+      return res.status(401).json({ error: "Invalid email or password" });
+    }
+
     const match = await comparePassword(password, user.password);
     if (match) {
       // Only set token if not admin login or user is admin/superadmin
@@ -383,6 +393,17 @@ const verifyPassword = async (req, res) => {
     const user = await User.findById(decoded.id);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
+    }
+
+    // Check if this is a Google OAuth user (no traditional password)
+    if (!user.password && user.googleId) {
+      return res.status(400).json({ 
+        error: "This account was created with Google and doesn't have a traditional password." 
+      });
+    }
+
+    if (!user.password) {
+      return res.status(400).json({ error: "No password set for this account" });
     }
 
     const isMatch = await comparePassword(password, user.password);

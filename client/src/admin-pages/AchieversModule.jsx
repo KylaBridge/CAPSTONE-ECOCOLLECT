@@ -69,6 +69,7 @@ export default function AchieversModule() {
       const sortedData = response.data
         .filter((user) => user && typeof user === "object") // Filter out invalid entries
         .filter((user) => user.role === "user") // Only include users, exclude admins and superadmins
+        .filter((user) => user.rank !== "Unranked" && (user.exp || 0) > 0) // Filter out unranked users with 0 exp
         .sort((a, b) => (b.exp || 0) - (a.exp || 0));
 
       setData(sortedData);

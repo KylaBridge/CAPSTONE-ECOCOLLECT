@@ -35,6 +35,8 @@ export default function EWasteBin() {
     const [sortOption, setSortOption] = useState("");
     const [statusSubSort, setStatusSubSort] = useState("");
     const [showStatusSubmenu, setShowStatusSubmenu] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const [isRemoving, setIsRemoving] = useState(false);
     const dropdownRef = useRef(null);
 
     useEffect(() => {
@@ -161,6 +163,7 @@ export default function EWasteBin() {
     };
 
     const handleRemoveBin = async (binToRemove) => {
+        setIsRemoving(true);
         try {
             await axios.delete(`/api/ecocollect/bins/${binToRemove.binId}`);
             const updatedBins = bins.filter(bin => bin.binId !== binToRemove.binId);
@@ -172,6 +175,8 @@ export default function EWasteBin() {
             alert(`Bin "${binToRemove.binId}" removed!`);
         } catch (err) {
             alert("Failed to remove bin.");
+        } finally {
+            setIsRemoving(false);
         }
     };
 
@@ -180,6 +185,8 @@ export default function EWasteBin() {
             alert("No changes to update or fields are empty.");
             return;
         }
+        
+        setIsSaving(true);
         try {
             const formData = new FormData();
             formData.append("location", location);
@@ -209,6 +216,8 @@ export default function EWasteBin() {
             alert(`Bin "${selectedBin.binId}" updated!`);
         } catch (err) {
             alert("Failed to update bin.");
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -217,6 +226,8 @@ export default function EWasteBin() {
             alert("Please fill in all required fields.");
             return;
         }
+        
+        setIsSaving(true);
         try {
             const formData = new FormData();
             formData.append("location", location);
@@ -245,6 +256,8 @@ export default function EWasteBin() {
             alert(`New bin "${bin._id}" added!`);
         } catch (err) {
             alert("Failed to add bin.");
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -355,23 +368,28 @@ export default function EWasteBin() {
                                                 type={selectedBin?.binId === 'new' ? 'save' : 'update'}
                                                 size="medium"
                                                 onClick={handleSubmitBin}
-                                                disabled={!isFormValid}
+                                                disabled={!isFormValid || isSaving || isRemoving}
                                             >
-                                                {selectedBin?.binId === 'new' ? 'SAVE' : 'UPDATE'}
+                                                {isSaving 
+                                                    ? (selectedBin?.binId === 'new' ? 'SAVING...' : 'UPDATING...') 
+                                                    : (selectedBin?.binId === 'new' ? 'SAVE' : 'UPDATE')
+                                                }
                                             </AdminButton>
                                             {viewedFromTable && selectedBin ? (
                                                 <AdminButton 
                                                     type="remove"
                                                     size="medium"
                                                     onClick={() => handleRemoveBin(selectedBin)}
+                                                    disabled={isSaving || isRemoving}
                                                 >
-                                                    REMOVE
+                                                    {isRemoving ? 'REMOVING...' : 'REMOVE'}
                                                 </AdminButton>
                                             ) : (
                                                 <AdminButton 
                                                     type="cancel"
                                                     size="medium"
                                                     onClick={handleClosePanel}
+                                                    disabled={isSaving || isRemoving}
                                                 >
                                                     CANCEL
                                                 </AdminButton>
