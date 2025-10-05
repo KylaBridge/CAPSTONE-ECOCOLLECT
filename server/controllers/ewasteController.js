@@ -52,9 +52,9 @@ const getAllSubmissions = async (req, res) => {
   }
 };
 
-// Add points to user based on e-waste category
-const addPointsByCategory = async (userId, category) => {
-  // Define points per category
+// Add points to user based on e-waste category and quantity
+const addPointsByCategory = async (userId, category, imageCount = 1) => {
+  // Define points per category per image
   const categoryPoints = {
     "Laptop": 20,
     "Tablet": 15,
@@ -67,12 +67,13 @@ const addPointsByCategory = async (userId, category) => {
     "Powerbank": 10,
     "USB": 5,
   };
-  const points = categoryPoints[category] || 5; // Default to 5 if not found
+  const pointsPerImage = categoryPoints[category] || 5; // Default to 5 if not found
+  const totalPoints = pointsPerImage * imageCount; // Multiply by number of images
 
   const user = await User.findById(userId);
   if (user) {
-    user.points += points;
-    user.exp += points * 4; // exp is 4x points, adjust as needed
+    user.points += totalPoints;
+    user.exp += totalPoints * 4; // exp is 4x points, adjust as needed
     await user.save();
     await updateUserRank(user._id);
   }
@@ -91,6 +92,11 @@ const updateSubmissionStatus = async (req, res) => {
 
     // Delete images if status changed from "Pending"
     if (status !== "Pending" && submission.attachments.length > 0) {
+      // Store original attachment count before clearing
+      if (!submission.originalAttachmentCount) {
+        submission.originalAttachmentCount = submission.attachments.length;
+      }
+      
       submission.attachments.forEach(file => {
         const filePath = path.join(__dirname, "..", file.path);
         if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
@@ -112,18 +118,21 @@ const updateSubmissionStatus = async (req, res) => {
     });
 
     if (status === "Approved") {
+      const imageCount = submission.originalAttachmentCount || submission.attachments.length || 1;
+      
       if (submission.category === "others" && points) {
         // Add manually specified points for "others" category
         const user = await User.findById(submission.user);
         if (user) {
-          user.points += parseInt(points);
-          user.exp += parseInt(points) * 4; // exp is 4x points
+          const totalPoints = parseInt(points) * imageCount;
+          user.points += totalPoints;
+          user.exp += totalPoints * 4; // exp is 4x points
           await user.save();
           await updateUserRank(user._id);
         }
       } else {
-        // Add points based on predefined category
-        await addPointsByCategory(submission.user, submission.category);
+        // Add points based on predefined category and image count
+        await addPointsByCategory(submission.user, submission.category, imageCount);
       }
     }
 

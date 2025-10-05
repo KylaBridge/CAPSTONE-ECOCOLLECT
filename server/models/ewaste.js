@@ -17,6 +17,10 @@ const ewasteSchema = new Schema({
         path: String,
         }
     ],
+    originalAttachmentCount: {
+        type: Number,
+        default: 0
+    },
     status: { 
         type: String, 
         default: "Pending", 

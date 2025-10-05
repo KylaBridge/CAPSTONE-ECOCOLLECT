@@ -135,6 +135,31 @@
   background-color: #388e3c;
 }
 
+/* Primary Button */
+.admin-btn-primary {
+  background: linear-gradient(135deg, #4caf50, #66bb6a);
+  color: white;
+  border: 1px solid #4caf50;
+}
+
+.admin-btn-primary:hover {
+  background: linear-gradient(135deg, #66bb6a, #81c784);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+/* Default Button */
+.admin-btn-default {
+  background: linear-gradient(135deg, #4caf50, #66bb6a);
+  color: white;
+  border: 1px solid #4caf50;
+}
+
+.admin-btn-default:hover {
+  background: linear-gradient(135deg, #66bb6a, #81c784);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
 .admin-button:disabled,
 .admin-button[disabled] {
   opacity: 0.6;

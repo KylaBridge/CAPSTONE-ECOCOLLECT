@@ -53,7 +53,35 @@
     position: absolute;
     top: -20px;
     right: -30px;
-  }
+}
+
+/* Mobile responsiveness for chip-icon */
+@media (max-width: 768px) {
+    .chip-icon {
+        width: 120px;
+        height: 120px;
+        top: -10px;
+        right: -15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .chip-icon {
+        width: 80px;
+        height: 80px;
+        top: -5px;
+        right: -10px;
+    }
+}
+
+@media (max-width: 360px) {
+    .chip-icon {
+        width: 60px;
+        height: 60px;
+        top: 0px;
+        right: -5px;
+    }
+}
 
 .upload-button-container {
     display: flex;
@@ -65,6 +93,9 @@
     padding: 10px 12px;
     width: fit-content;
     flex-shrink: 0;
+    margin-bottom: 10px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .upload-button-container h1 {
@@ -103,7 +134,7 @@
     padding: 12px 30px;
     font-family: "Arial Black", Gadget, sans-serif;
     font-weight: 940;
-    font-size: 1.2rem;
+    font-size: 1rem;
     text-transform: uppercase;
     color: #000;
     border-radius: 999px;
@@ -113,6 +144,18 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    width: 100%;
+}
+
+.upload-button-container label.disabled-upload {
+    background-color: #d3d3d3;
+    color: #888;
+    box-shadow: 0px 6px 0px #666;
+    cursor: not-allowed;
+}
+
+.upload-button-container label.disabled-upload .camera-icon {
+    color: #888;
 }
 
 .camera-icon {
@@ -122,6 +165,7 @@
 
 .no-attachments {
     text-align: center;
+    font-weight: 600;
     font-style: italic;
     color: #474747;
     margin-top: 10px;
@@ -220,6 +264,7 @@
 
 .instruction-list li {
     font-size: 0.7rem;
+    font-weight: 600;
     color: #333;
     display: grid;
     grid-template-columns: 30px 1fr;

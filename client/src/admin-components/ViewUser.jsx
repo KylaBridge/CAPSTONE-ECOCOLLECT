@@ -24,17 +24,43 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
       if (!user?._id) return;
 
       try {
+        // Define points per category (same as backend logic)
+        const categoryPoints = {
+          "Laptop": 20,
+          "Tablet": 15,
+          "Mobile Phone": 10,
+          "Telephone": 8,
+          "Router": 8,
+          "Charger": 5,
+          "Batteries": 5,
+          "Cords": 5,
+          "Powerbank": 10,
+          "USB": 5,
+        };
+
         // Fetch user's e-waste submissions
         const submissionsResponse = await axios.get(
           `/api/ecocollect/ewaste/user/${user._id}`
         );
-        const submissions = submissionsResponse.data.map((submission) => ({
-          _id: submission._id,
-          ewasteSubmitted: submission.category,
-          date: new Date(submission.createdAt).toLocaleDateString(),
-          quantity: 1,
-          pointsEarned: submission.status === "Approved" ? 5 : 0,
-        }));
+        const submissions = submissionsResponse.data.map((submission) => {
+          // Get the image count (use originalAttachmentCount if available, otherwise current attachments)
+          const imageCount = submission.originalAttachmentCount || 
+                           (submission.attachments ? submission.attachments.length : 1);
+          
+          // Calculate points based on category and image count
+          const pointsPerImage = categoryPoints[submission.category] || 5;
+          const totalPointsEarned = submission.status === "Approved" 
+            ? pointsPerImage * imageCount
+            : 0;
+          
+          return {
+            _id: submission._id,
+            ewasteSubmitted: submission.category,
+            date: new Date(submission.createdAt).toLocaleDateString(),
+            quantity: imageCount,
+            pointsEarned: totalPointsEarned,
+          };
+        });
         setContributionHistory(submissions);
         setLoadingContributions(false);
 

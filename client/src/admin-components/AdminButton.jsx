@@ -20,6 +20,8 @@ const AdminButton = ({ type, size = 'medium', children, onClick, className, isAc
         return 'admin-btn-cancel';
       case 'save':
         return 'admin-btn-save';
+      case 'primary':
+        return 'admin-btn-primary';
       default:
         return 'admin-btn-default';
     }

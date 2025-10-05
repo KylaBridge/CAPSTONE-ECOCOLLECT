@@ -25,6 +25,13 @@ export default function EWasteSubmission() {
     const files = Array.from(event.target.files);
     const allowedTypes = ["image/jpeg", "image/png"];
     const maxSize = 5 * 1024 * 1024;
+    const maxImages = 5;
+
+    // Check if adding new files would exceed the limit
+    if (attachments.length + files.length > maxImages) {
+      alert(`You can only upload a maximum of ${maxImages} images.`);
+      return;
+    }
 
     files.forEach((file) => {
       if (!allowedTypes.includes(file.type)) {
@@ -37,7 +44,10 @@ export default function EWasteSubmission() {
         return;
       }
 
-      setAttachments((prev) => [...prev, file]);
+      // Double check we don't exceed limit when adding individual files
+      if (attachments.length < maxImages) {
+        setAttachments((prev) => [...prev, file]);
+      }
     });
   };
 
@@ -115,10 +125,18 @@ export default function EWasteSubmission() {
               accept="image/jpeg,image/png,image/jpg"
               onChange={handleUpload}
               multiple
+              disabled={attachments.length >= 5}
             />
-            <label htmlFor="file-upload">
+            <label 
+              htmlFor="file-upload" 
+              className={attachments.length >= 5 ? 'disabled-upload' : ''}
+              style={{
+                pointerEvents: attachments.length >= 5 ? 'none' : 'auto',
+                opacity: attachments.length >= 5 ? 0.6 : 1
+              }}
+            >
               <FaCamera className="camera-icon" />
-              UPLOAD
+              {attachments.length >= 5 ? 'MAX' : 'UPLOAD'}
             </label>
           </div>
           <img src={ChipIcon} alt="Chip and Trash Icon" className="chip-icon" />
@@ -127,7 +145,7 @@ export default function EWasteSubmission() {
             <ul className="instruction-list">
               <li><IoMdArrowDroprightCircle className="instruction-icon" /> Let's focus on one e-waste item per submission.</li>
               <li><IoMdArrowDroprightCircle className="instruction-icon" /> Tell us what kind of e-waste you're sending.</li>
-              <li><IoMdArrowDroprightCircle className="instruction-icon" /> Add as many pics as you need.</li>
+              <li><IoMdArrowDroprightCircle className="instruction-icon" /> Add pics at least 1 to 5. Only upload 5 pics.</li>
               <li><IoMdArrowDroprightCircle className="instruction-icon" /> We'll give it a once-over and let you know it's good to go!</li>
             </ul>
 

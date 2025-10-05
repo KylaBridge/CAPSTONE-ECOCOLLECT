@@ -19,6 +19,10 @@ export default function RewardManagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
   const dropdownRef = useRef(null);
   const rowsPerPage = 5;
 
@@ -114,6 +118,9 @@ export default function RewardManagement() {
       return;
     }
 
+    setIsDeleting(true);
+    setDeletingId(id);
+
     try {
       if (!id.startsWith('new-')) {
         await axios.delete(`/api/ecocollect/rewards/${id}`);
@@ -125,6 +132,9 @@ export default function RewardManagement() {
     } catch (error) {
       console.error("Error deleting reward:", error);
       toast.error("Failed to delete reward");
+    } finally {
+      setIsDeleting(false);
+      setDeletingId(null);
     }
   };
 
@@ -148,6 +158,13 @@ export default function RewardManagement() {
       return;
     }
 
+    const isNewReward = current.id.startsWith('new-');
+    if (isNewReward) {
+      setIsAdding(true);
+    } else {
+      setIsUpdating(true);
+    }
+
     try {
       const formData = new FormData();
       formData.append("name", current.name);
@@ -159,7 +176,7 @@ export default function RewardManagement() {
       }
 
       let response;
-      if (current.id.startsWith('new-')) {
+      if (isNewReward) {
         response = await axios.post("/api/ecocollect/rewards", formData, {
           headers: { "Content-Type": "multipart/form-data" }
         });
@@ -181,6 +198,9 @@ export default function RewardManagement() {
     } catch (error) {
       console.error("Error saving reward:", error);
       toast.error("Failed to save reward");
+    } finally {
+      setIsAdding(false);
+      setIsUpdating(false);
     }
   };
 
@@ -190,6 +210,7 @@ export default function RewardManagement() {
     setNewRewardId(null);
     setOriginalReward(null);
     setHasChanges(false);
+    setIsAdding(false);
   };
 
   const handleCancelEdit = () => {
@@ -199,10 +220,12 @@ export default function RewardManagement() {
     setEditId(null);
     setOriginalReward(null);
     setHasChanges(false);
+    setIsUpdating(false);
   };
 
   // Helper to check if in add/edit mode
   const isEditingOrAdding = editId !== null;
+  const isPerformingAction = isAdding || isUpdating || isDeleting;
 
   // Handler to show toast if restricted
   const showEditWarning = () => {
@@ -229,8 +252,8 @@ export default function RewardManagement() {
           <AdminButton
             type="add"
             size="medium"
-            onClick={isEditingOrAdding ? showEditWarning : handleAddReward}
-            disabled={isEditingOrAdding}
+            onClick={isEditingOrAdding || isPerformingAction ? showEditWarning : handleAddReward}
+            disabled={isEditingOrAdding || isPerformingAction}
           >
             Add Reward
           </AdminButton>
@@ -239,7 +262,7 @@ export default function RewardManagement() {
               className="reward-sort-btn"
               onClick={() => setShowDropdown(!showDropdown)}
               type="button"
-              disabled={isEditingOrAdding}
+              disabled={isEditingOrAdding || isPerformingAction}
             >
               Sort By
               {categoryFilter !== "all" && ` : ${categoryFilter}`}
@@ -281,9 +304,9 @@ export default function RewardManagement() {
               type="text"
               placeholder="Search rewards"
               value={searchTerm}
-              onChange={isEditingOrAdding ? showEditWarning : e => setSearchTerm(e.target.value)}
+              onChange={isEditingOrAdding || isPerformingAction ? showEditWarning : e => setSearchTerm(e.target.value)}
               className="search-input"
-              disabled={isEditingOrAdding}
+              disabled={isEditingOrAdding || isPerformingAction}
             />
             <FaSearch className="search-icon" />
           </div>
@@ -393,18 +416,47 @@ export default function RewardManagement() {
                             className="reward-table-btn"
                             onClick={handleUpdate}
                             disabled={
-                              (reward.id === newRewardId && !isAddFormComplete()) ||
-                              (!hasChanges && reward.id !== newRewardId)
+                              (reward.id === newRewardId && (!isAddFormComplete() || isAdding)) ||
+                              (!hasChanges && reward.id !== newRewardId) ||
+                              isUpdating ||
+                              isDeleting
                             }
                           >
-                            {reward.id === newRewardId ? "Save" : "Update"}
+                            {reward.id === newRewardId 
+                              ? (isAdding ? "Saving..." : "Save") 
+                              : (isUpdating ? "Updating..." : "Update")
+                            }
                           </AdminButton>
                           {reward.id === newRewardId ? (
-                            <AdminButton type="cancel" size="small" className="reward-table-btn" onClick={handleCancelAdd}>Cancel</AdminButton>
+                            <AdminButton 
+                              type="cancel" 
+                              size="small" 
+                              className="reward-table-btn" 
+                              onClick={handleCancelAdd}
+                              disabled={isAdding}
+                            >
+                              Cancel
+                            </AdminButton>
                           ) : (
                             <>
-                              <AdminButton type="remove" size="small" className="reward-table-btn" onClick={() => handleRemove(reward.id)}>Delete</AdminButton>
-                              <AdminButton type="cancel" size="small" className="reward-table-btn" onClick={handleCancelEdit}>Cancel</AdminButton>
+                              <AdminButton 
+                                type="remove" 
+                                size="small" 
+                                className="reward-table-btn" 
+                                onClick={() => handleRemove(reward.id)}
+                                disabled={isDeleting && deletingId === reward.id || isUpdating || isAdding}
+                              >
+                                {isDeleting && deletingId === reward.id ? "Deleting..." : "Delete"}
+                              </AdminButton>
+                              <AdminButton 
+                                type="cancel" 
+                                size="small" 
+                                className="reward-table-btn" 
+                                onClick={handleCancelEdit}
+                                disabled={isUpdating}
+                              >
+                                Cancel
+                              </AdminButton>
                             </>
                           )}
                         </>
@@ -414,7 +466,7 @@ export default function RewardManagement() {
                           size="small"
                           className="reward-table-btn"
                           onClick={
-                            isEditingOrAdding
+                            isEditingOrAdding || isPerformingAction
                               ? showEditWarning
                               : () => {
                                   setOriginalReward({ ...reward });
@@ -422,7 +474,7 @@ export default function RewardManagement() {
                                   setHasChanges(false);
                                 }
                           }
-                          disabled={isEditingOrAdding}
+                          disabled={isEditingOrAdding || isPerformingAction}
                         >
                           Edit
                         </AdminButton>
@@ -436,21 +488,21 @@ export default function RewardManagement() {
 
           <div className="pagination-controls">
             <button
-              onClick={isEditingOrAdding ? showEditWarning : () => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1 || isEditingOrAdding}
+              onClick={isEditingOrAdding || isPerformingAction ? showEditWarning : () => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1 || isEditingOrAdding || isPerformingAction}
               className="pagination-button"
             >
-              <TbPlayerTrackPrevFilled size={15} color={currentPage === 1 || isEditingOrAdding ? "#ccc" : "#0e653f"} />
+              <TbPlayerTrackPrevFilled size={15} color={currentPage === 1 || isEditingOrAdding || isPerformingAction ? "#ccc" : "#0e653f"} />
             </button>
 
             <span>Page {currentPage} of {totalPages}</span>
 
             <button
-              onClick={isEditingOrAdding ? showEditWarning : () => setCurrentPage(prev => (prev < totalPages ? prev + 1 : prev))}
-              disabled={currentPage === totalPages || isEditingOrAdding}
+              onClick={isEditingOrAdding || isPerformingAction ? showEditWarning : () => setCurrentPage(prev => (prev < totalPages ? prev + 1 : prev))}
+              disabled={currentPage === totalPages || isEditingOrAdding || isPerformingAction}
               className="pagination-button"
             >
-              <TbPlayerTrackNextFilled size={15} color={currentPage === totalPages || isEditingOrAdding ? "#ccc" : "#0e653f"} />
+              <TbPlayerTrackNextFilled size={15} color={currentPage === totalPages || isEditingOrAdding || isPerformingAction ? "#ccc" : "#0e653f"} />
             </button>
           </div>
         </div>
