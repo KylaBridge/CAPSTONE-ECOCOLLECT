@@ -2,7 +2,7 @@ import { toast } from "react-hot-toast";
 import { useEffect, useState, useRef, useMemo } from "react";
 import axios from "axios";
 import "./styles/UserTable.css";
-import { FaSearch, FaPlus } from "react-icons/fa";
+import { FaSearch } from "react-icons/fa";
 import AdminButton from "./AdminButton";
 
 export default function UserTable({
@@ -220,13 +220,9 @@ export default function UserTable({
 
         <div className="search-container">
           {currentUserRole === "superadmin" && (
-            <button
-              type="button"
-              className="add-user-button"
-              onClick={onAddUser}
-            >
-              <FaPlus size={14} /> Add User
-            </button>
+            <AdminButton type="add" size="medium" onClick={onAddUser}>
+              Add User
+            </AdminButton>
           )}
           <div className="search-input-wrapper">
             <input

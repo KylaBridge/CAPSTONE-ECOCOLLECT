@@ -242,7 +242,7 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
               {currentUserRole === "superadmin" &&
                 user.role !== "superadmin" && (
                   <AdminButton
-                    type="primary"
+                    type="update"
                     size="small"
                     onClick={() => {
                       setNewRole(user.role === "user" ? "admin" : "user");

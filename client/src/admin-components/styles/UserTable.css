@@ -60,29 +60,6 @@
   gap: 10px;
 }
 
-.add-user-button {
-  background-color: #245a1e;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 15px;
-  font-size: 0.9em;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: background-color 0.2s, transform 0.1s;
-}
-
-.add-user-button:hover {
-  background-color: #1d4819;
-}
-
-.add-user-button:active {
-  transform: translateY(1px);
-}
-
 .search-input-wrapper {
   position: relative;
   display: flex;
