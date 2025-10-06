@@ -97,18 +97,18 @@ export default function Achievements() {
   const handleShare = async () => {
     if (!selectedBadge) return;
 
-    // Generate a shareable URL for the badge with user information
+    // Generate a shareable URL for the badge with user information using path-based approach
     const baseUrl = window.location.origin;
-    const userParams = new URLSearchParams();
 
-    if (user?._id) userParams.append("userId", user._id);
-    if (user?.name) userParams.append("userName", user.name);
-    else if (user?.email) userParams.append("userName", user.email);
-    if (user?.email) userParams.append("userEmail", user.email);
+    // Use path-based URL structure for better social media compatibility
+    const userName = user?.name || user?.email || "EcoCollect-User";
+    const userEmail = user?.email || "user@ecocollect.com";
 
-    const shareUrl = `${baseUrl}/badge/${selectedBadge._id}${
-      userParams.toString() ? `?${userParams.toString()}` : ""
-    }`;
+    // Encode the user data for URL path
+    const encodedUserName = encodeURIComponent(userName);
+    const encodedUserEmail = encodeURIComponent(userEmail);
+
+    const shareUrl = `${baseUrl}/badge/${selectedBadge._id}/${encodedUserName}/${encodedUserEmail}`;
     const shareText = `I earned the ${selectedBadge.name} badge on EcoCollect!`;
 
     // Always show our custom share options first
@@ -234,22 +234,21 @@ export default function Achievements() {
     try {
       const baseUrl = window.location.origin;
 
-      // Use the same user parameter logic as in handleShare
-      const userParams = new URLSearchParams();
-      if (user?._id) userParams.append("userId", user._id);
-      if (user?.name) userParams.append("userName", user.name);
-      else if (user?.email) userParams.append("userName", user.email);
-      if (user?.email) userParams.append("userEmail", user.email);
+      // Use path-based URL structure for better social media compatibility
+      const userName = user?.name || user?.email || "EcoCollect-User";
+      const userEmail = user?.email || "user@ecocollect.com";
 
-      const shareUrl = `${baseUrl}/badge/${badge._id}${
-        userParams.toString() ? `?${userParams.toString()}` : ""
-      }`;
-      const shareTitle = `🏆 ${badge.name} Badge - EcoCollect`;
-      const shareDescription = `I've earned the "${
+      // Encode the user data for URL path
+      const encodedUserName = encodeURIComponent(userName);
+      const encodedUserEmail = encodeURIComponent(userEmail);
+
+      const shareUrl = `${baseUrl}/badge/${badge._id}/${encodedUserName}/${encodedUserEmail}`;
+      const shareTitle = `🏆 ${userName} earned the ${badge.name} Badge - EcoCollect`;
+      const shareDescription = `${userName} has earned the "${
         badge.name
       }" badge on EcoCollect! ${
         badge.description ||
-        "Join me in making a difference for our environment!"
+        "Join us in making a difference for our environment!"
       }`;
 
       let shareLink = "";

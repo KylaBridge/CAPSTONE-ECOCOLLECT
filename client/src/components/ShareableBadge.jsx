@@ -9,21 +9,29 @@ import html2canvas from "html2canvas";
 import "./styles/ShareableBadge.css";
 
 const ShareableBadge = ({ badgeId }) => {
-  const { id: urlId } = useParams();
+  const {
+    id: urlId,
+    userName: pathUserName,
+    userEmail: pathUserEmail,
+  } = useParams();
   const [badge, setBadge] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const shareCardRef = useRef(null);
 
-  const updateMetaTags = (badgeData) => {
+  const updateMetaTags = (badgeData, userInfo) => {
     const baseUrl = window.location.origin;
-    const shareUrl = `${baseUrl}/badge/${badgeData._id}`;
-    const shareTitle = `🏆 ${badgeData.name} Badge - EcoCollect`;
-    const shareDescription = `I've earned the "${
+    const shareUrl = `${baseUrl}/badge/${badgeData._id}${
+      userInfo.userName ? `/${encodeURIComponent(userInfo.userName)}` : ""
+    }${userInfo.userEmail ? `/${encodeURIComponent(userInfo.userEmail)}` : ""}`;
+    const shareTitle = `🏆 ${userInfo.userName || "Someone"} earned the ${
       badgeData.name
-    }" badge on EcoCollect! ${
+    } Badge - EcoCollect`;
+    const shareDescription = `${
+      userInfo.userName || "An EcoCollect user"
+    } has earned the "${badgeData.name}" badge on EcoCollect! ${
       badgeData.description ||
-      "Join me in making a difference for our environment!"
+      "Join us in making a difference for our environment!"
     }`;
     const shareImage = badgeData.img || badgeData.image || Badge1;
 
@@ -113,13 +121,88 @@ const ShareableBadge = ({ badgeId }) => {
 
         const apiUrl = import.meta.env.VITE_API_URL || window.location.origin;
 
-        // Get user information from URL query parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const userId = urlParams.get("userId");
-        const userName = urlParams.get("userName");
-        const userEmail = urlParams.get("userEmail");
+        // Extract user information from URL path
+        let userName = null;
+        let userEmail = null;
+        let userId = null;
 
-        console.log("URL Params:", { userId, userName, userEmail }); // Debug log
+        // First, try to get from React Router params
+        if (pathUserName) {
+          try {
+            userName = decodeURIComponent(pathUserName);
+          } catch (e) {
+            userName = pathUserName;
+          }
+        }
+
+        if (pathUserEmail) {
+          try {
+            userEmail = decodeURIComponent(pathUserEmail);
+          } catch (e) {
+            userEmail = pathUserEmail;
+          }
+        }
+
+        // Fallback: Extract from URL path manually for backwards compatibility
+        if (!userName || !userEmail) {
+          const pathParts = window.location.pathname
+            .split("/")
+            .filter((part) => part);
+          // Expected format: ['badge', badgeId, userName, userEmail]
+          if (pathParts.length >= 4) {
+            try {
+              userName = userName || decodeURIComponent(pathParts[2]);
+              userEmail = userEmail || decodeURIComponent(pathParts[3]);
+            } catch (e) {
+              userName = userName || pathParts[2];
+              userEmail = userEmail || pathParts[3];
+            }
+          }
+        }
+
+        // Final fallback: Try legacy query parameters for backwards compatibility
+        if (!userName || !userEmail) {
+          const urlParams = new URLSearchParams(window.location.search);
+          const hashParams = new URLSearchParams(
+            window.location.hash.substring(1)
+          );
+
+          // Also try regex extraction for encoded URLs
+          const fullUrl = window.location.href;
+          const urlMatches = {
+            userId: fullUrl.match(/[?&]userId=([^&#]*)/i),
+            userName: fullUrl.match(/[?&]userName=([^&#]*)/i),
+            userEmail: fullUrl.match(/[?&]userEmail=([^&#]*)/i),
+          };
+
+          let additionalParams = {};
+          Object.keys(urlMatches).forEach((key) => {
+            if (urlMatches[key] && urlMatches[key][1]) {
+              try {
+                additionalParams[key] = decodeURIComponent(urlMatches[key][1]);
+              } catch (e) {
+                additionalParams[key] = urlMatches[key][1];
+              }
+            }
+          });
+
+          userId =
+            urlParams.get("userId") ||
+            hashParams.get("userId") ||
+            additionalParams.userId;
+          userName =
+            userName ||
+            urlParams.get("userName") ||
+            hashParams.get("userName") ||
+            additionalParams.userName;
+          userEmail =
+            userEmail ||
+            urlParams.get("userEmail") ||
+            hashParams.get("userEmail") ||
+            additionalParams.userEmail;
+        }
+
+        console.log("Extracted user data:", { userId, userName, userEmail }); // Debug log
 
         // Build API endpoint with user parameters if available
         let apiEndpoint = `${apiUrl}/api/ecocollect/badges/public/${badgeIdToUse}`;
@@ -156,6 +239,7 @@ const ShareableBadge = ({ badgeId }) => {
             name:
               response.data.earnedByName ||
               response.data.userDetails?.name ||
+              userName || // Use userName from URL params as fallback
               "EcoCollect Champion",
             username:
               response.data.earnedByUsername ||
@@ -163,12 +247,18 @@ const ShareableBadge = ({ badgeId }) => {
             email:
               response.data.earnedByEmail ||
               response.data.userDetails?.email ||
+              userEmail || // Use userEmail from URL params as fallback
               "champion@ecocollect.com",
           },
+          // Use the actual earned date from the response, or preserve existing dateEarned
+          dateEarned:
+            response.data.dateEarned ||
+            response.data.earnedDate ||
+            response.data.createdAt,
         };
 
         setBadge(formattedBadge);
-        updateMetaTags(formattedBadge);
+        updateMetaTags(formattedBadge, { userName, userEmail, userId });
 
         console.log("Final formatted badge with user data:", formattedBadge); // Debug log
         console.log(
@@ -196,6 +286,85 @@ const ShareableBadge = ({ badgeId }) => {
 
   // Fallback for fetch failures
   if (error === "fetch-failed") {
+    // Extract user data using the same path-based approach
+    let userName = null;
+    let userEmail = null;
+
+    // Try React Router params first
+    if (pathUserName) {
+      try {
+        userName = decodeURIComponent(pathUserName);
+      } catch (e) {
+        userName = pathUserName;
+      }
+    }
+
+    if (pathUserEmail) {
+      try {
+        userEmail = decodeURIComponent(pathUserEmail);
+      } catch (e) {
+        userEmail = pathUserEmail;
+      }
+    }
+
+    // Fallback to manual path extraction
+    if (!userName || !userEmail) {
+      const pathParts = window.location.pathname
+        .split("/")
+        .filter((part) => part);
+      if (pathParts.length >= 4) {
+        try {
+          userName = userName || decodeURIComponent(pathParts[2]);
+          userEmail = userEmail || decodeURIComponent(pathParts[3]);
+        } catch (e) {
+          userName = userName || pathParts[2];
+          userEmail = userEmail || pathParts[3];
+        }
+      }
+    }
+
+    // Final fallback to legacy query parameters
+    if (!userName || !userEmail) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+
+      const fullUrl = window.location.href;
+      const urlMatches = {
+        userName: fullUrl.match(/[?&]userName=([^&#]*)/i),
+        userEmail: fullUrl.match(/[?&]userEmail=([^&#]*)/i),
+      };
+
+      let additionalParams = {};
+      Object.keys(urlMatches).forEach((key) => {
+        if (urlMatches[key] && urlMatches[key][1]) {
+          try {
+            additionalParams[key] = decodeURIComponent(urlMatches[key][1]);
+          } catch (e) {
+            additionalParams[key] = urlMatches[key][1];
+          }
+        }
+      });
+
+      userName =
+        userName ||
+        urlParams.get("userName") ||
+        hashParams.get("userName") ||
+        additionalParams.userName ||
+        "Eco User";
+      userEmail =
+        userEmail ||
+        urlParams.get("userEmail") ||
+        hashParams.get("userEmail") ||
+        additionalParams.userEmail ||
+        "user@example.com";
+    }
+
+    // Ensure we have fallback values
+    userName = userName || "Eco User";
+    userEmail = userEmail || "user@example.com";
+
+    console.log("Fallback - Extracted user data:", { userName, userEmail }); // Debug log
+
     const fallbackBadge = {
       _id: "fallback",
       name: "EcoCollect Badge",
@@ -204,13 +373,13 @@ const ShareableBadge = ({ badgeId }) => {
       image: Badge1,
       img: Badge1,
       earnedBy: {
-        name: "Eco User",
-        email: "user@example.com",
+        name: userName,
+        email: userEmail,
       },
-      dateEarned: new Date().toISOString(),
+      dateEarned: new Date().toISOString(), // Keep current date for fallback only
     };
 
-    updateMetaTags(fallbackBadge);
+    updateMetaTags(fallbackBadge, { userName, userEmail });
 
     return (
       <div className="certificate-container">
@@ -239,11 +408,14 @@ const ShareableBadge = ({ badgeId }) => {
             <div className="badge-metadata">
               <div className="badge-earned-date">
                 <strong>Date Earned:</strong>{" "}
-                {new Date().toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
+                {new Date(fallbackBadge.dateEarned).toLocaleDateString(
+                  "en-US",
+                  {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  }
+                )}
               </div>
 
               <div className="badge-earner">
@@ -332,11 +504,7 @@ const ShareableBadge = ({ badgeId }) => {
                     month: "long",
                     day: "numeric",
                   })
-                : new Date().toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
+                : "Date not available"}
             </div>
 
             {badge.earnedBy && (

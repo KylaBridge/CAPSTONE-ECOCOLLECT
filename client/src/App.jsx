@@ -91,6 +91,10 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/badge/:id" element={<ShareableBadge />} />
+        <Route
+          path="/badge/:id/:userName/:userEmail"
+          element={<ShareableBadge />}
+        />
         <Route path="/redemption/validate/:id" element={<ValidateRedeem />} />
 
         {/* Protected User Routes */}

@@ -237,11 +237,9 @@ router.get("/badges/public/:id", async (req, res) => {
     if (userId && (typeof userId !== 'string' || !/^[a-fA-F0-9]{24}$/.test(userId))) {
       return res.status(400).json({ error: "Invalid userId format" });
     }
-    
     if (userName && (typeof userName !== 'string' || userName.length > 100)) {
       return res.status(400).json({ error: "Invalid userName format" });
     }
-    
     if (userEmail && (typeof userEmail !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEmail))) {
       return res.status(400).json({ error: "Invalid userEmail format" });
     }
@@ -261,7 +259,29 @@ router.get("/badges/public/:id", async (req, res) => {
         email: userEmail || "champion@ecocollect.com",
         _id: userId,
       };
-      badgeWithUser.dateEarned = new Date().toISOString();
+
+      // Look up the actual earned date from user's badge history
+      let actualEarnedDate = null;
+      if (userId) {
+        try {
+          const user = await User.findById(userId);
+          if (user && user.badgeHistory) {
+            const badgeEntry = user.badgeHistory.find(
+              (entry) => entry.badgeId.toString() === id
+            );
+            if (badgeEntry && badgeEntry.earnedAt) {
+              actualEarnedDate = badgeEntry.earnedAt;
+            }
+          }
+        } catch (userError) {
+          console.warn("Could not fetch user badge history:", userError);
+        }
+      }
+
+      // Use actual earned date if found, otherwise fallback to current date
+      badgeWithUser.dateEarned = actualEarnedDate
+        ? actualEarnedDate.toISOString()
+        : new Date().toISOString();
     }
 
     res.status(200).json(badgeWithUser);
