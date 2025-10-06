@@ -27,8 +27,29 @@ const updateUserRank = async (userId) => {
 
     // Update user's rank if they have a qualifying badge
     if (highestBadge) {
-      user.rank = highestBadge.name;
-      await user.save();
+      // Only update if the rank has changed (new badge earned)
+      if (user.rank !== highestBadge.name) {
+        const currentTime = new Date();
+        
+        // Check if this badge is already in history to avoid duplicates
+        const badgeExists = user.badgeHistory.some(
+          badge => badge.badgeId.toString() === highestBadge._id.toString()
+        );
+        
+        if (!badgeExists) {
+          // Add new badge to history
+          user.badgeHistory.push({
+            badgeName: highestBadge.name,
+            badgeId: highestBadge._id,
+            earnedAt: currentTime,
+            pointsRequired: highestBadge.pointsRequired
+          });
+        }
+        
+        user.rank = highestBadge.name;
+        user.rankEarnedAt = currentTime;
+        await user.save();
+      }
     }
 
     return user;
@@ -200,6 +221,34 @@ const getAllUserLeaderboards = async (req, res) => {
   }
 };
 
+// Get user badge history
+const getUserBadgeHistory = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId)
+      .populate('badgeHistory.badgeId', 'name description image')
+      .select('badgeHistory rank rankEarnedAt');
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Sort badge history by earnedAt date (newest first)
+    const sortedHistory = user.badgeHistory.sort((a, b) => 
+      new Date(b.earnedAt) - new Date(a.earnedAt)
+    );
+
+    res.status(200).json({
+      currentRank: user.rank,
+      currentRankEarnedAt: user.rankEarnedAt,
+      badgeHistory: sortedHistory
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch badge history" });
+  }
+};
+
 module.exports = {
   submitEWaste,
   userSubmitCount,
@@ -207,4 +256,5 @@ module.exports = {
   redeemReward,
   updateUserRank,
   getAllUserLeaderboards,
+  getUserBadgeHistory,
 };

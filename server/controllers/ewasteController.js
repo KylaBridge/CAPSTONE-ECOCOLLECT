@@ -52,33 +52,6 @@ const getAllSubmissions = async (req, res) => {
   }
 };
 
-// Add points to user based on e-waste category and quantity
-const addPointsByCategory = async (userId, category, imageCount = 1) => {
-  // Define points per category per image
-  const categoryPoints = {
-    "Laptop": 20,
-    "Tablet": 15,
-    "Mobile Phone": 10,
-    "Telephone": 8,
-    "Router": 8,
-    "Charger": 5,
-    "Batteries": 5,
-    "Cords": 5,
-    "Powerbank": 10,
-    "USB": 5,
-  };
-  const pointsPerImage = categoryPoints[category] || 5; // Default to 5 if not found
-  const totalPoints = pointsPerImage * imageCount; // Multiply by number of images
-
-  const user = await User.findById(userId);
-  if (user) {
-    user.points += totalPoints;
-    user.exp += totalPoints * 4; // exp is 4x points, adjust as needed
-    await user.save();
-    await updateUserRank(user._id);
-  }
-};
-
 // Update submission status and manage related user points and image files
 const updateSubmissionStatus = async (req, res) => {
   try {
@@ -118,21 +91,36 @@ const updateSubmissionStatus = async (req, res) => {
     });
 
     if (status === "Approved") {
-      const imageCount = submission.originalAttachmentCount || submission.attachments.length || 1;
-      
-      if (submission.category === "others" && points) {
-        // Add manually specified points for "others" category
-        const user = await User.findById(submission.user);
-        if (user) {
-          const totalPoints = parseInt(points) * imageCount;
+      const user = await User.findById(submission.user);
+      if (user) {
+        let totalPoints = 0;
+        
+        if (submission.category === "others" && points) {
+          // Add manually specified points for "others" category
+          totalPoints = parseInt(points);
+        } else {
+          // Define points per category per submission
+          const categoryPoints = {
+            "Laptop": 20,
+            "Tablet": 15,
+            "Mobile Phone": 10,
+            "Telephone": 8,
+            "Router": 8,
+            "Charger": 5,
+            "Batteries": 5,
+            "Cords": 5,
+            "Powerbank": 10,
+            "USB": 5,
+          };
+          totalPoints = categoryPoints[submission.category] || 0;
+        }
+        
+        if (totalPoints > 0) {
           user.points += totalPoints;
-          user.exp += totalPoints * 4; // exp is 4x points
+          user.exp += totalPoints * 2; // exp is 2x points
           await user.save();
           await updateUserRank(user._id);
         }
-      } else {
-        // Add points based on predefined category and image count
-        await addPointsByCategory(submission.user, submission.category, imageCount);
       }
     }
 

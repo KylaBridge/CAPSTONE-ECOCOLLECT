@@ -1,8 +1,7 @@
 import "./styles/ViewUser.css";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import React, { useState, useEffect, useContext } from "react";
-import defaultProfileImage from "../assets/icons/profile-pic.png";
+import { useState, useEffect, useContext } from "react";
 import AdminButton from "./AdminButton";
 import { UserContext } from "../context/userContext";
 
@@ -42,25 +41,22 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
         const submissionsResponse = await axios.get(
           `/api/ecocollect/ewaste/user/${user._id}`
         );
-        const submissions = submissionsResponse.data.map((submission) => {
-          // Get the image count (use originalAttachmentCount if available, otherwise current attachments)
-          const imageCount = submission.originalAttachmentCount || 
-                           (submission.attachments ? submission.attachments.length : 1);
-          
-          // Calculate points based on category and image count
-          const pointsPerImage = categoryPoints[submission.category] || 5;
-          const totalPointsEarned = submission.status === "Approved" 
-            ? pointsPerImage * imageCount
-            : 0;
-          
-          return {
-            _id: submission._id,
-            ewasteSubmitted: submission.category,
-            date: new Date(submission.createdAt).toLocaleDateString(),
-            quantity: imageCount,
-            pointsEarned: totalPointsEarned,
-          };
-        });
+        const submissions = submissionsResponse.data
+          .map((submission) => {
+            // Calculate points based on category (fixed points per submission, not per image)
+            const pointsPerSubmission = categoryPoints[submission.category] || 5;
+            const totalPointsEarned = submission.status === "Approved" 
+              ? pointsPerSubmission
+              : 0;
+            
+            return {
+              _id: submission._id,
+              ewasteSubmitted: submission.category,
+              date: new Date(submission.createdAt).toLocaleDateString(),
+              pointsEarned: totalPointsEarned,
+            };
+          })
+          .filter((submission) => submission.pointsEarned > 0); // Only show submissions with points earned
         setContributionHistory(submissions);
         setLoadingContributions(false);
 
@@ -188,7 +184,6 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
         <td className="placeholder"></td>
         <td className="placeholder"></td>
         <td className="placeholder"></td>
-        <td className="placeholder"></td>
       </tr>
     ));
   };
@@ -196,7 +191,6 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
   const renderRewardPlaceholderRows = (count) => {
     return Array.from({ length: count }, (_, index) => (
       <tr key={`reward-placeholder-${index}`}>
-        <td className="placeholder"></td>
         <td className="placeholder"></td>
         <td className="placeholder"></td>
       </tr>
@@ -278,7 +272,6 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
                     <tr>
                       <th>E-Waste Submitted</th>
                       <th>Date</th>
-                      <th>Quantity</th>
                       <th>Points Earned</th>
                     </tr>
                   </thead>
@@ -290,13 +283,12 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
                         <tr key={contribution._id}>
                           <td>{contribution.ewasteSubmitted}</td>
                           <td>{contribution.date}</td>
-                          <td>{contribution.quantity}</td>
                           <td>{contribution.pointsEarned}</td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="4" className="no-data">
+                        <td colSpan="3" className="no-data">
                           No contribution history to show
                         </td>
                       </tr>
@@ -314,7 +306,6 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
                     <tr>
                       <th>Type</th>
                       <th>Date</th>
-                      <th>Quantity</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -325,12 +316,11 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
                         <tr key={reward._id}>
                           <td>{reward.type}</td>
                           <td>{reward.date}</td>
-                          <td>{reward.quantity}</td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="3" className="no-data">
+                        <td colSpan="2" className="no-data">
                           No rewards redeemed yet
                         </td>
                       </tr>

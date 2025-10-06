@@ -68,6 +68,7 @@ const {
   getUserSubmissions,
   redeemReward,
   getAllUserLeaderboards,
+  getUserBadgeHistory,
 } = require("../controllers/userController");
 
 const {
@@ -292,6 +293,7 @@ router.post(
 );
 router.get("/ewaste/user/:userId/count", authMiddleware, userSubmitCount);
 router.get("/ewaste/user/:userId", authMiddleware, getUserSubmissions);
+router.get("/user/:userId/badge-history", authMiddleware, getUserBadgeHistory);
 router.post("/redeem", authMiddleware, redeemReward);
 router.get("/leaderboards", authMiddleware, getAllUserLeaderboards);
 

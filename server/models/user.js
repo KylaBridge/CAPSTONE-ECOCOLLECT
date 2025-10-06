@@ -28,6 +28,29 @@ const userSchema = new Schema({
     type: String,
     default: "Unranked",
   },
+  rankEarnedAt: {
+    type: Date,
+    default: null,
+  },
+  badgeHistory: [{
+    badgeName: {
+      type: String,
+      required: true,
+    },
+    badgeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Badge",
+      required: true,
+    },
+    earnedAt: {
+      type: Date,
+      default: Date.now,
+    },
+    pointsRequired: {
+      type: Number,
+      required: true,
+    }
+  }],
   points: {
     type: Number,
     default: 0,

@@ -58,11 +58,14 @@ export default function UserTable({
         });
         setUserActivities(grouped);
 
-        // Count e-waste submissions per userId
+        // Count approved e-waste submissions per userId
         const counts = {};
         ewasteRes.data.forEach((sub) => {
           const uid = sub.user?._id || sub.user;
-          if (uid) counts[uid] = (counts[uid] || 0) + 1;
+          // Only count approved submissions
+          if (uid && sub.status === "Approved") {
+            counts[uid] = (counts[uid] || 0) + 1;
+          }
         });
         setUserContributions(counts);
       } catch {
