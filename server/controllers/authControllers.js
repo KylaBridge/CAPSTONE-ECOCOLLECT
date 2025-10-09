@@ -3,6 +3,27 @@ const { comparePassword, hashPassword } = require("../helpers/auth");
 const { signToken, verifyToken } = require("../helpers/jwt");
 const { sendVerificationEmail } = require("../helpers/mail");
 const passport = require("passport");
+const jwt = require("jsonwebtoken");
+
+// Dynamic session configuration based on NODE_ENV
+const getSessionConfig = () => {
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  
+  const config = {
+    tokenExpire: isDevelopment ? '1m' : '30m',
+    cookieExpire: isDevelopment ? 60000 : 1800000
+  };
+  
+  // Log configuration on first call
+  if (!getSessionConfig.logged) {
+    console.log(`[SESSION CONFIG] Environment: ${process.env.NODE_ENV || 'production'}`);
+    console.log(`[SESSION CONFIG] Token Expiry: ${config.tokenExpire}`);
+    console.log(`[SESSION CONFIG] Cookie Expiry: ${config.cookieExpire}ms`);
+    getSessionConfig.logged = true;
+  }
+  
+  return config;
+};
 
 // Register Email and Name
 const registerEmailName = async (req, res) => {
@@ -156,7 +177,12 @@ const loginUser = async (req, res) => {
       // Only set token if not admin login or user is admin/superadmin
       if (!isAdminLogin || user.role === "admin" || user.role === "superadmin") {
         try {
-          const token = await signToken({ email: user.email, id: user._id });
+          const { tokenExpire, cookieExpire } = getSessionConfig();
+          
+          const token = await signToken(
+            { email: user.email, id: user._id },
+            { expiresIn: tokenExpire }
+          );
           return res
             .status(200)
             .cookie("token", token, {
@@ -164,7 +190,7 @@ const loginUser = async (req, res) => {
               sameSite: "none",
               secure: true,
               path: "/",
-              maxAge: 1000 * 60 * 30, // 30 minutes
+              maxAge: cookieExpire,
             })
             .json({
               token,
@@ -223,6 +249,63 @@ const logoutUser = (req, res) => {
     path: "/",
   });
   return res.status(200).json({ message: "Logged out successfully" });
+};
+
+// Return current session expiration (exp claim) so client can schedule warnings
+const sessionInfo = (req, res) => {
+  try {
+    // Reconstruct token extraction similar to auth logic
+    let token = null;
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      token = authHeader.split(" ")[1];
+    } else if (req.cookies && req.cookies.token) {
+      token = req.cookies.token;
+    }
+    if (!token) return res.status(200).json(null);
+    const decoded = jwt.decode(token);
+    if (!decoded || !decoded.exp) return res.status(200).json(null);
+    return res.status(200).json({ expiresAt: decoded.exp * 1000 });
+  } catch (e) {
+    return res.status(500).json({ error: "Failed to read session" });
+  }
+};
+
+// Extend session by issuing a fresh token (requires still-authenticated request)
+const extendSession = async (req, res) => {
+  try {
+    // req.user is expected to be populated by authMiddleware
+    if (!req.user) return res.status(401).json({ error: "Unauthorized" });
+    const user = req.user;
+    const { tokenExpire, cookieExpire } = getSessionConfig();
+    
+    const token = await signToken(
+      { id: user._id, email: user.email, role: user.role },
+      { expiresIn: tokenExpire }
+    );
+    // Decode to obtain exp
+    const decoded = jwt.decode(token);
+    const expiresAt = decoded?.exp ? decoded.exp * 1000 : null;
+
+    // Set cookie (mirrors login behavior)
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      path: "/",
+      maxAge: cookieExpire,
+    });
+
+    const userAgent = req.headers["user-agent"] || "";
+    const responseBody = { message: "Session extended", expiresAt };
+    // For iOS Chrome fallback return token so client can refresh local copy
+    if (/CriOS/i.test(userAgent)) {
+      responseBody.token = token;
+    }
+    return res.status(200).json(responseBody);
+  } catch (e) {
+    return res.status(500).json({ error: "Failed to extend session" });
+  }
 };
 
 // Initiate Google OAuth (delegates to passport)
@@ -289,7 +372,10 @@ const googleAuthCallback = (req, res) => {
 
   if (!user) return res.redirect(`${process.env.FRONTEND_URL}/login`);
 
-  signToken({ email: user.email, id: user._id })
+  const { tokenExpire, cookieExpire } = getSessionConfig();
+
+  // Add expiry so front-end session modal logic (which depends on exp claim) works for Google auth.
+  signToken({ email: user.email, id: user._id }, { expiresIn: tokenExpire })
     .then((token) => {
       // Detect user agent to handle iOS Chrome differently
       const userAgent = req.headers["user-agent"] || "";
@@ -315,7 +401,7 @@ const googleAuthCallback = (req, res) => {
           sameSite: "lax",
           secure: true,
           path: "/",
-          maxAge: 1000 * 60 * 30,
+          maxAge: cookieExpire,
         });
 
         // Also pass token in URL for iOS Chrome as fallback
@@ -334,7 +420,7 @@ const googleAuthCallback = (req, res) => {
           sameSite: "none",
           secure: true,
           path: "/",
-          maxAge: 1000 * 60 * 30,
+          maxAge: cookieExpire,
         });
         const base = process.env.FRONTEND_URL;
         const redirectUrl = `${base.replace(/\/$/, "")}/home/?auth=google`;
@@ -427,6 +513,8 @@ module.exports = {
   loginUser,
   getProfile,
   logoutUser,
+  sessionInfo,
+  extendSession,
   googleAuthStart,
   googleAuthCallback,
   googleProfile,

@@ -9,11 +9,14 @@ const {
   loginUser,
   getProfile,
   logoutUser,
+  sessionInfo,
+  extendSession,
   googleAuthStart,
   googleAuthCallback,
   googleProfile,
   verifyPassword,
 } = require("../controllers/authControllers");
+const { authMiddleware } = require("../middleware/authMiddleware");
 
 router.post("/register/email", rateLimitAuth, registerEmailName);
 router.post("/register/password", rateLimitAuth, registerPassword);
@@ -22,6 +25,8 @@ router.post("/login", rateLimitAuth, loginUser);
 router.get("/profile", getProfile);
 router.post("/logout", logoutUser);
 router.post("/verify-password", verifyPassword);
+router.get("/session", sessionInfo); // public read (returns null if no token)
+router.post("/session/extend", authMiddleware, extendSession); // must be authenticated
 
 // Google OAuth start - with rate limiting and parameter validation
 router.get("/google", rateLimitAuth, googleAuthStart);
