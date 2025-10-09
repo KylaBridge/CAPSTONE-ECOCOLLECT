@@ -14,6 +14,7 @@ export function UserContextProvider({ children }) {
   const [countdownClass, setCountdownClass] = useState("normal");
   const [lastActivity, setLastActivity] = useState(Date.now());
   const [isIdle, setIsIdle] = useState(false);
+  const [autoExtendTriggered, setAutoExtendTriggered] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -42,6 +43,7 @@ export function UserContextProvider({ children }) {
     setSessionExpiresAt(null);
     setShowSessionModal(false);
     setSessionWarningFired(false);
+    setAutoExtendTriggered(false);
   };
 
   const fetchSessionInfo = async () => {
@@ -96,6 +98,7 @@ export function UserContextProvider({ children }) {
         setSessionExpiresAt(data.expiresAt);
         setShowSessionModal(false);
         setSessionWarningFired(false);
+        setAutoExtendTriggered(false); // Reset for next session cycle
         setLastActivity(Date.now()); // Reset activity on manual extend
         setIsIdle(false);
         if (data.token) setAuthToken(data.token);
@@ -167,7 +170,7 @@ export function UserContextProvider({ children }) {
 
   // Auto-extend session for active users (sliding session)
   useEffect(() => {
-    if (!user || !sessionExpiresAt || isIdle || showSessionModal) return;
+    if (!user || !sessionExpiresAt || isIdle || showSessionModal || autoExtendTriggered) return;
 
     const now = Date.now();
     const msLeft = sessionExpiresAt - now;
@@ -175,9 +178,10 @@ export function UserContextProvider({ children }) {
     // If active user has threshold time or less remaining, auto-extend
     if (msLeft <= EXTEND_THRESHOLD) {
       console.log(`[SESSION] Auto-extending session for active user (${Math.floor(msLeft/60000)}m left)`);
+      setAutoExtendTriggered(true); // Prevent multiple calls
       extendSession();
     }
-  }, [user, sessionExpiresAt, isIdle, lastActivity, showSessionModal]);
+  }, [user, sessionExpiresAt, isIdle, lastActivity, showSessionModal, autoExtendTriggered]);
 
   // Idle detection - check if user has been inactive
   useEffect(() => {
@@ -273,7 +277,7 @@ export function UserContextProvider({ children }) {
       const activityStatus = isIdle ? 'IDLE' : 'ACTIVE';
       const timeSinceActivity = Math.floor((Date.now() - lastActivity) / 1000);
       console.log(`[SESSION] ${mins}m ${secs}s remaining | Status: ${activityStatus} | Idle for: ${timeSinceActivity}s`);
-    }, 5 * 60 * 1000); // Log every 5 minutes
+    }, 5 * 60 * 1000); // Log every 5 minutes, Log per second if testing
 
     return () => clearInterval(logInterval);
   }, [sessionExpiresAt, isIdle, lastActivity]);
