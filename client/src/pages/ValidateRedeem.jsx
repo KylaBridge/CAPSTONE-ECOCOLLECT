@@ -241,9 +241,32 @@ export default function ValidateRedeem() {
           {redemptionData.rewardImage && (
             <div className="validate-redeem-image-container">
               <img
-                src={redemptionData.rewardImage}
+                src={(() => {
+                  const image = redemptionData.rewardImage;
+                  
+                  // Handle if image is an object with path property
+                  if (typeof image === 'object' && image.path) {
+                    return image.path.startsWith('http') 
+                      ? image.path 
+                      : `${import.meta.env.VITE_API_URL}/${image.path}`;
+                  }
+                  
+                  // Handle if image is a string
+                  if (typeof image === 'string') {
+                    return image.startsWith('http') 
+                      ? image 
+                      : `${import.meta.env.VITE_API_URL}/${image}`;
+                  }
+                  
+                  // Fallback - return empty to hide image
+                  return '';
+                })()}
                 alt={redemptionData.rewardName}
                 className="validate-redeem-image"
+                onError={(e) => {
+                  console.error('Failed to load image:', e.target.src);
+                  e.target.style.display = 'none';
+                }}
               />
             </div>
           )}
