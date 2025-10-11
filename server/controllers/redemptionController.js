@@ -103,7 +103,8 @@ const confirmRedemption = async (req, res) => {
     });
 
     if (!storeAdmin) {
-      return res.status(401).json({ 
+      // Store account not found -> forbidden (validation) rather than auth token issue
+      return res.status(403).json({ 
         message: "Invalid store account credentials." 
       });
     }
@@ -111,7 +112,8 @@ const confirmRedemption = async (req, res) => {
     // Validate store admin password using auth helper
     const isValidPassword = await comparePassword(storePassword, storeAdmin.password);
     if (!isValidPassword) {
-      return res.status(401).json({ 
+      // Wrong password for store account -> forbidden (validation)
+      return res.status(403).json({ 
         message: "Invalid store account credentials." 
       });
     }

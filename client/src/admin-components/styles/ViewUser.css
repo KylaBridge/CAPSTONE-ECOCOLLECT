@@ -398,3 +398,19 @@
   transform: none !important;
   box-shadow: none !important;
 }
+
+/* Inline modal error message (used for incorrect password etc.) */
+.view-user-modal-error {
+  color: #b00020; /* accessible red */
+  background-color: rgba(176, 0, 32, 0.06);
+  border-left: 4px solid rgba(176, 0, 32, 0.9);
+  padding: 0.5rem 0.75rem;
+  margin-top: 0.5rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .view-user-modal-error { font-size: 0.9rem; padding: 0.45rem 0.6rem; }
+}

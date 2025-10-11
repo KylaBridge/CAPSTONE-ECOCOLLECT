@@ -520,7 +520,10 @@ const verifyPassword = async (req, res) => {
 
     const isMatch = await comparePassword(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ error: "Invalid password" });
+      // Return 403 for invalid password on verification endpoints - this
+      // represents a forbidden/validation failure rather than an auth token
+      // problem. Clients should treat this as a credential validation error.
+      return res.status(403).json({ error: "Invalid password" });
     }
 
     return res

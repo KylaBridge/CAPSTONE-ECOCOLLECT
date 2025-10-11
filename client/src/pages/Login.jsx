@@ -262,7 +262,7 @@ export default function Login() {
             className="google-btn"
           >
             <img src={GoogleIcon} alt="Google" className="google-icon" />
-            Continue with Google
+            Sign In with Google
           </button>
           <Link className="go-back-btn" to={"/"}>
             Go Back to Main

@@ -263,7 +263,7 @@ export default function Register() {
           className="google-btn"
         >
           <img src={GoogleIcon} alt="Google" className="google-icon" />
-          Continue with Google
+          Sign Up with Google
         </button>
         <p className="register-el">
           Already have an account?

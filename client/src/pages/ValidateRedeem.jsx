@@ -90,9 +90,10 @@ export default function ValidateRedeem() {
       }
     } catch (error) {
       console.error("Error confirming redemption:", error);
-      if (error.response?.status === 401) {
+      const status = error.response?.status;
+      if (status === 401 || status === 403) {
         setPasswordError("Invalid admin credentials. Please try again.");
-      } else if (error.response?.status === 409) {
+      } else if (status === 409) {
         setPasswordError("This reward has already been claimed.");
       } else {
         setPasswordError("Failed to confirm redemption. Please try again.");

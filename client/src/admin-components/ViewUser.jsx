@@ -16,6 +16,7 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
   const [newRole, setNewRole] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [isChangingRole, setIsChangingRole] = useState(false);
+  const [modalError, setModalError] = useState("");
   const { user: currentUser } = useContext(UserContext);
 
   useEffect(() => {
@@ -85,6 +86,7 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
 
   const handleDelete = async () => {
     setIsDeleting(true);
+    setModalError("");
     try {
       // Verify password before deletion
       const response = await axios.post(
@@ -100,14 +102,17 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
         toast.success("User deleted successfully");
         setShowDeleteModal(false);
         setPasswordConfirmation("");
+        setModalError("");
         onUserDeleted();
       }
     } catch (error) {
       console.error("Error deleting user:", error);
-      if (error.response?.status === 401) {
-        toast.error("Incorrect password");
+      const status = error.response?.status;
+      if (status === 401 || status === 403) {
+        // Show inline error inside the modal instead of a toast
+        setModalError("Invalid password. Please try again.");
       } else {
-        toast.error("Error deleting user");
+        setModalError("Error deleting user. Please try again later.");
       }
     } finally {
       setIsDeleting(false);
@@ -116,6 +121,7 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
 
   const handleChangeRole = async () => {
     setIsChangingRole(true);
+    setModalError("");
     try {
       // Verify password before role change
       const response = await axios.post(
@@ -134,14 +140,17 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
         setShowChangeRoleModal(false);
         setPasswordConfirmation("");
         setNewRole("");
+        setModalError("");
         onUserDeleted(); // Refresh the user data
       }
     } catch (error) {
       console.error("Error changing user role:", error);
-      if (error.response?.status === 401) {
-        toast.error("Incorrect password");
+      const status = error.response?.status;
+      if (status === 401 || status === 403) {
+        // Show inline error inside the modal instead of a toast
+        setModalError("Invalid password. Please try again.");
       } else {
-        toast.error("Error changing user role");
+        setModalError("Error changing user role. Please try again later.");
       }
     } finally {
       setIsChangingRole(false);
@@ -240,6 +249,9 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
                     size="small"
                     onClick={() => {
                       setNewRole(user.role === "user" ? "admin" : "user");
+                      // clear any previous modal errors or typed password when opening
+                      setModalError("");
+                      setPasswordConfirmation("");
                       setShowChangeRoleModal(true);
                     }}
                   >
@@ -252,7 +264,12 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
                 <AdminButton
                   type="remove"
                   size="small"
-                  onClick={() => setShowDeleteModal(true)}
+                  onClick={() => {
+                    // clear previous modal errors/password before opening
+                    setModalError("");
+                    setPasswordConfirmation("");
+                    setShowDeleteModal(true);
+                  }}
                 >
                   REMOVE USER
                 </AdminButton>
@@ -337,7 +354,11 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
       {showDeleteModal && (
         <div
           className="view-user-modal-overlay"
-          onClick={() => setShowDeleteModal(false)}
+          onClick={() => {
+            setShowDeleteModal(false);
+            setModalError("");
+            setPasswordConfirmation("");
+          }}
         >
           <div
             className="view-user-modal-content"
@@ -367,12 +388,19 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
               />
             </div>
 
+            {modalError && (
+              <div className="view-user-modal-error" role="alert">
+                {modalError}
+              </div>
+            )}
+
             <div className="view-user-modal-buttons">
               <button
                 className="view-user-modal-btn view-user-modal-btn-cancel"
                 onClick={() => {
                   setShowDeleteModal(false);
                   setPasswordConfirmation("");
+                  setModalError("");
                 }}
                 disabled={isDeleting}
               >
@@ -394,7 +422,12 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
       {showChangeRoleModal && (
         <div
           className="view-user-modal-overlay"
-          onClick={() => setShowChangeRoleModal(false)}
+          onClick={() => {
+            setShowChangeRoleModal(false);
+            setModalError("");
+            setPasswordConfirmation("");
+            setNewRole("");
+          }}
         >
           <div
             className="view-user-modal-content"
@@ -423,6 +456,12 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
               />
             </div>
 
+            {modalError && (
+              <div className="view-user-modal-error" role="alert">
+                {modalError}
+              </div>
+            )}
+
             <div className="view-user-modal-buttons">
               <button
                 className="view-user-modal-btn view-user-modal-btn-cancel"
@@ -430,6 +469,7 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
                   setShowChangeRoleModal(false);
                   setPasswordConfirmation("");
                   setNewRole("");
+                  setModalError("");
                 }}
                 disabled={isChangingRole}
               >

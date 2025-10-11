@@ -288,6 +288,7 @@ export function UserContextProvider({ children }) {
     const interceptor = axios.interceptors.response.use(
       (r) => r,
       (err) => {
+        // Only handle 401s here. Pass through other errors.
         if (err?.response?.status !== 401) return Promise.reject(err);
         if (!redirected) {
           redirected = true;
