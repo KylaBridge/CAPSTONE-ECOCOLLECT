@@ -1,42 +1,69 @@
 const nodemailer = require("nodemailer");
-const { google } = require("googleapis");
-const QRCode = require("qrcode"); // ADD THIS LINE
+const QRCode = require("qrcode");
 
-const oAuth2Client = new google.auth.OAuth2(
-  process.env.GOOGLE_CLIENT_ID,
-  process.env.GOOGLE_CLIENT_SECRET,
-  process.env.REDIRECT_URI
-);
-oAuth2Client.setCredentials({
-  refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
-});
+// Simple Gmail transporter using App Password (more reliable for unverified apps)
+const createGmailTransporter = () => {
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_APP_PASSWORD, // App password instead of OAuth
+    },
+  });
+};
 
 const sendVerificationEmail = async (to, code) => {
   try {
-    const accessToken = await oAuth2Client.getAccessToken();
+    const transport = createGmailTransporter();
 
-    const transport = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        type: "OAuth2",
-        user: process.env.GMAIL_USER,
-        clientId: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
-        accessToken: accessToken,
-      },
-    });
+    const textBody = `Welcome to EcoCollect!
+
+Your account verification code is: ${code}
+
+This code will expire in 5 minutes for security reasons.
+
+If you didn't create an account with EcoCollect, please ignore this email.
+
+Best regards,
+The EcoCollect Team`;
+
+    const htmlBody = `
+      <div style="font-family:Arial,Helvetica,sans-serif;line-height:1.6;color:#333;max-width:600px;margin:0 auto;">
+        <div style="background:#28a745;color:white;padding:20px;text-align:center;">
+          <h1 style="margin:0;">Welcome to EcoCollect!</h1>
+        </div>
+        <div style="padding:20px;background:#f9f9f9;">
+          <p>Thank you for signing up with EcoCollect! You're one step away from joining our eco-friendly community.</p>
+          
+          <div style="background:white;padding:20px;border-radius:8px;margin:20px 0;text-align:center;border:2px dashed #28a745;">
+            <p style="margin:0;font-size:18px;color:#666;">Your verification code is:</p>
+            <h2 style="margin:10px 0;color:#28a745;font-size:32px;letter-spacing:4px;">${code}</h2>
+          </div>
+          
+          <p><strong>⏰ This code will expire in 5 minutes</strong> for security reasons.</p>
+          <p>Enter this code in the registration form to complete your account setup.</p>
+          <p>If you didn't create an account with EcoCollect, please ignore this email.</p>
+          
+          <div style="margin-top:30px;padding-top:20px;border-top:1px solid #ddd;">
+            <p style="color:#666;font-size:14px;">Best regards,<br>The EcoCollect Team</p>
+          </div>
+        </div>
+      </div>
+    `;
 
     const mailOptions = {
       from: `EcoCollect NU <${process.env.GMAIL_USER}>`,
       to: to,
-      subject: "Account Verification",
-      text: `This is your account verification code ${code}`,
+      subject: "Complete Your EcoCollect Registration",
+      text: textBody,
+      html: htmlBody,
     };
 
     const result = await transport.sendMail(mailOptions);
+    console.log(`Verification email sent successfully to: ${to}`);
     return result;
   } catch (error) {
+    console.error("Error sending verification email:", error);
     return error;
   }
 };
@@ -52,19 +79,7 @@ const sendContactEmail = async ({
 }) => {
   const recipient = process.env.GMAIL_USER;
   try {
-    const accessToken = await oAuth2Client.getAccessToken();
-
-    const transport = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        type: "OAuth2",
-        user: process.env.GMAIL_USER,
-        clientId: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
-        accessToken: accessToken,
-      },
-    });
+    const transport = createGmailTransporter();
 
     const subject = `New Contact Message from ${fromName}`;
     const textBody = `You have received a new message from the EcoCollect Contact form.
@@ -100,8 +115,10 @@ ${message}
     };
 
     const result = await transport.sendMail(mailOptions);
+    console.log(`Contact email sent successfully to: ${recipient}`);
     return result;
   } catch (error) {
+    console.error("Error sending contact email:", error);
     return error;
   }
 };
@@ -115,37 +132,25 @@ const sendRedemptionEmail = async (to, redemptionData) => {
       pointsSpent,
       redemptionId,
       expiryDate,
-      validationUrl
+      validationUrl,
     } = redemptionData;
 
-    const accessToken = await oAuth2Client.getAccessToken();
-
-    const transport = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        type: "OAuth2",
-        user: process.env.GMAIL_USER,
-        clientId: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
-        accessToken: accessToken,
-      },
-    });
+    const transport = createGmailTransporter();
 
     // Generate QR code as buffer for email attachment
     const qrCodeBuffer = await QRCode.toBuffer(validationUrl, {
       width: 300,
       margin: 2,
       color: {
-        dark: '#000000',
-        light: '#FFFFFF'
-      }
+        dark: "#000000",
+        light: "#FFFFFF",
+      },
     });
 
     const subject = `🎁 Reward Redeemed Successfully - ${rewardName}`;
-    
+
     const textBody = `
-Hello ${userFirstName || 'EcoCollect User'}!
+Hello ${userFirstName || "EcoCollect User"}!
 
 Congratulations! You have successfully redeemed your reward.
 
@@ -161,7 +166,9 @@ To claim your reward:
 3. Staff will scan the QR code or visit: ${validationUrl}
 4. Staff will confirm the redemption
 
-IMPORTANT: This redemption expires on ${new Date(expiryDate).toLocaleDateString()}. Make sure to claim it before the expiry date!
+IMPORTANT: This redemption expires on ${new Date(
+      expiryDate
+    ).toLocaleDateString()}. Make sure to claim it before the expiry date!
 
 Thank you for using EcoCollect!
 
@@ -173,7 +180,9 @@ EcoCollect Team
       <div style="font-family:Arial,Helvetica,sans-serif;line-height:1.6;max-width:600px;margin:0 auto;padding:20px;border:1px solid #ddd;border-radius:10px;">
         <div style="text-align:center;margin-bottom:30px;">
           <h1 style="color:#2E8B57;margin-bottom:10px;">🎁 Reward Redeemed!</h1>
-          <p style="color:#666;margin:0;">Congratulations, ${userFirstName || 'EcoCollect User'}!</p>
+          <p style="color:#666;margin:0;">Congratulations, ${
+            userFirstName || "EcoCollect User"
+          }!</p>
         </div>
         
         <div style="background:#f9f9f9;padding:20px;border-radius:8px;margin:20px 0;">
@@ -182,7 +191,9 @@ EcoCollect Team
             <tr><td style="padding:8px 0;border-bottom:1px solid #eee;"><strong>Reward:</strong></td><td style="padding:8px 0;border-bottom:1px solid #eee;">${rewardName}</td></tr>
             <tr><td style="padding:8px 0;border-bottom:1px solid #eee;"><strong>Points Used:</strong></td><td style="padding:8px 0;border-bottom:1px solid #eee;">${pointsSpent}</td></tr>
             <tr><td style="padding:8px 0;border-bottom:1px solid #eee;"><strong>Redemption ID:</strong></td><td style="padding:8px 0;border-bottom:1px solid #eee;">${redemptionId}</td></tr>
-            <tr><td style="padding:8px 0;"><strong>Expires:</strong></td><td style="padding:8px 0;">${new Date(expiryDate).toLocaleDateString()}</td></tr>
+            <tr><td style="padding:8px 0;"><strong>Expires:</strong></td><td style="padding:8px 0;">${new Date(
+              expiryDate
+            ).toLocaleDateString()}</td></tr>
           </table>
         </div>
 
@@ -203,7 +214,9 @@ EcoCollect Team
         </div>
 
         <div style="background:#f8d7da;border:1px solid #f5c6cb;padding:15px;border-radius:8px;margin:20px 0;">
-          <p style="color:#721c24;margin:0;"><strong>IMPORTANT:</strong> This redemption expires on ${new Date(expiryDate).toLocaleDateString()}. Make sure to claim it before the expiry date!</p>
+          <p style="color:#721c24;margin:0;"><strong>IMPORTANT:</strong> This redemption expires on ${new Date(
+            expiryDate
+          ).toLocaleDateString()}. Make sure to claim it before the expiry date!</p>
         </div>
 
         <div style="text-align:center;margin-top:30px;padding-top:20px;border-top:1px solid #eee;">
@@ -221,20 +234,84 @@ EcoCollect Team
       html: htmlBody,
       attachments: [
         {
-          filename: 'qrcode.png',
+          filename: "qrcode.png",
           content: qrCodeBuffer,
-          cid: 'qrcode', // Referenced in HTML as cid:qrcode
-          contentType: 'image/png'
-        }
-      ]
+          cid: "qrcode", // Referenced in HTML as cid:qrcode
+          contentType: "image/png",
+        },
+      ],
     };
 
     const result = await transport.sendMail(mailOptions);
     return result;
   } catch (error) {
-    console.error('Error sending redemption email:', error);
+    console.error("Error sending redemption email:", error);
     return error;
   }
 };
 
-module.exports = { sendVerificationEmail, sendContactEmail, sendRedemptionEmail };
+// Send password reset email with verification code
+const sendPasswordResetEmail = async (to, code, userName) => {
+  try {
+    const transport = createGmailTransporter();
+
+    const textBody = `Hi ${userName || "there"},
+
+You requested to reset your password for your EcoCollect account.
+
+Your password reset verification code is: ${code}
+
+This code will expire in 15 minutes for security reasons.
+
+If you didn't request this password reset, please ignore this email.
+
+Best regards,
+The EcoCollect Team`;
+
+    const htmlBody = `
+      <div style="font-family:Arial,Helvetica,sans-serif;line-height:1.6;color:#333;max-width:600px;margin:0 auto;">
+        <div style="background:#28a745;color:white;padding:20px;text-align:center;">
+          <h1 style="margin:0;">EcoCollect Password Reset</h1>
+        </div>
+        <div style="padding:20px;background:#f9f9f9;">
+          <p>Hi ${userName || "there"},</p>
+          <p>You requested to reset your password for your EcoCollect account.</p>
+          
+          <div style="background:white;padding:20px;border-radius:8px;margin:20px 0;text-align:center;border:2px dashed #28a745;">
+            <p style="margin:0;font-size:18px;color:#666;">Your verification code is:</p>
+            <h2 style="margin:10px 0;color:#28a745;font-size:32px;letter-spacing:4px;">${code}</h2>
+          </div>
+          
+          <p><strong>⏰ This code will expire in 15 minutes</strong> for security reasons.</p>
+          <p>If you didn't request this password reset, please ignore this email and your password will remain unchanged.</p>
+          
+          <div style="margin-top:30px;padding-top:20px;border-top:1px solid #ddd;">
+            <p style="color:#666;font-size:14px;">Best regards,<br>The EcoCollect Team</p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const mailOptions = {
+      from: `EcoCollect NU <${process.env.GMAIL_USER}>`,
+      to: to,
+      subject: "Reset Your EcoCollect Password",
+      text: textBody,
+      html: htmlBody,
+    };
+
+    const result = await transport.sendMail(mailOptions);
+    console.log(`Password reset email sent successfully to: ${to}`);
+    return result;
+  } catch (error) {
+    console.error("Error sending password reset email:", error);
+    return error;
+  }
+};
+
+module.exports = {
+  sendVerificationEmail,
+  sendContactEmail,
+  sendRedemptionEmail,
+  sendPasswordResetEmail,
+};

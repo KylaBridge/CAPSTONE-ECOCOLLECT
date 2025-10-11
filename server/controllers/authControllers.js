@@ -1,27 +1,32 @@
 const User = require("../models/user");
 const { comparePassword, hashPassword } = require("../helpers/auth");
 const { signToken, verifyToken } = require("../helpers/jwt");
-const { sendVerificationEmail } = require("../helpers/mail");
+const {
+  sendVerificationEmail,
+  sendPasswordResetEmail,
+} = require("../helpers/mail");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 
 // Dynamic session configuration based on NODE_ENV
 const getSessionConfig = () => {
-  const isDevelopment = process.env.NODE_ENV === 'development';
-  
+  const isDevelopment = process.env.NODE_ENV === "development";
+
   const config = {
-    tokenExpire: isDevelopment ? '1m' : '30m',
-    cookieExpire: isDevelopment ? 60000 : 1800000
+    tokenExpire: isDevelopment ? "1m" : "30m",
+    cookieExpire: isDevelopment ? 60000 : 1800000,
   };
-  
+
   // Log configuration on first call
   if (!getSessionConfig.logged) {
-    console.log(`[SESSION CONFIG] Environment: ${process.env.NODE_ENV || 'production'}`);
+    console.log(
+      `[SESSION CONFIG] Environment: ${process.env.NODE_ENV || "production"}`
+    );
     console.log(`[SESSION CONFIG] Token Expiry: ${config.tokenExpire}`);
     console.log(`[SESSION CONFIG] Cookie Expiry: ${config.cookieExpire}ms`);
     getSessionConfig.logged = true;
   }
-  
+
   return config;
 };
 
@@ -154,7 +159,7 @@ const loginUser = async (req, res) => {
     }
 
     // If this is an admin login, only allow admins
-    if (isAdminLogin && (user.role !== "admin" && user.role !== "superadmin")) {
+    if (isAdminLogin && user.role !== "admin" && user.role !== "superadmin") {
       return res
         .status(403)
         .json({ error: "You are not authorized to access this page" });
@@ -162,8 +167,9 @@ const loginUser = async (req, res) => {
 
     // Check if this is a Google OAuth user (no traditional password)
     if (!user.password && user.googleId) {
-      return res.status(400).json({ 
-        error: "This account was created with Google. Please use 'Continue with Google' to sign in." 
+      return res.status(400).json({
+        error:
+          "This account was created with Google. Please use 'Continue with Google' to sign in.",
       });
     }
 
@@ -175,10 +181,14 @@ const loginUser = async (req, res) => {
     const match = await comparePassword(password, user.password);
     if (match) {
       // Only set token if not admin login or user is admin/superadmin
-      if (!isAdminLogin || user.role === "admin" || user.role === "superadmin") {
+      if (
+        !isAdminLogin ||
+        user.role === "admin" ||
+        user.role === "superadmin"
+      ) {
         try {
           const { tokenExpire, cookieExpire } = getSessionConfig();
-          
+
           const token = await signToken(
             { email: user.email, id: user._id },
             { expiresIn: tokenExpire }
@@ -195,7 +205,9 @@ const loginUser = async (req, res) => {
             .json({
               token,
               message:
-                user.role === "admin" || user.role === "superadmin" ? "User is an admin" : "User logged in",
+                user.role === "admin" || user.role === "superadmin"
+                  ? "User is an admin"
+                  : "User logged in",
               _id: user._id,
               role: user.role,
               name: user.name,
@@ -278,7 +290,7 @@ const extendSession = async (req, res) => {
     if (!req.user) return res.status(401).json({ error: "Unauthorized" });
     const user = req.user;
     const { tokenExpire, cookieExpire } = getSessionConfig();
-    
+
     const token = await signToken(
       { id: user._id, email: user.email, role: user.role },
       { expiresIn: tokenExpire }
@@ -313,26 +325,35 @@ const googleAuthStart = (req, res, next) => {
   // Security: Strictly validate query parameters to prevent RFI attacks
   // Allow ONLY standard OAuth parameters
   const allowedParams = [
-    'state', 'response_type', 'client_id', 'redirect_uri', 'scope', 
-    'access_type', 'prompt', 'include_granted_scopes', 'hd'
+    "state",
+    "response_type",
+    "client_id",
+    "redirect_uri",
+    "scope",
+    "access_type",
+    "prompt",
+    "include_granted_scopes",
+    "hd",
   ];
   const queryParams = Object.keys(req.query);
-  
+
   // First, reject any parameters that are not explicitly allowed
   for (const param of queryParams) {
     if (!allowedParams.includes(param)) {
-      console.warn(`Unauthorized query parameter detected and blocked: ${param}`);
-      return res.status(400).json({ 
+      console.warn(
+        `Unauthorized query parameter detected and blocked: ${param}`
+      );
+      return res.status(400).json({
         error: "Unauthorized parameter detected",
         code: "INVALID_PARAMETER",
-        parameter: param
+        parameter: param,
       });
     }
   }
-  
+
   // Second, validate values of allowed parameters for suspicious patterns
   for (const [param, value] of Object.entries(req.query)) {
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       const suspiciousPatterns = [
         /^https?:\/\/(?!accounts\.google\.com|www\.google\.com)/i, // External URLs except Google
         /^ftp:\/\//i,
@@ -340,23 +361,25 @@ const googleAuthStart = (req, res, next) => {
         /javascript:/i,
         /data:/i,
         /vbscript:/i,
-        /\.\.\/|\.\.%2F/i,  // Directory traversal
-        /%2e%2e/i           // URL encoded dots
+        /\.\.\/|\.\.%2F/i, // Directory traversal
+        /%2e%2e/i, // URL encoded dots
       ];
-      
+
       for (const pattern of suspiciousPatterns) {
         if (pattern.test(value)) {
-          console.warn(`Suspicious parameter value detected and blocked: ${param}=${value}`);
-          return res.status(400).json({ 
+          console.warn(
+            `Suspicious parameter value detected and blocked: ${param}=${value}`
+          );
+          return res.status(400).json({
             error: "Suspicious parameter value detected",
             code: "SECURITY_VIOLATION",
-            parameter: param
+            parameter: param,
           });
         }
       }
     }
   }
-  
+
   // Proceed with passport authentication only if all validations pass
   passport.authenticate("google", {
     scope: ["profile", "email"],
@@ -483,13 +506,16 @@ const verifyPassword = async (req, res) => {
 
     // Check if this is a Google OAuth user (no traditional password)
     if (!user.password && user.googleId) {
-      return res.status(400).json({ 
-        error: "This account was created with Google and doesn't have a traditional password." 
+      return res.status(400).json({
+        error:
+          "This account was created with Google and doesn't have a traditional password.",
       });
     }
 
     if (!user.password) {
-      return res.status(400).json({ error: "No password set for this account" });
+      return res
+        .status(400)
+        .json({ error: "No password set for this account" });
     }
 
     const isMatch = await comparePassword(password, user.password);
@@ -502,6 +528,171 @@ const verifyPassword = async (req, res) => {
       .json({ success: true, message: "Password verified" });
   } catch (error) {
     console.log(error);
+    return res.status(500).json({ error: "Server error" });
+  }
+};
+
+// Forgot Password - Step 1: Send verification code
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
+    }
+
+    // Check if user exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      // For security, don't reveal if email exists or not
+      return res.status(200).json({
+        message:
+          "If an account with that email exists, a verification code has been sent.",
+      });
+    }
+
+    // Check if this is a Google OAuth user (no traditional password)
+    if (!user.password && user.googleId) {
+      return res.status(400).json({
+        error:
+          "This account was created with Google. Please use 'Continue with Google' to sign in.",
+      });
+    }
+
+    // Generate verification code (6-digit)
+    const verificationCode = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
+
+    // Create reset token with verification code (like registration flow)
+    const resetToken = await signToken(
+      { email: user.email, verificationCode },
+      { expiresIn: "15m" }
+    );
+
+    // Send verification email
+    try {
+      await sendPasswordResetEmail(email, verificationCode, user.name);
+    } catch (emailError) {
+      console.error("Failed to send reset email:", emailError);
+      return res
+        .status(500)
+        .json({ error: "Failed to send verification email" });
+    }
+
+    return res.status(200).json({
+      message: "Verification code sent to your email",
+      resetToken,
+    });
+  } catch (error) {
+    console.error("Forgot password error:", error);
+    return res.status(500).json({ error: "Server error" });
+  }
+};
+
+// Forgot Password - Step 2: Verify reset code
+const verifyResetCode = async (req, res) => {
+  try {
+    const { code, resetToken } = req.body;
+
+    if (!code || !resetToken) {
+      return res
+        .status(400)
+        .json({ error: "Code and reset token are required" });
+    }
+
+    // Verify reset token and extract data
+    let decoded;
+    try {
+      decoded = await verifyToken(resetToken);
+    } catch (err) {
+      return res.status(400).json({ error: "Invalid or expired reset token" });
+    }
+
+    const { email, verificationCode } = decoded;
+
+    // Verify code
+    if (verificationCode !== code) {
+      return res.status(400).json({ error: "Invalid verification code" });
+    }
+
+    // Verify user still exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Generate new token for the final step (like registration flow)
+    const newResetToken = await signToken(
+      { email, verified: true },
+      { expiresIn: "10m" }
+    );
+
+    return res.status(200).json({
+      message: "Code verified successfully",
+      newResetToken,
+    });
+  } catch (error) {
+    console.error("Verify reset code error:", error);
+    return res.status(500).json({ error: "Server error" });
+  }
+};
+
+// Forgot Password - Step 3: Reset password
+const resetPassword = async (req, res) => {
+  try {
+    const { newPassword, newResetToken } = req.body;
+
+    if (!newPassword || !newResetToken) {
+      return res
+        .status(400)
+        .json({ error: "New password and token are required" });
+    }
+
+    // Validate password requirements
+    const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+    if (
+      newPassword.length < 10 ||
+      !specialCharRegex.test(newPassword) ||
+      !/\d/.test(newPassword)
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Password does not meet requirements" });
+    }
+
+    // Verify token and extract data
+    let decoded;
+    try {
+      decoded = await verifyToken(newResetToken);
+    } catch (err) {
+      return res.status(400).json({ error: "Invalid or expired reset token" });
+    }
+
+    const { email, verified } = decoded;
+
+    if (!verified) {
+      return res.status(400).json({ error: "Reset token not verified" });
+    }
+
+    // Find user
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Hash new password
+    const hashedPassword = await hashPassword(newPassword);
+
+    // Update password
+    await User.findByIdAndUpdate(user._id, {
+      password: hashedPassword,
+      updatedAt: new Date(),
+    });
+
+    return res.status(200).json({ message: "Password reset successfully" });
+  } catch (error) {
+    console.error("Reset password error:", error);
     return res.status(500).json({ error: "Server error" });
   }
 };
@@ -519,4 +710,7 @@ module.exports = {
   googleAuthCallback,
   googleProfile,
   verifyPassword,
+  forgotPassword,
+  verifyResetCode,
+  resetPassword,
 };

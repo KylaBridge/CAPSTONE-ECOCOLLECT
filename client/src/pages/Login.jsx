@@ -37,6 +37,8 @@ export default function Login() {
     code: "",
     newPassword: "",
   });
+  const [resetToken, setResetToken] = useState(null);
+  const [newResetToken, setNewResetToken] = useState(null);
 
   function handleResetFormChange(e) {
     setResetForm({ ...resetForm, [e.target.name]: e.target.value });
@@ -83,6 +85,8 @@ export default function Login() {
     setIsPasswordReset(false);
     setResetStep(1);
     setResetForm({ email: "", code: "", newPassword: "" });
+    setResetToken(null);
+    setNewResetToken(null);
   }
 
   async function handleResetStep1(e) {
@@ -93,26 +97,24 @@ export default function Login() {
     }
     setLoading(true);
     try {
-      // TODO: API call to send verification code for password reset
-      // const response = await fetch("/api/ecocollect/auth/forgot-password", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   credentials: "include",
-      //   body: JSON.stringify({ email: resetForm.email }),
-      // });
-      // const data = await response.json();
+      const response = await fetch("/api/ecocollect/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email: resetForm.email }),
+      });
+      const data = await response.json();
 
-      // if (data.error) {
-      //   toast.error(data.error);
-      //   return;
-      // }
+      if (data.error) {
+        toast.error(data.error);
+        return;
+      }
 
-      // Simulate API call for UI flow
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      toast.success("Verification code sent to your email.");
+      setResetToken(data.resetToken);
+      toast.success(data.message);
       setResetStep(2);
     } catch (err) {
+      console.error("Forgot password error:", err);
       toast.error("Failed to send verification code.");
     } finally {
       setLoading(false);
@@ -125,15 +127,34 @@ export default function Login() {
       toast.error("Please enter the verification code.");
       return;
     }
+    if (!resetToken) {
+      toast.error("Reset session expired. Please start over.");
+      handleBackToLogin();
+      return;
+    }
     setLoading(true);
     try {
-      // TODO: API call to verify the code
-      // Simulate API call for UI flow
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await fetch("/api/ecocollect/auth/verify-reset-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          code: resetForm.code,
+          resetToken: resetToken,
+        }),
+      });
+      const data = await response.json();
 
-      toast.success("Code verified successfully.");
+      if (data.error) {
+        toast.error(data.error);
+        return;
+      }
+
+      setNewResetToken(data.newResetToken);
+      toast.success(data.message);
       setResetStep(3);
     } catch (err) {
+      console.error("Verify code error:", err);
       toast.error("Invalid verification code.");
     } finally {
       setLoading(false);
@@ -146,16 +167,33 @@ export default function Login() {
       toast.error("Password does not meet requirements.");
       return;
     }
+    if (!newResetToken) {
+      toast.error("Reset session expired. Please start over.");
+      handleBackToLogin();
+      return;
+    }
     setLoading(true);
     try {
-      // TODO: API call to reset password
+      const response = await fetch("/api/ecocollect/auth/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          newPassword: resetForm.newPassword,
+          newResetToken: newResetToken,
+        }),
+      });
+      const data = await response.json();
 
-      // Simulate API call for UI flow
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (data.error) {
+        toast.error(data.error);
+        return;
+      }
 
-      toast.success("Password reset successfully!");
+      toast.success(data.message);
       handleBackToLogin();
     } catch (err) {
+      console.error("Reset password error:", err);
       toast.error("Failed to reset password.");
     } finally {
       setLoading(false);

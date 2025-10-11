@@ -99,7 +99,7 @@ const confirmRedemption = async (req, res) => {
     // Find store admin account
     const storeAdmin = await User.findOne({ 
       email: storeEmail, 
-      role: 'admin' // Changed to 'admin' role
+      role: 'admin' || "superadmin" // Changed to 'admin' role
     });
 
     if (!storeAdmin) {

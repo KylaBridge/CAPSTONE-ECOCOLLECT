@@ -15,6 +15,9 @@ const {
   googleAuthCallback,
   googleProfile,
   verifyPassword,
+  forgotPassword,
+  verifyResetCode,
+  resetPassword,
 } = require("../controllers/authControllers");
 const { authMiddleware } = require("../middleware/authMiddleware");
 
@@ -25,6 +28,12 @@ router.post("/login", rateLimitAuth, loginUser);
 router.get("/profile", getProfile);
 router.post("/logout", logoutUser);
 router.post("/verify-password", verifyPassword);
+
+// Password reset routes
+router.post("/forgot-password", rateLimitAuth, forgotPassword);
+router.post("/verify-reset-code", rateLimitAuth, verifyResetCode);
+router.post("/reset-password", rateLimitAuth, resetPassword);
+
 router.get("/session", sessionInfo); // public read (returns null if no token)
 router.post("/session/extend", authMiddleware, extendSession); // must be authenticated
 
@@ -34,17 +43,24 @@ router.get("/google", rateLimitAuth, googleAuthStart);
 // Middleware to validate OAuth callback parameters
 const validateOAuthCallback = (req, res, next) => {
   const allowedCallbackParams = [
-    'code', 'state', 'scope', 'authuser', 'prompt', 'hd', 'error', 'error_description'
+    "code",
+    "state",
+    "scope",
+    "authuser",
+    "prompt",
+    "hd",
+    "error",
+    "error_description",
   ];
   const queryParams = Object.keys(req.query);
-  
+
   for (const param of queryParams) {
     if (!allowedCallbackParams.includes(param)) {
       console.warn(`Unauthorized OAuth callback parameter detected: ${param}`);
-      return res.status(400).json({ 
+      return res.status(400).json({
         error: "Unauthorized callback parameter",
         code: "INVALID_OAUTH_PARAMETER",
-        parameter: param
+        parameter: param,
       });
     }
   }
