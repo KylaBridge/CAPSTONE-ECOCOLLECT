@@ -8,15 +8,12 @@
   --bg-light: #8dd7d7;
 }
 
-body {
-  overflow-x: hidden;
-}
-
 .landing-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   background: var(--green);
+  overflow-x: hidden;
 }
 
 section {
@@ -41,7 +38,7 @@ section {
 
 .landing-hero {
   background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-                    url('../../assets/bgphoto-ecocollect.png');
+    url("../../assets/bgphoto-ecocollect.png");
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
@@ -104,6 +101,15 @@ section {
   text-align: left;
 }
 
+/* Desktop/Mobile text control */
+.mobile-text {
+  display: none;
+}
+
+.desktop-text {
+  display: inline;
+}
+
 .transform-text .highlight {
   color: #fff;
   text-shadow: 1px 1px #000;
@@ -156,7 +162,7 @@ section {
 .icon-circle {
   width: 50%;
   height: 100px;
-  background-image: linear-gradient(to bottom,#6db300 5%,#005c1b 95%);
+  background-image: linear-gradient(to bottom, #6db300 5%, #005c1b 95%);
   color: white;
   border-radius: 50%;
   margin: 0 auto 1rem;
@@ -307,6 +313,22 @@ section {
     margin-bottom: 2rem;
   }
 
+  .transform-text h2 {
+    font-size: 2rem;
+    line-height: 1.2;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* Mobile text display */
+  .desktop-text {
+    display: none;
+  }
+
+  .mobile-text {
+    display: block;
+  }
+
   .transform-image {
     margin-top: 20px;
     margin-right: 0;
@@ -406,5 +428,56 @@ section {
   .rewards-images img {
     width: 100%;
     max-width: 360px;
+  }
+}
+
+/* Add these media query improvements for better mobile text wrapping */
+
+/* Enhanced mobile responsiveness for transform section */
+@media (max-width: 768px) {
+  .transform-text h2 {
+    font-size: 2rem; /* Reduce font size for mobile */
+    line-height: 1.2;
+    word-wrap: break-word;
+    hyphens: auto;
+  }
+
+  .transform-text {
+    min-width: 280px; /* Allow for smaller screens */
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .transform-text h2 {
+    font-size: 1.5rem;
+    line-height: 1.2;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+  }
+
+  .transform-text {
+    min-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0 1rem;
+  }
+
+  .transform-section {
+    padding: 2rem 1rem;
+  }
+}
+
+/* Improve text readability across all mobile sizes */
+@media (max-width: 768px) {
+  .hero-text h1 {
+    word-wrap: break-word;
+    hyphens: auto;
+  }
+
+  .hero-text p {
+    word-wrap: break-word;
   }
 }

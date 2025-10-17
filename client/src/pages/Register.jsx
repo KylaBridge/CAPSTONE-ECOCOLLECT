@@ -1,5 +1,5 @@
 import "./styles/Register.css";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import {
   AiOutlineEye,
   AiOutlineEyeInvisible,
@@ -23,10 +23,16 @@ const passwordRequirements = [
   { label: "At least one number", test: (pw) => /\d/.test(pw) },
 ];
 
+// Name validation - allow letters, numbers, spaces, hyphens, apostrophes, and underscores
+const isValidName = (name) => {
+  return /^[a-zA-Z0-9\s\-'_]+$/.test(name);
+};
+
 export default function Register() {
   const navigate = useNavigate();
   const {
     registerEmailName,
+    checkUsernameAvailability,
     registerPassword,
     registerUserFinal,
     getGoogleAuthUrl,
@@ -42,10 +48,96 @@ export default function Register() {
   });
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [usernameStatus, setUsernameStatus] = useState({
+    isChecking: false,
+    isAvailable: null,
+    message: "",
+  });
+
+  // Debounce timer for username check
+  const [usernameDebounceTimer, setUsernameDebounceTimer] = useState(null);
+
+  // Check username availability
+  async function checkUsername(name) {
+    if (!name || name.length < 2) {
+      setUsernameStatus({ isChecking: false, isAvailable: null, message: "" });
+      return;
+    }
+
+    if (!isValidName(name)) {
+      setUsernameStatus({
+        isChecking: false,
+        isAvailable: false,
+        message:
+          "Username can only contain letters, numbers, spaces, hyphens, apostrophes, and underscores.",
+      });
+      return;
+    }
+
+    setUsernameStatus({
+      isChecking: true,
+      isAvailable: null,
+      message: "Checking availability...",
+    });
+
+    try {
+      const data = await checkUsernameAvailability({ name: name.trim() });
+      if (data.error) {
+        setUsernameStatus({
+          isChecking: false,
+          isAvailable: null,
+          message: "Error checking username availability",
+        });
+        return;
+      }
+
+      setUsernameStatus({
+        isChecking: false,
+        isAvailable: data.available,
+        message: data.message,
+      });
+    } catch (err) {
+      setUsernameStatus({
+        isChecking: false,
+        isAvailable: null,
+        message: "Error checking username availability",
+      });
+    }
+  }
 
   function handleChange(e) {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    // For name field, filter out invalid characters in real-time
+    if (name === "name") {
+      // Remove any characters that don't match our allowed pattern
+      const filteredValue = value.replace(/[^a-zA-Z0-9\s\-'_]/g, "");
+      setForm({ ...form, [name]: filteredValue });
+
+      // Clear existing timer
+      if (usernameDebounceTimer) {
+        clearTimeout(usernameDebounceTimer);
+      }
+
+      // Set new timer for username check
+      const newTimer = setTimeout(() => {
+        checkUsername(filteredValue);
+      }, 500); // 500ms debounce
+
+      setUsernameDebounceTimer(newTimer);
+    } else {
+      setForm({ ...form, [name]: value });
+    }
   }
+
+  // Cleanup effect for username debounce timer
+  useEffect(() => {
+    return () => {
+      if (usernameDebounceTimer) {
+        clearTimeout(usernameDebounceTimer);
+      }
+    };
+  }, [usernameDebounceTimer]);
 
   function allPasswordValid() {
     return passwordRequirements.every((req) => req.test(form.password));
@@ -55,6 +147,22 @@ export default function Register() {
     e.preventDefault();
     if (!form.email || !form.name) {
       toast.error("Please fill in all fields.");
+      return;
+    }
+    if (!isValidName(form.name)) {
+      toast.error(
+        "Name can only contain letters, numbers, spaces, hyphens, apostrophes, and underscores."
+      );
+      return;
+    }
+    if (usernameStatus.isAvailable === false) {
+      toast.error(
+        "Username is already taken. Please choose a different username."
+      );
+      return;
+    }
+    if (usernameStatus.isChecking) {
+      toast.error("Please wait while we check username availability.");
       return;
     }
     try {
@@ -146,7 +254,7 @@ export default function Register() {
               onChange={handleChange}
               required
             />
-            <label htmlFor="name">Name</label>
+            <label htmlFor="name">Username</label>
             <input
               id="name"
               name="name"
@@ -155,13 +263,44 @@ export default function Register() {
               onChange={handleChange}
               required
             />
+            {/* Username availability status */}
+            {usernameStatus.message && (
+              <div
+                className={`username-status ${
+                  usernameStatus.isChecking
+                    ? "checking"
+                    : usernameStatus.isAvailable === true
+                    ? "available"
+                    : usernameStatus.isAvailable === false
+                    ? "unavailable"
+                    : "error"
+                }`}
+              >
+                {usernameStatus.isChecking && (
+                  <span className="spinner">⏳</span>
+                )}
+                {usernameStatus.isAvailable === true && (
+                  <span className="check">✅</span>
+                )}
+                {usernameStatus.isAvailable === false && (
+                  <span className="cross">❌</span>
+                )}
+                {usernameStatus.message}
+              </div>
+            )}
             <div className="name-hint">
               This name will appear on your profile
             </div>
             <button
               className="register-btn2"
               type="submit"
-              disabled={loading || !form.email || !form.name}
+              disabled={
+                loading ||
+                !form.email ||
+                !form.name ||
+                usernameStatus.isChecking ||
+                usernameStatus.isAvailable === false
+              }
             >
               Next
             </button>

@@ -38,13 +38,45 @@ const registerEmailName = async (req, res) => {
     if (!email || !name)
       return res.status(400).json({ error: "Missing fields" });
 
-    const exists = await User.findOne({ email });
+    const emailExists = await User.findOne({ email });
+    const usernameExists = await User.findOne({ name: name.trim() });
 
-    if (exists) return res.status(400).json({ error: "Email Already Exists" });
+    if (emailExists)
+      return res.status(400).json({ error: "Email Already Exists" });
+    if (usernameExists)
+      return res.status(400).json({ error: "Username Already Exists" });
 
     const tempToken = await signToken({ email, name }, { expiresIn: "5m" });
 
     return res.status(200).json({ message: "Email Accepted", tempToken });
+  } catch (error) {
+    return res.status(500).json({ error: "Server error" });
+  }
+};
+
+// Check Username Availability
+const checkUsernameAvailability = async (req, res) => {
+  try {
+    const { name } = req.body;
+
+    if (!name) {
+      return res.status(400).json({ error: "Username is required" });
+    }
+
+    // Check if username already exists
+    const existingUser = await User.findOne({ name: name.trim() });
+
+    if (existingUser) {
+      return res.status(200).json({
+        available: false,
+        message: "Username is already taken",
+      });
+    }
+
+    return res.status(200).json({
+      available: true,
+      message: "Username is available",
+    });
   } catch (error) {
     return res.status(500).json({ error: "Server error" });
   }
@@ -702,6 +734,7 @@ const resetPassword = async (req, res) => {
 
 module.exports = {
   registerEmailName,
+  checkUsernameAvailability,
   registerPassword,
   registerUser,
   loginUser,

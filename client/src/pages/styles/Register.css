@@ -84,6 +84,40 @@
     margin-bottom: 10px;
     margin-left: 5px;
   }
+
+  .username-status {
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+    margin-left: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .username-status.checking {
+    color: #ffd700;
+  }
+
+  .username-status.available {
+    color: #4caf50;
+  }
+
+  .username-status.unavailable {
+    color: #f44336;
+  }
+
+  .username-status.error {
+    color: #ff9800;
+  }
+
+  .username-status .spinner,
+  .username-status .check,
+  .username-status .cross {
+    font-size: 0.9rem;
+  }
   
   .register-form input {
     margin-bottom: 10px;

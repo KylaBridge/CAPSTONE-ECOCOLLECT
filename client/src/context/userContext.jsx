@@ -20,14 +20,18 @@ export function UserContextProvider({ children }) {
   const location = useLocation();
 
   // Session timing configuration from environment variables
-  const IDLE_TIMEOUT = parseInt(import.meta.env.VITE_IDLE_TIMEOUT) || 2 * 60 * 1000; // Default: 2 minutes
-  const EXTEND_THRESHOLD = parseInt(import.meta.env.VITE_EXTEND_THRESHOLD) || 10 * 60 * 1000; // Default: 10 minutes
-  const WARNING_LEAD = parseInt(import.meta.env.VITE_WARNING_LEAD) || 5 * 60 * 1000; // Default: 5 minutes
+  const IDLE_TIMEOUT =
+    parseInt(import.meta.env.VITE_IDLE_TIMEOUT) || 2 * 60 * 1000; // Default: 2 minutes
+  const EXTEND_THRESHOLD =
+    parseInt(import.meta.env.VITE_EXTEND_THRESHOLD) || 10 * 60 * 1000; // Default: 10 minutes
+  const WARNING_LEAD =
+    parseInt(import.meta.env.VITE_WARNING_LEAD) || 5 * 60 * 1000; // Default: 5 minutes
 
   // Load persisted token (iOS Chrome fallback path)
   useEffect(() => {
     const saved = localStorage.getItem("authToken");
-    if (saved) axios.defaults.headers.common["Authorization"] = `Bearer ${saved}`;
+    if (saved)
+      axios.defaults.headers.common["Authorization"] = `Bearer ${saved}`;
   }, []);
 
   const setAuthToken = (token) => {
@@ -49,7 +53,8 @@ export function UserContextProvider({ children }) {
   const fetchSessionInfo = async () => {
     try {
       const { data } = await axios.get("/api/ecocollect/auth/session");
-      if (data?.expiresAt) setSessionExpiresAt(data.expiresAt); else setSessionExpiresAt(null);
+      if (data?.expiresAt) setSessionExpiresAt(data.expiresAt);
+      else setSessionExpiresAt(null);
     } catch {
       setSessionExpiresAt(null);
     }
@@ -59,7 +64,8 @@ export function UserContextProvider({ children }) {
     try {
       const { data } = await axios.get("/api/ecocollect/auth/profile");
       setUser(data || null);
-      if (data) fetchSessionInfo(); else clearSessionTimers();
+      if (data) fetchSessionInfo();
+      else clearSessionTimers();
       return data || null;
     } catch {
       setUser(null);
@@ -72,10 +78,15 @@ export function UserContextProvider({ children }) {
 
   const login = async ({ email, password, isAdminLogin = false }) => {
     try {
-      const { data } = await axios.post("/api/ecocollect/auth/login", { email, password, isAdminLogin });
+      const { data } = await axios.post("/api/ecocollect/auth/login", {
+        email,
+        password,
+        isAdminLogin,
+      });
       if (!data?.error) {
         setUser(data);
-        if (data.token && /CriOS/i.test(navigator.userAgent)) setAuthToken(data.token);
+        if (data.token && /CriOS/i.test(navigator.userAgent))
+          setAuthToken(data.token);
         fetchSessionInfo();
       }
       return data;
@@ -85,7 +96,9 @@ export function UserContextProvider({ children }) {
   };
 
   const logout = async () => {
-    try { await axios.post("/api/ecocollect/auth/logout"); } catch {}
+    try {
+      await axios.post("/api/ecocollect/auth/logout");
+    } catch {}
     setUser(null);
     clearAuthToken();
     clearSessionTimers();
@@ -103,21 +116,55 @@ export function UserContextProvider({ children }) {
         setIsIdle(false);
         if (data.token) setAuthToken(data.token);
       }
-    } catch { logout(); }
+    } catch {
+      logout();
+    }
   };
 
   // Registration helpers
   const registerEmailName = async ({ email, name }) => {
-    try { const { data } = await axios.post("/api/ecocollect/auth/register/email", { email, name }); return data; }
-    catch (e) { return e?.response?.data || { error: "Registration step 1 failed" }; }
+    try {
+      const { data } = await axios.post("/api/ecocollect/auth/register/email", {
+        email,
+        name,
+      });
+      return data;
+    } catch (e) {
+      return e?.response?.data || { error: "Registration step 1 failed" };
+    }
+  };
+  const checkUsernameAvailability = async ({ name }) => {
+    try {
+      const { data } = await axios.post("/api/ecocollect/auth/check-username", {
+        name,
+      });
+      return data;
+    } catch (e) {
+      return e?.response?.data || { error: "Username check failed" };
+    }
   };
   const registerPassword = async ({ password, tempToken }) => {
-    try { const { data } = await axios.post("/api/ecocollect/auth/register/password", { password, tempToken }); return data; }
-    catch (e) { return e?.response?.data || { error: "Registration step 2 failed" }; }
+    try {
+      const { data } = await axios.post(
+        "/api/ecocollect/auth/register/password",
+        { password, tempToken }
+      );
+      return data;
+    } catch (e) {
+      return e?.response?.data || { error: "Registration step 2 failed" };
+    }
   };
   const registerUserFinal = async ({ code, newTempToken, role }) => {
-    try { const { data } = await axios.post("/api/ecocollect/auth/register", { code, newTempToken, role }); return data; }
-    catch (e) { return e?.response?.data || { error: "Registration failed" }; }
+    try {
+      const { data } = await axios.post("/api/ecocollect/auth/register", {
+        code,
+        newTempToken,
+        role,
+      });
+      return data;
+    } catch (e) {
+      return e?.response?.data || { error: "Registration failed" };
+    }
   };
 
   const getGoogleAuthUrl = () => {
@@ -135,12 +182,20 @@ export function UserContextProvider({ children }) {
       setAuthToken(urlToken);
       refreshProfile().then((data) => {
         if (data) navigate("/home", { replace: true });
-        else { clearAuthToken(); navigate("/login", { replace: true }); }
+        else {
+          clearAuthToken();
+          navigate("/login", { replace: true });
+        }
       });
     } else {
       refreshProfile().then((data) => {
         if (fromGoogle && data) navigate("/home", { replace: true });
-        else if (fromGoogle) window.history.replaceState({}, document.title, window.location.pathname);
+        else if (fromGoogle)
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+          );
       });
     }
   }, []);
@@ -156,13 +211,20 @@ export function UserContextProvider({ children }) {
       // User must manually choose to extend via modal buttons
     };
 
-    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
-    events.forEach(event => {
+    const events = [
+      "mousedown",
+      "mousemove",
+      "keypress",
+      "scroll",
+      "touchstart",
+      "click",
+    ];
+    events.forEach((event) => {
       document.addEventListener(event, updateActivity, { passive: true });
     });
 
     return () => {
-      events.forEach(event => {
+      events.forEach((event) => {
         document.removeEventListener(event, updateActivity);
       });
     };
@@ -170,18 +232,36 @@ export function UserContextProvider({ children }) {
 
   // Auto-extend session for active users (sliding session)
   useEffect(() => {
-    if (!user || !sessionExpiresAt || isIdle || showSessionModal || autoExtendTriggered) return;
+    if (
+      !user ||
+      !sessionExpiresAt ||
+      isIdle ||
+      showSessionModal ||
+      autoExtendTriggered
+    )
+      return;
 
     const now = Date.now();
     const msLeft = sessionExpiresAt - now;
 
     // If active user has threshold time or less remaining, auto-extend
     if (msLeft <= EXTEND_THRESHOLD) {
-      console.log(`[SESSION] Auto-extending session for active user (${Math.floor(msLeft/60000)}m left)`);
+      console.log(
+        `[SESSION] Auto-extending session for active user (${Math.floor(
+          msLeft / 60000
+        )}m left)`
+      );
       setAutoExtendTriggered(true); // Prevent multiple calls
       extendSession();
     }
-  }, [user, sessionExpiresAt, isIdle, lastActivity, showSessionModal, autoExtendTriggered]);
+  }, [
+    user,
+    sessionExpiresAt,
+    isIdle,
+    lastActivity,
+    showSessionModal,
+    autoExtendTriggered,
+  ]);
 
   // Idle detection - check if user has been inactive
   useEffect(() => {
@@ -190,10 +270,12 @@ export function UserContextProvider({ children }) {
     const idleChecker = setInterval(() => {
       const timeSinceActivity = Date.now() - lastActivity;
       const shouldBeIdle = timeSinceActivity >= IDLE_TIMEOUT;
-      
+
       if (shouldBeIdle !== isIdle) {
         setIsIdle(shouldBeIdle);
-        console.log(`[SESSION] User is now ${shouldBeIdle ? 'IDLE' : 'ACTIVE'}`);
+        console.log(
+          `[SESSION] User is now ${shouldBeIdle ? "IDLE" : "ACTIVE"}`
+        );
       }
     }, 5000); // Check every 5 seconds
 
@@ -207,10 +289,13 @@ export function UserContextProvider({ children }) {
       // User must manually choose via modal buttons
       return;
     }
-    
+
     const now = Date.now();
     const msLeft = sessionExpiresAt - now;
-    if (msLeft <= 0) { refreshProfile(); return; }
+    if (msLeft <= 0) {
+      refreshProfile();
+      return;
+    }
     if (msLeft <= WARNING_LEAD && !sessionWarningFired) {
       setShowSessionModal(true);
       setSessionWarningFired(true);
@@ -225,13 +310,19 @@ export function UserContextProvider({ children }) {
 
   // Countdown in modal
   useEffect(() => {
-    if (!showSessionModal || !sessionExpiresAt) { setCountdown(""); setCountdownClass("normal"); return; }
+    if (!showSessionModal || !sessionExpiresAt) {
+      setCountdown("");
+      setCountdownClass("normal");
+      return;
+    }
     const format = (ms) => {
       if (ms <= 0) return "00:00";
       const total = Math.floor(ms / 1000);
       const m = Math.floor(total / 60);
       const s = total % 60;
-      return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+      return `${m.toString().padStart(2, "0")}:${s
+        .toString()
+        .padStart(2, "0")}`;
     };
     const classify = (ms) => {
       const sec = Math.floor(ms / 1000);
@@ -242,13 +333,20 @@ export function UserContextProvider({ children }) {
     };
     const tick = () => {
       const diff = sessionExpiresAt - Date.now();
-      if (diff <= 0) { setCountdown("00:00"); setCountdownClass("critical"); logout(); return false; }
+      if (diff <= 0) {
+        setCountdown("00:00");
+        setCountdownClass("critical");
+        logout();
+        return false;
+      }
       setCountdown(format(diff));
       setCountdownClass(classify(diff));
       return true;
     };
     if (!tick()) return; // initial
-    const id = setInterval(() => { if (!tick()) clearInterval(id); }, 1000);
+    const id = setInterval(() => {
+      if (!tick()) clearInterval(id);
+    }, 1000);
     return () => clearInterval(id);
   }, [showSessionModal, sessionExpiresAt]);
 
@@ -260,7 +358,9 @@ export function UserContextProvider({ children }) {
   }, [user]);
 
   // Fallback fetch if profile loaded but no expiry
-  useEffect(() => { if (user && !sessionExpiresAt) fetchSessionInfo(); }, [user, sessionExpiresAt]);
+  useEffect(() => {
+    if (user && !sessionExpiresAt) fetchSessionInfo();
+  }, [user, sessionExpiresAt]);
 
   // Console log remaining session time (every 10 minutes) with activity status
   useEffect(() => {
@@ -274,9 +374,11 @@ export function UserContextProvider({ children }) {
       }
       const mins = Math.floor(ms / 60000);
       const secs = Math.floor((ms % 60000) / 1000);
-      const activityStatus = isIdle ? 'IDLE' : 'ACTIVE';
+      const activityStatus = isIdle ? "IDLE" : "ACTIVE";
       const timeSinceActivity = Math.floor((Date.now() - lastActivity) / 1000);
-      console.log(`[SESSION] ${mins}m ${secs}s remaining | Status: ${activityStatus} | Idle for: ${timeSinceActivity}s`);
+      console.log(
+        `[SESSION] ${mins}m ${secs}s remaining | Status: ${activityStatus} | Idle for: ${timeSinceActivity}s`
+      );
     }, 5 * 60 * 1000); // Log every 5 minutes, Log per second if testing
 
     return () => clearInterval(logInterval);
@@ -296,7 +398,8 @@ export function UserContextProvider({ children }) {
           clearAuthToken();
           const path = location.pathname || "";
           const target = path.startsWith("/admin") ? "/admin/login" : "/login";
-          if (path !== target) navigate(target, { replace: true, state: { from: location } });
+          if (path !== target)
+            navigate(target, { replace: true, state: { from: location } });
         }
         return Promise.reject(err);
       }
@@ -305,42 +408,69 @@ export function UserContextProvider({ children }) {
   }, [location, navigate]);
 
   return (
-    <UserContext.Provider value={{
-      user,
-      setUser,
-      loading,
-      refreshProfile,
-      logout,
-      login,
-      registerEmailName,
-      registerPassword,
-      registerUserFinal,
-      getGoogleAuthUrl,
-      sessionExpiresAt,
-      showSessionModal,
-      extendSession,
-      setShowSessionModal,
-      clearSessionTimers,
-    }}>
+    <UserContext.Provider
+      value={{
+        user,
+        setUser,
+        loading,
+        refreshProfile,
+        logout,
+        login,
+        registerEmailName,
+        checkUsernameAvailability,
+        registerPassword,
+        registerUserFinal,
+        getGoogleAuthUrl,
+        sessionExpiresAt,
+        showSessionModal,
+        extendSession,
+        setShowSessionModal,
+        clearSessionTimers,
+      }}
+    >
       {children}
       {showSessionModal && (
         <div className="session-timeout-modal">
           <div className="session-timeout-modal-backdrop" />
-          <div className="session-timeout-modal-content" role="dialog" aria-modal="true" aria-labelledby="session-timeout-title" aria-describedby="session-timeout-desc">
+          <div
+            className="session-timeout-modal-content"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="session-timeout-title"
+            aria-describedby="session-timeout-desc"
+          >
             <div className="session-timeout-header">
               <h2 id="session-timeout-title">Session Timeout Notice</h2>
             </div>
             <p id="session-timeout-desc" className="session-timeout-message">
-              Your secure session will end soon. Please choose an action to continue or you will be automatically logged out.
+              Your secure session will end soon. Please choose an action to
+              continue or you will be automatically logged out.
             </p>
             <p className="session-countdown-text" aria-live="polite">
-              Auto logout in <span className={`session-countdown-value ${countdownClass}`}>{countdown}</span>
+              Auto logout in{" "}
+              <span className={`session-countdown-value ${countdownClass}`}>
+                {countdown}
+              </span>
             </p>
             <div className="session-timeout-actions">
-              <button onClick={extendSession} className="extend-session-btn" autoFocus>Stay Signed In</button>
-              <button onClick={logout} className="logout-session-btn">Logout Now</button>
+              <button
+                onClick={extendSession}
+                className="extend-session-btn"
+                autoFocus
+              >
+                Stay Signed In
+              </button>
+              <button onClick={logout} className="logout-session-btn">
+                Logout Now
+              </button>
             </div>
-            <button className="session-close-btn" onClick={logout} aria-label="Close and logout">×</button>
+            <button
+              className="session-close-btn"
+              onClick={logout}
+              aria-label="Close and logout"
+            >
+              ×
+            </button>
           </div>
         </div>
       )}

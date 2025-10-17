@@ -4,6 +4,7 @@ const passport = require("passport");
 const { rateLimitAuth } = require("../middleware/securityMiddleware");
 const {
   registerEmailName,
+  checkUsernameAvailability,
   registerPassword,
   registerUser,
   loginUser,
@@ -22,6 +23,7 @@ const {
 const { authMiddleware } = require("../middleware/authMiddleware");
 
 router.post("/register/email", rateLimitAuth, registerEmailName);
+router.post("/check-username", rateLimitAuth, checkUsernameAvailability);
 router.post("/register/password", rateLimitAuth, registerPassword);
 router.post("/register", rateLimitAuth, registerUser);
 router.post("/login", rateLimitAuth, loginUser);

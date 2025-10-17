@@ -1,0 +1,369 @@
+:root {
+  --green-dark: #284c42;
+  --green: #70ac40;
+  --green-light: #a5d6a7;
+  --text-light: #f0fdf4;
+  --blue-light: #8dd7d7;
+  --bg-light: #8dd7d7;
+}
+
+.pp-page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: white;
+}
+
+.pp-page-header {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)),
+    url("../../assets/bgphoto-ecocollect.png");
+  background-size: cover;
+  background-position: center;
+  text-align: center;
+  padding: 6rem 2rem 4rem;
+  color: white;
+}
+
+.pp-page-header h1 {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: white;
+}
+
+.pp-page-subtitle {
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto;
+  opacity: 0.9;
+  color: white;
+}
+
+.pp-main-content {
+  display: flex;
+  flex-direction: column;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem 2rem 2rem;
+  background: white;
+}
+
+.pp-navigation-tabs {
+  width: 100%;
+  margin-bottom: 2rem;
+  position: sticky;
+  top: 70px;
+  z-index: 100;
+  background: white;
+  padding: 1rem 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pp-tabs-container {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 6px;
+  border: 1px solid #e9ecef;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  max-width: 100%;
+}
+
+.pp-tabs-container::-webkit-scrollbar {
+  display: none;
+}
+
+.pp-tab-link {
+  color: #6c757d;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  text-align: center;
+  min-width: fit-content;
+  flex-shrink: 0;
+}
+
+.pp-tab-short {
+  display: none;
+}
+
+.pp-tab-full {
+  display: inline;
+}
+
+.pp-tab-link:hover {
+  color: var(--green-dark);
+  background-color: rgba(112, 172, 64, 0.1);
+}
+
+.pp-tab-link.active {
+  color: var(--green-dark);
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+}
+
+.pp-content-sections {
+  background: #f8f9fa;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.pp-content-section {
+  padding: 2.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.pp-content-section:last-child {
+  border-bottom: none;
+}
+
+.pp-content-section h2 {
+  color: var(--green-dark);
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.pp-content-section h2::before {
+  content: "";
+  width: 4px;
+  height: 2rem;
+  background: var(--green);
+  margin-right: 1rem;
+  border-radius: 2px;
+}
+
+.pp-section-body h3 {
+  color: var(--green);
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.75rem 0;
+}
+
+.pp-section-body p {
+  color: #555;
+  line-height: 1.7;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.pp-section-body ul {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.pp-section-body li {
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+.pp-section-body strong {
+  color: var(--green-dark);
+  font-weight: 600;
+}
+
+.pp-contact-info {
+  background: linear-gradient(
+    135deg,
+    var(--green-light) 0%,
+    rgba(165, 214, 167, 0.3) 100%
+  );
+  padding: 1.5rem;
+  border-radius: 10px;
+  border-left: 4px solid var(--green);
+  margin: 1rem 0;
+}
+
+.pp-contact-info p {
+  margin: 0.5rem 0;
+  color: #555;
+}
+
+.pp-page-footer {
+  text-align: center;
+  padding: 2rem;
+}
+
+.pp-back-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: var(--green);
+  color: white;
+  text-decoration: none;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(112, 172, 64, 0.3);
+}
+
+.pp-back-button:hover {
+  background: var(--green-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(112, 172, 64, 0.4);
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 1024px) {
+  .pp-main-content {
+    padding: 0 2rem 2rem 2rem;
+  }
+
+  .pp-tabs-container {
+    justify-content: flex-start;
+    padding: 5px;
+  }
+
+  .pp-tab-link {
+    font-size: 0.8rem;
+    padding: 0.6rem 0.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .pp-page-header {
+    padding: 5rem 1.5rem 3rem;
+  }
+
+  .pp-page-header h1 {
+    font-size: 2.5rem;
+  }
+
+  .pp-main-content {
+    padding: 0 1rem 1rem 1rem;
+  }
+
+  .pp-navigation-tabs {
+    position: sticky;
+    top: 65px;
+    margin-bottom: 1rem;
+    padding: 0.5rem 0;
+  }
+
+  .pp-tabs-container {
+    padding: 4px;
+    gap: 0;
+    justify-content: flex-start;
+    border-radius: 8px;
+  }
+
+  .pp-tab-link {
+    font-size: 0.7rem;
+    padding: 0.45rem 0.6rem;
+    border-radius: 6px;
+  }
+
+  .pp-tab-full {
+    display: none;
+  }
+
+  .pp-tab-short {
+    display: inline;
+  }
+
+  .pp-content-section {
+    padding: 1.5rem;
+  }
+
+  .pp-content-section h2 {
+    font-size: 1.6rem;
+  }
+
+  .pp-content-section h2::before {
+    height: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .pp-page-header {
+    padding: 4rem 1rem 3rem;
+  }
+
+  .pp-page-header h1 {
+    font-size: 2rem;
+  }
+
+  .pp-page-subtitle {
+    font-size: 1rem;
+  }
+
+  .pp-main-content {
+    padding: 0 0.5rem 0.5rem 0.5rem;
+  }
+
+  .pp-navigation-tabs {
+    padding: 0.25rem 0;
+    margin-bottom: 0.75rem;
+    top: 60px;
+  }
+
+  .pp-tabs-container {
+    padding: 3px;
+    border-radius: 6px;
+    justify-content: flex-start;
+  }
+
+  .pp-tab-link {
+    font-size: 0.65rem;
+    padding: 0.35rem 0.4rem;
+    border-radius: 4px;
+    min-width: auto;
+  }
+
+  .pp-content-section {
+    padding: 1rem;
+  }
+
+  .pp-content-section h2 {
+    font-size: 1.4rem;
+  }
+
+  .pp-contact-info {
+    padding: 1rem;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 360px) {
+  .pp-navigation-tabs {
+    padding: 0.2rem 0;
+    top: 55px;
+  }
+
+  .pp-tabs-container {
+    padding: 2px;
+    border-radius: 4px;
+  }
+
+  .pp-tab-link {
+    font-size: 0.6rem;
+    padding: 0.3rem 0.35rem;
+    border-radius: 3px;
+  }
+}
+
+/* Smooth scrolling for anchor links */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Highlight target sections when navigated to via anchor */
+.pp-content-section:target {
+  background-color: rgba(112, 172, 64, 0.05);
+  transition: background-color 0.6s ease;
+}
