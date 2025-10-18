@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
 import {
   AiOutlineHome,
@@ -14,6 +14,7 @@ import { UserContext } from "../context/userContext";
 
 export default function Sidebar({ isShown, setIsShown }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const { logout } = useContext(UserContext);
 
   function toggleNavbar() {
@@ -22,7 +23,8 @@ export default function Sidebar({ isShown, setIsShown }) {
 
   function loggingOut() {
     logout().then(() => {
-      toast.success("User logged Out");
+      navigate("/login", { replace: true });
+      //toast.success("User logged Out");
     });
   }
 
@@ -30,17 +32,17 @@ export default function Sidebar({ isShown, setIsShown }) {
     <>
       {/* Dark translucent overlay */}
       <div
-        className={`sidebar-overlay ${isShown ? 'show' : ''}`}
+        className={`sidebar-overlay ${isShown ? "show" : ""}`}
         onClick={() => setIsShown(false)}
         aria-hidden={!isShown}
       />
       {/* Toggle button placed outside nav so it stays visible when sidebar is hidden */}
       <button
-        className={`toggleBtn ${isShown ? 'open' : ''}`}
+        className={`toggleBtn ${isShown ? "open" : ""}`}
         onClick={toggleNavbar}
-        aria-label={isShown ? 'Close navigation menu' : 'Open navigation menu'}
+        aria-label={isShown ? "Close navigation menu" : "Open navigation menu"}
       >
-        {isShown ? '×' : '☰'}
+        {isShown ? "×" : "☰"}
       </button>
       <nav className={isShown ? "navShown" : "navHidden"}>
         <img
