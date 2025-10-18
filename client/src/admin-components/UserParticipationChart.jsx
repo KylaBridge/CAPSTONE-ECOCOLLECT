@@ -1,4 +1,4 @@
-import './styles/UserParticipationChart.css'
+import "./styles/UserParticipationChart.css";
 import { useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
 import {
@@ -11,11 +11,35 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import axios from 'axios';
+import axios from "axios";
 
-ChartJS.register(LineElement, PointElement, LinearScale, Title, CategoryScale, Tooltip, Legend);
+ChartJS.register(
+  LineElement,
+  PointElement,
+  LinearScale,
+  Title,
+  CategoryScale,
+  Tooltip,
+  Legend
+);
 
-const yearOptions = [2023, 2024, 2025, 2026];
+// Function to generate year options dynamically
+const generateYearOptions = () => {
+  const currentYear = new Date().getFullYear();
+  const startYear = 2025; // The year when EcoCollect started
+  const years = [];
+
+  for (let year = startYear; year <= currentYear; year++) {
+    years.push(year);
+  }
+
+  // If we want to include next year for planning purposes
+  if (!years.includes(currentYear + 1)) {
+    years.push(currentYear + 1);
+  }
+
+  return years;
+};
 
 export default function UserParticipationChart() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -36,27 +60,31 @@ export default function UserParticipationChart() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`/api/ecocollect/analytics/participation?year=${selectedYear}&viewType=${viewType}`);
+        const response = await axios.get(
+          `/api/ecocollect/analytics/participation?year=${selectedYear}&viewType=${viewType}`
+        );
         const { submissions, redemptions, signups } = response.data;
 
         // Combine all activities for each time period
         const combinedData = {};
         const allDates = new Set([
-          ...submissions.map(s => s._id),
-          ...redemptions.map(r => r._id),
-          ...signups.map(s => s._id)
+          ...submissions.map((s) => s._id),
+          ...redemptions.map((r) => r._id),
+          ...signups.map((s) => s._id),
         ]);
 
-        allDates.forEach(date => {
-          const submission = submissions.find(s => s._id === date)?.count || 0;
-          const redemption = redemptions.find(r => r._id === date)?.count || 0;
-          const signup = signups.find(s => s._id === date)?.count || 0;
+        allDates.forEach((date) => {
+          const submission =
+            submissions.find((s) => s._id === date)?.count || 0;
+          const redemption =
+            redemptions.find((r) => r._id === date)?.count || 0;
+          const signup = signups.find((s) => s._id === date)?.count || 0;
           combinedData[date] = submission + redemption + signup;
         });
 
         // Sort dates and prepare chart data
         const sortedDates = Object.keys(combinedData).sort();
-        const counts = sortedDates.map(date => combinedData[date]);
+        const counts = sortedDates.map((date) => combinedData[date]);
 
         setChartData({
           labels: sortedDates,
@@ -71,7 +99,7 @@ export default function UserParticipationChart() {
           ],
         });
       } catch (error) {
-        console.error('Error fetching participation data:', error);
+        console.error("Error fetching participation data:", error);
       }
     };
 
@@ -83,6 +111,11 @@ export default function UserParticipationChart() {
     plugins: {
       legend: { display: false },
       tooltip: {
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+        titleColor: "#ffffff",
+        bodyColor: "#ffffff",
+        borderColor: "#284c42",
+        borderWidth: 1,
         callbacks: {
           label: (ctx) => `Engagements: ${ctx.raw}`,
         },
@@ -106,7 +139,12 @@ export default function UserParticipationChart() {
       x: {
         title: {
           display: true,
-          text: viewType === "Daily" ? "Day of Month" : viewType === "Weekly" ? "Week" : "Month",
+          text:
+            viewType === "Daily"
+              ? "Day of Month"
+              : viewType === "Weekly"
+              ? "Week"
+              : "Month",
         },
       },
     },
@@ -121,8 +159,10 @@ export default function UserParticipationChart() {
           value={selectedYear}
           onChange={(e) => setSelectedYear(parseInt(e.target.value))}
         >
-          {yearOptions.map((year) => (
-            <option key={year} value={year}>{year}</option>
+          {generateYearOptions().map((year) => (
+            <option key={year} value={year}>
+              {year}
+            </option>
           ))}
         </select>
       </div>
@@ -142,8 +182,9 @@ export default function UserParticipationChart() {
       <Line data={chartData} options={chartOptions} />
 
       <p className="card-note">
-        This chart shows how users interact with the system. Metrics include submissions, redemptions,
-        and sign-ups. Use the dropdown and toggle to explore data trends for different timeframes and years.
+        This chart shows how users interact with the system. Metrics include
+        submissions, redemptions, and sign-ups. Use the dropdown and toggle to
+        explore data trends for different timeframes and years.
       </p>
     </div>
   );

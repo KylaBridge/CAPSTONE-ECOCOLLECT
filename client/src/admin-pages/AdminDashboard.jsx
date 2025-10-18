@@ -14,12 +14,14 @@ import {
 } from "react-icons/fa";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { MdCable, MdOutlineRouter } from "react-icons/md";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import { UserContext } from "../context/userContext";
 import axios from "axios";
 import binIcon from "../assets/icons/binIcon.png";
 import "./styles/AdminDashboard.css";
 
 export default function AdminDashboard() {
+  const { user } = useContext(UserContext);
   const [roleCounts, setRoleCounts] = useState({
     userCount: 0,
     adminCount: 0,
@@ -156,25 +158,37 @@ export default function AdminDashboard() {
           {/* Total Users */}
           <div className="total-users-container">
             <h2>Total Users Registered</h2>
-            <div className="user-grid">
+            <div
+              className={`user-grid ${
+                user?.role === "admin" ? "admin-only" : ""
+              }`}
+            >
               <div className="user-card">
                 <FaUserAlt className="icon" size={28} />
                 <p>Users</p>
                 <h3>{roleCounts.userCount || "..."}</h3>
               </div>
-              <div className="user-card">
-                <FaUserAlt className="icon" size={28} />
-                <p>Admin</p>
-                <h3>{roleCounts.adminCount || "..."}</h3>
-              </div>
-              <div className="user-card">
-                <FaUserShield className="icon" size={28} />
-                <p>Super Admin</p>
-                <h3>{roleCounts.superadminCount || "..."}</h3>
-              </div>
+              {user?.role === "superadmin" && (
+                <>
+                  <div className="user-card">
+                    <FaUserAlt className="icon" size={28} />
+                    <p>Admin</p>
+                    <h3>{roleCounts.adminCount || "..."}</h3>
+                  </div>
+                  <div className="user-card">
+                    <FaUserShield className="icon" size={28} />
+                    <p>Super Admin</p>
+                    <h3>{roleCounts.superadminCount || "..."}</h3>
+                  </div>
+                </>
+              )}
             </div>
             <div className="total-bar">
-              <strong>{totalUsers || "loading.."}</strong>
+              <strong>
+                {user?.role === "admin"
+                  ? roleCounts.userCount || "loading.."
+                  : totalUsers || "loading.."}
+              </strong>
             </div>
           </div>
 

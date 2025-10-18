@@ -35,7 +35,7 @@ body {
 .total-users-container {
   background-color: #dfe0d0;
   min-height: 300px;
-  max-height: 400px;;
+  max-height: 400px;
   width: fit-content;
   justify-content: center;
   max-width: 100%;
@@ -80,6 +80,11 @@ body {
   gap: 0.3rem;
   justify-items: center;
   align-items: start;
+}
+
+.user-grid.admin-only {
+  grid-template-columns: 1fr;
+  justify-content: center;
 }
 
 .user-card {
