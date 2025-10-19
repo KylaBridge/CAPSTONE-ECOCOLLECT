@@ -1,25 +1,26 @@
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    background-color: #c4cfc5;
-  }
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: #c4cfc5;
+}
 
-  .activitymodule-container{
-    padding: 13px 30px;
-    height: 100%;
-    margin-left: 18%;
-  }
+.activitymodule-container {
+  padding: 13px 30px;
+  height: 100%;
+  margin-left: 18%;
+}
 
-  .activity-table-container {
-    margin-top: 20px;
-    margin-bottom: 30px;
-    background-color: #dfe0d0;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    border-radius: 30px;
-    width: 100%;
-    min-height: 50%;
+.activity-table-container {
+  margin-top: 20px;
+  margin-bottom: 30px;
+  background-color: #dfe0d0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 30px;
+  width: 100%;
+  min-height: 50%;
 }
 
 .filters-container {
@@ -59,8 +60,7 @@ html, body {
   padding: 8px;
 }
 
-.activity-table-filter option:hover
-{
+.activity-table-filter option:hover {
   background-color: #e6f2ea !important;
 }
 
@@ -101,9 +101,72 @@ html, body {
 }
 
 .activitymodule-container .pagination-controls {
-    display: flex;
-    justify-content: end;
-    align-items: end;
-    gap: 1rem;
-    margin-top: 10px;
+  display: flex;
+  justify-content: end;
+  align-items: end;
+  gap: 1rem;
+  margin-top: 10px;
+}
+
+/* Export Dropdown Styles */
+.export-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.export-button {
+  background-color: #118653;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+}
+
+.export-button:hover {
+  background-color: #0e653f;
+}
+
+.export-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.export-dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background-color: white;
+  min-width: 150px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  z-index: 1000;
+  border: 1px solid #ddd;
+  margin-top: 2px;
+}
+
+.export-dropdown-item {
+  padding: 10px 15px;
+  cursor: pointer;
+  color: #333;
+  font-size: 0.8rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.export-dropdown-item:last-child {
+  border-bottom: none;
+  border-radius: 0 0 8px 8px;
+}
+
+.export-dropdown-item:first-child {
+  border-radius: 8px 8px 0 0;
+}
+
+.export-dropdown-item:hover {
+  background-color: #f8f9fa;
+  color: #118653;
 }

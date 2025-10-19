@@ -1,41 +1,42 @@
-html, body {
-    height: 100%;
-    background-color: #c4cfc5;
-  }
+html,
+body {
+  height: 100%;
+  background-color: #c4cfc5;
+}
 
-  .achieversmodule-container{
-    padding: 13px 30px;
-    height: 100%;
-    margin-left: 18%;
-  }
+.achieversmodule-container {
+  padding: 13px 30px;
+  height: 100%;
+  margin-left: 18%;
+}
 
-  .achievers-table-container{
-    margin-top: 20px;
-    margin-bottom: 30px;
-    background-color: #dfe0d0;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    border-radius: 30px;
-    width: 100%;
-    min-height: 50%;
-  }
+.achievers-table-container {
+  margin-top: 20px;
+  margin-bottom: 30px;
+  background-color: #dfe0d0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 30px;
+  width: 100%;
+  min-height: 50%;
+}
 
-  .achievers-title{
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 1rem;
-    font-weight: bold;
-  }
+.achievers-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1rem;
+  font-weight: bold;
+}
 
-  .achievers-table-header{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    position: relative;
-    color: #154d31;
-  }
+.achievers-table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  position: relative;
+  color: #154d31;
+}
 
 .sort-table {
   position: relative;
@@ -56,7 +57,7 @@ html, body {
   cursor: pointer;
 }
 
-.sort-achievers-dropdown{
+.sort-achievers-dropdown {
   position: absolute;
   top: 100%;
   left: 0;
@@ -106,14 +107,13 @@ html, body {
   color: #2c5f2d;
 }
 
-  .achievers-table-wrapper{
-    max-height: 500px;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #aaa #dfe0d0;
-  }
+.achievers-table-wrapper {
+  max-height: 500px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #aaa #dfe0d0;
+}
 
-  
 .achievers-table-wrapper::-webkit-scrollbar {
   width: 6px;
 }
@@ -128,7 +128,7 @@ html, body {
   border-radius: 10px;
 }
 
-.achievers-table{
+.achievers-table {
   width: 100%;
   height: 100%;
   table-layout: fixed;
@@ -137,7 +137,7 @@ html, body {
   background-color: #dfe0d0;
 }
 
-.achievers-table thead th{
+.achievers-table thead th {
   position: sticky;
   top: 0;
   background-color: #dfe0d0;
@@ -152,16 +152,16 @@ html, body {
 
 .achievers-table th,
 .achievers-table td {
-    width: 25%;
-    box-sizing: border-box;
-    padding: 20px;
-    text-align: center;
-    font-size: 0.7rem;
-    border: 1px solid #afafaf;
+  width: 25%;
+  box-sizing: border-box;
+  padding: 20px;
+  text-align: center;
+  font-size: 0.7rem;
+  border: 1px solid #afafaf;
 }
 
 .achievers-table tbody tr {
-    background-color: #dfe0d0;
+  background-color: #dfe0d0;
 }
 
 .achievers-id-cell {
@@ -179,9 +179,48 @@ html, body {
   font-size: 0.8rem;
 }
 
-
 .export-button:hover {
   background-color: #0e653f;
+}
+
+.export-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.export-dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background-color: white;
+  min-width: 150px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  z-index: 1000;
+  border: 1px solid #ddd;
+  margin-top: 2px;
+}
+
+.export-dropdown-item {
+  padding: 10px 15px;
+  cursor: pointer;
+  color: #333;
+  font-size: 0.8rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.export-dropdown-item:last-child {
+  border-bottom: none;
+  border-radius: 0 0 8px 8px;
+}
+
+.export-dropdown-item:first-child {
+  border-radius: 8px 8px 0 0;
+}
+
+.export-dropdown-item:hover {
+  background-color: #f8f9fa;
+  color: #118653;
 }
 
 .no-data-message {
@@ -198,24 +237,24 @@ html, body {
 }
 
 .pagination-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
 }
 
 .pagination-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 6px;
-    display: flex;
-    align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
 }
 
 .pagination-button:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .achievers-sort-dropdown {
@@ -246,7 +285,7 @@ html, body {
   background-color: #dfe0d0;
   border: 1px solid #ccc;
   border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   min-width: 120px;
 }
@@ -274,7 +313,7 @@ html, body {
   background-color: #dfe0d0;
   border: 1px solid #ccc;
   border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   min-width: 200px;
   max-height: 300px;
   overflow-y: auto;

@@ -11,6 +11,7 @@ import {
   FaUserAlt,
   FaTrash,
   FaUserShield,
+  FaBoxes,
 } from "react-icons/fa";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { MdCable, MdOutlineRouter } from "react-icons/md";
@@ -42,6 +43,7 @@ export default function AdminDashboard() {
     cordCount: 0,
     powerbankCount: 0,
     usbCount: 0,
+    othersCount: 0,
   });
 
   const totalEwastes = Object.values(ewasteCount).reduce(
@@ -135,6 +137,10 @@ export default function AdminDashboard() {
     usbCount: {
       label: "USB",
       icon: <FaPlug size={30} className="ewaste-icon" />,
+    },
+    othersCount: {
+      label: "Others",
+      icon: <FaBoxes size={30} className="ewaste-icon" />,
     },
   };
 

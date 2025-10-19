@@ -12,22 +12,94 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-   color: #154d31;
+  color: #154d31;
 }
 
-.user-participation-card .year-dropdown {
+.user-participation-card .date-selectors {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.user-participation-card .year-dropdown,
+.user-participation-card .month-dropdown {
   padding: 6px 12px;
   border-radius: 8px;
   background-color: transparent;
   border: 1px solid #ccc;
   font-weight: 900;
   color: #118653;
+  min-width: 80px;
 }
 
 .user-participation-card .toggle-group {
   display: flex;
-  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
   margin: 16px 0;
+}
+
+.user-participation-card .toggle-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.user-participation-card .export-dropdown {
+  position: relative;
+}
+
+.user-participation-card .export-dropdown .export-button {
+  background-color: #118653 !important;
+  color: white !important;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+}
+
+.user-participation-card .export-dropdown .export-button:hover {
+  background-color: #0e653f !important;
+}
+
+.user-participation-card .export-dropdown .export-button:disabled {
+  background-color: #ccc !important;
+  color: #666 !important;
+  cursor: not-allowed;
+}
+
+.user-participation-card .export-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  min-width: 140px;
+}
+
+.user-participation-card .export-dropdown-item {
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 14px;
+}
+
+.user-participation-card .export-dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+
+.user-participation-card .export-dropdown-item:first-child {
+  border-radius: 8px 8px 0 0;
+}
+
+.user-participation-card .export-dropdown-item:last-child {
+  border-radius: 0 0 8px 8px;
 }
 
 .user-participation-card .toggle-group button {
@@ -42,7 +114,7 @@
 }
 
 .user-participation-card .toggle-group button.active {
-  background: linear-gradient( #76b082, #284c42);
+  background: linear-gradient(#76b082, #284c42);
   color: #fff;
 }
 

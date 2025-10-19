@@ -1,7 +1,14 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import AdminSidebar from "../admin-components/AdminSidebar";
 import Header from "../admin-components/Header";
-import { TbPlayerTrackPrevFilled, TbPlayerTrackNextFilled} from "react-icons/tb";
+import {
+  TbPlayerTrackPrevFilled,
+  TbPlayerTrackNextFilled,
+} from "react-icons/tb";
+import { FaChevronDown } from "react-icons/fa";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import * as XLSX from "xlsx";
 import axios from "axios";
 import "./styles/ActivityLog.css";
 
@@ -13,7 +20,23 @@ export default function ActivityLog() {
   const [currentPage, setCurrentPage] = useState(1);
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showExportDropdown, setShowExportDropdown] = useState(false);
+  const exportDropdownRef = useRef(null);
   const logsPerPage = 10;
+
+  // Handle click outside for export dropdown
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        exportDropdownRef.current &&
+        !exportDropdownRef.current.contains(event.target)
+      ) {
+        setShowExportDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Fetch activities data when component mounts
   useEffect(() => {
@@ -22,22 +45,24 @@ export default function ActivityLog() {
         setLoading(true);
 
         // Fetch activity logs from backend
-        const response = await axios.get('/api/ecocollect/activity-logs');
-        const formattedLogs = response.data.map(log => ({
+        const response = await axios.get("/api/ecocollect/activity-logs");
+        const formattedLogs = response.data.map((log) => ({
           id: log._id,
-          email: log.userEmail || 'Unknown User',
-          role: (log.userRole || 'user').toLowerCase(), // <-- Use userRole
+          email: log.userEmail || "Unknown User",
+          role: (log.userRole || "user").toLowerCase(), // <-- Use userRole
           activity: log.action,
           description: log.details,
           dateTime: new Date(log.timestamp).toLocaleString(),
         }));
 
         // Sort by date (newest first)
-        const allActivities = formattedLogs.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
+        const allActivities = formattedLogs.sort(
+          (a, b) => new Date(b.dateTime) - new Date(a.dateTime)
+        );
 
         setActivities(allActivities);
       } catch (error) {
-        console.error('Error fetching activities:', error);
+        console.error("Error fetching activities:", error);
       } finally {
         setLoading(false);
       }
@@ -48,7 +73,9 @@ export default function ActivityLog() {
 
   // Get unique roles for filter dropdown
   const roleOptions = useMemo(() => {
-    const roles = activities.map((log) => log.role && log.role.trim().toLowerCase());
+    const roles = activities.map(
+      (log) => log.role && log.role.trim().toLowerCase()
+    );
     return Array.from(new Set(roles)).filter(Boolean);
   }, [activities]);
 
@@ -64,8 +91,10 @@ export default function ActivityLog() {
       const matchesSearch = log.email
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
-      const matchesRole = roleFilter === "All" || log.role === roleFilter.toLowerCase();
-      const matchesActivity = activityTypeFilter === "All" || log.activity === activityTypeFilter;
+      const matchesRole =
+        roleFilter === "All" || log.role === roleFilter.toLowerCase();
+      const matchesActivity =
+        activityTypeFilter === "All" || log.activity === activityTypeFilter;
 
       return matchesSearch && matchesRole && matchesActivity;
     });
@@ -77,6 +106,44 @@ export default function ActivityLog() {
     const startIndex = (currentPage - 1) * logsPerPage;
     return filteredLogs.slice(startIndex, startIndex + logsPerPage);
   }, [filteredLogs, currentPage]);
+
+  // Export functions
+  const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Activity Log", 14, 16);
+    autoTable(doc, {
+      startY: 20,
+      head: [["ID", "Email", "Role", "Activity", "Description", "Date & Time"]],
+      body: filteredLogs.map((log) => [
+        log.id,
+        log.email || "N/A",
+        log.role || "N/A",
+        log.activity || "N/A",
+        log.description || "N/A",
+        log.dateTime || "N/A",
+      ]),
+    });
+    doc.save("Activity_Log.pdf");
+    setShowExportDropdown(false);
+  };
+
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(
+      filteredLogs.map((log) => ({
+        ID: log.id,
+        Email: log.email || "N/A",
+        Role: log.role || "N/A",
+        Activity: log.activity || "N/A",
+        Description: log.description || "N/A",
+        "Date & Time": log.dateTime || "N/A",
+      }))
+    );
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Activity Log");
+    XLSX.writeFile(workbook, "Activity_Log.xlsx");
+    setShowExportDropdown(false);
+  };
 
   // Render loading state or empty state
   const renderTableContent = () => {
@@ -128,7 +195,8 @@ export default function ActivityLog() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
 
-            <select className="activity-table-filter"
+            <select
+              className="activity-table-filter"
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
             >
@@ -140,17 +208,41 @@ export default function ActivityLog() {
               ))}
             </select>
 
-            <select className="activity-table-filter"
+            <select
+              className="activity-table-filter"
               value={activityTypeFilter}
               onChange={(e) => setActivityTypeFilter(e.target.value)}
             >
               <option value="All">All Activities</option>
               {activityTypes.map((type, idx) => (
-                <option  key={idx} value={type}>
+                <option key={idx} value={type}>
                   {type}
                 </option>
               ))}
             </select>
+
+            <div className="export-dropdown" ref={exportDropdownRef}>
+              <button
+                className="export-button"
+                onClick={() => setShowExportDropdown(!showExportDropdown)}
+                disabled={filteredLogs.length === 0}
+              >
+                Export{" "}
+                <FaChevronDown
+                  style={{ marginLeft: "5px", fontSize: "12px" }}
+                />
+              </button>
+              {showExportDropdown && (
+                <div className="export-dropdown-menu">
+                  <div className="export-dropdown-item" onClick={exportToPDF}>
+                    Export to PDF
+                  </div>
+                  <div className="export-dropdown-item" onClick={exportToExcel}>
+                    Export to Excel
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Activity Log Table */}
@@ -165,9 +257,7 @@ export default function ActivityLog() {
                 <th>Date & Time</th>
               </tr>
             </thead>
-            <tbody>
-              {renderTableContent()}
-            </tbody>
+            <tbody>{renderTableContent()}</tbody>
           </table>
 
           {/* Pagination Controls */}
@@ -188,7 +278,9 @@ export default function ActivityLog() {
             </span>
 
             <button
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
               disabled={currentPage === totalPages}
               className="pagination-button"
             >

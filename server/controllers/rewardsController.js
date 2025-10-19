@@ -1,8 +1,8 @@
-const Reward = require('../models/rewards');
+const Reward = require("../models/rewards");
 const path = require("path");
 const fs = require("fs");
-const Redemption = require('../models/redemption');
-const ActivityLog = require('../models/activityLog');
+const Redemption = require("../models/redemption");
+const ActivityLog = require("../models/activityLog");
 
 //
 // ------------------ REWARDS MANAGEMENT ------------------
@@ -23,17 +23,19 @@ const getAllRewards = async (req, res) => {
 const addReward = async (req, res) => {
   try {
     const { name, category, points, description } = req.body;
-    const image = req.file ? {
-      name: req.file.originalname,
-      path: req.file.path
-    } : null;
+    const image = req.file
+      ? {
+          name: req.file.originalname,
+          path: req.file.path,
+        }
+      : null;
 
     const newReward = new Reward({
       name,
       category,
       points: Number(points),
       description,
-      image
+      image,
     });
 
     await newReward.save();
@@ -41,13 +43,15 @@ const addReward = async (req, res) => {
     // Log activity
     await ActivityLog.create({
       userId: req.user?._id || null,
-      userEmail: req.user?.email || 'Admin',
+      userEmail: req.user?.email || "Admin",
       userRole: req.user?.role,
-      action: 'Reward Added',
+      action: "Reward Added",
       details: `Added reward ${name}`,
     });
 
-    res.status(201).json({ message: "Reward added successfully", reward: newReward });
+    res
+      .status(201)
+      .json({ message: "Reward added successfully", reward: newReward });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to add reward" });
@@ -59,7 +63,7 @@ const updateReward = async (req, res) => {
   try {
     const { id } = req.params;
     const { name, category, points, description } = req.body;
-    
+
     const reward = await Reward.findById(id);
     if (!reward) {
       return res.status(404).json({ message: "Reward not found" });
@@ -77,7 +81,7 @@ const updateReward = async (req, res) => {
 
       reward.image = {
         name: req.file.originalname,
-        path: req.file.path
+        path: req.file.path,
       };
     }
 
@@ -92,9 +96,9 @@ const updateReward = async (req, res) => {
     // Log activity
     await ActivityLog.create({
       userId: req.user?._id || null,
-      userEmail: req.user?.email || 'Admin',
+      userEmail: req.user?.email || "Admin",
       userRole: req.user?.role,
-      action: 'Reward Updated',
+      action: "Reward Updated",
       details: `Updated reward ${name}`,
     });
 
@@ -128,9 +132,9 @@ const deleteReward = async (req, res) => {
     // Log activity
     await ActivityLog.create({
       userId: req.user?._id || null,
-      userEmail: req.user?.email || 'Admin',
+      userEmail: req.user?.email || "Admin",
       userRole: req.user?.role,
-      action: 'Reward Deleted',
+      action: "Reward Deleted",
       details: `Deleted reward ${reward.name}`,
     });
 
@@ -144,44 +148,99 @@ const deleteReward = async (req, res) => {
 // Get reward redemption statistics
 const getRewardRedemptionStats = async (req, res) => {
   try {
-    const { period } = req.query; // 'weekly' or 'monthly'
-    
-    // Get the date range based on period
-    const now = new Date();
-    const startDate = new Date();
-    if (period === 'weekly') {
-      startDate.setDate(now.getDate() - 7);
+    const { period, year, month, week } = req.query; // 'weekly' or 'monthly' + date parameters
+
+    let startDate, endDate;
+
+    if (period === "weekly") {
+      const targetYear = parseInt(year) || new Date().getFullYear();
+      const targetMonth = parseInt(month) || new Date().getMonth() + 1;
+
+      if (week && parseInt(week) > 0) {
+        // Specific week requested - calculate week boundaries
+        const weekNumber = parseInt(week);
+        const firstDay = new Date(targetYear, targetMonth - 1, 1);
+
+        // Find the first Monday of the month
+        const dayOfWeek = firstDay.getDay();
+        const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+        const firstMonday = new Date(firstDay);
+        firstMonday.setDate(firstDay.getDate() - daysToMonday);
+
+        // Calculate the start of the specific week
+        startDate = new Date(firstMonday);
+        startDate.setDate(firstMonday.getDate() + (weekNumber - 1) * 7);
+
+        // End date is 6 days later (Sunday)
+        endDate = new Date(startDate);
+        endDate.setDate(startDate.getDate() + 6);
+        endDate.setHours(23, 59, 59, 999);
+
+        // Don't exceed the month boundary
+        const lastDayOfMonth = new Date(targetYear, targetMonth, 0);
+        if (endDate > lastDayOfMonth) {
+          endDate = new Date(lastDayOfMonth);
+          endDate.setHours(23, 59, 59, 999);
+        }
+      } else {
+        // All weeks in the month
+        startDate = new Date(targetYear, targetMonth - 1, 1);
+        endDate = new Date(targetYear, targetMonth, 0);
+        endDate.setHours(23, 59, 59, 999);
+      }
     } else {
-      startDate.setMonth(now.getMonth() - 1);
+      // Monthly view
+      const targetYear = parseInt(year) || new Date().getFullYear();
+
+      if (month && parseInt(month) > 0) {
+        // Specific month requested
+        const targetMonth = parseInt(month);
+        startDate = new Date(targetYear, targetMonth - 1, 1);
+        endDate = new Date(targetYear, targetMonth, 0);
+        endDate.setHours(23, 59, 59, 999);
+      } else {
+        // All months in the year
+        startDate = new Date(targetYear, 0, 1); // January 1st
+        endDate = new Date(targetYear, 11, 31, 23, 59, 59, 999); // December 31st
+      }
+    }
+
+    // Don't include future dates
+    const now = new Date();
+    if (startDate > now) {
+      return res.status(200).json([]);
+    }
+    if (endDate > now) {
+      endDate = new Date(now);
     }
 
     // Aggregate redemptions by reward
     const redemptions = await Redemption.aggregate([
       {
         $match: {
-          redemptionDate: { $gte: startDate, $lte: now }
-        }
+          redemptionDate: { $gte: startDate, $lte: endDate },
+        },
       },
       {
         $lookup: {
-          from: 'rewards',
-          localField: 'rewardId',
-          foreignField: '_id',
-          as: 'reward'
-        }
+          from: "rewards",
+          localField: "rewardId",
+          foreignField: "_id",
+          as: "reward",
+        },
       },
       {
-        $unwind: '$reward'
+        $unwind: "$reward",
       },
       {
         $group: {
-          _id: '$reward.name',
-          count: { $sum: 1 }
-        }
+          _id: "$reward.name",
+          count: { $sum: 1 },
+        },
       },
       {
-        $sort: { count: -1 }
-      }
+        $sort: { count: -1 },
+      },
     ]);
 
     res.status(200).json(redemptions);

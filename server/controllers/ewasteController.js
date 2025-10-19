@@ -1,9 +1,9 @@
-const User = require('../models/user');
-const EWaste = require('../models/ewaste');
+const User = require("../models/user");
+const EWaste = require("../models/ewaste");
 const path = require("path");
 const fs = require("fs");
-const { updateUserRank } = require('./userController');
-const ActivityLog = require('../models/activityLog'); 
+const { updateUserRank } = require("./userController");
+const ActivityLog = require("../models/activityLog");
 
 //
 // ------------------ E-WASTE SUBMISSIONS ------------------
@@ -12,16 +12,50 @@ const ActivityLog = require('../models/activityLog');
 // Get counts of approved ewaste items by category
 const getEwastes = async (req, res) => {
   try {
-    const telephoneCount = await EWaste.countDocuments({ category: "Telephone", status: "Approved" });
-    const routerCount = await EWaste.countDocuments({ category: "Router", status: "Approved" });
-    const mobileCount = await EWaste.countDocuments({ category: "Mobile Phone", status: "Approved" });
-    const tabletCount = await EWaste.countDocuments({ category: "Tablet", status: "Approved" });
-    const laptopCount = await EWaste.countDocuments({ category: "Laptop", status: "Approved" });
-    const chargerCount = await EWaste.countDocuments({ category: "Charger", status: "Approved" });
-    const batteryCount = await EWaste.countDocuments({ category: "Batteries", status: "Approved" });
-    const cordCount = await EWaste.countDocuments({ category: "Cords", status: "Approved" });
-    const powerbankCount = await EWaste.countDocuments({ category: "Powerbank", status: "Approved" });
-    const usbCount = await EWaste.countDocuments({ category: "USB", status: "Approved" });
+    const telephoneCount = await EWaste.countDocuments({
+      category: "Telephone",
+      status: "Approved",
+    });
+    const routerCount = await EWaste.countDocuments({
+      category: "Router",
+      status: "Approved",
+    });
+    const mobileCount = await EWaste.countDocuments({
+      category: "Mobile Phone",
+      status: "Approved",
+    });
+    const tabletCount = await EWaste.countDocuments({
+      category: "Tablet",
+      status: "Approved",
+    });
+    const laptopCount = await EWaste.countDocuments({
+      category: "Laptop",
+      status: "Approved",
+    });
+    const chargerCount = await EWaste.countDocuments({
+      category: "Charger",
+      status: "Approved",
+    });
+    const batteryCount = await EWaste.countDocuments({
+      category: "Batteries",
+      status: "Approved",
+    });
+    const cordCount = await EWaste.countDocuments({
+      category: "Cords",
+      status: "Approved",
+    });
+    const powerbankCount = await EWaste.countDocuments({
+      category: "Powerbank",
+      status: "Approved",
+    });
+    const usbCount = await EWaste.countDocuments({
+      category: "USB",
+      status: "Approved",
+    });
+    const othersCount = await EWaste.countDocuments({
+      category: "Others",
+      status: "Approved",
+    });
 
     res.status(200).json({
       telephoneCount,
@@ -33,7 +67,8 @@ const getEwastes = async (req, res) => {
       batteryCount,
       cordCount,
       powerbankCount,
-      usbCount
+      usbCount,
+      othersCount,
     });
   } catch (error) {
     console.error(error);
@@ -69,8 +104,8 @@ const updateSubmissionStatus = async (req, res) => {
       if (!submission.originalAttachmentCount) {
         submission.originalAttachmentCount = submission.attachments.length;
       }
-      
-      submission.attachments.forEach(file => {
+
+      submission.attachments.forEach((file) => {
         const filePath = path.join(__dirname, "..", file.path);
         if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
       });
@@ -84,9 +119,14 @@ const updateSubmissionStatus = async (req, res) => {
     const user = await User.findById(submission.user);
     await ActivityLog.create({
       userId: user?._id,
-      userEmail: user?.email || 'Unknown',
+      userEmail: user?.email || "Unknown",
       userRole: user?.role,
-      action: status === "Approved" ? "EWaste Approved" : status === "Rejected" ? "EWaste Rejected" : "EWaste Updated",
+      action:
+        status === "Approved"
+          ? "EWaste Approved"
+          : status === "Rejected"
+          ? "EWaste Rejected"
+          : "EWaste Updated",
       details: `Submission ${submission.category} marked as ${status}`,
     });
 
@@ -94,27 +134,27 @@ const updateSubmissionStatus = async (req, res) => {
       const user = await User.findById(submission.user);
       if (user) {
         let totalPoints = 0;
-        
+
         if (submission.category === "others" && points) {
           // Add manually specified points for "others" category
           totalPoints = parseInt(points);
         } else {
           // Define points per category per submission
           const categoryPoints = {
-            "Laptop": 20,
-            "Tablet": 15,
+            Laptop: 20,
+            Tablet: 15,
             "Mobile Phone": 10,
-            "Telephone": 8,
-            "Router": 8,
-            "Charger": 5,
-            "Batteries": 5,
-            "Cords": 5,
-            "Powerbank": 10,
-            "USB": 5,
+            Telephone: 8,
+            Router: 8,
+            Charger: 5,
+            Batteries: 5,
+            Cords: 5,
+            Powerbank: 10,
+            USB: 5,
           };
           totalPoints = categoryPoints[submission.category] || 0;
         }
-        
+
         if (totalPoints > 0) {
           user.points += totalPoints;
           user.exp += totalPoints * 2; // exp is 2x points
@@ -124,7 +164,9 @@ const updateSubmissionStatus = async (req, res) => {
       }
     }
 
-    res.status(200).json({ message: "Status and image data updated successfully" });
+    res
+      .status(200)
+      .json({ message: "Status and image data updated successfully" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Failed to update status" });
@@ -151,13 +193,15 @@ const deleteEWaste = async (req, res) => {
     // Log activity
     await ActivityLog.create({
       userId: submission.user,
-      userEmail: 'Unknown', // Optionally fetch user for email
+      userEmail: "Unknown", // Optionally fetch user for email
       userRole: req.user?.role,
-      action: 'EWaste Deleted',
+      action: "EWaste Deleted",
       details: `Deleted submission of ${submission.category}`,
     });
 
-    res.status(200).json({ message: "E-waste submission deleted successfully" });
+    res
+      .status(200)
+      .json({ message: "E-waste submission deleted successfully" });
   } catch (err) {
     console.error("Error deleting e-waste submission:", err);
     res.status(500).json({ message: "Server error while deleting submission" });

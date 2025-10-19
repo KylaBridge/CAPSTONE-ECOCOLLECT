@@ -4,7 +4,8 @@ import "./styles/AchieversModule.css";
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { FaSearch } from "react-icons/fa";
+import * as XLSX from "xlsx";
+import { FaSearch, FaChevronDown } from "react-icons/fa";
 import {
   TbPlayerTrackPrevFilled,
   TbPlayerTrackNextFilled,
@@ -22,7 +23,9 @@ export default function AchieversModule() {
   const [badgeFilter, setBadgeFilter] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [showBadgeSubmenu, setShowBadgeSubmenu] = useState(false);
+  const [showExportDropdown, setShowExportDropdown] = useState(false);
   const dropdownRef = useRef(null);
+  const exportDropdownRef = useRef(null);
   const itemsPerPage = 7;
 
   const badges = [
@@ -49,6 +52,12 @@ export default function AchieversModule() {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowDropdown(false);
         setShowBadgeSubmenu(false);
+      }
+      if (
+        exportDropdownRef.current &&
+        !exportDropdownRef.current.contains(event.target)
+      ) {
+        setShowExportDropdown(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -133,6 +142,24 @@ export default function AchieversModule() {
       ]),
     });
     doc.save("Top_Contributors.pdf");
+    setShowExportDropdown(false);
+  };
+
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(
+      rankedData.map((user) => ({
+        Position: user.position,
+        Name: user.name || "N/A",
+        Email: user.email || "N/A",
+        "Current Badge": user.rank || "N/A",
+        "Experience Points": user.exp || 0,
+      }))
+    );
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Top Contributors");
+    XLSX.writeFile(workbook, "Top_Contributors.xlsx");
+    setShowExportDropdown(false);
   };
 
   const handleShowAll = () => {
@@ -235,6 +262,28 @@ export default function AchieversModule() {
                 Show All
               </button>
             )}
+            <div className="export-dropdown" ref={exportDropdownRef}>
+              <button
+                className="export-button"
+                onClick={() => setShowExportDropdown(!showExportDropdown)}
+                disabled={rankedData.length === 0}
+              >
+                Export{" "}
+                <FaChevronDown
+                  style={{ marginLeft: "5px", fontSize: "12px" }}
+                />
+              </button>
+              {showExportDropdown && (
+                <div className="export-dropdown-menu">
+                  <div className="export-dropdown-item" onClick={exportToPDF}>
+                    Export to PDF
+                  </div>
+                  <div className="export-dropdown-item" onClick={exportToExcel}>
+                    Export to Excel
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -314,14 +363,6 @@ export default function AchieversModule() {
                 />
               </button>
             </div>
-
-            <button
-              className="export-button"
-              onClick={exportToPDF}
-              disabled={rankedData.length === 0}
-            >
-              Export to PDF
-            </button>
           </div>
         </div>
       </div>

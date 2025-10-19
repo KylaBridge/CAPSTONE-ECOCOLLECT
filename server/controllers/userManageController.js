@@ -99,9 +99,23 @@ const deleteUser = async (req, res) => {
 // Get user participation data
 const getUserParticipationData = async (req, res) => {
   try {
-    const { year, viewType } = req.query;
-    const startDate = new Date(year, 0, 1);
-    const endDate = new Date(year, 11, 31);
+    const { year, month, viewType } = req.query;
+
+    let startDate, endDate;
+
+    if (viewType === "Daily" && month) {
+      // For daily view with specific month
+      startDate = new Date(year, month - 1, 1);
+      endDate = new Date(year, month, 0); // Last day of the month
+    } else if (viewType === "Weekly" && month) {
+      // For weekly view with specific month
+      startDate = new Date(year, month - 1, 1);
+      endDate = new Date(year, month, 0);
+    } else {
+      // For monthly view or when no month specified, use entire year
+      startDate = new Date(year, 0, 1);
+      endDate = new Date(year, 11, 31);
+    }
 
     let groupBy;
     let dateFormat;
@@ -112,8 +126,25 @@ const getUserParticipationData = async (req, res) => {
         dateFormat = "%Y-%m-%d";
         break;
       case "Weekly":
-        groupBy = { $dateToString: { format: "%Y-%U", date: "$createdAt" } };
-        dateFormat = "%Y-%U";
+        // For weekly, create a custom grouping that includes week start and end dates
+        groupBy = {
+          $dateToString: {
+            format: "%Y-%m-%d",
+            date: {
+              $dateFromParts: {
+                year: { $year: "$createdAt" },
+                month: { $month: "$createdAt" },
+                day: {
+                  $subtract: [
+                    { $dayOfMonth: "$createdAt" },
+                    { $subtract: [{ $dayOfWeek: "$createdAt" }, 1] },
+                  ],
+                },
+              },
+            },
+          },
+        };
+        dateFormat = "%Y-%m-%d";
         break;
       case "Monthly":
         groupBy = { $dateToString: { format: "%Y-%m", date: "$createdAt" } };
@@ -178,11 +209,45 @@ const getUserParticipationData = async (req, res) => {
       },
     ]);
 
-    res.status(200).json({
-      submissions,
-      redemptions,
-      signups,
-    });
+    // For weekly view, transform the data to include week ranges
+    if (viewType === "Weekly") {
+      const transformWeeklyData = (data) => {
+        return data.map((item) => {
+          const weekStart = new Date(item._id);
+          const weekEnd = new Date(weekStart);
+          weekEnd.setDate(weekStart.getDate() + 6);
+
+          // Format week range display
+          const weekStartFormatted = weekStart.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          });
+          const weekEndFormatted = weekEnd.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          });
+
+          return {
+            ...item,
+            _id: `${weekStartFormatted} - ${weekEndFormatted}`,
+            weekStart: item._id,
+            weekEnd: weekEnd.toISOString().split("T")[0],
+          };
+        });
+      };
+
+      res.status(200).json({
+        submissions: transformWeeklyData(submissions),
+        redemptions: transformWeeklyData(redemptions),
+        signups: transformWeeklyData(signups),
+      });
+    } else {
+      res.status(200).json({
+        submissions,
+        redemptions,
+        signups,
+      });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to get user participation data" });
@@ -213,8 +278,13 @@ const addUser = async (req, res) => {
     }
 
     // Check permissions - only superadmin can create admin/superadmin accounts
-    if ((role === "admin" || role === "superadmin") && req.user?.role !== "superadmin") {
-      return res.status(403).json({ error: "Only superadmins can create admin accounts" });
+    if (
+      (role === "admin" || role === "superadmin") &&
+      req.user?.role !== "superadmin"
+    ) {
+      return res
+        .status(403)
+        .json({ error: "Only superadmins can create admin accounts" });
     }
 
     const exist = await User.findOne({ email });
@@ -237,7 +307,12 @@ const addUser = async (req, res) => {
     const logUserEmail = req.user?.email || "System";
 
     if (logUserId) {
-      const actionText = role === "admin" ? "Admin Created" : role === "superadmin" ? "Superadmin Created" : "User Created";
+      const actionText =
+        role === "admin"
+          ? "Admin Created"
+          : role === "superadmin"
+          ? "Superadmin Created"
+          : "User Created";
       await ActivityLog.create({
         userId: logUserId,
         userEmail: logUserEmail,
@@ -250,10 +325,16 @@ const addUser = async (req, res) => {
     // Don't return the password in the response
     const { password: _, ...userResponse } = user.toObject();
 
-    const roleText = role === "admin" ? "Admin" : role === "superadmin" ? "Superadmin" : "User";
-    res
-      .status(201)
-      .json({ message: `${roleText} Created Successfully`, user: userResponse });
+    const roleText =
+      role === "admin"
+        ? "Admin"
+        : role === "superadmin"
+        ? "Superadmin"
+        : "User";
+    res.status(201).json({
+      message: `${roleText} Created Successfully`,
+      user: userResponse,
+    });
   } catch (error) {
     console.error("Error creating user:", error);
     res.status(500).json({ error: "Failed to create user account" });
