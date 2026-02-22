@@ -28,7 +28,7 @@ export const teamData = [
       facebook: "https://www.facebook.com/kylarosaldo",
       email:
         "mailto:kylabridgetr@gmail.com?subject=EcoCollect Inquiry&body=Hello Kyla,%0D%0A%0D%0AI would like to connect regarding the EcoCollect project...",
-      linkedin: "https://www.linkedin.com/in/kyla-rosaldo-3404b0281/",
+      linkedin: "https://www.linkedin.com/in/kylarosaldo/",
     },
   },
   {
