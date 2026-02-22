@@ -1,6 +1,6 @@
 import "./styles/EwasteCollectedChart.css";
 import { useEffect, useState, useRef } from "react";
-import axios from "axios";
+import { ewasteAPI } from "../api/ewaste";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
@@ -55,7 +55,7 @@ export default function EwasteCollectedChart() {
 
     const total = ewasteData.datasets[0].data.reduce(
       (acc, val) => acc + val,
-      0
+      0,
     );
 
     const exportData = ewasteData.labels.map((label, index) => {
@@ -73,10 +73,10 @@ export default function EwasteCollectedChart() {
     doc.text(
       `Total E-Waste Items: ${total}`,
       14,
-      doc.lastAutoTable.finalY + 10
+      doc.lastAutoTable.finalY + 10,
     );
     doc.save(
-      `E-Waste_Collection_Report_${new Date().toISOString().split("T")[0]}.pdf`
+      `E-Waste_Collection_Report_${new Date().toISOString().split("T")[0]}.pdf`,
     );
     setShowExportDropdown(false);
   };
@@ -86,7 +86,7 @@ export default function EwasteCollectedChart() {
 
     const total = ewasteData.datasets[0].data.reduce(
       (acc, val) => acc + val,
-      0
+      0,
     );
 
     const exportData = ewasteData.labels.map((label, index) => {
@@ -110,21 +110,21 @@ export default function EwasteCollectedChart() {
         [`Total E-Waste Items: ${total}`],
         [`Report Generated: ${new Date().toLocaleDateString()}`],
       ],
-      { origin: -1 }
+      { origin: -1 },
     );
 
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "E-Waste Collection");
     XLSX.writeFile(
       workbook,
-      `E-Waste_Collection_Report_${new Date().toISOString().split("T")[0]}.xlsx`
+      `E-Waste_Collection_Report_${new Date().toISOString().split("T")[0]}.xlsx`,
     );
     setShowExportDropdown(false);
   };
 
   useEffect(() => {
-    axios
-      .get("/api/ecocollect/user/ewastes") // Adjust if your API base is different
+    ewasteAPI
+      .getEwasteCounts()
       .then((res) => {
         const data = res.data;
         const labels = categoryLabels.map((c) => c.label);
@@ -214,7 +214,7 @@ export default function EwasteCollectedChart() {
                   formatter: (value, context) => {
                     const total = context.chart.data.datasets[0].data.reduce(
                       (a, b) => a + b,
-                      0
+                      0,
                     );
                     const percent = ((value / total) * 100).toFixed(1);
                     return `${percent}%`;

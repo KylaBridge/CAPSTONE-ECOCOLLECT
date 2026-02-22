@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
+import { rewardsAPI } from "../api/rewards";
 import AdminSidebar from "../admin-components/AdminSidebar";
 import Header from "../admin-components/Header";
 import "./styles/RewardManagement.css";
 import { FaSearch } from "react-icons/fa";
-import { TbPlayerTrackPrevFilled, TbPlayerTrackNextFilled } from "react-icons/tb";
+import {
+  TbPlayerTrackPrevFilled,
+  TbPlayerTrackNextFilled,
+} from "react-icons/tb";
 import { toast } from "react-hot-toast";
 import AdminButton from "../admin-components/AdminButton";
 
@@ -33,11 +36,13 @@ export default function RewardManagement() {
 
   const fetchRewards = async () => {
     try {
-      const response = await axios.get("/api/ecocollect/rewards");
-      const rewardsWithImageUrls = response.data.map(reward => ({
+      const response = await rewardsAPI.getAllRewards();
+      const rewardsWithImageUrls = response.data.map((reward) => ({
         ...reward,
         id: reward._id,
-        image: reward.image ? `${import.meta.env.VITE_API_URL}/${reward.image.path}` : null
+        image: reward.image
+          ? `${import.meta.env.VITE_API_URL}/${reward.image.path}`
+          : null,
       }));
       setRewards(rewardsWithImageUrls);
       setLoading(false);
@@ -48,31 +53,42 @@ export default function RewardManagement() {
     }
   };
 
-  const filteredRewards = rewards.filter(r => {
+  const filteredRewards = rewards.filter((r) => {
     if (editId && r.id === editId) return true;
-    const matchesSearch = [r.name, r.category, String(r.id)].some(val =>
-      val.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesSearch = [r.name, r.category, String(r.id)].some((val) =>
+      val.toLowerCase().includes(searchTerm.toLowerCase()),
     );
-    const matchesCategory = categoryFilter === "all" || r.category === categoryFilter;
+    const matchesCategory =
+      categoryFilter === "all" || r.category === categoryFilter;
     return matchesSearch && matchesCategory;
   });
 
   const totalPages = Math.ceil(filteredRewards.length / rowsPerPage);
   const paginatedRewards = filteredRewards.slice(
     (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
+    currentPage * rowsPerPage,
   );
 
   const handleInputChange = (id, field, value) => {
-    setRewards(prev => {
-      const updated = prev.map(r => 
-        r.id === id 
-          ? { ...r, [field]: field === "points" ? (value === '' ? '' : Number(value)) : value } 
-          : r
+    setRewards((prev) => {
+      const updated = prev.map((r) =>
+        r.id === id
+          ? {
+              ...r,
+              [field]:
+                field === "points"
+                  ? value === ""
+                    ? ""
+                    : Number(value)
+                  : value,
+            }
+          : r,
       );
       if (originalReward && id === originalReward.id) {
-        const edited = updated.find(r => r.id === id);
-        const changed = Object.keys(originalReward).some(key => edited[key] !== originalReward[key]);
+        const edited = updated.find((r) => r.id === id);
+        const changed = Object.keys(originalReward).some(
+          (key) => edited[key] !== originalReward[key],
+        );
         setHasChanges(changed);
       }
       return updated;
@@ -85,8 +101,10 @@ export default function RewardManagement() {
     const reader = new FileReader();
     reader.onloadend = () => {
       const imageDataUrl = reader.result;
-      setRewards(prev => {
-        const updated = prev.map(r => r.id === id ? { ...r, image: imageDataUrl, imageFile: file } : r);
+      setRewards((prev) => {
+        const updated = prev.map((r) =>
+          r.id === id ? { ...r, image: imageDataUrl, imageFile: file } : r,
+        );
         if (originalReward && id === originalReward.id) {
           setHasChanges(true);
         }
@@ -97,14 +115,14 @@ export default function RewardManagement() {
   };
 
   const handleAddReward = () => {
-    const newId = 'new-' + Date.now();
+    const newId = "new-" + Date.now();
     const newReward = {
       id: newId,
       name: "",
       category: "merch",
       points: 0,
       description: "",
-      image: null
+      image: null,
     };
     setRewards([newReward, ...rewards]);
     setEditId(newId);
@@ -122,11 +140,11 @@ export default function RewardManagement() {
     setDeletingId(id);
 
     try {
-      if (!id.startsWith('new-')) {
-        await axios.delete(`/api/ecocollect/rewards/${id}`);
+      if (!id.startsWith("new-")) {
+        await rewardsAPI.deleteReward(id);
         toast.success("Reward deleted successfully");
       }
-      setRewards(prev => prev.filter(r => r.id !== id));
+      setRewards((prev) => prev.filter((r) => r.id !== id));
       if (editId === id) setEditId(null);
       if (newRewardId === id) setNewRewardId(null);
     } catch (error) {
@@ -140,7 +158,7 @@ export default function RewardManagement() {
 
   const isAddFormComplete = () => {
     if (!newRewardId) return true;
-    const newReward = rewards.find(r => r.id === newRewardId);
+    const newReward = rewards.find((r) => r.id === newRewardId);
     if (!newReward) return true;
     return (
       newReward.name.trim() !== "" &&
@@ -152,13 +170,18 @@ export default function RewardManagement() {
   };
 
   const handleUpdate = async () => {
-    const current = rewards.find(r => r.id === editId);
-    if (!current.name || !current.category || current.points === undefined || !current.description) {
+    const current = rewards.find((r) => r.id === editId);
+    if (
+      !current.name ||
+      !current.category ||
+      current.points === undefined ||
+      !current.description
+    ) {
       toast.error("All fields are required");
       return;
     }
 
-    const isNewReward = current.id.startsWith('new-');
+    const isNewReward = current.id.startsWith("new-");
     if (isNewReward) {
       setIsAdding(true);
     } else {
@@ -177,20 +200,16 @@ export default function RewardManagement() {
 
       let response;
       if (isNewReward) {
-        response = await axios.post("/api/ecocollect/rewards", formData, {
-          headers: { "Content-Type": "multipart/form-data" }
-        });
+        response = await rewardsAPI.addReward(formData);
         toast.success("Reward added successfully");
       } else {
-        response = await axios.put(`/api/ecocollect/rewards/${current.id}`, formData, {
-          headers: { "Content-Type": "multipart/form-data" }
-        });
+        response = await rewardsAPI.updateReward(current.id, formData);
         toast.success("Reward updated successfully");
       }
 
       // Update the rewards list with the new data
       await fetchRewards();
-      
+
       setEditId(null);
       setNewRewardId(null);
       setOriginalReward(null);
@@ -205,7 +224,7 @@ export default function RewardManagement() {
   };
 
   const handleCancelAdd = () => {
-    setRewards(prev => prev.filter(r => r.id !== newRewardId));
+    setRewards((prev) => prev.filter((r) => r.id !== newRewardId));
     setEditId(null);
     setNewRewardId(null);
     setOriginalReward(null);
@@ -215,7 +234,9 @@ export default function RewardManagement() {
 
   const handleCancelEdit = () => {
     if (originalReward) {
-      setRewards(prev => prev.map(r => r.id === originalReward.id ? originalReward : r));
+      setRewards((prev) =>
+        prev.map((r) => (r.id === originalReward.id ? originalReward : r)),
+      );
     }
     setEditId(null);
     setOriginalReward(null);
@@ -229,7 +250,10 @@ export default function RewardManagement() {
 
   // Handler to show toast if restricted
   const showEditWarning = () => {
-    toast.error("Finish adding or editing the current reward before proceeding.", { position: "bottom-right" });
+    toast.error(
+      "Finish adding or editing the current reward before proceeding.",
+      { position: "bottom-right" },
+    );
   };
 
   useEffect(() => {
@@ -252,7 +276,11 @@ export default function RewardManagement() {
           <AdminButton
             type="add"
             size="medium"
-            onClick={isEditingOrAdding || isPerformingAction ? showEditWarning : handleAddReward}
+            onClick={
+              isEditingOrAdding || isPerformingAction
+                ? showEditWarning
+                : handleAddReward
+            }
             disabled={isEditingOrAdding || isPerformingAction}
           >
             Add Reward
@@ -304,7 +332,11 @@ export default function RewardManagement() {
               type="text"
               placeholder="Search rewards"
               value={searchTerm}
-              onChange={isEditingOrAdding || isPerformingAction ? showEditWarning : e => setSearchTerm(e.target.value)}
+              onChange={
+                isEditingOrAdding || isPerformingAction
+                  ? showEditWarning
+                  : (e) => setSearchTerm(e.target.value)
+              }
               className="search-input"
               disabled={isEditingOrAdding || isPerformingAction}
             />
@@ -316,76 +348,139 @@ export default function RewardManagement() {
           <table className="rewards-table">
             <thead>
               <tr>
-                <th>ID</th><th>Reward Name</th><th>Category</th>
-                <th>Points</th><th>Description</th><th>Image</th><th>Action</th>
+                <th>ID</th>
+                <th>Reward Name</th>
+                <th>Category</th>
+                <th>Points</th>
+                <th>Description</th>
+                <th>Image</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="7" style={{ textAlign: "center", padding: "20px" }}>
+                  <td
+                    colSpan="7"
+                    style={{ textAlign: "center", padding: "20px" }}
+                  >
                     Loading rewards...
                   </td>
                 </tr>
               ) : paginatedRewards.length === 0 ? (
                 <tr>
-                  <td colSpan="7" style={{ textAlign: "center", padding: "20px", fontStyle: "italic", color: "#666" }}>
+                  <td
+                    colSpan="7"
+                    style={{
+                      textAlign: "center",
+                      padding: "20px",
+                      fontStyle: "italic",
+                      color: "#666",
+                    }}
+                  >
                     No rewards to display. Add one!
                   </td>
                 </tr>
               ) : (
-                paginatedRewards.map(reward => (
+                paginatedRewards.map((reward) => (
                   <tr key={reward.id}>
                     <td>{reward.id}</td>
                     <td>
                       {editId === reward.id ? (
-                        <input value={reward.name} onChange={e => handleInputChange(reward.id, "name", e.target.value)} />
-                      ) : reward.name}
+                        <input
+                          value={reward.name}
+                          onChange={(e) =>
+                            handleInputChange(reward.id, "name", e.target.value)
+                          }
+                        />
+                      ) : (
+                        reward.name
+                      )}
                     </td>
                     <td>
                       {editId === reward.id ? (
-                        <select value={reward.category} onChange={e => handleInputChange(reward.id, "category", e.target.value)}>
+                        <select
+                          value={reward.category}
+                          onChange={(e) =>
+                            handleInputChange(
+                              reward.id,
+                              "category",
+                              e.target.value,
+                            )
+                          }
+                        >
                           <option value="merch">Merch</option>
                           <option value="mobile load">Mobile Load</option>
                         </select>
-                      ) : reward.category}
+                      ) : (
+                        reward.category
+                      )}
                     </td>
                     <td>
                       {editId === reward.id ? (
-                        <input 
-                            type="number" 
-                            value={reward.points} 
-                            onChange={e => {
-                                const value = e.target.value;
-                                if (value === '') {
-                                    handleInputChange(reward.id, "points", '');
-                                } else {
-                                    const numValue = parseInt(value);
-                                    if (!isNaN(numValue) && numValue >= 0) {
-                                        handleInputChange(reward.id, "points", numValue);
-                                    }
-                                }
-                            }}
-                            onBlur={e => {
-                                const value = e.target.value;
-                                if (value === '') {
-                                    handleInputChange(reward.id, "points", 0);
-                                } else {
-                                    const cleanValue = value.replace(/^0+/, '') || '0';
-                                    handleInputChange(reward.id, "points", parseInt(cleanValue));
-                                }
-                            }}
-                            min="0"
+                        <input
+                          type="number"
+                          value={reward.points}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (value === "") {
+                              handleInputChange(reward.id, "points", "");
+                            } else {
+                              const numValue = parseInt(value);
+                              if (!isNaN(numValue) && numValue >= 0) {
+                                handleInputChange(
+                                  reward.id,
+                                  "points",
+                                  numValue,
+                                );
+                              }
+                            }
+                          }}
+                          onBlur={(e) => {
+                            const value = e.target.value;
+                            if (value === "") {
+                              handleInputChange(reward.id, "points", 0);
+                            } else {
+                              const cleanValue =
+                                value.replace(/^0+/, "") || "0";
+                              handleInputChange(
+                                reward.id,
+                                "points",
+                                parseInt(cleanValue),
+                              );
+                            }
+                          }}
+                          min="0"
                         />
-                      ) : reward.points}
+                      ) : (
+                        reward.points
+                      )}
                     </td>
                     <td>
                       {editId === reward.id ? (
-                        <textarea className="desc-input-box" value={reward.description} onChange={e => handleInputChange(reward.id, "description", e.target.value)} />
-                      ) : reward.description}
+                        <textarea
+                          className="desc-input-box"
+                          value={reward.description}
+                          onChange={(e) =>
+                            handleInputChange(
+                              reward.id,
+                              "description",
+                              e.target.value,
+                            )
+                          }
+                        />
+                      ) : (
+                        reward.description
+                      )}
                     </td>
                     <td>
-                      {reward.image && <img src={reward.image} className="preview-image" alt="Reward" />}
+                      {reward.image && (
+                        <img
+                          src={reward.image}
+                          className="preview-image"
+                          alt="Reward"
+                        />
+                      )}
                       {editId === reward.id && (
                         <>
                           <input
@@ -393,13 +488,19 @@ export default function RewardManagement() {
                             accept="image/png, image/jpeg, image/jpg"
                             style={{ display: "none" }}
                             id={`fileInput-${reward.id}`}
-                            onChange={(e) => handleImageChange(reward.id, e.target.files[0])}
+                            onChange={(e) =>
+                              handleImageChange(reward.id, e.target.files[0])
+                            }
                           />
                           <AdminButton
                             type="upload"
                             size="small"
                             className="reward-table-btn"
-                            onClick={() => document.getElementById(`fileInput-${reward.id}`).click()}
+                            onClick={() =>
+                              document
+                                .getElementById(`fileInput-${reward.id}`)
+                                .click()
+                            }
                           >
                             {reward.image ? "Replace Image" : "Add Image"}
                           </AdminButton>
@@ -416,22 +517,26 @@ export default function RewardManagement() {
                             className="reward-table-btn"
                             onClick={handleUpdate}
                             disabled={
-                              (reward.id === newRewardId && (!isAddFormComplete() || isAdding)) ||
+                              (reward.id === newRewardId &&
+                                (!isAddFormComplete() || isAdding)) ||
                               (!hasChanges && reward.id !== newRewardId) ||
                               isUpdating ||
                               isDeleting
                             }
                           >
-                            {reward.id === newRewardId 
-                              ? (isAdding ? "Saving..." : "Save") 
-                              : (isUpdating ? "Updating..." : "Update")
-                            }
+                            {reward.id === newRewardId
+                              ? isAdding
+                                ? "Saving..."
+                                : "Save"
+                              : isUpdating
+                                ? "Updating..."
+                                : "Update"}
                           </AdminButton>
                           {reward.id === newRewardId ? (
-                            <AdminButton 
-                              type="cancel" 
-                              size="small" 
-                              className="reward-table-btn" 
+                            <AdminButton
+                              type="cancel"
+                              size="small"
+                              className="reward-table-btn"
                               onClick={handleCancelAdd}
                               disabled={isAdding}
                             >
@@ -439,19 +544,25 @@ export default function RewardManagement() {
                             </AdminButton>
                           ) : (
                             <>
-                              <AdminButton 
-                                type="remove" 
-                                size="small" 
-                                className="reward-table-btn" 
+                              <AdminButton
+                                type="remove"
+                                size="small"
+                                className="reward-table-btn"
                                 onClick={() => handleRemove(reward.id)}
-                                disabled={isDeleting && deletingId === reward.id || isUpdating || isAdding}
+                                disabled={
+                                  (isDeleting && deletingId === reward.id) ||
+                                  isUpdating ||
+                                  isAdding
+                                }
                               >
-                                {isDeleting && deletingId === reward.id ? "Deleting..." : "Delete"}
+                                {isDeleting && deletingId === reward.id
+                                  ? "Deleting..."
+                                  : "Delete"}
                               </AdminButton>
-                              <AdminButton 
-                                type="cancel" 
-                                size="small" 
-                                className="reward-table-btn" 
+                              <AdminButton
+                                type="cancel"
+                                size="small"
+                                className="reward-table-btn"
                                 onClick={handleCancelEdit}
                                 disabled={isUpdating}
                               >
@@ -488,21 +599,56 @@ export default function RewardManagement() {
 
           <div className="pagination-controls">
             <button
-              onClick={isEditingOrAdding || isPerformingAction ? showEditWarning : () => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1 || isEditingOrAdding || isPerformingAction}
+              onClick={
+                isEditingOrAdding || isPerformingAction
+                  ? showEditWarning
+                  : () => setCurrentPage((prev) => Math.max(prev - 1, 1))
+              }
+              disabled={
+                currentPage === 1 || isEditingOrAdding || isPerformingAction
+              }
               className="pagination-button"
             >
-              <TbPlayerTrackPrevFilled size={15} color={currentPage === 1 || isEditingOrAdding || isPerformingAction ? "#ccc" : "#0e653f"} />
+              <TbPlayerTrackPrevFilled
+                size={15}
+                color={
+                  currentPage === 1 || isEditingOrAdding || isPerformingAction
+                    ? "#ccc"
+                    : "#0e653f"
+                }
+              />
             </button>
 
-            <span>Page {currentPage} of {totalPages}</span>
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
 
             <button
-              onClick={isEditingOrAdding || isPerformingAction ? showEditWarning : () => setCurrentPage(prev => (prev < totalPages ? prev + 1 : prev))}
-              disabled={currentPage === totalPages || isEditingOrAdding || isPerformingAction}
+              onClick={
+                isEditingOrAdding || isPerformingAction
+                  ? showEditWarning
+                  : () =>
+                      setCurrentPage((prev) =>
+                        prev < totalPages ? prev + 1 : prev,
+                      )
+              }
+              disabled={
+                currentPage === totalPages ||
+                isEditingOrAdding ||
+                isPerformingAction
+              }
               className="pagination-button"
             >
-              <TbPlayerTrackNextFilled size={15} color={currentPage === totalPages || isEditingOrAdding || isPerformingAction ? "#ccc" : "#0e653f"} />
+              <TbPlayerTrackNextFilled
+                size={15}
+                color={
+                  currentPage === totalPages ||
+                  isEditingOrAdding ||
+                  isPerformingAction
+                    ? "#ccc"
+                    : "#0e653f"
+                }
+              />
             </button>
           </div>
         </div>

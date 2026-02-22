@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import axios from "axios";
+import { userAPI } from "../api/user";
 import {
   AiOutlineEye,
   AiOutlineEyeInvisible,
@@ -60,7 +60,7 @@ export default function AddUserModal({
 
     if (!isPasswordValid()) {
       toast.error(
-        "Password must be at least 6 characters long and contain at least one number, one uppercase letter, and one special character."
+        "Password must be at least 6 characters long and contain at least one number, one uppercase letter, and one special character.",
       );
       return;
     }
@@ -81,7 +81,7 @@ export default function AddUserModal({
 
     setLoading(true);
     try {
-      const response = await axios.post("/api/ecocollect/usermanagement/add", {
+      const response = await userAPI.addUser({
         email: form.email,
         name: form.name,
         password: form.password,

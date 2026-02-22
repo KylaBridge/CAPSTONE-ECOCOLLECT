@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
-import axios from "axios";
 import { UserContext } from "../context/userContext";
+import { ewasteAPI } from "../api/ewaste";
 import "./styles/EWasteSubmission.css";
 
 // Components and Assets
@@ -10,8 +10,8 @@ import Logs from "../components/Logs";
 import EWasteHeaderTitle from "../assets/headers/ewaste-header.png";
 import ChipIcon from "../assets/icons/chipandtrash.png";
 import { IoMdArrowDroprightCircle } from "react-icons/io";
-import { MdDelete } from 'react-icons/md';
-import { FaCamera } from 'react-icons/fa';
+import { MdDelete } from "react-icons/md";
+import { FaCamera } from "react-icons/fa";
 
 export default function EWasteSubmission() {
   const [showNavbar, setShowNavbar] = useState(false);
@@ -64,7 +64,7 @@ export default function EWasteSubmission() {
   const fetchSubmissionLogs = async () => {
     if (!user?._id) return;
     try {
-      const res = await axios.get(`/api/ecocollect/ewaste/user/${user._id}`);
+      const res = await ewasteAPI.getUserSubmissions(user._id);
       setSubmissionLogs(res.data);
     } catch (err) {
       console.error("Failed to fetch submission logs", err);
@@ -85,11 +85,7 @@ export default function EWasteSubmission() {
     attachments.forEach((file) => formData.append("attachments", file));
 
     try {
-      const response = await axios.post("/api/ecocollect/ewaste", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await ewasteAPI.submitEWaste(formData);
 
       if (response.status === 201) {
         alert("E-Waste submitted successfully!");
@@ -127,26 +123,38 @@ export default function EWasteSubmission() {
               multiple
               disabled={attachments.length >= 5}
             />
-            <label 
-              htmlFor="file-upload" 
-              className={attachments.length >= 5 ? 'disabled-upload' : ''}
+            <label
+              htmlFor="file-upload"
+              className={attachments.length >= 5 ? "disabled-upload" : ""}
               style={{
-                pointerEvents: attachments.length >= 5 ? 'none' : 'auto',
-                opacity: attachments.length >= 5 ? 0.6 : 1
+                pointerEvents: attachments.length >= 5 ? "none" : "auto",
+                opacity: attachments.length >= 5 ? 0.6 : 1,
               }}
             >
               <FaCamera className="camera-icon" />
-              {attachments.length >= 5 ? 'MAX' : 'UPLOAD'}
+              {attachments.length >= 5 ? "MAX" : "UPLOAD"}
             </label>
           </div>
           <img src={ChipIcon} alt="Chip and Trash Icon" className="chip-icon" />
 
           <div className="upload-content-wrapper">
             <ul className="instruction-list">
-              <li><IoMdArrowDroprightCircle className="instruction-icon" /> Let's focus on one e-waste item per submission.</li>
-              <li><IoMdArrowDroprightCircle className="instruction-icon" /> Tell us what kind of e-waste you're sending.</li>
-              <li><IoMdArrowDroprightCircle className="instruction-icon" /> Add pics at least 1 to 5. Only upload 5 pics.</li>
-              <li><IoMdArrowDroprightCircle className="instruction-icon" /> We'll give it a once-over and let you know it's good to go!</li>
+              <li>
+                <IoMdArrowDroprightCircle className="instruction-icon" /> Let's
+                focus on one e-waste item per submission.
+              </li>
+              <li>
+                <IoMdArrowDroprightCircle className="instruction-icon" /> Tell
+                us what kind of e-waste you're sending.
+              </li>
+              <li>
+                <IoMdArrowDroprightCircle className="instruction-icon" /> Add
+                pics at least 1 to 5. Only upload 5 pics.
+              </li>
+              <li>
+                <IoMdArrowDroprightCircle className="instruction-icon" /> We'll
+                give it a once-over and let you know it's good to go!
+              </li>
             </ul>
 
             <div className="attachments-section">
@@ -156,7 +164,10 @@ export default function EWasteSubmission() {
                   {attachments.map((file, index) => (
                     <li key={index} className="attachment-item">
                       <span className="attachment-name">{file.name}</span>
-                      <MdDelete style={{ fontSize: '16px', color: '#245a1e' }} onClick={() => handleRemoveAttachment(index)} />
+                      <MdDelete
+                        style={{ fontSize: "16px", color: "#245a1e" }}
+                        onClick={() => handleRemoveAttachment(index)}
+                      />
                     </li>
                   ))}
                 </ul>
@@ -166,8 +177,14 @@ export default function EWasteSubmission() {
             </div>
 
             <div className="item-selection-container">
-              <select className="category-select" value={selectedCategory || ""} onChange={handleCategoryChange}>
-                <option value="" disabled>Select E-Waste Category</option>
+              <select
+                className="category-select"
+                value={selectedCategory || ""}
+                onChange={handleCategoryChange}
+              >
+                <option value="" disabled>
+                  Select E-Waste Category
+                </option>
                 <option value="Telephone">Telephone</option>
                 <option value="Router">Router</option>
                 <option value="Mobile Phone">Mobile Phone</option>
@@ -182,12 +199,18 @@ export default function EWasteSubmission() {
               </select>
             </div>
 
-            <button 
-              onClick={handleSubmit} 
-              disabled={!attachments.length || !selectedCategory || isSubmitting}
-              className={(!attachments.length || !selectedCategory || isSubmitting) ? 'disabled-button' : ''}
+            <button
+              onClick={handleSubmit}
+              disabled={
+                !attachments.length || !selectedCategory || isSubmitting
+              }
+              className={
+                !attachments.length || !selectedCategory || isSubmitting
+                  ? "disabled-button"
+                  : ""
+              }
             >
-              {isSubmitting ? 'SUBMITTING...' : 'SUBMIT'}
+              {isSubmitting ? "SUBMITTING..." : "SUBMIT"}
             </button>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { authAPI } from "../api/auth";
 import { createContext, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -52,7 +53,7 @@ export function UserContextProvider({ children }) {
 
   const fetchSessionInfo = async () => {
     try {
-      const { data } = await axios.get("/api/ecocollect/auth/session");
+      const { data } = await authAPI.getSession();
       if (data?.expiresAt) setSessionExpiresAt(data.expiresAt);
       else setSessionExpiresAt(null);
     } catch {
@@ -62,7 +63,7 @@ export function UserContextProvider({ children }) {
 
   const refreshProfile = async () => {
     try {
-      const { data } = await axios.get("/api/ecocollect/auth/profile");
+      const { data } = await authAPI.getProfile();
       setUser(data || null);
       if (data) fetchSessionInfo();
       else clearSessionTimers();
@@ -78,7 +79,7 @@ export function UserContextProvider({ children }) {
 
   const login = async ({ email, password, isAdminLogin = false }) => {
     try {
-      const { data } = await axios.post("/api/ecocollect/auth/login", {
+      const { data } = await authAPI.login({
         email,
         password,
         isAdminLogin,
@@ -97,7 +98,7 @@ export function UserContextProvider({ children }) {
 
   const logout = async () => {
     try {
-      await axios.post("/api/ecocollect/auth/logout");
+      await authAPI.logout();
     } catch {}
     setUser(null);
     clearAuthToken();
@@ -106,7 +107,7 @@ export function UserContextProvider({ children }) {
 
   const extendSession = async () => {
     try {
-      const { data } = await axios.post("/api/ecocollect/auth/session/extend");
+      const { data } = await authAPI.extendSession();
       if (data?.expiresAt) {
         setSessionExpiresAt(data.expiresAt);
         setShowSessionModal(false);
@@ -124,7 +125,7 @@ export function UserContextProvider({ children }) {
   // Registration helpers
   const registerEmailName = async ({ email, name }) => {
     try {
-      const { data } = await axios.post("/api/ecocollect/auth/register/email", {
+      const { data } = await authAPI.registerEmailName({
         email,
         name,
       });
@@ -135,7 +136,7 @@ export function UserContextProvider({ children }) {
   };
   const checkUsernameAvailability = async ({ name }) => {
     try {
-      const { data } = await axios.post("/api/ecocollect/auth/check-username", {
+      const { data } = await authAPI.checkUsernameAvailability({
         name,
       });
       return data;
@@ -145,10 +146,7 @@ export function UserContextProvider({ children }) {
   };
   const registerPassword = async ({ password, tempToken }) => {
     try {
-      const { data } = await axios.post(
-        "/api/ecocollect/auth/register/password",
-        { password, tempToken }
-      );
+      const { data } = await authAPI.registerPassword({ password, tempToken });
       return data;
     } catch (e) {
       return e?.response?.data || { error: "Registration step 2 failed" };
@@ -156,7 +154,7 @@ export function UserContextProvider({ children }) {
   };
   const registerUserFinal = async ({ code, newTempToken, role }) => {
     try {
-      const { data } = await axios.post("/api/ecocollect/auth/register", {
+      const { data } = await authAPI.register({
         code,
         newTempToken,
         role,
@@ -194,7 +192,7 @@ export function UserContextProvider({ children }) {
           window.history.replaceState(
             {},
             document.title,
-            window.location.pathname
+            window.location.pathname,
           );
       });
     }
@@ -248,8 +246,8 @@ export function UserContextProvider({ children }) {
     if (msLeft <= EXTEND_THRESHOLD) {
       console.log(
         `[SESSION] Auto-extending session for active user (${Math.floor(
-          msLeft / 60000
-        )}m left)`
+          msLeft / 60000,
+        )}m left)`,
       );
       setAutoExtendTriggered(true); // Prevent multiple calls
       extendSession();
@@ -274,7 +272,7 @@ export function UserContextProvider({ children }) {
       if (shouldBeIdle !== isIdle) {
         setIsIdle(shouldBeIdle);
         console.log(
-          `[SESSION] User is now ${shouldBeIdle ? "IDLE" : "ACTIVE"}`
+          `[SESSION] User is now ${shouldBeIdle ? "IDLE" : "ACTIVE"}`,
         );
       }
     }, 5000); // Check every 5 seconds
@@ -366,20 +364,25 @@ export function UserContextProvider({ children }) {
   useEffect(() => {
     if (!sessionExpiresAt) return;
 
-    const logInterval = setInterval(() => {
-      const ms = sessionExpiresAt - Date.now();
-      if (ms <= 0) {
-        console.log("[SESSION] expired or about to expire (<=0ms)");
-        return; // let other logic handle logout
-      }
-      const mins = Math.floor(ms / 60000);
-      const secs = Math.floor((ms % 60000) / 1000);
-      const activityStatus = isIdle ? "IDLE" : "ACTIVE";
-      const timeSinceActivity = Math.floor((Date.now() - lastActivity) / 1000);
-      console.log(
-        `[SESSION] ${mins}m ${secs}s remaining | Status: ${activityStatus} | Idle for: ${timeSinceActivity}s`
-      );
-    }, 5 * 60 * 1000); // Log every 5 minutes, Log per second if testing
+    const logInterval = setInterval(
+      () => {
+        const ms = sessionExpiresAt - Date.now();
+        if (ms <= 0) {
+          console.log("[SESSION] expired or about to expire (<=0ms)");
+          return; // let other logic handle logout
+        }
+        const mins = Math.floor(ms / 60000);
+        const secs = Math.floor((ms % 60000) / 1000);
+        const activityStatus = isIdle ? "IDLE" : "ACTIVE";
+        const timeSinceActivity = Math.floor(
+          (Date.now() - lastActivity) / 1000,
+        );
+        console.log(
+          `[SESSION] ${mins}m ${secs}s remaining | Status: ${activityStatus} | Idle for: ${timeSinceActivity}s`,
+        );
+      },
+      5 * 60 * 1000,
+    ); // Log every 5 minutes, Log per second if testing
 
     return () => clearInterval(logInterval);
   }, [sessionExpiresAt, isIdle, lastActivity]);
@@ -402,7 +405,7 @@ export function UserContextProvider({ children }) {
             navigate(target, { replace: true, state: { from: location } });
         }
         return Promise.reject(err);
-      }
+      },
     );
     return () => axios.interceptors.response.eject(interceptor);
   }, [location, navigate]);

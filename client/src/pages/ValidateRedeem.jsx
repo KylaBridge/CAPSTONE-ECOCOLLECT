@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-hot-toast";
+import { redemptionAPI } from "../api/redemption";
 import "./styles/ValidateRedeem.css";
 
 export default function ValidateRedeem() {
@@ -26,7 +26,7 @@ export default function ValidateRedeem() {
     try {
       setLoading(true);
       setValidating(true);
-      const response = await axios.get(`/api/ecocollect/redeem/validate/${id}`);
+      const response = await redemptionAPI.getRedemptionForValidation(id);
       setRedemptionData(response.data);
       setError(null);
     } catch (error) {
@@ -69,13 +69,10 @@ export default function ValidateRedeem() {
 
     setConfirming(true);
     try {
-      const response = await axios.post(
-        `/api/ecocollect/redeem/confirm/${id}`,
-        {
-          storeEmail: storeEmail.trim(),
-          storePassword: storePassword.trim(),
-        }
-      );
+      const response = await redemptionAPI.confirmRedemption(id, {
+        storeEmail: storeEmail.trim(),
+        storePassword: storePassword.trim(),
+      });
 
       if (response.status === 200) {
         setConfirmed(true);
@@ -177,7 +174,11 @@ export default function ValidateRedeem() {
         <div className="validate-redeem-card">
           <div className="validate-redeem-loading">
             <div className="validate-redeem-spinner"></div>
-            <p>{validating ? 'Validating redemption...' : 'Loading redemption details...'}</p>
+            <p>
+              {validating
+                ? "Validating redemption..."
+                : "Loading redemption details..."}
+            </p>
             <small>Please wait while we verify your QR code</small>
           </div>
         </div>
@@ -244,29 +245,29 @@ export default function ValidateRedeem() {
               <img
                 src={(() => {
                   const image = redemptionData.rewardImage;
-                  
+
                   // Handle if image is an object with path property
-                  if (typeof image === 'object' && image.path) {
-                    return image.path.startsWith('http') 
-                      ? image.path 
+                  if (typeof image === "object" && image.path) {
+                    return image.path.startsWith("http")
+                      ? image.path
                       : `${import.meta.env.VITE_API_URL}/${image.path}`;
                   }
-                  
+
                   // Handle if image is a string
-                  if (typeof image === 'string') {
-                    return image.startsWith('http') 
-                      ? image 
+                  if (typeof image === "string") {
+                    return image.startsWith("http")
+                      ? image
                       : `${import.meta.env.VITE_API_URL}/${image}`;
                   }
-                  
+
                   // Fallback - return empty to hide image
-                  return '';
+                  return "";
                 })()}
                 alt={redemptionData.rewardName}
                 className="validate-redeem-image"
                 onError={(e) => {
-                  console.error('Failed to load image:', e.target.src);
-                  e.target.style.display = 'none';
+                  console.error("Failed to load image:", e.target.src);
+                  e.target.style.display = "none";
                 }}
               />
             </div>
@@ -352,7 +353,7 @@ export default function ValidateRedeem() {
               onClick={handleConfirmRedemption}
               disabled={validating}
             >
-              {validating ? 'Validating...' : 'Confirm Redemption'}
+              {validating ? "Validating..." : "Confirm Redemption"}
             </button>
           ) : redemptionData.status === "Claimed" ? (
             <div className="validate-redeem-already-claimed">
@@ -435,7 +436,9 @@ export default function ValidateRedeem() {
               <button
                 className="validate-redeem-btn validate-redeem-btn-primary"
                 onClick={handlePasswordSubmit}
-                disabled={confirming || !storeEmail.trim() || !storePassword.trim()}
+                disabled={
+                  confirming || !storeEmail.trim() || !storePassword.trim()
+                }
               >
                 {confirming ? "Confirming..." : "Confirm"}
               </button>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { FaMapMarkerAlt, FaPhone, FaEnvelope } from "react-icons/fa";
+import { contactAPI } from "../api/contact";
 import { toast } from "react-hot-toast";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -62,7 +62,7 @@ export default function ContactPage() {
         company: formData.company,
         message: formData.message,
       };
-      await axios.post("/api/ecocollect/contact", payload);
+      await contactAPI.sendContactMessage(payload);
       setSubmitSuccess(true);
       toast.success("Your message has been sent.");
       setFormData({
@@ -73,7 +73,9 @@ export default function ContactPage() {
         message: "",
       });
     } catch (err) {
-      const msg = err?.response?.data?.error || "Failed to send message. Please try again later.";
+      const msg =
+        err?.response?.data?.error ||
+        "Failed to send message. Please try again later.";
       setSubmitError(msg);
       setSubmitSuccess(false);
       toast.error(msg);
@@ -94,8 +96,14 @@ export default function ContactPage() {
       <div className="contact-content">
         <div className="form-section">
           <h2>PLEASE FILL IN THE FORM BELOW</h2>
-          <p className="required-text">* Fields marked with an asterisk are mandatory</p>
-          {submitSuccess && <div className="success-message">Thanks! Your message has been sent.</div>}
+          <p className="required-text">
+            * Fields marked with an asterisk are mandatory
+          </p>
+          {submitSuccess && (
+            <div className="success-message">
+              Thanks! Your message has been sent.
+            </div>
+          )}
           {submitError && <div className="error-banner">{submitError}</div>}
           <form onSubmit={handleSubmit} noValidate>
             <div className="form-row">
@@ -109,7 +117,9 @@ export default function ContactPage() {
                   placeholder="Enter your name"
                   required
                 />
-                {errors.name && <span className="error-message">{errors.name}</span>}
+                {errors.name && (
+                  <span className="error-message">{errors.name}</span>
+                )}
               </div>
               <div className="form-group">
                 <label>Email *</label>
@@ -121,7 +131,9 @@ export default function ContactPage() {
                   placeholder="Enter your email"
                   required
                 />
-                {errors.email && <span className="error-message">{errors.email}</span>}
+                {errors.email && (
+                  <span className="error-message">{errors.email}</span>
+                )}
               </div>
             </div>
 
@@ -158,7 +170,9 @@ export default function ContactPage() {
                 rows="4"
                 required
               ></textarea>
-              {errors.message && <span className="error-message">{errors.message}</span>}
+              {errors.message && (
+                <span className="error-message">{errors.message}</span>
+              )}
             </div>
 
             <button type="submit" className="submit-btn" disabled={submitting}>
@@ -197,7 +211,10 @@ export default function ContactPage() {
             <div className="secured-data">
               <h3>Secured Data</h3>
               <div className="info-item">
-                <p>Your data is protected and will only be used for EcoCollect communications.</p>
+                <p>
+                  Your data is protected and will only be used for EcoCollect
+                  communications.
+                </p>
               </div>
             </div>
           </div>

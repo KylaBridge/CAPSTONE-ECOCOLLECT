@@ -1,6 +1,7 @@
 import { useContext, useState, useEffect } from "react";
-import axios from "axios";
 import { UserContext } from "../context/userContext";
+import { redemptionAPI } from "../api/redemption";
+import { rewardsAPI } from "../api/rewards";
 import "./styles/Rewards.css";
 import Header from "../components/Header";
 import RewardsContainer from "../components/RewardsContainer";
@@ -34,9 +35,9 @@ export default function Rewards() {
 
   const fetchRedemptionHistory = async () => {
     if (!user?._id) return;
-    
+
     try {
-      const response = await axios.get(`/api/ecocollect/redeem/user/${user._id}`);
+      const response = await redemptionAPI.getUserRedemptions(user._id);
       setRedemptionHistory(response.data);
     } catch (error) {
       console.error("Error fetching redemption history:", error);
@@ -46,13 +47,15 @@ export default function Rewards() {
 
   const fetchRewards = async () => {
     try {
-      const response = await axios.get("/api/ecocollect/rewards");
+      const response = await rewardsAPI.getAllRewards();
       const formattedRewards = response.data.map((reward) => ({
         id: reward._id,
         name: reward.name,
         price: reward.points,
         description: reward.description,
-        img: reward.image ? `${import.meta.env.VITE_API_URL}/${reward.image.path}` : null
+        img: reward.image
+          ? `${import.meta.env.VITE_API_URL}/${reward.image.path}`
+          : null,
       }));
       setRewards(formattedRewards);
       setLoading(false);
@@ -82,7 +85,7 @@ export default function Rewards() {
     if (currentPoints >= selectedReward.price) {
       setIsRedeeming(true);
       try {
-        const response = await axios.post("/api/ecocollect/redeem", {
+        const response = await redemptionAPI.redeemReward({
           userId: user._id,
           rewardId: selectedReward.id,
         });
@@ -95,9 +98,12 @@ export default function Rewards() {
           // Refresh rewards list and redemption history
           fetchRewards();
           fetchRedemptionHistory();
-          toast.success("Reward redeemed successfully! Check your email for the QR code.", {
-            duration: 6000, // 6 seconds for important success message
-          });
+          toast.success(
+            "Reward redeemed successfully! Check your email for the QR code.",
+            {
+              duration: 6000, // 6 seconds for important success message
+            },
+          );
         }
       } catch (error) {
         console.error("Error redeeming reward:", error);
@@ -176,7 +182,9 @@ export default function Rewards() {
                   {loading ? (
                     <div className="loading-message">Loading rewards...</div>
                   ) : rewards.length === 0 ? (
-                    <div className="no-rewards-message">No rewards available at the moment.</div>
+                    <div className="no-rewards-message">
+                      No rewards available at the moment.
+                    </div>
                   ) : (
                     rewards.map((reward) => (
                       <RewardsContainer
@@ -207,12 +215,16 @@ export default function Rewards() {
             <button className="modal-close-button" onClick={handleCloseModal}>
               &times;
             </button>
-            <img src={selectedReward.img} alt={selectedReward.name} className="modal-image" />
+            <img
+              src={selectedReward.img}
+              alt={selectedReward.name}
+              className="modal-image"
+            />
             <h2 className="modal-title">{selectedReward.name}</h2>
             <p className="modal-points">Worth: {selectedReward.price} points</p>
             <div className="modal-description">
               <h3>How to Claim:</h3>
-              <p>{selectedReward.description || 'No description available.'}</p>
+              <p>{selectedReward.description || "No description available."}</p>
             </div>
 
             {!redeemSuccess ? (
@@ -221,12 +233,14 @@ export default function Rewards() {
                 onClick={handleRedeem}
                 disabled={redeemSuccess || isRedeeming}
               >
-                {isRedeeming ? 'Redeeming...' : 'Redeem'}
+                {isRedeeming ? "Redeeming..." : "Redeem"}
               </button>
             ) : (
               <div className="redeem-success">
                 <h3>Purchased!</h3>
-                <p>Thank you for your purchase. Check your email for the QR code!</p>
+                <p>
+                  Thank you for your purchase. Check your email for the QR code!
+                </p>
               </div>
             )}
 

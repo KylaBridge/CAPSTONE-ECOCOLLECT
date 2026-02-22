@@ -17,7 +17,10 @@ import { BsFillTelephoneFill } from "react-icons/bs";
 import { MdCable, MdOutlineRouter } from "react-icons/md";
 import { useEffect, useState, useContext } from "react";
 import { UserContext } from "../context/userContext";
-import axios from "axios";
+import { userAPI } from "../api/user";
+import { ewasteAPI } from "../api/ewaste";
+import { redemptionAPI } from "../api/redemption";
+import { binsAPI } from "../api/bins";
 import binIcon from "../assets/icons/binIcon.png";
 import "./styles/AdminDashboard.css";
 
@@ -48,14 +51,14 @@ export default function AdminDashboard() {
 
   const totalEwastes = Object.values(ewasteCount).reduce(
     (sum, val) => sum + val,
-    0
+    0,
   );
   const [binList, setBinList] = useState([]);
 
   useEffect(() => {
     const fetchRoleCount = async () => {
       try {
-        const response = await axios.get("/api/ecocollect/user/role-count");
+        const response = await userAPI.getUserCount();
         setRoleCounts(response.data);
       } catch (err) {
         console.error(err);
@@ -64,7 +67,7 @@ export default function AdminDashboard() {
 
     const fetchEwasteCount = async () => {
       try {
-        const response = await axios.get("/api/ecocollect/user/ewastes");
+        const response = await ewasteAPI.getEwasteCounts();
         setEwasteCount(response.data);
       } catch (err) {
         console.error(err);
@@ -73,9 +76,7 @@ export default function AdminDashboard() {
 
     const fetchRedemptionCount = async () => {
       try {
-        const response = await axios.get(
-          "/api/ecocollect/rewards/redemption-count"
-        );
+        const response = await redemptionAPI.getRedemptionCount();
         setRedemptionCount(response.data.count);
       } catch (err) {
         console.error(err);
@@ -84,7 +85,7 @@ export default function AdminDashboard() {
 
     const fetchBins = async () => {
       try {
-        const response = await axios.get("/api/ecocollect/bins");
+        const response = await binsAPI.getAllBins();
         setBinList(response.data);
       } catch (err) {
         console.error(err);
@@ -151,7 +152,7 @@ export default function AdminDashboard() {
 
   // Filter bins that need emptying
   const binsNeedEmptying = binList.filter(
-    (bin) => bin.status === "Full" || bin.status === "Needs Emptying"
+    (bin) => bin.status === "Full" || bin.status === "Needs Emptying",
   );
 
   return (

@@ -11,7 +11,9 @@ import SubmissionCharacter from "../assets/icons/submissionchar.png";
 import SmartDevicesIcon from "../assets/icons/smartdevicesicon.png";
 import SmartIcon from "../assets/icons/smarticon.png";
 import Sidebar from "../components/Sidebar";
-import axios from "axios";
+import { ewasteAPI } from "../api/ewaste";
+import { badgesAPI } from "../api/badges";
+import { userAPI } from "../api/user";
 
 export default function Home() {
   const [showNavbar, setShowNavbar] = useState(false);
@@ -28,8 +30,8 @@ export default function Home() {
   useEffect(() => {
     if (user) {
       // Fetch submission count
-      axios
-        .get(`/api/ecocollect/ewaste/user/${user._id}/count`)
+      ewasteAPI
+        .getUserSubmitCount(user._id)
         .then((response) => {
           setSubmissionCount(response.data.submissionCount);
         })
@@ -38,8 +40,8 @@ export default function Home() {
         });
 
       // Fetch badges
-      axios
-        .get("/api/ecocollect/badges")
+      badgesAPI
+        .getAllBadges()
         .then((response) => {
           const badges = response.data;
           // Find current badge based on user's rank
@@ -55,10 +57,10 @@ export default function Home() {
 
           // Find next badge (the one with higher points required)
           const sortedBadges = badges.sort(
-            (a, b) => a.pointsRequired - b.pointsRequired
+            (a, b) => a.pointsRequired - b.pointsRequired,
           );
           const next = sortedBadges.find(
-            (badge) => badge.pointsRequired > user.exp
+            (badge) => badge.pointsRequired > user.exp,
           );
           if (next) {
             setNextBadge({
@@ -74,8 +76,8 @@ export default function Home() {
         });
 
       // Fetch leaderboard (top contributors)
-      axios
-        .get("/api/ecocollect/leaderboards")
+      userAPI
+        .getLeaderboards()
         .then((response) => {
           if (Array.isArray(response.data)) {
             // Sort by exp descending
@@ -130,9 +132,7 @@ export default function Home() {
                 </div>
                 <div className="submission-items-display">
                   <h2>Submissions:</h2>
-                  <span className="submission-count">
-                    {submissionCount}
-                  </span>
+                  <span className="submission-count">{submissionCount}</span>
                 </div>
               </div>
               <img

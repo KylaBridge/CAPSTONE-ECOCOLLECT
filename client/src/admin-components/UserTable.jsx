@@ -1,6 +1,8 @@
 import { toast } from "react-hot-toast";
 import { useEffect, useState, useRef, useMemo } from "react";
-import axios from "axios";
+import { userAPI } from "../api/user";
+import { activityLogAPI } from "../api/activityLog";
+import { ewasteAPI } from "../api/ewaste";
 import "./styles/UserTable.css";
 import { FaSearch } from "react-icons/fa";
 import AdminButton from "./AdminButton";
@@ -28,7 +30,7 @@ export default function UserTable({
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        const usersRes = await axios.get("/api/ecocollect/usermanagement");
+        const usersRes = await userAPI.getAllUsers();
 
         // Filter users based on current user role
         let filteredUsers = usersRes.data;
@@ -38,7 +40,7 @@ export default function UserTable({
         } else if (currentUserRole === "superadmin") {
           // Super admin can see users and admins, but not other superadmins
           filteredUsers = usersRes.data.filter(
-            (user) => user.role === "user" || user.role === "admin"
+            (user) => user.role === "user" || user.role === "admin",
           );
         }
 
@@ -46,8 +48,8 @@ export default function UserTable({
         setShowAll(true);
 
         const [activityRes, ewasteRes] = await Promise.all([
-          axios.get("/api/ecocollect/activity-logs"),
-          axios.get("/api/ecocollect/ewaste"),
+          activityLogAPI.getAllActivityLogs(),
+          ewasteAPI.getAllSubmissions(),
         ]);
 
         // Group activity logs by userId
@@ -276,7 +278,7 @@ export default function UserTable({
                 const lastActivity =
                   activities.length > 0
                     ? activities.sort(
-                        (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+                        (a, b) => new Date(b.timestamp) - new Date(a.timestamp),
                       )[0]
                     : null;
                 const totalContributions = userContributions[user._id] || 0;
@@ -289,7 +291,7 @@ export default function UserTable({
                     <td>
                       {lastActivity
                         ? `${lastActivity.action} (${new Date(
-                            lastActivity.timestamp
+                            lastActivity.timestamp,
                           ).toLocaleString()})`
                         : "No activity"}
                     </td>

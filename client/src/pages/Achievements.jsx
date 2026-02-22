@@ -10,8 +10,8 @@ import {
   FiDownload,
 } from "react-icons/fi";
 import LockIcon from "../assets/icons/lockicon.png";
-import axios from "axios";
 import html2canvas from "html2canvas";
+import { badgesAPI } from "../api/badges";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
@@ -40,7 +40,7 @@ export default function Achievements() {
   useEffect(() => {
     const fetchBadges = async () => {
       try {
-        const response = await axios.get("/api/ecocollect/badges");
+        const response = await badgesAPI.getAllBadges();
         const badgesWithImages = response.data.map((badge) => ({
           ...badge,
           img: badge.image
@@ -256,41 +256,41 @@ export default function Achievements() {
         case "facebook":
           // Facebook requires simpler URL format and may need debugging
           shareLink = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-            shareUrl
+            shareUrl,
           )}`;
           window.open(shareLink, "_blank", "width=600,height=400");
           break;
         case "twitter":
           shareLink = `https://twitter.com/intent/tweet?url=${encodeURIComponent(
-            shareUrl
+            shareUrl,
           )}&text=${encodeURIComponent(
-            shareDescription
+            shareDescription,
           )}&hashtags=EcoCollect,Sustainability,EcoFriendly`;
           window.open(shareLink, "_blank", "width=600,height=400");
           break;
         case "whatsapp":
           shareLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(
-            shareDescription + " " + shareUrl
+            shareDescription + " " + shareUrl,
           )}`;
           window.open(shareLink, "_blank", "width=600,height=400");
           break;
         case "telegram":
           shareLink = `https://t.me/share/url?url=${encodeURIComponent(
-            shareUrl
+            shareUrl,
           )}&text=${encodeURIComponent(shareDescription)}`;
           window.open(shareLink, "_blank", "width=600,height=400");
           break;
         case "linkedin":
           shareLink = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
-            shareUrl
+            shareUrl,
           )}&title=${encodeURIComponent(
-            shareTitle
+            shareTitle,
           )}&summary=${encodeURIComponent(shareDescription)}`;
           window.open(shareLink, "_blank", "width=600,height=400");
           break;
         case "pinterest":
           shareLink = `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(
-            shareUrl
+            shareUrl,
           )}&description=${encodeURIComponent(shareDescription)}`;
           window.open(shareLink, "_blank", "width=600,height=400");
           break;

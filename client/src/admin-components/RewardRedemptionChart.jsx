@@ -10,7 +10,7 @@ import {
 } from "chart.js";
 import { useState, useEffect, useRef } from "react";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import axios from "axios";
+import { rewardsAPI } from "../api/rewards";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
@@ -22,7 +22,7 @@ ChartJS.register(
   LinearScale,
   Tooltip,
   Legend,
-  ChartDataLabels
+  ChartDataLabels,
 );
 
 export default function RewardRedemptionChart() {
@@ -30,7 +30,7 @@ export default function RewardRedemptionChart() {
   const [view, setView] = useState("weekly");
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(
-    currentDate.getMonth() + 1
+    currentDate.getMonth() + 1,
   );
   const [selectedMonthForMonthlyView, setSelectedMonthForMonthlyView] =
     useState(0); // 0 means all months
@@ -186,17 +186,17 @@ export default function RewardRedemptionChart() {
 
     const totalRedemptions = chartData.datasets[0].data.reduce(
       (sum, count) => sum + count,
-      0
+      0,
     );
     doc.text(
       `Total Redemptions: ${totalRedemptions}`,
       14,
-      doc.lastAutoTable.finalY + 10
+      doc.lastAutoTable.finalY + 10,
     );
     doc.save(
       `Reward_Redemptions_${view}_${selectedYear}${
         view === "weekly" ? `_${selectedMonth}` : ""
-      }.pdf`
+      }.pdf`,
     );
     setShowExportDropdown(false);
   };
@@ -212,7 +212,7 @@ export default function RewardRedemptionChart() {
     // Add summary information
     const totalRedemptions = chartData.datasets[0].data.reduce(
       (sum, count) => sum + count,
-      0
+      0,
     );
     XLSX.utils.sheet_add_aoa(
       worksheet,
@@ -224,7 +224,7 @@ export default function RewardRedemptionChart() {
         [`Year: ${selectedYear}`],
         [`Month: ${view === "weekly" ? selectedMonth : "N/A"}`],
       ],
-      { origin: -1 }
+      { origin: -1 },
     );
 
     const workbook = XLSX.utils.book_new();
@@ -233,7 +233,7 @@ export default function RewardRedemptionChart() {
       workbook,
       `Reward_Redemptions_${view}_${selectedYear}${
         view === "weekly" ? `_${selectedMonth}` : ""
-      }.xlsx`
+      }.xlsx`,
     );
     setShowExportDropdown(false);
   };
@@ -254,8 +254,8 @@ export default function RewardRedemptionChart() {
             }),
         });
 
-        const response = await axios.get(
-          `/api/ecocollect/rewards/redemption-stats?${params}`
+        const response = await rewardsAPI.getRewardRedemptionStats(
+          Object.fromEntries(params),
         );
         const data = response.data;
 
@@ -317,13 +317,13 @@ export default function RewardRedemptionChart() {
 
   const totalRedemptions = chartData.datasets[0].data.reduce(
     (sum, count) => sum + count,
-    0
+    0,
   );
 
   const maxReward = hasData
     ? chartData.labels[
         chartData.datasets[0].data.indexOf(
-          Math.max(...chartData.datasets[0].data)
+          Math.max(...chartData.datasets[0].data),
         )
       ]
     : null;
@@ -331,7 +331,7 @@ export default function RewardRedemptionChart() {
   const minReward = hasData
     ? chartData.labels[
         chartData.datasets[0].data.indexOf(
-          Math.min(...chartData.datasets[0].data.filter((x) => x > 0))
+          Math.min(...chartData.datasets[0].data.filter((x) => x > 0)),
         )
       ]
     : null;
@@ -486,18 +486,18 @@ export default function RewardRedemptionChart() {
                     })`
                   : ` (All weeks in ${new Date(
                       2025,
-                      selectedMonth - 1
+                      selectedMonth - 1,
                     ).toLocaleString("default", {
                       month: "long",
                     })} ${selectedYear})`
                 : selectedMonthForMonthlyView > 0
-                ? ` (${new Date(
-                    2025,
-                    selectedMonthForMonthlyView - 1
-                  ).toLocaleString("default", {
-                    month: "long",
-                  })} ${selectedYear})`
-                : ` (All months in ${selectedYear})`}
+                  ? ` (${new Date(
+                      2025,
+                      selectedMonthForMonthlyView - 1,
+                    ).toLocaleString("default", {
+                      month: "long",
+                    })} ${selectedYear})`
+                  : ` (All months in ${selectedYear})`}
             </span>
           </div>
 
@@ -510,7 +510,7 @@ export default function RewardRedemptionChart() {
               <div className="reward-percentage">
                 {hasData && totalRedemptions > 0
                   ? `${((maxRedemptionCount / totalRedemptions) * 100).toFixed(
-                      1
+                      1,
                     )}%`
                   : "0.0%"}
               </div>
@@ -523,7 +523,7 @@ export default function RewardRedemptionChart() {
               <div className="reward-percentage">
                 {hasData && totalRedemptions > 0
                   ? `${((minRedemptionCount / totalRedemptions) * 100).toFixed(
-                      1
+                      1,
                     )}%`
                   : "0.0%"}
               </div>
@@ -543,26 +543,26 @@ export default function RewardRedemptionChart() {
                   ? selectedWeek > 0
                     ? `No redemptions found for ${
                         generateWeekRanges().find(
-                          (w) => w.value === selectedWeek
+                          (w) => w.value === selectedWeek,
                         )?.label || "selected week"
                       } in ${new Date(2025, selectedMonth - 1).toLocaleString(
                         "default",
-                        { month: "long" }
+                        { month: "long" },
                       )} ${selectedYear}.`
                     : `No redemptions found for ${new Date(
                         2025,
-                        selectedMonth - 1
+                        selectedMonth - 1,
                       ).toLocaleString("default", {
                         month: "long",
                       })} ${selectedYear}.`
                   : selectedMonthForMonthlyView > 0
-                  ? `No redemptions found for ${new Date(
-                      2025,
-                      selectedMonthForMonthlyView - 1
-                    ).toLocaleString("default", {
-                      month: "long",
-                    })} ${selectedYear}.`
-                  : `No redemptions found for ${selectedYear}.`}
+                    ? `No redemptions found for ${new Date(
+                        2025,
+                        selectedMonthForMonthlyView - 1,
+                      ).toLocaleString("default", {
+                        month: "long",
+                      })} ${selectedYear}.`
+                    : `No redemptions found for ${selectedYear}.`}
               </p>
               <p className="suggestion">
                 Try selecting a different time period or check back later.

@@ -9,7 +9,7 @@ import { FaChevronDown } from "react-icons/fa";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
-import axios from "axios";
+import { activityLogAPI } from "../api/activityLog";
 import "./styles/ActivityLog.css";
 
 export default function ActivityLog() {
@@ -45,7 +45,7 @@ export default function ActivityLog() {
         setLoading(true);
 
         // Fetch activity logs from backend
-        const response = await axios.get("/api/ecocollect/activity-logs");
+        const response = await activityLogAPI.getAllActivityLogs();
         const formattedLogs = response.data.map((log) => ({
           id: log._id,
           email: log.userEmail || "Unknown User",
@@ -57,7 +57,7 @@ export default function ActivityLog() {
 
         // Sort by date (newest first)
         const allActivities = formattedLogs.sort(
-          (a, b) => new Date(b.dateTime) - new Date(a.dateTime)
+          (a, b) => new Date(b.dateTime) - new Date(a.dateTime),
         );
 
         setActivities(allActivities);
@@ -74,7 +74,7 @@ export default function ActivityLog() {
   // Get unique roles for filter dropdown
   const roleOptions = useMemo(() => {
     const roles = activities.map(
-      (log) => log.role && log.role.trim().toLowerCase()
+      (log) => log.role && log.role.trim().toLowerCase(),
     );
     return Array.from(new Set(roles)).filter(Boolean);
   }, [activities]);
@@ -136,7 +136,7 @@ export default function ActivityLog() {
         Activity: log.activity || "N/A",
         Description: log.description || "N/A",
         "Date & Time": log.dateTime || "N/A",
-      }))
+      })),
     );
 
     const workbook = XLSX.utils.book_new();

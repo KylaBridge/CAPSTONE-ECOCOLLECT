@@ -3,6 +3,7 @@ import Header from "../admin-components/Header";
 import "./styles/AchieversModule.css";
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import jsPDF from "jspdf";
+import { userAPI } from "../api/user";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 import { FaSearch, FaChevronDown } from "react-icons/fa";
@@ -68,7 +69,7 @@ export default function AchieversModule() {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get("/api/ecocollect/usermanagement");
+      const response = await userAPI.getAllUsers();
 
       if (!response.data || !Array.isArray(response.data)) {
         throw new Error("Invalid data format received");
@@ -120,7 +121,7 @@ export default function AchieversModule() {
 
   const paginatedData = filteredRankedData.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const totalPages = Math.ceil(filteredRankedData.length / itemsPerPage);
@@ -153,7 +154,7 @@ export default function AchieversModule() {
         Email: user.email || "N/A",
         "Current Badge": user.rank || "N/A",
         "Experience Points": user.exp || 0,
-      }))
+      })),
     );
 
     const workbook = XLSX.utils.book_new();
@@ -183,8 +184,8 @@ export default function AchieversModule() {
               {sortOption === "exp"
                 ? "Experience Points"
                 : badgeFilter
-                ? badgeFilter
-                : "Badge"}
+                  ? badgeFilter
+                  : "Badge"}
             </button>
             {showDropdown && (
               <div className="achievers-dropdown-menu">
@@ -351,7 +352,7 @@ export default function AchieversModule() {
               <button
                 onClick={() =>
                   setCurrentPage((prev) =>
-                    prev < totalPages ? prev + 1 : prev
+                    prev < totalPages ? prev + 1 : prev,
                   )
                 }
                 disabled={currentPage === totalPages}

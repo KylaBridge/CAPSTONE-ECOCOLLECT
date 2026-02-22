@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useContext, useState } from "react";
 import { UserContext } from "../context/userContext";
+import { authAPI } from "../api/auth";
 import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
 import {
   AiOutlineEye,
@@ -97,13 +98,8 @@ export default function Login() {
     }
     setLoading(true);
     try {
-      const response = await fetch("/api/ecocollect/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ email: resetForm.email }),
-      });
-      const data = await response.json();
+      const response = await authAPI.forgotPassword({ email: resetForm.email });
+      const data = response.data;
 
       if (data.error) {
         toast.error(data.error);
@@ -134,16 +130,11 @@ export default function Login() {
     }
     setLoading(true);
     try {
-      const response = await fetch("/api/ecocollect/auth/verify-reset-code", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          code: resetForm.code,
-          resetToken: resetToken,
-        }),
+      const response = await authAPI.verifyResetCode({
+        code: resetForm.code,
+        resetToken: resetToken,
       });
-      const data = await response.json();
+      const data = response.data;
 
       if (data.error) {
         toast.error(data.error);
@@ -174,16 +165,11 @@ export default function Login() {
     }
     setLoading(true);
     try {
-      const response = await fetch("/api/ecocollect/auth/reset-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          newPassword: resetForm.newPassword,
-          newResetToken: newResetToken,
-        }),
+      const response = await authAPI.resetPassword({
+        newPassword: resetForm.newPassword,
+        newResetToken: newResetToken,
       });
-      const data = await response.json();
+      const data = response.data;
 
       if (data.error) {
         toast.error(data.error);
@@ -276,8 +262,8 @@ export default function Login() {
             resetStep === 1
               ? handleResetStep1
               : resetStep === 2
-              ? handleResetStep2
-              : handleResetStep3
+                ? handleResetStep2
+                : handleResetStep3
           }
         >
           <h1>Reset Password</h1>

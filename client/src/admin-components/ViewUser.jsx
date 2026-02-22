@@ -1,9 +1,12 @@
 import "./styles/ViewUser.css";
-import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useState, useEffect, useContext } from "react";
 import AdminButton from "./AdminButton";
 import { UserContext } from "../context/userContext";
+import { ewasteAPI } from "../api/ewaste";
+import { redemptionAPI } from "../api/redemption";
+import { userAPI } from "../api/user";
+import { authAPI } from "../api/auth";
 
 export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
   const [contributionHistory, setContributionHistory] = useState([]);
@@ -26,30 +29,30 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
       try {
         // Define points per category (same as backend logic)
         const categoryPoints = {
-          "Laptop": 20,
-          "Tablet": 15,
+          Laptop: 20,
+          Tablet: 15,
           "Mobile Phone": 10,
-          "Telephone": 8,
-          "Router": 8,
-          "Charger": 5,
-          "Batteries": 5,
-          "Cords": 5,
-          "Powerbank": 10,
-          "USB": 5,
+          Telephone: 8,
+          Router: 8,
+          Charger: 5,
+          Batteries: 5,
+          Cords: 5,
+          Powerbank: 10,
+          USB: 5,
         };
 
         // Fetch user's e-waste submissions
-        const submissionsResponse = await axios.get(
-          `/api/ecocollect/ewaste/user/${user._id}`
+        const submissionsResponse = await ewasteAPI.getUserSubmissions(
+          user._id,
         );
         const submissions = submissionsResponse.data
           .map((submission) => {
             // Calculate points based on category (fixed points per submission, not per image)
-            const pointsPerSubmission = categoryPoints[submission.category] || 5;
-            const totalPointsEarned = submission.status === "Approved" 
-              ? pointsPerSubmission
-              : 0;
-            
+            const pointsPerSubmission =
+              categoryPoints[submission.category] || 5;
+            const totalPointsEarned =
+              submission.status === "Approved" ? pointsPerSubmission : 0;
+
             return {
               _id: submission._id,
               ewasteSubmitted: submission.category,
@@ -62,8 +65,8 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
         setLoadingContributions(false);
 
         // Fetch user's redeemed rewards
-        const rewardsResponse = await axios.get(
-          `/api/ecocollect/redeem/user/${user._id}`
+        const rewardsResponse = await redemptionAPI.getUserRedemptions(
+          user._id,
         );
         const rewards = rewardsResponse.data.map((redemption) => ({
           _id: redemption._id,
@@ -89,16 +92,13 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
     setModalError("");
     try {
       // Verify password before deletion
-      const response = await axios.post(
-        "/api/ecocollect/auth/verify-password",
-        {
-          email: currentUser.email,
-          password: passwordConfirmation,
-        }
-      );
+      const response = await authAPI.verifyPassword({
+        email: currentUser.email,
+        password: passwordConfirmation,
+      });
 
       if (response.data.success) {
-        await axios.delete(`/api/ecocollect/usermanagement/${user._id}`);
+        await userAPI.deleteUser(user._id);
         toast.success("User deleted successfully");
         setShowDeleteModal(false);
         setPasswordConfirmation("");
@@ -124,18 +124,13 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
     setModalError("");
     try {
       // Verify password before role change
-      const response = await axios.post(
-        "/api/ecocollect/auth/verify-password",
-        {
-          email: currentUser.email,
-          password: passwordConfirmation,
-        }
-      );
+      const response = await authAPI.verifyPassword({
+        email: currentUser.email,
+        password: passwordConfirmation,
+      });
 
       if (response.data.success) {
-        await axios.patch(`/api/ecocollect/usermanagement/role/${user._id}`, {
-          role: newRole,
-        });
+        await userAPI.changeUserRole(user._id, { role: newRole });
         toast.success(`User role changed to ${newRole} successfully`);
         setShowChangeRoleModal(false);
         setPasswordConfirmation("");
@@ -169,8 +164,8 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
   const userInitial = user?.name
     ? user.name.charAt(0).toUpperCase()
     : user?.email
-    ? user.email.charAt(0).toUpperCase()
-    : "?";
+      ? user.email.charAt(0).toUpperCase()
+      : "?";
 
   // Decide which avatar image (if any) to show
   const displayAvatar = user?.avatar || user?.profilePicture || null;

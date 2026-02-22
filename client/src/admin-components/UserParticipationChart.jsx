@@ -11,7 +11,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import axios from "axios";
+import { userAPI } from "../api/user";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
@@ -24,7 +24,7 @@ ChartJS.register(
   Title,
   CategoryScale,
   Tooltip,
-  Legend
+  Legend,
 );
 
 // Function to generate year options dynamically
@@ -107,12 +107,12 @@ export default function UserParticipationChart() {
     doc.text(
       `Total Registered Users: ${totalUsers}`,
       14,
-      doc.lastAutoTable.finalY + 10
+      doc.lastAutoTable.finalY + 10,
     );
     doc.save(
       `User_Participation_${viewType}_${selectedYear}${
         viewType !== "Monthly" ? `_${selectedMonth}` : ""
-      }.pdf`
+      }.pdf`,
     );
     setShowExportDropdown(false);
   };
@@ -136,7 +136,7 @@ export default function UserParticipationChart() {
         [`Year: ${selectedYear}`],
         [`Month: ${viewType !== "Monthly" ? selectedMonth : "N/A"}`],
       ],
-      { origin: -1 }
+      { origin: -1 },
     );
 
     const workbook = XLSX.utils.book_new();
@@ -145,7 +145,7 @@ export default function UserParticipationChart() {
       workbook,
       `User_Participation_${viewType}_${selectedYear}${
         viewType !== "Monthly" ? `_${selectedMonth}` : ""
-      }.xlsx`
+      }.xlsx`,
     );
     setShowExportDropdown(false);
   };
@@ -154,15 +154,15 @@ export default function UserParticipationChart() {
     const fetchData = async () => {
       try {
         // Fetch participation data
-        const response = await axios.get(
-          `/api/ecocollect/analytics/participation?year=${selectedYear}&month=${selectedMonth}&viewType=${viewType}`
-        );
+        const response = await userAPI.getUserParticipationData({
+          year: selectedYear,
+          month: selectedMonth,
+          viewType: viewType,
+        });
         const { submissions, redemptions, signups } = response.data;
 
         // Fetch total user count for participation rate calculation
-        const userCountResponse = await axios.get(
-          "/api/ecocollect/user/role-count"
-        );
+        const userCountResponse = await userAPI.getUserCount();
         const totalUserCount = userCountResponse.data.userCount || 0;
         setTotalUsers(totalUserCount);
 
@@ -286,8 +286,8 @@ export default function UserParticipationChart() {
             viewType === "Daily"
               ? "Day of Month"
               : viewType === "Weekly"
-              ? "Week Ranges"
-              : "Month",
+                ? "Week Ranges"
+                : "Month",
         },
         ticks: {
           maxRotation: viewType === "Weekly" ? 45 : 0,
@@ -377,8 +377,8 @@ export default function UserParticipationChart() {
         {viewType === "Weekly"
           ? " Weekly view shows participation rates for complete week ranges (Sunday-Saturday) within the selected month."
           : viewType === "Daily"
-          ? " Daily view shows participation rates for each day of the selected month."
-          : " Monthly view shows participation rates for each month of the selected year."}{" "}
+            ? " Daily view shows participation rates for each day of the selected month."
+            : " Monthly view shows participation rates for each month of the selected year."}{" "}
         Use the dropdowns and toggle to explore participation trends across
         different timeframes.
       </p>
