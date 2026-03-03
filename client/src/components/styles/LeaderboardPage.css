@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
 
 .body-leaderboard-module {
-  background-color: #5bcecc;         /* solid teal – color-only background */
+  background-color: #8dd7d7;         /* match homepage main background */
   min-height: 100vh;
   width: 100%;
   display: flex;
@@ -11,7 +11,7 @@
 
 /* ─── Main Content Area ───────────────────────────────────── */
 .lb-main-container {
-  background-image: linear-gradient(to bottom,#5bcecc 5%,#206159 95%);
+  background-image: linear-gradient(to bottom, #8dd7d7 5%, #103d4b 95%);
   border-top-left-radius: 36px;
   border-top-right-radius: 36px;
   flex: 1;
@@ -66,123 +66,34 @@
 }
 
 .lb-your-rank-num {
-  color: #d9e1d4;
-  font-weight: 850;
+  color: #ffffff;
+  font-weight: 900;
   font-size: 1rem;
 }
 
-/* ─── Podium ──────────────────────────────────────────────── */
-.lb-podium-wrapper {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 6px;
-  margin-bottom: 28px;
-  padding: 0 8px;
+.lb-your-rank-divider {
+  color: rgba(255,255,255,0.4);
+  font-size: 1rem;
 }
 
-.lb-podium-slot {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex: 1;
-  max-width: 120px;
-  animation: lb-fade-up 0.5s ease both;
-}
-
-.lb-podium-slot:nth-child(1) { animation-delay: 0.1s; }
-.lb-podium-slot:nth-child(2) { animation-delay: 0s; }
-.lb-podium-slot:nth-child(3) { animation-delay: 0.2s; }
-
-.lb-crown {
-  font-size: 1.8rem;
-  filter: drop-shadow(0 0 6px #ffd700);
-  margin-bottom: 2px;
-  animation: lb-bounce 1.4s infinite ease-in-out;
-}
-
-@keyframes lb-bounce {
-  0%, 100% { transform: translateY(0); }
-  50%       { transform: translateY(-5px); }
-}
-
-.lb-podium-avatar {
-  border: 3px solid #ffd700;
-  box-shadow: 0 0 12px rgba(255,215,0,0.5);
-}
-
-.lb-podium-me .lb-podium-avatar,
-.lb-podium-me .lb-avatar-initial {
-  border-color: #6db300;
-  box-shadow: 0 0 14px rgba(109,179,0,0.7);
-}
-
-.lb-podium-name {
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-weight: 700;
-  font-size: 0.72rem;
-  color: #fff;
-  margin: 4px 0 2px;
-  text-align: center;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.lb-podium-exp {
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-size: 0.68rem;
-  color: #8dd7d7;
-  margin: 0 0 6px;
-}
-
-.lb-podium-block {
-  width: 100%;
-  border-radius: 12px 12px 0 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.podium-first {
-  height: 90px;
-  background: linear-gradient(180deg, #f8d030 0%, #c89820 100%);
-  box-shadow: 0 -4px 12px rgba(248,208,48,0.45);
-}
-
-.podium-second {
-  height: 65px;
-  background: linear-gradient(180deg, #c0c0c0 0%, #8a8a8a 100%);
-  box-shadow: 0 -4px 12px rgba(192,192,192,0.35);
-}
-
-.podium-third {
-  height: 48px;
-  background: linear-gradient(180deg, #cd7f32 0%, #8b5a1a 100%);
-  box-shadow: 0 -4px 12px rgba(205,127,50,0.35);
-}
-
-.lb-podium-medal {
-  font-family: 'Luckiest Guy', cursive;
-  font-size: 1.1rem;
-  letter-spacing: 1px;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-}
-
-/* ─── Rank List (4–10) ───────────────────────────────────── */
+/* ─── Rank List (Top 10) ────────────────────────── */
 .lb-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  max-height: 68vh;
+  overflow-y: auto;
+  scroll-behavior: smooth;
 }
+
+.lb-list::-webkit-scrollbar        { width: 0px; }
 
 .lb-row {
   display: flex;
   align-items: center;
   gap: 12px;
   background: #6db035;
-  border: 1px solid rgba(64, 82, 82, 0.2);
+  border: 2px solid rgba(64, 82, 82, 0.2);
   border-radius: 16px;
   padding: 10px 14px;
   animation: lb-fade-up 0.4s ease both;
@@ -190,13 +101,17 @@
 }
 
 .lb-row:hover {
-  background: rgba(255,255,255,0.13);
+  background: #5ebbbb;
 }
 
 .lb-row-me {
-  background: rgba(109,179,0,0.18) !important;
-  border-color: #6db300 !important;
-  box-shadow: 0 0 10px rgba(109,179,0,0.3);
+  background-image: linear-gradient(#5ebbbb, #103d4b);
+}
+
+.lb-row-me .lb-row-rank,
+.lb-row-me .lb-row-name,
+.lb-row-me .lb-row-exp {
+  color: #ffffff !important;
 }
 
 .lb-row-rank {
@@ -230,14 +145,15 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 110px;
+  max-width: 160px;
 }
 
 .lb-rank-badge {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-size: 0.62rem;
   font-weight: 700;
-  color: #fff;
+  background-color: bisque;
+  color: #967737;
   padding: 2px 8px;
   border-radius: 50px;
   white-space: nowrap;
@@ -245,19 +161,6 @@
   flex-shrink: 0;
 }
 
-.lb-xp-bar-track {
-  background: rgba(0,0,0,0.3);
-  border-radius: 50px;
-  height: 7px;
-  overflow: hidden;
-}
-
-.lb-xp-bar-fill {
-  background: linear-gradient(90deg, #6db300, #8dd7d7);
-  height: 100%;
-  border-radius: 50px;
-  transition: width 0.8s ease;
-}
 
 .lb-row-exp {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
@@ -321,4 +224,23 @@
 @keyframes lb-fade-up {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Responsive ──────────────────────────────────────────── */
+@media (min-width: 601px) {
+  .lb-main-container {
+    padding-inline: 20px;
+  }
+}
+
+@media (min-width: 740px) and (max-width: 1024px) {
+  .lb-main-container {
+    padding-inline: 2.5%; /* ~95% content width, matches homepage tablet */
+  }
+}
+
+@media (min-width: 1024px) {
+  .lb-main-container {
+    padding-inline: 10%; /* ~80% content width, matches homepage large */
+  }
 }

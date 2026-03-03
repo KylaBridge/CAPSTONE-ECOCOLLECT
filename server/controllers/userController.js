@@ -207,13 +207,13 @@ const redeemReward = async (req, res) => {
   }
 };
 
-// Get all users
+// Get leaderboard users - only required display fields, sorted by exp
 const getAllUserLeaderboards = async (req, res) => {
   try {
     const data = await User.find(
-      {},
-      { email: 0, name: 0, password: 0, googleId: 0, avatar: 0, role: 0 }
-    );
+      { role: "user", exp: { $gt: 0 } },
+      { name: 1, email: 1, avatar: 1, exp: 1, points: 1, rank: 1 }
+    ).sort({ exp: -1 });
     res.status(200).json(data);
   } catch (error) {
     console.error(error);

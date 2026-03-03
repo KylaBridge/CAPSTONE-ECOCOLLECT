@@ -109,110 +109,114 @@ export default function Home() {
             <Userprofile />
           </div>
 
-          <h1 className="rank-title">Rank</h1>
-          <div className="rank-container">
-            <div className="merit">
-              <h2>{user?.rank || "Loading..."}</h2>
-            </div>
-            <div className="leaderboard-rank" onClick={() => navigate("/leaderboard")} style={{ cursor: "pointer" }}>
-              <h2 className="rank-number-container">
-                <span className="rank-label">Leaderboards</span>
-                <div className="rank-icon-container">
-                  <span className="user-rank-number">
-                    {userRank ? `#${userRank}` : "Not ranked"}
-                  </span>
-                </div>
-              </h2>
-            </div>
-          </div>
-
-          <div className="submission-container">
-            <div className="submission-content">
-              <div className="submission-text">
-                <h1>Activity</h1>
-                <div className="points-display">
-                  <h2>Total Points: {currentPoints}</h2>
-                </div>
-                <div className="submission-items-display">
-                  <h2>Submissions:</h2>
-                  <span className="submission-count">{submissionCount}</span>
-                </div>
+          <div className="home-content-scroll-wrapper">
+            <h1 className="rank-title">Rank</h1>
+            <div className="rank-container">
+              <div className="merit">
+                <h2>{user?.rank || "Loading..."}</h2>
               </div>
-              <img
-                src={SubmissionCharacter}
-                alt="submission mascot"
-                className="submission-character"
-              />
-            </div>
-          </div>
-
-          <div className="badge-reward-container">
-            <div className="current-reward-item">
-              <h1>Current Badge</h1>
-              <div className="current-reward-image-container">
-                {currentBadge ? (
-                  <>
-                    <img
-                      src={currentBadge.image}
-                      alt={currentBadge.name}
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = Badge;
-                      }}
-                    />
-                    <p>{currentBadge?.description}</p>
-                  </>
-                ) : (
-                  <>
-                    <h1
-                      style={{
-                        color: "white",
-                        fontFamily: "Tahoma",
-                        fontWeight: 400,
-                      }}
-                    >
-                      No Badge Yet
-                    </h1>
-                  </>
-                )}
+              <div className="leaderboard-rank" onClick={() => navigate("/leaderboard")} style={{ cursor: "pointer" }}>
+                <h2 className="rank-number-container">
+                  <span className="rank-label">Leaderboards</span>
+                  <div className="rank-icon-container">
+                    <span className="user-rank-number">
+                      {userRank ? `#${userRank}` : "Not ranked"}
+                    </span>
+                  </div>
+                </h2>
               </div>
             </div>
-            <div className="next-reward-item">
-              <h1>Next Badge</h1>
-              <div className="next-reward-image-container">
+
+            <div className="submission-container">
+              <div className="submission-content">
+                <div className="submission-text">
+                  <h1>Activity</h1>
+                  <div className="points-display">
+                    <h2>Total Points: {currentPoints}</h2>
+                  </div>
+                  <div className="submission-items-display">
+                    <h2>Submissions:</h2>
+                    <span className="submission-count">{submissionCount}</span>
+                  </div>
+                </div>
                 <img
-                  src={nextBadge?.image || NextBadge}
-                  alt={nextBadge?.name || "Next Badge"}
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = NextBadge;
-                  }}
+                  src={SubmissionCharacter}
+                  alt="submission mascot"
+                  className="submission-character"
                 />
-                <p>
-                  {nextBadge
-                    ? `Earn ${nextBadge.pointsRequired} exp to unlock`
-                    : "Earn 100 points to unlock"}
+              </div>
+            </div>
+
+            <div className="badge-reward-container">
+              <div className="current-reward-item">
+                <h1>Current Badge</h1>
+                <div className="current-reward-image-container">
+                  {currentBadge ? (
+                    <>
+                      <img
+                        src={currentBadge.image}
+                        alt={currentBadge.name}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = Badge;
+                        }}
+                      />
+                      <p>{currentBadge?.description}</p>
+                    </>
+                  ) : (
+                    <>
+                      <h1
+                        style={{
+                          color: "white",
+                          fontFamily: "Tahoma",
+                          fontWeight: 400,
+                        }}
+                      >
+                        No Badge Yet
+                      </h1>
+                    </>
+                  )}
+                </div>
+              </div>
+              <div className="next-reward-item">
+                <h1>Next Badge</h1>
+                <div className="next-reward-image-container">
+                  <img
+                    src={nextBadge?.image || NextBadge}
+                    alt={nextBadge?.name || "Next Badge"}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = NextBadge;
+                    }}
+                  />
+                  <p>
+                    {nextBadge
+                      ? `Earn ${nextBadge.pointsRequired} exp to unlock`
+                      : "Earn 100 points to unlock"}
+                  </p>
+                </div>
+                <img src={LockIcon} alt="Locked" className="overlay-image" />
+              </div>
+            </div>
+
+            <div className="home-divider"></div>
+
+            <div className="rewards-preview-container">
+              <img
+                src={SmartDevicesIcon}
+                alt="Reward Mascot"
+                className="reward-mascot"
+              />
+              <div className="reward-text-container">
+                <img src={SmartIcon} alt="Smart Logo" className="smart-logo" />
+                <p className="reward-description">
+                  Get a FREE load after unlocking the badge
                 </p>
               </div>
-              <img src={LockIcon} alt="Locked" className="overlay-image" />
             </div>
           </div>
 
-          <div className="home-divider"></div>
-
-          <div className="rewards-preview-container">
-            <img
-              src={SmartDevicesIcon}
-              alt="Reward Mascot"
-              className="reward-mascot"
-            />
-            <div className="reward-text-container">
-              <img src={SmartIcon} alt="Smart Logo" className="smart-logo" />
-              <p className="reward-description">
-                Get a FREE load after unlocking the badge
-              </p>
-            </div>
-          </div>
+       
         </div>
       </div>
     </>

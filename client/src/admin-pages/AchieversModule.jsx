@@ -99,9 +99,7 @@ export default function AchieversModule() {
 
   const sortedData = useMemo(() => {
     let sorted = [...data];
-    if (sortOption === "exp") {
-      sorted.sort((a, b) => (b.exp || 0) - (a.exp || 0));
-    } else if (sortOption === "badge" && badgeFilter) {
+    if (sortOption === "badge" && badgeFilter) {
       sorted = sorted.filter((user) => user.rank === badgeFilter);
     }
     return sorted;

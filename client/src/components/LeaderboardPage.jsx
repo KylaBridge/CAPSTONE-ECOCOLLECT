@@ -57,11 +57,10 @@ export default function LeaderboardPage() {
       .getLeaderboards()
       .then((res) => {
         if (Array.isArray(res.data)) {
-          const sorted = [...res.data]
-            .filter((u) => u && typeof u === "object")
-            .sort((a, b) => (b.exp || 0) - (a.exp || 0));
-          setLeaderboard(sorted.slice(0, 10));
-          const idx = sorted.findIndex((u) => u._id === user?._id);
+          // Server returns pre-sorted, filtered results — just slice top 10
+          const top10 = res.data.slice(0, 10);
+          setLeaderboard(top10);
+          const idx = res.data.findIndex((u) => u._id === user?._id);
           setUserRank(idx !== -1 ? idx + 1 : null);
         }
       })
@@ -69,17 +68,9 @@ export default function LeaderboardPage() {
       .finally(() => setLoading(false));
   }, [user]);
 
-  const top3 = leaderboard.slice(0, 3);
-  const rest = leaderboard.slice(3);
-
-  // Display order for podium: 2nd · 1st · 3rd
-  const podiumOrder = [
-    { entry: top3[1], podiumIdx: 0 },
-    { entry: top3[0], podiumIdx: 1 },
-    { entry: top3[2], podiumIdx: 2 },
-  ];
-
   const isCurrentUser = (entry) => entry?._id === user?._id;
+
+  const RANK_MEDAL = { 1: "🥇", 2: "🥈", 3: "🥉" };
 
   return (
     <div className="body-leaderboard-module">
@@ -94,10 +85,22 @@ export default function LeaderboardPage() {
           <span className="lb-trophy">🏆</span>
         </div>
 
-        {userRank && (
+        {(userRank || user?.rank) && (
           <div className="lb-your-rank">
-            <span>Your Rank:</span>
-            <span className="lb-your-rank-num">#{userRank}</span>
+            {userRank && (
+              <>
+                <span>Your Rank:</span>
+                <span className="lb-your-rank-num">{userRank}</span>
+              </>
+            )}
+            {userRank && user?.rank && user.rank !== "Unranked" && (
+              <span className="lb-your-rank-divider">·</span>
+            )}
+            {user?.rank && user.rank !== "Unranked" && (
+              <span className="lb-rank-badge">
+                {user.rank}
+              </span>
+            )}
           </div>
         )}
 
@@ -108,49 +111,11 @@ export default function LeaderboardPage() {
           </div>
         ) : (
           <>
-            {/* ── Podium (top 3) ──
-             {top3.length > 0 && (
-              <div className="lb-podium-wrapper">
-                {podiumOrder.map(({ entry, podiumIdx }) => {
-                  if (!entry) return <div key={podiumIdx} className="lb-podium-slot" />;
-                  const { heightClass, label, crownColor } = PODIUM_STYLES[podiumIdx];
-                  const realRank = podiumIdx === 1 ? 1 : podiumIdx === 0 ? 2 : 3;
-                  return (
-                    <div
-                      key={entry._id}
-                      className={`lb-podium-slot ${
-                        isCurrentUser(entry) ? "lb-podium-me" : ""
-                      }`}
-                    >
-                      {realRank === 1 && (
-                        <span className="lb-crown">👑</span>
-                      )}
-                      <Avatar user={entry} size={54} className="lb-podium-avatar" />
-                      <p className="lb-podium-name">
-                        {entry.name || entry.email?.split("@")[0]}
-                      </p>
-                      <p className="lb-podium-exp">{(entry.exp || 0).toLocaleString()} XP</p>
-                      <div className={`lb-podium-block ${heightClass}`}>
-                        <span
-                          className="lb-podium-medal"
-                          style={{ color: crownColor }}
-                        >
-                          {label}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )} */}
-
-            {/* ── Rank list (4–10) ── */}
-            {rest.length > 0 && (
+            {/* ── Rank list (Top 10) ── */}
+            {leaderboard.length > 0 && (
               <div className="lb-list">
-                {rest.map((entry, idx) => {
-                  const rank = idx + 4;
-                  const rankColor =
-                    RANK_BADGE_COLOR[entry.rank] || "#8dd7d7";
+                {leaderboard.map((entry, idx) => {
+                  const rank = idx + 1;
                   return (
                     <div
                       key={entry._id}
@@ -159,12 +124,21 @@ export default function LeaderboardPage() {
                       }`}
                       style={{ animationDelay: `${idx * 0.07}s` }}
                     >
-                      <span className="lb-row-rank">#{rank}</span>
+                      <span className="lb-row-rank">
+                        {RANK_MEDAL[rank] ?? `#${rank}`}
+                      </span>
                       <Avatar user={entry} size={44} />
                       <div className="lb-row-info">
-                        <span className="lb-row-name">
-                          {entry.name || entry.email?.split("@")[0]}
-                        </span>
+                        <div className="lb-row-top">
+                          <span className="lb-row-name">
+                            {entry.name || entry.email?.split("@")[0] || "Unknown Player"}
+                          </span>
+                          {entry.rank && entry.rank !== "Unranked" && (
+                            <span className="lb-rank-badge" >
+                              {entry.rank}
+                            </span>
+                          )}
+                        </div>
                         <span className="lb-row-exp">
                           {(entry.exp || 0).toLocaleString()} XP
                         </span>
