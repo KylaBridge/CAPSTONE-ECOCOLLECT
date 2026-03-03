@@ -127,7 +127,7 @@ const updateSubmissionStatus = async (req, res) => {
           : status === "Rejected"
           ? "EWaste Rejected"
           : "EWaste Updated",
-      details: `Submission ${submission.category} marked as ${status}`,
+      details: `Submission ${submission.category} marked as ${status} by ${req.user.name}`,
     });
 
     if (status === "Approved") {

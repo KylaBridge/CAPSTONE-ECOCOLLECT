@@ -1,4 +1,5 @@
 import { useState, useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/userContext";
 import "../pages/styles/HomePage.css";
 import Userprofile from "../components/Userprofile";
@@ -11,6 +12,7 @@ import SubmissionCharacter from "../assets/icons/submissionchar.png";
 import SmartDevicesIcon from "../assets/icons/smartdevicesicon.png";
 import SmartIcon from "../assets/icons/smarticon.png";
 import Sidebar from "../components/Sidebar";
+import LeaderboardPage from "../components/LeaderboardPage";
 import { ewasteAPI } from "../api/ewaste";
 import { badgesAPI } from "../api/badges";
 import { userAPI } from "../api/user";
@@ -25,6 +27,7 @@ export default function Home() {
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [userRank, setUserRank] = useState(null);
 
+  const navigate = useNavigate();
   const currentPoints = user?.points || 0;
 
   useEffect(() => {
@@ -111,7 +114,7 @@ export default function Home() {
             <div className="merit">
               <h2>{user?.rank || "Loading..."}</h2>
             </div>
-            <div className="leaderboard-rank">
+            <div className="leaderboard-rank" onClick={() => navigate("/leaderboard")} style={{ cursor: "pointer" }}>
               <h2 className="rank-number-container">
                 <span className="rank-label">Leaderboards</span>
                 <div className="rank-icon-container">

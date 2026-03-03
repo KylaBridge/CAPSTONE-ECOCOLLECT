@@ -6,6 +6,7 @@ import {
   AiOutlineCrown,
   AiOutlineFileDone,
   AiOutlineLogout,
+  AiOutlineGift,
 } from "react-icons/ai";
 import { toast } from "react-hot-toast";
 import "./styles/Sidebar.css";
@@ -81,7 +82,15 @@ export default function Sidebar({ isShown, setIsShown }) {
             className={location.pathname === "/rewards" ? "active" : ""}
           >
             <li>
-              <AiOutlineTrophy size={20} /> REWARDS
+              <AiOutlineGift size={20} /> REWARDS
+            </li>
+          </Link>
+          <Link
+            to="/leaderboard"
+            className={location.pathname === "/leaderboard" ? "active" : ""}
+          >
+            <li>
+              <AiOutlineTrophy size={20} /> LEADERBOARD
             </li>
           </Link>
         </ul>

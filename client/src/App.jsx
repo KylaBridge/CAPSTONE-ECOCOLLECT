@@ -11,6 +11,7 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import EWasteSubmission from "./pages/EWasteSubmission.jsx";
 import Achievements from "./pages/Achievements.jsx";
+import LeaderboardPage from "./components/LeaderboardPage.jsx";
 import AdminDashboard from "./admin-pages/AdminDashboard.jsx";
 import UserManagement from "./admin-pages/UserManagement.jsx";
 import AnalyticsDashboard from "./admin-pages/AnalyticsDashboard.jsx";
@@ -129,6 +130,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Rewards />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/leaderboard"
+          element={
+            <ProtectedRoute>
+              <LeaderboardPage />
             </ProtectedRoute>
           }
         />
