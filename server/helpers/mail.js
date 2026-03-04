@@ -309,9 +309,174 @@ The EcoCollect Team`;
   }
 };
 
+const sendEwasteStatusEmail = async (to, statusData) => {
+  try{
+
+    const{
+      userFirstName,
+      category,
+      status,
+      submissionId,
+      pointsEarned,
+    } = statusData;
+
+    const transport = createGmailTransporter();
+    const isApproved = status === "Approved";
+    const isRejected = status === "Rejected";
+
+    const subject = isApproved?  `E-Waste Submission Approved - ${category}` : `E-Waste Submission Rejected - ${category}`;
+
+    const textBody = `Hello ${userFirstName || "User"}!
+    
+    Your e-waste submission has been ${status.toLowerCase()}.
+
+    SUBMISSION DETAILS:
+    - Category: ${category}
+    - Submission ID: ${submissionId}
+    - Status: ${status}
+    ${isApproved && pointsEarned? `- Points Earned: +${pointsEarned} points` : ""}
+
+    ${isApproved
+      ? "Thank you..." : "Unfortunately...."}
+
+    Thank you for using EcoCollect!
+    EcoCollect Team`;
+
+ const htmlBody = `
+      <div style="font-family:Arial,Helvetica,sans-serif;line-height:1.6;max-width:600px;margin:0 auto;padding:20px;border:1px solid #ddd;border-radius:10px;">
+        <div style="text-align:center;background:${isApproved ? "#2E8B57" : "#dc3545"};padding:20px;border-radius:8px 8px 0 0;">
+          <h1 style="color:white;margin:0;">${isApproved ? "✅ Submission Approved!" : "❌ Submission Rejected"}</h1>
+          <p style="color:rgba(255,255,255,0.9);margin:5px 0 0;">Hello, ${userFirstName || "EcoCollect User"}!</p>
+        </div>
+
+        <div style="padding:20px;background:#f9f9f9;border-radius:0 0 8px 8px;">
+          <div style="background:white;padding:20px;border-radius:8px;margin:15px 0;">
+            <h3 style="color:#2E8B57;margin-top:0;">Submission Details:</h3>
+            <table style="width:100%;border-collapse:collapse;">
+              <tr><td style="padding:8px 0;border-bottom:1px solid #eee;"><strong>Category:</strong></td><td style="padding:8px 0;border-bottom:1px solid #eee;">${category}</td></tr>
+              <tr><td style="padding:8px 0;border-bottom:1px solid #eee;"><strong>Submission ID:</strong></td><td style="padding:8px 0;border-bottom:1px solid #eee;">${submissionId}</td></tr>
+              <tr><td style="padding:8px 0;${isApproved && pointsEarned ? "border-bottom:1px solid #eee;" : ""}"><strong>Status:</strong></td><td style="padding:8px 0;">${status}</td></tr>
+              ${isApproved && pointsEarned ? `<tr><td style="padding:8px 0;"><strong>Points Earned:</strong></td><td style="padding:8px 0;color:#2E8B57;font-weight:bold;">+${pointsEarned} points 🎉</td></tr>` : ""}
+            </table>
+          </div>
+
+          ${isApproved
+            ? `<div style="background:#d4edda;border:1px solid #c3e6cb;padding:15px;border-radius:8px;margin:15px 0;">
+                <p style="color:#155724;margin:0;">🌱 <strong>Thank you for contributing to a greener environment!</strong> Keep submitting e-waste to earn more points and unlock exciting rewards.</p>
+               </div>`
+            : `<div style="background:#f8d7da;border:1px solid #f5c6cb;padding:15px;border-radius:8px;margin:15px 0;">
+                <p style="color:#721c24;margin:0;">⚠️ <strong>Submission not accepted.</strong> Please ensure you submit clear, valid photos of e-waste items. You may try submitting again.</p>
+               </div>`
+          }
+
+          <div style="text-align:center;margin-top:20px;padding-top:20px;border-top:1px solid #eee;">
+            <p style="color:#666;">Thank you for using EcoCollect!</p>
+            <p style="color:#2E8B57;font-weight:bold;">EcoCollect Team</p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const mailOptions = {
+      from: `EcoCollect NU <${process.env.GMAIL_USER}>`,
+      to,
+      subject,
+      text: textBody,
+      html: htmlBody,
+    };
+
+    const result = await transport.sendMail(mailOptions);
+    console.log(`E-waste status email sent to ${to} for submission ${submissionId}`);
+    return result;
+
+  }catch(error){
+    console.error("Error sending e-waste status email:", error);
+    return error;
+  }
+};
+
+// Send reward claim confirmation email
+const sendRewardClaimConfirmationEmail = async (to, claimData) => {
+  try {
+    const {
+      userFirstName,
+      rewardName,
+      redemptionId,
+      claimedAt,
+      pointsSpent,
+    } = claimData;
+
+    const transport = createGmailTransporter();
+
+    const subject = `🎉 Reward Successfully Claimed - ${rewardName}`;
+
+    const textBody = `
+Hello ${userFirstName || "EcoCollect User"}!
+
+Great news! Your reward has been successfully claimed at the store.
+
+CLAIM DETAILS:
+- Reward: ${rewardName}
+- Redemption ID: ${redemptionId}
+- Points Used: ${pointsSpent}
+- Claimed At: ${new Date(claimedAt).toLocaleString()}
+
+Thank you for using EcoCollect rewards system!
+EcoCollect Team
+    `;
+
+    const htmlBody = `
+      <div style="font-family:Arial,Helvetica,sans-serif;line-height:1.6;max-width:600px;margin:0 auto;padding:20px;border:1px solid #ddd;border-radius:10px;">
+        <div style="text-align:center;background:linear-gradient(135deg,#2c5530,#4a7c59);padding:20px;border-radius:8px 8px 0 0;">
+          <h1 style="color:white;margin:0;">🎉 Reward Claimed!</h1>
+          <p style="color:rgba(255,255,255,0.9);margin:5px 0 0;">Congratulations, ${userFirstName || "EcoCollect User"}!</p>
+        </div>
+
+        <div style="padding:20px;background:#f9f9f9;border-radius:0 0 8px 8px;">
+          <div style="background:white;padding:20px;border-radius:8px;margin:15px 0;">
+            <h3 style="color:#2E8B57;margin-top:0;">Claim Details:</h3>
+            <table style="width:100%;border-collapse:collapse;">
+              <tr><td style="padding:8px 0;border-bottom:1px solid #eee;"><strong>Reward:</strong></td><td style="padding:8px 0;border-bottom:1px solid #eee;">${rewardName}</td></tr>
+              <tr><td style="padding:8px 0;border-bottom:1px solid #eee;"><strong>Redemption ID:</strong></td><td style="padding:8px 0;border-bottom:1px solid #eee;">${redemptionId}</td></tr>
+              <tr><td style="padding:8px 0;border-bottom:1px solid #eee;"><strong>Points Used:</strong></td><td style="padding:8px 0;border-bottom:1px solid #eee;">${pointsSpent}</td></tr>
+              <tr><td style="padding:8px 0;"><strong>Claimed At:</strong></td><td style="padding:8px 0;">${new Date(claimedAt).toLocaleString()}</td></tr>
+            </table>
+          </div>
+
+          <div style="background:#d4edda;border:1px solid #c3e6cb;padding:15px;border-radius:8px;margin:15px 0;text-align:center;">
+            <p style="color:#155724;margin:0;font-size:1.1rem;">✅ <strong>Your reward has been successfully redeemed at the store!</strong></p>
+          </div>
+
+          <div style="text-align:center;margin-top:20px;padding-top:20px;border-top:1px solid #eee;">
+            <p style="color:#666;">Keep collecting and earning more rewards!</p>
+            <p style="color:#2E8B57;font-weight:bold;">EcoCollect Team</p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const mailOptions = {
+      from: `EcoCollect NU <${process.env.GMAIL_USER}>`,
+      to,
+      subject,
+      text: textBody,
+      html: htmlBody,
+    };
+
+    const result = await transport.sendMail(mailOptions);
+    console.log(`Reward claim confirmation email sent to ${to} for redemption ${redemptionId}`);
+    return result;
+  } catch (error) {
+    console.error("Error sending reward claim confirmation email:", error);
+    return error;
+  }
+};
+
 module.exports = {
   sendVerificationEmail,
   sendContactEmail,
   sendRedemptionEmail,
   sendPasswordResetEmail,
+  sendEwasteStatusEmail,
+  sendRewardClaimConfirmationEmail,
 };

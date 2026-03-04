@@ -148,6 +148,34 @@ const confirmRedemption = async (req, res) => {
     
     await redemption.save();
 
+      //for sending confirmation email that the reward has been successfully claimed physically.
+    redemption.status = 'Claimed';
+    redemption.claimedAt = new Date();
+    redemption.updatedAt = new Date();
+    redemption.note = `Claimed by ${storeAdmin.name || storeAdmin.email} at ${new Date().toISOString()}`;
+    
+    await redemption.save();
+
+    // Send claim confirmation email to user
+    const claimUser = await require("../models/user").findById(redemption.userId);
+    if (claimUser && claimUser.email) {
+      const claimEmailData = {
+        userFirstName: claimUser.firstName || claimUser.name?.split(" ")[0],
+        rewardName: redemption.rewardName,
+        redemptionId: redemption.redemptionId,
+        claimedAt: redemption.claimedAt,
+        pointsSpent: redemption.pointsSpent,
+      };
+
+      try {
+        await sendRewardClaimConfirmationEmail(claimUser.email, claimEmailData);
+        console.log(`Claim confirmation email sent to ${claimUser.email}`);
+      } catch (emailError) {
+        console.error("Failed to send claim confirmation email:", emailError);
+        // Don't fail the redemption confirmation if email fails
+      }
+    }
+
     res.status(200).json({ 
       message: "Reward successfully redeemed!",
       redemption: {

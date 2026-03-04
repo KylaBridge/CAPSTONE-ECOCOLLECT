@@ -1,16 +1,21 @@
 .body-submission-module {
     background-color: #8dd7d7;
-    
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    overflow: hidden;
 }
 
 .waste-main-container {
     background-color: #8dd7d7;
-    height: auto;
-    padding: 20px;
-    padding-bottom: 50px;
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 20px 50px;
     border-top-left-radius: 40px;
     border-top-right-radius: 40px;
     width: 100%;
+    scrollbar-width: none;
+    margin-top: 10px;
 }
 
 @media (min-width: 1024px) {
@@ -300,5 +305,36 @@
 .disabled-button:hover {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+/* ─── Animations ──────────────────────────────────────────── */
+@keyframes ew-fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.drop-ewaste-container {
+  animation: ew-fade-up 0.4s ease both;
+  animation-delay: 0s;
+}
+
+.upload-button-container {
+  animation: ew-fade-up 0.4s ease both;
+  animation-delay: 0.1s;
+}
+
+.item-selection-container {
+  animation: ew-fade-up 0.4s ease both;
+  animation-delay: 0.2s;
+}
+
+.attachments-section {
+  animation: ew-fade-up 0.4s ease both;
+  animation-delay: 0.3s;
+}
+
+.upload-content-wrapper {
+  animation: ew-fade-up 0.4s ease both;
+  animation-delay: 0.4s;
 }  
   

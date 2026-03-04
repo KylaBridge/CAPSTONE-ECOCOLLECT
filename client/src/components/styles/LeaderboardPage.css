@@ -2,8 +2,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
 
 .body-leaderboard-module {
-  background-color: #8dd7d7;         /* match homepage main background */
-  min-height: 100vh;
+  background-color: #8dd7d7;
+  height: 100dvh;
+  overflow: hidden;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -15,8 +16,10 @@
   border-top-left-radius: 36px;
   border-top-right-radius: 36px;
   flex: 1;
-  padding: 24px 16px 60px;
-  overflow-x: hidden;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px 0;
 }
 
 /* ─── Title Row ───────────────────────────────────────────── */
@@ -81,9 +84,11 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-height: 68vh;
+  flex: 1;
   overflow-y: auto;
   scroll-behavior: smooth;
+  scrollbar-width: none;
+  padding-bottom: 60px;
 }
 
 .lb-list::-webkit-scrollbar        { width: 0px; }

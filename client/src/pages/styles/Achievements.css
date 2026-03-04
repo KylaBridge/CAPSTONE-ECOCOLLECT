@@ -1,19 +1,20 @@
 /* Main Container */
 .body-achievements-module {
   background-color: #ffeec2;
-  overflow-x: hidden;
-  min-height: 100vh;
+  overflow: hidden;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
 }
 
 .achievements-main-container {
   background-image: linear-gradient(to bottom,#5bcecc 5%,#206159 95%);
-  min-height: 100vh;
+  flex: 1;
   border-top-left-radius: 40px;
   border-top-right-radius: 40px;
-  overflow-x: hidden;
-  padding-bottom: 30px; 
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .badge-header-title {
@@ -33,13 +34,18 @@
 }
 
 .badge-scroll-container {
-  padding: 10px 5%;
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: none;
+  padding: 10px 5% 30px;
   max-width: 1200px;
   margin: 0 auto;
+  width: 100%;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-  gap: 10px;
+  gap: 15px;
   justify-items: center;
+  align-content: start;
 }
 
 .badge-card {
@@ -281,6 +287,32 @@
     opacity: 1;
   }
 }
+
+@keyframes ach-fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.badge-header-title {
+  animation: ach-fade-up 0.4s ease both;
+  animation-delay: 0s;
+}
+
+.badge-card {
+  animation: ach-fade-up 0.4s ease both;
+}
+
+.badge-card:nth-child(1)  { animation-delay: 0.05s; }
+.badge-card:nth-child(2)  { animation-delay: 0.10s; }
+.badge-card:nth-child(3)  { animation-delay: 0.15s; }
+.badge-card:nth-child(4)  { animation-delay: 0.20s; }
+.badge-card:nth-child(5)  { animation-delay: 0.25s; }
+.badge-card:nth-child(6)  { animation-delay: 0.30s; }
+.badge-card:nth-child(7)  { animation-delay: 0.35s; }
+.badge-card:nth-child(8)  { animation-delay: 0.40s; }
+.badge-card:nth-child(9)  { animation-delay: 0.45s; }
+.badge-card:nth-child(10) { animation-delay: 0.50s; }
+.badge-card:nth-child(n+11) { animation-delay: 0.55s; }
 
 /* Responsive Design */
 @media (min-width: 400px) {

@@ -4,6 +4,7 @@ const path = require("path");
 const fs = require("fs");
 const { updateUserRank } = require("./userController");
 const ActivityLog = require("../models/activityLog");
+const { sendEwasteStatusEmail} = require("../helpers/mail");
 
 //
 // ------------------ E-WASTE SUBMISSIONS ------------------
@@ -130,10 +131,12 @@ const updateSubmissionStatus = async (req, res) => {
       details: `Submission ${submission.category} marked as ${status} by ${req.user.name}`,
     });
 
+    let totalPoints = 0;
+    
     if (status === "Approved") {
       const user = await User.findById(submission.user);
       if (user) {
-        let totalPoints = 0;
+        
 
         if (submission.category === "others" && points) {
           // Add manually specified points for "others" category
@@ -161,6 +164,24 @@ const updateSubmissionStatus = async (req, res) => {
           await user.save();
           await updateUserRank(user._id);
         }
+      }
+    }
+
+        // send email notification
+    if (user && user.email && (status === "Approved" || status === "Rejected")) {
+      const emailData = {
+        userFirstName: user.firstName || user.name?.split(" ")[0],
+        category: submission.category,
+        status,
+        submissionId: submission._id.toString(),
+        pointsEarned: status === "Approved" ? totalPoints : 0,
+      };
+
+      try {
+        await sendEwasteStatusEmail(user.email, emailData);
+      } catch (emailError) {
+        console.error("Failed to send e-waste status email:", emailError);
+        // Don't fail the request if email fails
       }
     }
 

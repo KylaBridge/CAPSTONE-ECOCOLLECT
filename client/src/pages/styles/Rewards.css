@@ -1,6 +1,7 @@
 .body-rewards-module {
   background-color: #ffeec2;
-  overflow-x: hidden;
+  overflow: hidden;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
 }
@@ -8,10 +9,13 @@
 .rewards-main-container {
   background-image: linear-gradient(to bottom, #5bcecc 5%, #206159 95%);
   z-index: 1;
-  padding: 20px 30px;
+  padding: 20px 30px 0;
   border-top-left-radius: 40px;
   border-top-right-radius: 40px;
-  min-height: 100vh;
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .outer-rewards-container {
@@ -268,4 +272,29 @@
   justify-content: center;
   align-items: center;
   margin: auto;
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: none;
+  padding-bottom: 20px;
+}
+
+/* ─── Animations ──────────────────────────────────────────── */
+@keyframes rw-fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.outer-rewards-container {
+  animation: rw-fade-up 0.4s ease both;
+  animation-delay: 0s;
+}
+
+.rewards-section-card {
+  animation: rw-fade-up 0.4s ease both;
+  animation-delay: 0.1s;
+}
+
+.inner-rewards-container {
+  animation: rw-fade-up 0.4s ease both;
+  animation-delay: 0.2s;
 }
