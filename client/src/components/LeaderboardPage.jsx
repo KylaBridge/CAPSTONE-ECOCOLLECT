@@ -85,21 +85,19 @@ export default function LeaderboardPage() {
           <span className="lb-trophy">🏆</span>
         </div>
 
-        {(userRank || user?.rank) && (
+        {user && (
           <div className="lb-your-rank">
-            {userRank && (
-              <>
-                <span>Your Rank:</span>
-                <span className="lb-your-rank-num">{userRank}</span>
-              </>
-            )}
-            {userRank && user?.rank && user.rank !== "Unranked" && (
-              <span className="lb-your-rank-divider">·</span>
+            <span>Your Rank:</span>
+            {userRank ? (
+              <span className="lb-your-rank-num">#{userRank}</span>
+            ) : (
+              <span className="lb-your-rank-num">Unlisted</span>
             )}
             {user?.rank && user.rank !== "Unranked" && (
-              <span className="lb-rank-badge">
-                {user.rank}
-              </span>
+              <>
+                <span className="lb-your-rank-divider">·</span>
+                <span className="lb-rank-badge">{user.rank}</span>
+              </>
             )}
           </div>
         )}

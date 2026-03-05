@@ -113,7 +113,7 @@ export default function Home() {
             <h1 className="rank-title">Rank</h1>
             <div className="rank-container">
               <div className="merit">
-                <h2>{user?.rank || "Loading..."}</h2>
+                <h2>{(user?.rank && user.rank !== "Unranked") ? user.rank : "No badge yet!"}</h2>
               </div>
               <div className="leaderboard-rank" onClick={() => navigate("/leaderboard")} style={{ cursor: "pointer" }}>
                 <h2 className="rank-number-container">
@@ -164,21 +164,53 @@ export default function Home() {
                       <p>{currentBadge?.description}</p>
                     </>
                   ) : (
-                    <>
-                      <h1
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "12px",
+                        padding: "8px 4px",
+                        textAlign: "center",
+                      }}
+                    >
+                      <p
                         style={{
                           color: "white",
                           fontFamily: "Tahoma",
                           fontWeight: 400,
+                          fontSize: "0.8rem",
+                          lineHeight: "1.4",
+                          margin: 0,
                         }}
                       >
-                        No Badge Yet
-                      </h1>
-                    </>
+                        No badge yet! Submit your first e-waste to start earning.
+                      </p>
+                      <button
+                        onClick={() => navigate("/ewastesubmission")}
+                        style={{
+                          backgroundColor: "#4CAF50",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "20px",
+                          padding: "9px 20px",
+                          fontSize: "0.78rem",
+                          fontFamily: "Tahoma",
+                          cursor: "pointer",
+                          fontWeight: 700,
+                          letterSpacing: "0.4px",
+                          boxShadow: "0 3px 8px rgba(0,0,0,0.25)",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        Submit E-Waste
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>
-              <div className="next-reward-item">
+              <div className="next-reward-item" onClick={() => navigate("/achievements")} style={{ cursor: "pointer" }}>
                 <h1>Next Badge</h1>
                 <div className="next-reward-image-container">
                   <img
@@ -201,7 +233,7 @@ export default function Home() {
 
             <div className="home-divider"></div>
 
-            <div className="rewards-preview-container">
+            <div className="rewards-preview-container" onClick={() => navigate("/rewards")} style={{ cursor: "pointer" }}>
               <img
                 src={SmartDevicesIcon}
                 alt="Reward Mascot"

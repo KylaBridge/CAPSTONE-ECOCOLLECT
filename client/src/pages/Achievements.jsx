@@ -4,11 +4,17 @@ import {
   FiShare2,
   FiX,
   FiZoomIn,
-  FiFacebook,
-  FiTwitter,
-  FiInstagram,
   FiDownload,
+  FiLink,
 } from "react-icons/fi";
+import {
+  FaFacebook,
+  FaTwitter,
+  FaWhatsapp,
+  FaTelegramPlane,
+  FaLinkedin,
+  FaPinterest,
+} from "react-icons/fa";
 import LockIcon from "../assets/icons/lockicon.png";
 import html2canvas from "html2canvas";
 import { badgesAPI } from "../api/badges";
@@ -429,58 +435,66 @@ export default function Achievements() {
             {showShareOptions && (
               <div className="share-options">
                 <h4>Share to Social Media</h4>
-                <div className="social-share-grid">
+                <div className="social-share-icons-row">
                   <button
                     onClick={() =>
                       shareToSocialMedia("facebook", selectedBadge)
                     }
                     className="social-share-btn facebook"
+                    title="Share on Facebook"
                   >
-                    <FiFacebook /> Facebook
+                    <FaFacebook />
                   </button>
                   <button
                     onClick={() => shareToSocialMedia("twitter", selectedBadge)}
                     className="social-share-btn twitter"
+                    title="Share on Twitter"
                   >
-                    <FiTwitter /> Twitter
+                    <FaTwitter />
                   </button>
                   <button
                     onClick={() =>
                       shareToSocialMedia("whatsapp", selectedBadge)
                     }
                     className="social-share-btn whatsapp"
+                    title="Share on WhatsApp"
                   >
-                    <FiShare2 /> WhatsApp
+                    <FaWhatsapp />
                   </button>
                   <button
                     onClick={() =>
                       shareToSocialMedia("telegram", selectedBadge)
                     }
                     className="social-share-btn telegram"
+                    title="Share on Telegram"
                   >
-                    <FiShare2 /> Telegram
+                    <FaTelegramPlane />
                   </button>
                   <button
                     onClick={() =>
                       shareToSocialMedia("linkedin", selectedBadge)
                     }
                     className="social-share-btn linkedin"
+                    title="Share on LinkedIn"
                   >
-                    <FiShare2 /> LinkedIn
+                    <FaLinkedin />
                   </button>
                   <button
                     onClick={() =>
                       shareToSocialMedia("pinterest", selectedBadge)
                     }
                     className="social-share-btn pinterest"
+                    title="Share on Pinterest"
                   >
-                    <FiShare2 /> Pinterest
+                    <FaPinterest />
                   </button>
+                </div>
+                <div className="social-share-actions-row">
                   <button
                     onClick={() => shareToSocialMedia("copy", selectedBadge)}
                     className="social-share-btn copy"
                   >
-                    <FiShare2 /> Copy Link
+                    <FiLink /> Copy Link
                   </button>
                   <button
                     onClick={handleDownload}

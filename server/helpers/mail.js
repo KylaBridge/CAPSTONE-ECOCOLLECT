@@ -309,6 +309,7 @@ The EcoCollect Team`;
   }
 };
 
+//send status update for user ewaste submission
 const sendEwasteStatusEmail = async (to, statusData) => {
   try{
 
