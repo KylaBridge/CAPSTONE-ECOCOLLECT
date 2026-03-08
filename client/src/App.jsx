@@ -30,6 +30,35 @@ import ShareableBadge from "./components/ShareableBadge.jsx";
 import ValidateRedeem from "./pages/ValidateRedeem.jsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
 
+// Public route for unauthenticated users - redirects if already logged in
+function PublicRoute({ children, adminRoute = false }) {
+  const { user, loading } = useContext(UserContext);
+
+  // Wait for the authentication check to finish
+  if (loading) {
+    return (
+      <div className="app-loading-overlay">
+        <div className="app-loading-spinner"></div>
+      </div>
+    );
+  }
+
+  // If user is authenticated, redirect to appropriate home page
+  if (user) {
+    // If it's an admin route and user is not admin, don't redirect
+    if (adminRoute && user.role !== "admin" && user.role !== "superadmin") {
+      return children;
+    }
+    // Redirect admins to admin dashboard, regular users to home
+    if (user.role === "admin" || user.role === "superadmin") {
+      return <Navigate to="/admin/dashboard" replace />;
+    }
+    return <Navigate to="/home" replace />;
+  }
+
+  return children;
+}
+
 // Protected route for authenticated users
 function ProtectedRoute({ children }) {
   const { user, loading } = useContext(UserContext);
@@ -67,32 +96,53 @@ axios.defaults.withCredentials = true;
 export default function App() {
   return (
     <UserContextProvider>
-      <Toaster 
-        position="top-center" 
+      <Toaster
+        position="top-center"
         containerClassName="toaster-container"
         toastOptions={{
           duration: 5000,
-          className: 'custom-toast',
+          className: "custom-toast",
           style: {}, // Explicitly remove inline styles
           success: {
-            className: 'custom-toast toast-success',
+            className: "custom-toast toast-success",
           },
           error: {
-            className: 'custom-toast toast-error',
+            className: "custom-toast toast-error",
           },
           loading: {
-            className: 'custom-toast toast-loading',
+            className: "custom-toast toast-loading",
           },
         }}
       />
       <Routes>
         {/* Public User Routes */}
-        <Route path="/" element={<LandingPage />} />
+        <Route
+          path="/"
+          element={
+            <PublicRoute>
+              <LandingPage />
+            </PublicRoute>
+          }
+        />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
-        <Route path="/privacy" element={<PrivacyPolicy/>} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <PublicRoute>
+              <Register />
+            </PublicRoute>
+          }
+        />
         <Route path="/badge/:id" element={<ShareableBadge />} />
         <Route
           path="/badge/:id/:userName/:userEmail"
@@ -143,7 +193,14 @@ export default function App() {
         />
 
         {/* Admin Auth Routes */}
-        <Route path="/admin/login" element={<AdminLogIn />} />
+        <Route
+          path="/admin/login"
+          element={
+            <PublicRoute adminRoute={true}>
+              <AdminLogIn />
+            </PublicRoute>
+          }
+        />
 
         {/* Protected Admin Routes */}
         <Route
