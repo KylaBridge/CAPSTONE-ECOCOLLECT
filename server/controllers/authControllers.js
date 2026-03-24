@@ -20,7 +20,7 @@ const getSessionConfig = () => {
   // Log configuration on first call
   if (!getSessionConfig.logged) {
     console.log(
-      `[SESSION CONFIG] Environment: ${process.env.NODE_ENV || "production"}`
+      `[SESSION CONFIG] Environment: ${process.env.NODE_ENV || "production"}`,
     );
     console.log(`[SESSION CONFIG] Token Expiry: ${config.tokenExpire}`);
     console.log(`[SESSION CONFIG] Cookie Expiry: ${config.cookieExpire}ms`);
@@ -114,7 +114,7 @@ const registerPassword = async (req, res) => {
 
     const { email, name } = decoded;
     const verificationCode = Math.floor(
-      100000 + Math.random() * 900000
+      100000 + Math.random() * 900000,
     ).toString();
 
     try {
@@ -125,7 +125,7 @@ const registerPassword = async (req, res) => {
 
     const newTempToken = await signToken(
       { password, email, name, verificationCode },
-      { expiresIn: "5m" }
+      { expiresIn: "5m" },
     );
 
     return res.status(200).json({ message: "Password accepted", newTempToken });
@@ -223,7 +223,7 @@ const loginUser = async (req, res) => {
 
           const token = await signToken(
             { email: user.email, id: user._id },
-            { expiresIn: tokenExpire }
+            { expiresIn: tokenExpire },
           );
           return res
             .status(200)
@@ -241,6 +241,7 @@ const loginUser = async (req, res) => {
                   ? "User is an admin"
                   : "User logged in",
               _id: user._id,
+              autoId: user.autoId,
               role: user.role,
               name: user.name,
               email: user.email,
@@ -325,7 +326,7 @@ const extendSession = async (req, res) => {
 
     const token = await signToken(
       { id: user._id, email: user.email, role: user.role },
-      { expiresIn: tokenExpire }
+      { expiresIn: tokenExpire },
     );
     // Decode to obtain exp
     const decoded = jwt.decode(token);
@@ -373,7 +374,7 @@ const googleAuthStart = (req, res, next) => {
   for (const param of queryParams) {
     if (!allowedParams.includes(param)) {
       console.warn(
-        `Unauthorized query parameter detected and blocked: ${param}`
+        `Unauthorized query parameter detected and blocked: ${param}`,
       );
       return res.status(400).json({
         error: "Unauthorized parameter detected",
@@ -400,7 +401,7 @@ const googleAuthStart = (req, res, next) => {
       for (const pattern of suspiciousPatterns) {
         if (pattern.test(value)) {
           console.warn(
-            `Suspicious parameter value detected and blocked: ${param}=${value}`
+            `Suspicious parameter value detected and blocked: ${param}=${value}`,
           );
           return res.status(400).json({
             error: "Suspicious parameter value detected",
@@ -444,7 +445,7 @@ const googleAuthCallback = (req, res) => {
         "Browser detection - iOS Chrome:",
         isIOSChrome,
         "iOS Safari:",
-        isIOSSafari
+        isIOSSafari,
       );
 
       // For iOS Chrome, use different cookie settings and URL-based token passing
@@ -463,7 +464,7 @@ const googleAuthCallback = (req, res) => {
         const base = process.env.FRONTEND_URL;
         const redirectUrl = `${base.replace(
           /\/$/,
-          ""
+          "",
         )}/home/?auth=google&token=${encodeURIComponent(token)}`;
         console.log("Redirecting iOS Chrome to:", redirectUrl);
         res.redirect(redirectUrl);
@@ -596,13 +597,13 @@ const forgotPassword = async (req, res) => {
 
     // Generate verification code (6-digit)
     const verificationCode = Math.floor(
-      100000 + Math.random() * 900000
+      100000 + Math.random() * 900000,
     ).toString();
 
     // Create reset token with verification code (like registration flow)
     const resetToken = await signToken(
       { email: user.email, verificationCode },
-      { expiresIn: "15m" }
+      { expiresIn: "15m" },
     );
 
     // Send verification email
@@ -660,7 +661,7 @@ const verifyResetCode = async (req, res) => {
     // Generate new token for the final step (like registration flow)
     const newResetToken = await signToken(
       { email, verified: true },
-      { expiresIn: "10m" }
+      { expiresIn: "10m" },
     );
 
     return res.status(200).json({
