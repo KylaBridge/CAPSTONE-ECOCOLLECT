@@ -28,6 +28,7 @@ export default function BadgeManagement() {
   const [isSaving, setIsSaving] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
   const dropdownRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   // Fetch badges on component mount
   useEffect(() => {
@@ -151,6 +152,10 @@ export default function BadgeManagement() {
       description: "",
       imageUrl: null,
     });
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const handleClosePanel = () => {
@@ -165,6 +170,10 @@ export default function BadgeManagement() {
     setImagePreview(null);
     setIsImageSelected(false);
     setBadgeIcon(null);
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const handleRemoveBadge = async (badgeToRemove) => {
@@ -461,6 +470,7 @@ export default function BadgeManagement() {
                           accept=".png, .jpg, .jpeg, .gif"
                           onChange={handleImageChange}
                           id="imageInput"
+                          ref={fileInputRef}
                           style={{ display: "none" }}
                         />
                         <div className="upload-action-group">

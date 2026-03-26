@@ -326,44 +326,50 @@ export default function Achievements() {
             Badge <br /> Collections
           </h2>
           <div className="badge-scroll-container">
-            {badges.map((badge, index) => (
-              <div
-                key={badge._id || index}
-                className="badge-card"
-                onClick={() => setSelectedBadge(badge)}
-              >
-                <div className="badge-wrapper">
-                  <div
-                    className={`badge-bg-square ${
-                      user?.exp < badge.requiredPoints ? "locked" : ""
-                    }`}
-                  >
-                    <img
-                      src={badge.img}
-                      alt={badge.name}
-                      className="badge-img"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = Badge1;
-                      }}
-                    />
-                  </div>
-                  {user?.exp < badge.requiredPoints && (
-                    <img src={LockIcon} alt="Locked" className="lock-icon" />
-                  )}
-                  <span
-                    className={`badge-tap-icon ${
-                      user?.exp < badge.requiredPoints
-                        ? "locked-icon"
-                        : "unlocked-icon"
-                    }`}
-                  >
-                    <FiZoomIn size={16} />
-                  </span>
-                </div>
-                <p className="badge-name">{badge.name}</p>
+            {badges.length === 0 ? (
+              <div className="no-badges-message">
+                <p>No badges yet.</p>
               </div>
-            ))}
+            ) : (
+              badges.map((badge, index) => (
+                <div
+                  key={badge._id || index}
+                  className="badge-card"
+                  onClick={() => setSelectedBadge(badge)}
+                >
+                  <div className="badge-wrapper">
+                    <div
+                      className={`badge-bg-square ${
+                        user?.exp < badge.requiredPoints ? "locked" : ""
+                      }`}
+                    >
+                      <img
+                        src={badge.img}
+                        alt={badge.name}
+                        className="badge-img"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = Badge1;
+                        }}
+                      />
+                    </div>
+                    {user?.exp < badge.requiredPoints && (
+                      <img src={LockIcon} alt="Locked" className="lock-icon" />
+                    )}
+                    <span
+                      className={`badge-tap-icon ${
+                        user?.exp < badge.requiredPoints
+                          ? "locked-icon"
+                          : "unlocked-icon"
+                      }`}
+                    >
+                      <FiZoomIn size={16} />
+                    </span>
+                  </div>
+                  <p className="badge-name">{badge.name}</p>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>

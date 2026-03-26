@@ -9,7 +9,6 @@ import {
   FaTshirt,
   FaMobile,
   FaUserAlt,
-  FaTrash,
   FaUserShield,
   FaBoxes,
 } from "react-icons/fa";
@@ -20,6 +19,7 @@ import { UserContext } from "../context/userContext";
 import { userAPI } from "../api/user";
 import { ewasteAPI } from "../api/ewaste";
 import { redemptionAPI } from "../api/redemption";
+import { rewardsAPI } from "../api/rewards";
 import { binsAPI } from "../api/bins";
 import binIcon from "../assets/icons/binIcon.png";
 import "./styles/AdminDashboard.css";
@@ -54,6 +54,19 @@ export default function AdminDashboard() {
     0,
   );
   const [binList, setBinList] = useState([]);
+  const [topRewards, setTopRewards] = useState([]);
+  const [rewardsMap, setRewardsMap] = useState({});
+
+  const resolveRewardCategory = (redemption) => {
+    if (redemption?.rewardId?.category) {
+      return redemption.rewardId.category;
+    }
+
+    const rewardId =
+      redemption?.rewardId?._id?.toString?.() || redemption?.rewardId?.toString?.();
+
+    return rewardsMap[rewardId] || "Unknown";
+  };
 
   useEffect(() => {
     const fetchRoleCount = async () => {
@@ -92,11 +105,54 @@ export default function AdminDashboard() {
       }
     };
 
+    const fetchRewards = async () => {
+      try {
+        const response = await rewardsAPI.getAllRewards();
+        const map = {};
+        response.data.forEach((reward) => {
+          map[reward._id.toString()] = reward.category;
+        });
+        setRewardsMap(map);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
     fetchRoleCount();
     fetchEwasteCount();
     fetchRedemptionCount();
     fetchBins();
+    fetchRewards();
   }, []);
+
+  // Fetch top rewards when rewards map is ready
+  useEffect(() => {
+    if (Object.keys(rewardsMap).length > 0) {
+      const fetchTopRewardsData = async () => {
+        try {
+          const response = await redemptionAPI.getAllRedemptions();
+          const rewardsCount = {};
+
+          // Count each reward category
+          response.data.forEach((redemption) => {
+            const category = resolveRewardCategory(redemption);
+            rewardsCount[category] = (rewardsCount[category] || 0) + 1;
+          });
+
+          // Convert to array, sort by count, and take top 1
+          const sorted = Object.entries(rewardsCount)
+            .map(([name, count]) => ({ name, count }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 1);
+
+          setTopRewards(sorted);
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      fetchTopRewardsData();
+    }
+  }, [rewardsMap]);
 
   const iconMap = {
     telephoneCount: {
@@ -143,6 +199,15 @@ export default function AdminDashboard() {
       label: "Others",
       icon: <FaBoxes size={30} className="ewaste-icon" />,
     },
+  };
+
+  const rewardIconMap = {
+    "NU Merch": <FaTshirt size={35} className="ewaste-icon" />,
+    "Mobile Load": <FaMobile size={35} className="ewaste-icon" />,
+  };
+
+  const getRewardIcon = (rewardName) => {
+    return rewardIconMap[rewardName] || <FaBoxes size={35} className="ewaste-icon" />;
   };
 
   const topCategories = Object.entries(ewasteCount)
@@ -242,19 +307,22 @@ export default function AdminDashboard() {
           <div className="reward-container">
             <h2>Reward Redemptions</h2>
             <div className="rewardtotal-bar">
-              <strong>Total: {redemptionCount || "..."}</strong>
+              <strong>Total: {redemptionCount || 0}</strong>
             </div>
             <div className="rewards-grid">
               <h4 className="rewards-label">Top rewards</h4>
               <div className="rewards-breakdown">
-                <div className="reward-item">
-                  <FaTshirt size={35} className="ewaste-icon" />
-                  <p>NU Merch</p>
-                </div>
-                <div className="reward-item">
-                  <FaMobile size={35} className="ewaste-icon" />
-                  <p>Mobile Load</p>
-                </div>
+                {topRewards.length > 0 ? (
+                  topRewards.map((reward) => (
+                    <div key={reward.name} className="reward-item">
+                      {getRewardIcon(reward.name)}
+                      <p>{reward.name}</p>
+                      <span className="reward-count">{reward.count}</span>
+                    </div>
+                  ))
+                ) : (
+                  <p className="no-items-msg">No rewards yet</p>
+                )}
               </div>
             </div>
           </div>
