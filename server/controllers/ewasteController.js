@@ -4,7 +4,7 @@ const path = require("path");
 const fs = require("fs");
 const { updateUserRank } = require("./userController");
 const ActivityLog = require("../models/activityLog");
-const { sendEwasteStatusEmail} = require("../helpers/mail");
+const { sendEwasteStatusEmail } = require("../helpers/mail");
 
 //
 // ------------------ E-WASTE SUBMISSIONS ------------------
@@ -116,28 +116,29 @@ const updateSubmissionStatus = async (req, res) => {
     submission.status = status;
     await submission.save();
 
-    // Log activity
-    const user = await User.findById(submission.user);
+    // Fetch submitter for email/points and attribute activity to the current admin
+    const submitter = await User.findById(submission.user);
+    const submitterIdentifier = submitter
+      ? submitter.username || submitter.email || submitter.name || "Unknown"
+      : "Unknown";
+
     await ActivityLog.create({
-      userId: user?._id,
-      userEmail: user?.email || "Unknown",
-      userRole: user?.role,
+      userId: req.user?._id || null,
+      userEmail: req.user?.email || "Admin",
+      userRole: req.user?.role || "admin",
       action:
         status === "Approved"
           ? "EWaste Approved"
           : status === "Rejected"
-          ? "EWaste Rejected"
-          : "EWaste Updated",
-      details: `Submission ${submission.category} marked as ${status} by ${req.user.name}`,
+            ? "EWaste Rejected"
+            : "EWaste Updated",
+      details: `Submission ${submission.category} marked as ${status} for ${submitterIdentifier}`,
     });
 
     let totalPoints = 0;
-    
-    if (status === "Approved") {
-      const user = await User.findById(submission.user);
-      if (user) {
-        
 
+    if (status === "Approved") {
+      if (submitter) {
         if (submission.category === "others" && points) {
           // Add manually specified points for "others" category
           totalPoints = parseInt(points);
@@ -159,18 +160,22 @@ const updateSubmissionStatus = async (req, res) => {
         }
 
         if (totalPoints > 0) {
-          user.points += totalPoints;
-          user.exp += totalPoints * 2; // exp is 2x points
-          await user.save();
-          await updateUserRank(user._id);
+          submitter.points += totalPoints;
+          submitter.exp += totalPoints * 2; // exp is 2x points
+          await submitter.save();
+          await updateUserRank(submitter._id);
         }
       }
     }
 
-        // send email notification
-    if (user && user.email && (status === "Approved" || status === "Rejected")) {
+    // send email notification
+    if (
+      submitter &&
+      submitter.email &&
+      (status === "Approved" || status === "Rejected")
+    ) {
       const emailData = {
-        userFirstName: user.firstName || user.name?.split(" ")[0],
+        userFirstName: submitter.firstName || submitter.name?.split(" ")[0],
         category: submission.category,
         status,
         submissionId: submission._id.toString(),
@@ -178,7 +183,7 @@ const updateSubmissionStatus = async (req, res) => {
       };
 
       try {
-        await sendEwasteStatusEmail(user.email, emailData);
+        await sendEwasteStatusEmail(submitter.email, emailData);
       } catch (emailError) {
         console.error("Failed to send e-waste status email:", emailError);
         // Don't fail the request if email fails
@@ -211,13 +216,13 @@ const deleteEWaste = async (req, res) => {
 
     await EWaste.findByIdAndDelete(id);
 
-    // Log activity
+    // Log activity attributed to the current admin
     await ActivityLog.create({
-      userId: submission.user,
-      userEmail: "Unknown", // Optionally fetch user for email
-      userRole: req.user?.role,
+      userId: req.user?._id || null,
+      userEmail: req.user?.email || "Admin",
+      userRole: req.user?.role || "admin",
       action: "EWaste Deleted",
-      details: `Deleted submission of ${submission.category}`,
+      details: `Deleted submission of ${submission.category} by ${req.user?.name || "Admin"}`,
     });
 
     res

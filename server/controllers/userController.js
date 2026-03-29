@@ -13,43 +13,44 @@ const updateUserRank = async (userId) => {
     const user = await User.findById(userId);
     if (!user) return null;
 
-    // Get all badges and sort by points required
-    const badges = await Badge.find().sort({ pointsRequired: -1 });
+    // Get all badges sorted ascending by points required so we can
+    // add them in increasing order (earliest -> latest)
+    const badges = await Badge.find().sort({ pointsRequired: 1 });
 
-    // Find the highest badge the user qualifies for
     let highestBadge = null;
+    const currentTime = new Date();
+    let modified = false;
+
+    // Add every badge the user qualifies for that's not yet in history
     for (const badge of badges) {
       if (user.exp >= badge.pointsRequired) {
-        highestBadge = badge;
-        break;
+        highestBadge = badge; // keeps last (highest) qualifying badge
+
+        const badgeExists = user.badgeHistory.some(
+          (h) => h.badgeId && h.badgeId.toString() === badge._id.toString(),
+        );
+
+        if (!badgeExists) {
+          user.badgeHistory.push({
+            badgeName: badge.name,
+            badgeId: badge._id,
+            earnedAt: currentTime,
+            pointsRequired: badge.pointsRequired,
+          });
+          modified = true;
+        }
       }
     }
 
-    // Update user's rank if they have a qualifying badge
-    if (highestBadge) {
-      // Only update if the rank has changed (new badge earned)
-      if (user.rank !== highestBadge.name) {
-        const currentTime = new Date();
-        
-        // Check if this badge is already in history to avoid duplicates
-        const badgeExists = user.badgeHistory.some(
-          badge => badge.badgeId.toString() === highestBadge._id.toString()
-        );
-        
-        if (!badgeExists) {
-          // Add new badge to history
-          user.badgeHistory.push({
-            badgeName: highestBadge.name,
-            badgeId: highestBadge._id,
-            earnedAt: currentTime,
-            pointsRequired: highestBadge.pointsRequired
-          });
-        }
-        
-        user.rank = highestBadge.name;
-        user.rankEarnedAt = currentTime;
-        await user.save();
-      }
+    // If user's highest qualifying badge changed, update rank and timestamp
+    if (highestBadge && user.rank !== highestBadge.name) {
+      user.rank = highestBadge.name;
+      user.rankEarnedAt = currentTime;
+      modified = true;
+    }
+
+    if (modified) {
+      await user.save();
     }
 
     return user;
@@ -141,7 +142,7 @@ const redeemReward = async (req, res) => {
 
     // Generate unique redemption ID
     const redemptionId = crypto.randomUUID();
-    
+
     // Set expiry date (7 days from now)
     const expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + 7);
@@ -152,11 +153,11 @@ const redeemReward = async (req, res) => {
       rewardId,
       rewardName: reward.name,
       redemptionDate: new Date(),
-      status: 'Issued',
+      status: "Issued",
       expiresAt: expiryDate,
       pointsSpent: reward.points,
       redemptionId: redemptionId,
-      note: `Redemption issued via app on ${new Date().toISOString()}`
+      note: `Redemption issued via app on ${new Date().toISOString()}`,
     });
 
     // Update user points
@@ -168,20 +169,22 @@ const redeemReward = async (req, res) => {
     // Prepare email data
     const validationUrl = `${process.env.FRONTEND_URL}/redemption/validate/${redemptionId}`;
     const redemptionData = {
-      userFirstName: user.firstName || user.name?.split(' ')[0],
+      userFirstName: user.firstName || user.name?.split(" ")[0],
       rewardName: reward.name,
       pointsSpent: reward.points,
       redemptionId: redemptionId,
       expiryDate: expiryDate,
-      validationUrl: validationUrl
+      validationUrl: validationUrl,
     };
 
     // Send redemption email with QR code
     try {
       await sendRedemptionEmail(user.email, redemptionData);
-      console.log(`Redemption email sent to ${user.email} for redemption ${redemptionId}`);
+      console.log(
+        `Redemption email sent to ${user.email} for redemption ${redemptionId}`,
+      );
     } catch (emailError) {
-      console.error('Failed to send redemption email:', emailError);
+      console.error("Failed to send redemption email:", emailError);
       // Don't fail the redemption if email fails, just log it
     }
 
@@ -195,14 +198,15 @@ const redeemReward = async (req, res) => {
     });
 
     res.status(201).json({
-      message: "Reward redeemed successfully! Check your email for the QR code.",
+      message:
+        "Reward redeemed successfully! Check your email for the QR code.",
       remainingPoints: user.points,
       redemptionId: redemptionId,
       expiresAt: expiryDate,
-      validationUrl: validationUrl
+      validationUrl: validationUrl,
     });
   } catch (err) {
-    console.error('Error in redeemReward:', err);
+    console.error("Error in redeemReward:", err);
     res.status(500).json({ message: "Failed to redeem reward" });
   }
 };
@@ -212,7 +216,7 @@ const getAllUserLeaderboards = async (req, res) => {
   try {
     const data = await User.find(
       { role: "user", exp: { $gt: 0 } },
-      { name: 1, email: 1, avatar: 1, exp: 1, points: 1, rank: 1 }
+      { name: 1, email: 1, avatar: 1, exp: 1, points: 1, rank: 1 },
     ).sort({ exp: -1 });
     res.status(200).json(data);
   } catch (error) {
@@ -226,22 +230,22 @@ const getUserBadgeHistory = async (req, res) => {
   try {
     const { userId } = req.params;
     const user = await User.findById(userId)
-      .populate('badgeHistory.badgeId', 'name description image')
-      .select('badgeHistory rank rankEarnedAt');
-    
+      .populate("badgeHistory.badgeId", "name description image")
+      .select("badgeHistory rank rankEarnedAt");
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
     // Sort badge history by earnedAt date (newest first)
-    const sortedHistory = user.badgeHistory.sort((a, b) => 
-      new Date(b.earnedAt) - new Date(a.earnedAt)
+    const sortedHistory = user.badgeHistory.sort(
+      (a, b) => new Date(b.earnedAt) - new Date(a.earnedAt),
     );
 
     res.status(200).json({
       currentRank: user.rank,
       currentRankEarnedAt: user.rankEarnedAt,
-      badgeHistory: sortedHistory
+      badgeHistory: sortedHistory,
     });
   } catch (error) {
     console.error(error);

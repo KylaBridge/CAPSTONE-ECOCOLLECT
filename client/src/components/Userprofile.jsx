@@ -49,11 +49,9 @@ export default function Userprofile() {
         {!!user ? (
           <>
             <h2 className="username">{user.name || "USERNAME"}</h2>
-            <p className="user-id">
-              ID: {user._id ? user._id.slice(-8) : "ID Placeholder"}
-            </p>
             <p className="user-email">
-              Email: {user.email || "email@example.com"}
+              Email: <br></br>
+              {user.email || "email@example.com"}
             </p>
             <div className="progress-bar-container">
               <div
