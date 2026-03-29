@@ -51,6 +51,7 @@ const validateOAuthCallback = (req, res, next) => {
     "authuser",
     "prompt",
     "hd",
+    "iss",
     "error",
     "error_description",
   ];
@@ -77,7 +78,7 @@ router.get(
     session: false,
     failureRedirect: "/",
   }),
-  googleAuthCallback
+  googleAuthCallback,
 );
 
 // Optional profile route after oauth (requires passport sessionless user injection if used)
