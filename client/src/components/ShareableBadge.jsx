@@ -6,7 +6,7 @@ import Badge1 from "../assets/badges/current-badge.png";
 import BadgeShareCard from "./BadgeShareCard";
 import { FaDownload } from "react-icons/fa";
 import { toast } from "react-hot-toast";
-import html2canvas from "html2canvas";
+import downloadBadge from "../utils/downloadBadge";
 import "./styles/ShareableBadge.css";
 
 const ShareableBadge = ({ badgeId }) => {
@@ -72,37 +72,10 @@ const ShareableBadge = ({ badgeId }) => {
   };
 
   const handleDownloadBadge = async () => {
+    if (!shareCardRef.current) return;
     try {
-      if (!shareCardRef.current) return;
-
-      // Wait a bit for the component to render fully
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      // Temporarily reset any scaling transforms to capture original size
-      const originalTransform = shareCardRef.current.style.transform;
-      shareCardRef.current.style.transform = "none";
-
-      // Ensure the certificate renders at its original size (900x850)
-      const canvas = await html2canvas(shareCardRef.current, {
-        backgroundColor: null,
-        // scale: 1, // Higher quality
-        logging: false,
-        useCORS: true,
-        allowTaint: true,
-        width: 900, // Force original width
-        height: 850, // Force original height
-        windowWidth: 900,
-        windowHeight: 850,
-      });
-
-      // Restore the original transform
-      shareCardRef.current.style.transform = originalTransform;
-
-      const link = document.createElement("a");
-      link.download = `${badge.name}-badge-certificate.png`;
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-
+      const fileName = `${badge?.name || "badge"}-badge-certificate.png`;
+      await downloadBadge(shareCardRef.current, { width: 1200, height: 800, fileName });
       toast.success("Badge certificate downloaded successfully!");
     } catch (err) {
       console.error("Download failed:", err);
@@ -392,7 +365,16 @@ const ShareableBadge = ({ badgeId }) => {
         </div>
 
         {/* Hidden certificate for download functionality only */}
-        <div style={{ position: "absolute", left: "-9999px", top: "-9999px" }}>
+        <div
+          style={{
+            position: "absolute",
+            left: 0,
+            top: 0,
+            opacity: 0,
+            pointerEvents: "none",
+            zIndex: -1,
+          }}
+        >
           <BadgeShareCard
             user={fallbackBadge.earnedBy}
             selectedBadge={fallbackBadge}
@@ -469,7 +451,16 @@ const ShareableBadge = ({ badgeId }) => {
       </div>
 
       {/* Hidden certificate for download functionality only */}
-      <div style={{ position: "absolute", left: "-9999px", top: "-9999px" }}>
+      <div
+        style={{
+          position: "absolute",
+          left: 0,
+          top: 0,
+          opacity: 0,
+          pointerEvents: "none",
+          zIndex: -1,
+        }}
+      >
         <BadgeShareCard
           user={badge.earnedBy}
           selectedBadge={badge}

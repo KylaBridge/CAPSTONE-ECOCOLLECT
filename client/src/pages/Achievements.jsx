@@ -16,7 +16,7 @@ import {
   FaPinterest,
 } from "react-icons/fa";
 import LockIcon from "../assets/icons/lockicon.png";
-import html2canvas from "html2canvas";
+import downloadBadge from "../utils/downloadBadge";
 import { badgesAPI } from "../api/badges";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
@@ -38,7 +38,6 @@ export default function Achievements() {
   const [selectedBadge, setSelectedBadge] = useState(null);
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [isGeneratingShareCard, setIsGeneratingShareCard] = useState(false);
-  const [showShareCard, setShowShareCard] = useState(false);
   const shareCardRef = useRef(null);
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
@@ -54,30 +53,47 @@ export default function Achievements() {
             : Badge1,
           requiredPoints: badge.pointsRequired,
         }));
-        // Sort badges by points required
         badgesWithImages.sort((a, b) => a.requiredPoints - b.requiredPoints);
         setBadges(badgesWithImages);
       } catch (error) {
         console.error("Error fetching badges:", error);
       }
     };
-
     fetchBadges();
   }, []);
+
+  const handleSelectBadge = async (badge) => {
+    setSelectedBadge(badge);
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || window.location.origin;
+      if (user?._id) {
+        const resp = await fetch(
+          `${apiUrl}/api/ecocollect/badges/public/${badge._id}?userId=${user._id}`,
+        );
+        if (resp.ok) {
+          const data = await resp.json();
+          const dateEarned =
+            data.dateEarned || data.earnedAt || data.earnedDate || data.createdAt;
+          if (dateEarned) {
+            setSelectedBadge((prev) => ({ ...prev, dateEarned }));
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("Could not fetch badge earned date:", e);
+    }
+  };
 
   const generateShareCard = async () => {
     if (!shareCardRef.current) return null;
 
     setIsGeneratingShareCard(true);
     try {
-      // Wait for the image to load before generating the canvas
-      const badgeImage =
-        shareCardRef.current.querySelector(".share-card-badge");
+      const badgeImage = shareCardRef.current.querySelector(".share-card-badge");
       if (badgeImage) {
         await new Promise((resolve, reject) => {
-          if (badgeImage.complete) {
-            resolve();
-          } else {
+          if (badgeImage.complete) resolve();
+          else {
             badgeImage.onload = resolve;
             badgeImage.onerror = reject;
           }
@@ -103,39 +119,26 @@ export default function Achievements() {
   const handleShare = async () => {
     if (!selectedBadge) return;
 
-    // Generate a shareable URL for the badge with user information using path-based approach
     const baseUrl = window.location.origin;
-
-    // Use path-based URL structure for better social media compatibility
     const userName = user?.name || user?.email || "EcoCollect-User";
     const userEmail = user?.email || "user@ecocollect.com";
-
-    // Encode the user data for URL path
     const encodedUserName = encodeURIComponent(userName);
     const encodedUserEmail = encodeURIComponent(userEmail);
 
     const shareUrl = `${baseUrl}/badge/${selectedBadge._id}/${encodedUserName}/${encodedUserEmail}`;
     const shareText = `I earned the ${selectedBadge.name} badge on EcoCollect!`;
 
-    // Always show our custom share options first
     setShowShareOptions(true);
 
     if (navigator.share) {
       try {
-        const shareData = {
-          title: `EcoCollect Badge: ${selectedBadge.name}`,
-          text: shareText,
-          url: shareUrl,
-        };
-
+        const shareData = { title: `EcoCollect Badge: ${selectedBadge.name}`, text: shareText, url: shareUrl };
         if (shareCardRef.current) {
           const shareCardImage = await generateShareCard();
           if (shareCardImage) {
             try {
               const blob = await (await fetch(shareCardImage)).blob();
-              const file = new File([blob], "badge-share.png", {
-                type: "image/png",
-              });
+              const file = new File([blob], "badge-share.png", { type: "image/png" });
               shareData.files = [file];
             } catch (error) {
               console.error("Error creating share file:", error);
@@ -150,44 +153,17 @@ export default function Achievements() {
 
   const handleDownload = async () => {
     if (!selectedBadge) return;
+    if (!shareCardRef.current) {
+      alert("Share card not available");
+      return;
+    }
 
     try {
-      if (!shareCardRef.current) {
-        throw new Error("Share card not available");
-      }
-
-      // Wait a bit for the component to render fully
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      // Temporarily reset any scaling transforms to capture original size
-      const originalTransform = shareCardRef.current.style.transform;
-      shareCardRef.current.style.transform = "none";
-
-      // Ensure the certificate renders at its original size (900x850)
-      const canvas = await html2canvas(shareCardRef.current, {
-        backgroundColor: null,
-        scale: 2, // Higher quality
-        logging: false,
-        useCORS: true,
-        allowTaint: true,
-        width: 900, // Force original width
-        height: 850, // Force original height
-        windowWidth: 900,
-        windowHeight: 850,
-      });
-
-      // Restore the original transform
-      shareCardRef.current.style.transform = originalTransform;
-
-      // Create a temporary link element
-      const link = document.createElement("a");
-      link.href = canvas.toDataURL("image/png");
-      link.download = `eco-collect-badge-certificate-${selectedBadge.name
+      const fileName = `eco-collect-badge-certificate-${selectedBadge.name
         .toLowerCase()
         .replace(/\s+/g, "-")}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      await downloadBadge(shareCardRef.current, { width: 1200, height: 800, fileName });
+      toast.success("Badge certificate downloaded successfully!");
     } catch (error) {
       console.error("Error downloading badge certificate:", error);
       alert("Failed to download badge certificate. Please try again.");
@@ -331,11 +307,11 @@ export default function Achievements() {
                 <p>No badges yet.</p>
               </div>
             ) : (
-              badges.map((badge, index) => (
+                badges.map((badge, index) => (
                 <div
                   key={badge._id || index}
                   className="badge-card"
-                  onClick={() => setSelectedBadge(badge)}
+                  onClick={() => handleSelectBadge(badge)}
                 >
                   <div className="badge-wrapper">
                     <div
@@ -379,7 +355,7 @@ export default function Achievements() {
         user={user}
         selectedBadge={selectedBadge}
         shareCardRef={shareCardRef}
-        isVisible={showShareCard}
+        isVisible={false}
       />
 
       {/* Modal */}
@@ -389,18 +365,16 @@ export default function Achievements() {
           onClick={() => {
             setSelectedBadge(null);
             setShowShareOptions(false);
-            setShowShareCard(false);
           }}
         >
           <div className="badge-modal" onClick={(e) => e.stopPropagation()}>
-            <button
-              className="modal-close-btn"
-              onClick={() => {
-                setSelectedBadge(null);
-                setShowShareOptions(false);
-                setShowShareCard(false);
-              }}
-            >
+              <button
+                className="modal-close-btn"
+                onClick={() => {
+                  setSelectedBadge(null);
+                  setShowShareOptions(false);
+                }}
+              >
               <FiX size={24} />
             </button>
             <img
