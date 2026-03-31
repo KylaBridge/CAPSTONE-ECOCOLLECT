@@ -210,8 +210,18 @@ export default function Rewards() {
       </div>
 
       {isModalOpen && selectedReward && (
-        <div className="reward-modal-overlay">
-          <div className="reward-modal">
+        <div
+          className="reward-modal-overlay"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) handleCloseModal();
+          }}
+        >
+          <div
+            className="reward-modal"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
             <button className="modal-close-button" onClick={handleCloseModal}>
               &times;
             </button>

@@ -298,3 +298,21 @@
   animation: rw-fade-up 0.4s ease both;
   animation-delay: 0.2s;
 }
+
+/* Prevent iOS Safari / Apple data detectors from forcing blue link styles
+   (phone numbers, dates, emails) so text uses the CSS colors you set) */
+a[x-apple-data-detectors],
+a[x-apple-data-detectors] *,
+a[href^="tel"],
+a[href^="sms"] {
+  color: inherit !important;
+  text-decoration: none !important;
+  cursor: default;
+}
+
+/* Some iOS versions wrap detected content in u > a — cover that too */
+u > a,
+u > a * {
+  color: inherit !important;
+  text-decoration: none !important;
+}
