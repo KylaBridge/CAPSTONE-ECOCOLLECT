@@ -1,3 +1,4 @@
+//badge page that shows when you share or click through link or share on social media
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -84,7 +85,7 @@ const ShareableBadge = ({ badgeId }) => {
       // Ensure the certificate renders at its original size (900x850)
       const canvas = await html2canvas(shareCardRef.current, {
         backgroundColor: null,
-        scale: 2, // Higher quality
+        // scale: 1, // Higher quality
         logging: false,
         useCORS: true,
         allowTaint: true,
@@ -250,9 +251,11 @@ const ShareableBadge = ({ badgeId }) => {
               userEmail || // Use userEmail from URL params as fallback
               "champion@ecocollect.com",
           },
-          // Use the actual earned date from the response, or preserve existing dateEarned
+          // Use the actual earned date from the response (set by backend from user's badge history)
+          // Falls back through multiple field names for compatibility
           dateEarned:
             response.data.dateEarned ||
+            response.data.earnedAt ||
             response.data.earnedDate ||
             response.data.createdAt,
         };

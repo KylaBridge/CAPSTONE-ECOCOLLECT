@@ -1,3 +1,4 @@
+//badge certificate card that shows when you download a badge
 import React from "react";
 import "./styles/BadgeShareCard.css";
 import Badge1 from "../assets/badges/current-badge.png";

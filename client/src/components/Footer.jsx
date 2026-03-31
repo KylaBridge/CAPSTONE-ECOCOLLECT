@@ -1,6 +1,6 @@
 import React from "react";
 import NULogo from "../assets/partnershiplogos.png";
-import { FaFacebook, FaTwitter, FaInstagram } from "react-icons/fa";
+import { FaFacebook, FaInstagram } from "react-icons/fa";
 import { BiLogoGmail } from "react-icons/bi";
 import "./styles/Footer.css";
 

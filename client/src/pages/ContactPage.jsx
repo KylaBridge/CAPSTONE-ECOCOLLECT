@@ -190,7 +190,7 @@ export default function ContactPage() {
             </div>
             <div className="info-item">
               <FaPhone className="info-icon" />
-              <p>+63 2 8712 1900</p>
+              <p>+639107375624</p>
             </div>
 
             <h3>Location</h3>

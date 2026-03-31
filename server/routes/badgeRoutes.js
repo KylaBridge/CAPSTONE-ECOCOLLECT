@@ -47,15 +47,7 @@ router.use((req, res, next) => {
   });
 });
 
-// Badge management routes
-router.get("/", authMiddleware, getAllBadges); // Get all badges
-router.get("/count", authMiddleware, getBadgeCount); // Get badge count
-router.get("/:id", authMiddleware, getBadgeById); // Get badge by ID
-router.post("/", authMiddleware, badgesUpload.single("image"), addBadge); // Add badge
-router.put("/:id", authMiddleware, badgesUpload.single("image"), updateBadge); // Update badge
-router.delete("/:id", authMiddleware, deleteBadge); // Delete badge
-
-// Public badge sharing route (no auth required)
+// Public badge sharing route (no auth required) - MUST be before /:id to match correctly
 router.get("/public/:id", async (req, res) => {
   try {
     const Badge = require("../models/badge");
@@ -98,21 +90,45 @@ router.get("/public/:id", async (req, res) => {
         _id: userId,
       };
 
-      // Look up the actual earned date from user's badge history
+      // Look up the actual earned date from user's badge history.
+      // Prefer `userId`, but if it's not provided try to find the user by
+      // email or name so public share links that only include email/name
+      // can still show the correct earned date.
       let actualEarnedDate = null;
+
+      const findBadgeEarnedDateFromUser = (user) => {
+        if (!user || !user.badgeHistory) return null;
+        const badgeEntry = user.badgeHistory.find(
+          (entry) => entry.badgeId.toString() === id,
+        );
+        return badgeEntry && badgeEntry.earnedAt ? badgeEntry.earnedAt : null;
+      };
+
       if (userId) {
         try {
           const user = await User.findById(userId);
-          if (user && user.badgeHistory) {
-            const badgeEntry = user.badgeHistory.find(
-              (entry) => entry.badgeId.toString() === id,
-            );
-            if (badgeEntry && badgeEntry.earnedAt) {
-              actualEarnedDate = badgeEntry.earnedAt;
-            }
-          }
+          actualEarnedDate = findBadgeEarnedDateFromUser(user);
         } catch (userError) {
-          console.warn("Could not fetch user badge history:", userError);
+          console.warn("Could not fetch user badge history by id:", userError);
+        }
+      }
+
+      // If we didn't find it by id, try locating the user by email or name
+      if (!actualEarnedDate && userEmail) {
+        try {
+          const user = await User.findOne({ email: userEmail });
+          actualEarnedDate = findBadgeEarnedDateFromUser(user);
+        } catch (userError) {
+          console.warn("Could not fetch user badge history by email:", userError);
+        }
+      }
+
+      if (!actualEarnedDate && userName) {
+        try {
+          const user = await User.findOne({ name: userName });
+          actualEarnedDate = findBadgeEarnedDateFromUser(user);
+        } catch (userError) {
+          console.warn("Could not fetch user badge history by name:", userError);
         }
       }
 
@@ -128,5 +144,13 @@ router.get("/public/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch badge" });
   }
 });
+
+// Badge management routes (after public route to avoid conflicts)
+router.get("/", authMiddleware, getAllBadges); // Get all badges
+router.get("/count", authMiddleware, getBadgeCount); // Get badge count
+router.get("/:id", authMiddleware, getBadgeById); // Get badge by ID
+router.post("/", authMiddleware, badgesUpload.single("image"), addBadge); // Add badge
+router.put("/:id", authMiddleware, badgesUpload.single("image"), updateBadge); // Update badge
+router.delete("/:id", authMiddleware, deleteBadge); // Delete badge
 
 module.exports = router;
