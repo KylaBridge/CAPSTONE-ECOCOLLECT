@@ -20,6 +20,7 @@ export default function EWasteSubmit() {
   const [showStatusSubmenu, setShowStatusSubmenu] = useState(false);
   const [points, setPoints] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
+  const [imageZoom, setImageZoom] = useState(1);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -106,6 +107,27 @@ export default function EWasteSubmit() {
     if (value === "" || /^[1-9]\d*$/.test(value)) {
       setPoints(value);
     }
+  };
+
+  const handleZoomIn = () => {
+    setImageZoom((prev) => Math.min(prev + 0.2, 3));
+  };
+
+  const handleZoomOut = () => {
+    setImageZoom((prev) => Math.max(prev - 0.2, 1));
+  };
+
+  const handleResetZoom = () => {
+    setImageZoom(1);
+  };
+
+  const handleImageModalWheel = (e) => {
+    if (e.deltaY < 0) {
+      handleZoomIn();
+    } else {
+      handleZoomOut();
+    }
+    e.preventDefault();
   };
 
   const handleDetailsClick = (submission) => {
@@ -370,13 +392,43 @@ export default function EWasteSubmit() {
           <div
             className="image-modal-content"
             onClick={(e) => e.stopPropagation()}
+            onWheel={handleImageModalWheel}
           >
             <button
               className="close-modal"
-              onClick={() => setImageModalOpen(false)}
+              onClick={() => {
+                setImageModalOpen(false);
+                setImageZoom(1);
+              }}
             >
               ✖
             </button>
+
+            <div className="zoom-controls">
+              <button
+                className="zoom-button"
+                onClick={handleZoomOut}
+                title="Zoom Out (Scroll Down)"
+              >
+                −
+              </button>
+              <span className="zoom-level">{Math.round(imageZoom * 100)}%</span>
+              <button
+                className="zoom-button"
+                onClick={handleZoomIn}
+                title="Zoom In (Scroll Up)"
+              >
+                +
+              </button>
+              <button
+                className="zoom-button reset"
+                onClick={handleResetZoom}
+                title="Reset Zoom"
+              >
+                Reset
+              </button>
+            </div>
+
             <div className="modal-image-wrapper">
               {selectedSubmission.images.length > 1 && (
                 <button
@@ -393,6 +445,7 @@ export default function EWasteSubmit() {
                 src={selectedSubmission.images[modalImageIndex]}
                 alt="Zoomed"
                 className="modal-image"
+                style={{ transform: `scale(${imageZoom})` }}
               />
 
               {selectedSubmission.images.length > 1 && (

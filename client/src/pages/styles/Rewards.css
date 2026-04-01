@@ -300,12 +300,13 @@
 }
 
 /* Prevent iOS Safari / Apple data detectors from forcing blue link styles
-   (phone numbers, dates, emails) so text uses the CSS colors you set) */
+   (phone numbers, dates, emails) so text uses the CSS colors set) */
 a[x-apple-data-detectors],
 a[x-apple-data-detectors] *,
 a[href^="tel"],
 a[href^="sms"] {
   color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
   text-decoration: none !important;
   cursor: default;
 }
@@ -314,5 +315,31 @@ a[href^="sms"] {
 u > a,
 u > a * {
   color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
   text-decoration: none !important;
+}
+
+/* Force all text elements to use their CSS color on iOS
+   This prevents iOS/Chrome from applying system link colors to inactive tabs */
+* {
+  -webkit-text-fill-color: currentColor !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.rewards-main-container,
+.rewards-main-container * {
+  -webkit-text-fill-color: #eeeeee !important;
+}
+
+.rewards-section-card,
+.rewards-section-card * {
+  -webkit-text-fill-color: #333 !important;
+}
+
+/* Additional iOS Chrome safeguard for text rendering */
+@supports (-webkit-appearance: none) {
+  * {
+    color: inherit;
+    -webkit-text-fill-color: currentColor;
+  }
 }

@@ -208,6 +208,7 @@
     border: 1px solid #245a1e;
     padding: 10px;
     background-color: #8dd7d7;
+    gap: 10px;
 }
 
 .category-select {
@@ -294,6 +295,17 @@
 
 .attachment-name {
     font-size: 0.9rem;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.attachment-item svg {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
 }
 
 .disabled-button {

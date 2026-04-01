@@ -10,12 +10,12 @@ nav {
     flex-direction: column;
     align-items: center;
     z-index: 1000;
-    
     overflow-y: auto; 
     overflow-x: hidden;
-
     scrollbar-width: none;
     -ms-overflow-style: none;
+    transition: width 0.3s ease;
+    padding-top: 0;
 }
 
 nav::-webkit-scrollbar {
@@ -26,9 +26,9 @@ nav::-webkit-scrollbar {
     display: flex;
     flex-direction: column;
     width: 100%;
+    flex: 1;
+    align-items: stretch;
 }
-
-
 
 .admin-sidebarlogo{
     width: 50%;
@@ -46,7 +46,10 @@ nav::-webkit-scrollbar {
     list-style: none;
     padding: 0;
     width: 100%;
-    margin-bottom: 30%;
+    flex: 0 0 auto;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .admin-sidebar-ul a {
@@ -54,6 +57,8 @@ nav::-webkit-scrollbar {
     color: #bababa;
     font-weight: bold;
     width: 100%;
+    display: block;
+    flex: 0 0 auto;
 }
 
 .admin-sidebar-ul a li {
@@ -62,9 +67,20 @@ nav::-webkit-scrollbar {
     color: #000000;
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     gap: 10px; 
     border-top: 1px solid gray;
     transition: background 0.3s, color 0.3s;
+    white-space: nowrap;
+    height: auto;
+}
+
+.admin-sidebar-ul a:first-child li {
+    border-top: none;
+}
+
+.admin-sidebar-ul a li span {
+    display: inline;
 }
 
 .admin-sidebar-ul a li:hover, .admin-sidebar-ul a.active li {
@@ -77,7 +93,7 @@ nav::-webkit-scrollbar {
     font-size: 0.8rem;
     width: 70%;
     height: 40px;
-    font-size: 16px;
+    font-size: 14px;
     background-color: #118653;
     color: white;
     border: none;
@@ -87,9 +103,84 @@ nav::-webkit-scrollbar {
     align-items: center;
     justify-content: center;
     gap: 5px;
-    margin: 0 auto;
+    margin: 20px auto;
+    transition: background-color 0.3s ease, width 0.3s ease, height 0.3s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.loggingOut span {
+    display: inline;
 }
 
 nav button:hover {
     background-color: #3abc7d;
 }
+
+/* ─── TABLET & SMALLER (1024px and below) ──────────────────────────────────── */
+@media (max-width: 1024px) {
+    nav {
+        width: 80px;
+        padding-top: 15px;
+    }
+
+    .admin-sidebarlogo {
+        display: none;
+    }
+
+    .divider {
+        display: none;
+    }
+
+    .sidebar-content {
+        align-items: center;
+        justify-content: flex-start;
+        gap: 0;
+    }
+
+    .admin-sidebar-ul {
+        width: auto;
+        flex: 0 0 auto;
+        background-color: #b6ccb3;
+        overflow: visible;
+    }
+
+    .admin-sidebar-ul a {
+        width: 80px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .admin-sidebar-ul a li {
+        justify-content: center;
+        padding: 15px 0;
+        gap: 0;
+        border-top: 1px solid gray;
+        width: 100%;
+        height: auto;
+    }
+
+    .admin-sidebar-ul a:first-child li {
+        border-top: none;
+    }
+
+    .admin-sidebar-ul a li span {
+        display: none;
+    }
+
+    .loggingOut {
+        width: 50px;
+        height: 50px;
+        padding: 0;
+        font-size: 16px;
+        margin: auto auto 15px auto;
+        gap: 0;
+        margin-top: auto;
+    }
+
+    .loggingOut span {
+        display: none;
+    }
+}
+
+

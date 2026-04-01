@@ -119,14 +119,14 @@
   text-align: center;
   color: #333;
   line-height: 1.3;
-  font-size: 1.05rem;
+  font-size: 1.5rem;
   font-family: "Luckiest Guy", cursive;
   margin-bottom: 0;
 }
 
 .badge-description {
   margin: 8px 0 0 0;
-  font-size: 1.05rem;
+  font-size: 1.5rem;
   color: #154d31;
   font-weight: 700;
   text-shadow: 1px 1px 0 #fff;
@@ -135,41 +135,56 @@
 
 .badge-date {
   margin: 12px 0 22px 0;
-  font-size: 1.05rem;
+  font-size: 1.5rem;
   color: #154d31;
   font-weight: 700;
   text-shadow: 1px 1px 0 #fff;
 }
 
+/* Tablet & smaller desktops */
 @media screen and (max-width: 1200px) {
   .share-card-template {
     width: 95vw;
+    aspect-ratio: 1200 / 800;
     height: auto;
-    min-height: 420px;
     padding: 20px;
   }
+
   .share-card-header h1 {
     font-size: 2.2rem;
   }
+
+  .share-card-header .username {
+    font-size: 1.5rem;
+  }
+
+  .share-card-header p {
+    font-size: 1rem;
+  }
+
   .badge-title {
     font-size: 1.5rem;
   }
+
   .badge-details,
   .badge-description,
   .badge-date {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
+
   .share-card-badge {
     width: 160px;
     height: 160px;
   }
 }
 
+/* Mobile portrait */
 @media (max-width: 768px) {
   .certificate-wrapper {
     width: 100%;
     height: auto;
-    padding: 0.75rem;
+    min-height: 100vh;
+    padding: 0;
     overflow: auto;
   }
 
@@ -179,23 +194,76 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 0.5rem;
   }
 
   .share-card-template {
-    width: 1200px;
-    height: 800px;
-    max-width: 100%;
-    max-height: none;
+    width: 100%;
+    max-width: 600px;
+    aspect-ratio: 1200 / 800;
+    padding: 16px;
     margin: 0 auto;
-    transform: scale(calc(100vw / 1240));
-    transform-origin: center center;
-    padding: 18px;
+  }
+
+  .share-card-header h1 {
+    font-size: clamp(1.8rem, 5vw, 2.2rem);
+  }
+
+  .share-card-header .username {
+    font-size: clamp(1.2rem, 4vw, 1.5rem);
+  }
+
+  .share-card-header p {
+    font-size: clamp(0.9rem, 2.5vw, 1rem);
+  }
+
+  .badge-title {
+    font-size: clamp(1.2rem, 4vw, 1.5rem);
+  }
+
+  .badge-details,
+  .badge-description,
+  .badge-date {
+    font-size: clamp(0.75rem, 2vw, 0.9rem);
+  }
+
+  .share-card-badge {
+    width: clamp(120px, 30vw, 160px);
+    height: clamp(120px, 30vw, 160px);
+  }
+
+  .share-card-badge-section {
+    gap: 8px;
   }
 }
 
+/* Small mobile */
 @media (max-width: 480px) {
   .share-card-template {
-    transform: scale(calc(100vw / 1240));
+    max-width: 95vw;
+    padding: 12px;
+  }
+
+  .share-card-header h1 {
+    font-size: clamp(1.5rem, 5vw, 1.8rem);
+  }
+
+  .share-card-header .username {
+    font-size: clamp(1rem, 4vw, 1.2rem);
+  }
+
+  .share-card-header p {
+    font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+  }
+
+  .badge-title {
+    font-size: clamp(1rem, 4vw, 1.2rem);
+  }
+
+  .badge-details,
+  .badge-description,
+  .badge-date {
+    font-size: clamp(0.65rem, 2vw, 0.75rem);
   }
 }
 
