@@ -275,3 +275,37 @@
     max-height: 100vh;
   }
 }
+
+/* Download mode - preserve desktop size fonts */
+.share-card-template.download-mode {
+  width: 1200px;
+  height: 800px;
+  padding: 28px 36px;
+}
+
+.share-card-template.download-mode .share-card-header h1 {
+  font-size: 3.8rem;
+}
+
+.share-card-template.download-mode .share-card-header .username {
+  font-size: 2rem;
+}
+
+.share-card-template.download-mode .share-card-header p {
+  font-size: 1.4rem;
+}
+
+.share-card-template.download-mode .badge-title {
+  font-size: 3rem;
+}
+
+.share-card-template.download-mode .badge-details,
+.share-card-template.download-mode .badge-description,
+.share-card-template.download-mode .badge-date {
+  font-size: 1.5rem;
+}
+
+.share-card-template.download-mode .share-card-badge {
+  width: 280px;
+  height: 280px;
+}

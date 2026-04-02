@@ -42,6 +42,8 @@ export async function downloadBadge(element, options = {}) {
     clone.style.display = "block";
 
     const template = clone.querySelector(".share-card-template") || clone;
+    // Ensure download-mode class is applied for proper sizing
+    template.classList.add("download-mode");
     try {
       template.style.transform = "none";
       template.style.width = `${WIDTH}px`;

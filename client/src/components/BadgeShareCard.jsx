@@ -10,6 +10,7 @@ const BadgeShareCard = ({
   selectedBadge,
   shareCardRef,
   isVisible = false,
+  isDownloading = false,
 }) => {
   // Keep the card rendered in the DOM so it can be measured and captured.
   // When visible, show as a centered overlay; when hidden, keep it
@@ -51,7 +52,7 @@ const BadgeShareCard = ({
       <div style={containerStyle}>
         <div
           ref={shareCardRef}
-          className="share-card-template"
+          className={`share-card-template ${isDownloading ? 'download-mode' : ''}`}
           style={{
             background: `url(${ECOBADGEBackground}) no-repeat center center/cover`,
           }}
