@@ -228,7 +228,7 @@ export default function Rewards() {
             <img
               src={selectedReward.img}
               alt={selectedReward.name}
-              className="modal-image"
+              className="modal-image-rewards"
             />
             <h2 className="modal-title">{selectedReward.name}</h2>
             <p className="modal-points">Worth: {selectedReward.price} points</p>

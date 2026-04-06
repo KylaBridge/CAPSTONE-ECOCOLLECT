@@ -45,6 +45,11 @@ export default function Login() {
     setResetForm({ ...resetForm, [e.target.name]: e.target.value });
   }
 
+  function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
   function allPasswordValid() {
     return passwordRequirements.every((req) => req.test(resetForm.newPassword));
   }
@@ -106,12 +111,15 @@ export default function Login() {
         return;
       }
 
+      // Always proceed to step 2 for security (don't reveal if email exists)
       setResetToken(data.resetToken);
-      toast.success(data.message);
+      toast.success(data.message || "If an account exists, a verification code has been sent.", {
+        duration: 5000,
+      });
       setResetStep(2);
     } catch (err) {
       console.error("Forgot password error:", err);
-      toast.error("Failed to send verification code.");
+      toast.error("Failed to send verification code. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -286,7 +294,7 @@ export default function Login() {
               <button
                 className="login-btn"
                 type="submit"
-                disabled={loading || !resetForm.email}
+                disabled={loading || !resetForm.email || !isValidEmail(resetForm.email)}
               >
                 {loading ? "Sending..." : "Send Verification Code"}
               </button>

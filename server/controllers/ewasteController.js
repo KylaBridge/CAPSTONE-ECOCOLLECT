@@ -119,7 +119,7 @@ const updateSubmissionStatus = async (req, res) => {
     // Fetch submitter for email/points and attribute activity to the current admin
     const submitter = await User.findById(submission.user);
     const submitterIdentifier = submitter
-      ? submitter.username || submitter.email || submitter.name || "Unknown"
+      ? submitter.name || submitter.email || submitter.name || "Unknown"
       : "Unknown";
 
     await ActivityLog.create({
