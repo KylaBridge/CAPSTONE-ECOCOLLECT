@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { toast } from "react-hot-toast";
+import Alert from "./Alert";
 import { userAPI } from "../api/user";
 import {
   AiOutlineEye,
@@ -24,6 +24,10 @@ export default function AddUserModal({
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [showErrorAlert, setShowErrorAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertTitle, setAlertTitle] = useState("");
 
   // Validation functions
   const isValidEmail = (email) => {
@@ -49,24 +53,30 @@ export default function AddUserModal({
 
     // Validation
     if (!form.email || !form.name || !form.password || !form.confirmPassword) {
-      toast.error("Please fill in all fields.");
+      setAlertTitle("Validation Error");
+      setAlertMessage("Please fill in all fields.");
+      setShowErrorAlert(true);
       return;
     }
 
     if (!isValidEmail(form.email)) {
-      toast.error("Please enter a valid email address.");
+      setAlertTitle("Validation Error");
+      setAlertMessage("Please enter a valid email address.");
+      setShowErrorAlert(true);
       return;
     }
 
     if (!isPasswordValid()) {
-      toast.error(
-        "Password must be at least 6 characters long and contain at least one number, one uppercase letter, and one special character.",
-      );
+      setAlertTitle("Validation Error");
+      setAlertMessage("Password must be at least 6 characters long and contain at least one number, one uppercase letter, and one special character.");
+      setShowErrorAlert(true);
       return;
     }
 
     if (form.password !== form.confirmPassword) {
-      toast.error("Passwords do not match.");
+      setAlertTitle("Validation Error");
+      setAlertMessage("Passwords do not match.");
+      setShowErrorAlert(true);
       return;
     }
 
@@ -75,7 +85,9 @@ export default function AddUserModal({
       currentUserRole === "admin" &&
       (form.role === "admin" || form.role === "superadmin")
     ) {
-      toast.error("You can only create regular users.");
+      setAlertTitle("Validation Error");
+      setAlertMessage("You can only create regular users.");
+      setShowErrorAlert(true);
       return;
     }
 
@@ -89,11 +101,13 @@ export default function AddUserModal({
       });
 
       if (response.data.error) {
-        toast.error(response.data.error);
+        setAlertTitle("Error");
+        setAlertMessage(response.data.error);
+        setShowErrorAlert(true);
       } else {
-        toast.success("User added successfully!");
-        onUserAdded();
-        onClose();
+        setAlertTitle("Success");
+        setAlertMessage("User added successfully!");
+        setShowSuccessAlert(true);
         setForm({
           email: "",
           name: "",
@@ -104,7 +118,9 @@ export default function AddUserModal({
       }
     } catch (error) {
       console.error("Error adding user:", error);
-      toast.error(error.response?.data?.error || "Failed to add user");
+      setAlertTitle("Error");
+      setAlertMessage(error.response?.data?.error || "Failed to add user");
+      setShowErrorAlert(true);
     } finally {
       setLoading(false);
     }
@@ -292,6 +308,30 @@ export default function AddUserModal({
             </button>
           </div>
         </form>
+
+        {/* Success Alert */}
+        <Alert
+          type="alert"
+          title={alertTitle}
+          message={alertMessage}
+          okText="OK"
+          onConfirm={() => {
+            setShowSuccessAlert(false);
+            onUserAdded();
+            onClose();
+          }}
+          isOpen={showSuccessAlert}
+        />
+
+        {/* Error Alert */}
+        <Alert
+          type="alert"
+          title={alertTitle}
+          message={alertMessage}
+          okText="OK"
+          onConfirm={() => setShowErrorAlert(false)}
+          isOpen={showErrorAlert}
+        />
       </div>
     </div>
   );

@@ -2,8 +2,8 @@ import AdminSidebar from "../admin-components/AdminSidebar";
 import Header from "../admin-components/Header";
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import { ewasteAPI } from "../api/ewaste";
-import toast from "react-hot-toast";
 import { MdOutlineZoomOutMap } from "react-icons/md";
+import Alert from "../admin-components/Alert";
 import "./styles/EWasteSubmit.css";
 import AdminButton from "../admin-components/AdminButton";
 
@@ -21,6 +21,10 @@ export default function EWasteSubmit() {
   const [points, setPoints] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
   const [imageZoom, setImageZoom] = useState(1);
+  const [showUpdateConfirmAlert, setShowUpdateConfirmAlert] = useState(false);
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertTitle, setAlertTitle] = useState("");
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -92,13 +96,22 @@ export default function EWasteSubmit() {
       setSelectedSubmission(null);
       setOpenSubmissionId(null);
 
-      toast.success(`Submission ${statusValue.toLowerCase()} successfully.`);
+      setAlertTitle("Success");
+      setAlertMessage(`Submission ${statusValue.toLowerCase()} successfully.`);
+      setShowSuccessAlert(true);
+      setShowUpdateConfirmAlert(false);
     } catch (error) {
       console.error("Error updating submission:", error);
-      toast.error("An error occurred while updating the submission.");
+      setAlertTitle("Error");
+      setAlertMessage("An error occurred while updating the submission.");
+      setShowSuccessAlert(true);
     } finally {
       setIsUpdating(false);
     }
+  };
+
+  const handleUpdateClick = () => {
+    setShowUpdateConfirmAlert(true);
   };
 
   const handlePointsChange = (e) => {
@@ -359,7 +372,7 @@ export default function EWasteSubmit() {
                     <AdminButton
                       type="update"
                       size="medium"
-                      onClick={handleUpdateSubmission}
+                      onClick={handleUpdateClick}
                       disabled={
                         isUpdating ||
                         statusValue === originalStatus ||
@@ -467,6 +480,28 @@ export default function EWasteSubmit() {
           </div>
         </div>
       )}
+
+      {/* Update Confirmation Alert */}
+      <Alert
+        type="confirm"
+        title="Update Submission"
+        message={`Are you sure you want to mark this submission as ${statusValue}?`}
+        confirmText="Confirm"
+        cancelText="Cancel"
+        onConfirm={() => handleUpdateSubmission()}
+        onCancel={() => setShowUpdateConfirmAlert(false)}
+        isOpen={showUpdateConfirmAlert}
+      />
+
+      {/* Success Alert */}
+      <Alert
+        type="alert"
+        title={alertTitle}
+        message={alertMessage}
+        okText="OK"
+        onConfirm={() => setShowSuccessAlert(false)}
+        isOpen={showSuccessAlert}
+      />
     </>
   );
 }

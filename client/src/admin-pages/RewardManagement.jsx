@@ -2,13 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import { rewardsAPI } from "../api/rewards";
 import AdminSidebar from "../admin-components/AdminSidebar";
 import Header from "../admin-components/Header";
+import Alert from "../admin-components/Alert";
 import "./styles/RewardManagement.css";
 import { FaSearch } from "react-icons/fa";
 import {
   TbPlayerTrackPrevFilled,
   TbPlayerTrackNextFilled,
 } from "react-icons/tb";
-import { toast } from "react-hot-toast";
 import AdminButton from "../admin-components/AdminButton";
 
 export default function RewardManagement() {
@@ -26,6 +26,11 @@ export default function RewardManagement() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
+  const [showConfirmAlert, setShowConfirmAlert] = useState(false);
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertTitle, setAlertTitle] = useState("");
+  const [pendingAction, setPendingAction] = useState(null);
   const dropdownRef = useRef(null);
   const rowsPerPage = 5;
 
@@ -48,7 +53,9 @@ export default function RewardManagement() {
       setLoading(false);
     } catch (error) {
       console.error("Error fetching rewards:", error);
-      toast.error("Failed to fetch rewards");
+      setAlertTitle("Error");
+      setAlertMessage("Failed to fetch rewards");
+      setShowSuccessAlert(true);
       setLoading(false);
     }
   };
@@ -131,28 +138,36 @@ export default function RewardManagement() {
     setHasChanges(false);
   };
 
-  const handleRemove = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this reward?")) {
-      return;
-    }
+  const handleRemoveClick = (id) => {
+    setPendingAction({ type: "remove", id });
+    setShowConfirmAlert(true);
+  };
 
+  const handleRemove = async () => {
+    const id = pendingAction.id;
     setIsDeleting(true);
     setDeletingId(id);
+    setShowConfirmAlert(false);
 
     try {
       if (!id.startsWith("new-")) {
         await rewardsAPI.deleteReward(id);
-        toast.success("Reward deleted successfully");
       }
       setRewards((prev) => prev.filter((r) => r.id !== id));
       if (editId === id) setEditId(null);
       if (newRewardId === id) setNewRewardId(null);
+      setAlertTitle("Success");
+      setAlertMessage("Reward deleted successfully");
+      setShowSuccessAlert(true);
     } catch (error) {
       console.error("Error deleting reward:", error);
-      toast.error("Failed to delete reward");
+      setAlertTitle("Error");
+      setAlertMessage("Failed to delete reward");
+      setShowSuccessAlert(true);
     } finally {
       setIsDeleting(false);
       setDeletingId(null);
+      setPendingAction(null);
     }
   };
 
@@ -169,7 +184,7 @@ export default function RewardManagement() {
     );
   };
 
-  const handleUpdate = async () => {
+  const handleUpdateClick = () => {
     const current = rewards.find((r) => r.id === editId);
     if (
       !current.name ||
@@ -177,16 +192,26 @@ export default function RewardManagement() {
       current.points === undefined ||
       !current.description
     ) {
-      toast.error("All fields are required");
+      setAlertTitle("Validation Error");
+      setAlertMessage("All fields are required");
+      setShowSuccessAlert(true);
       return;
     }
+    const isNewReward = current.id.startsWith("new-");
+    setPendingAction({ type: "update", isNew: isNewReward });
+    setShowConfirmAlert(true);
+  };
 
+  const handleUpdate = async () => {
+    const current = rewards.find((r) => r.id === editId);
     const isNewReward = current.id.startsWith("new-");
     if (isNewReward) {
       setIsAdding(true);
     } else {
       setIsUpdating(true);
     }
+
+    setShowConfirmAlert(false);
 
     try {
       const formData = new FormData();
@@ -201,10 +226,8 @@ export default function RewardManagement() {
       let response;
       if (isNewReward) {
         response = await rewardsAPI.addReward(formData);
-        toast.success("Reward added successfully");
       } else {
         response = await rewardsAPI.updateReward(current.id, formData);
-        toast.success("Reward updated successfully");
       }
 
       // Update the rewards list with the new data
@@ -214,12 +237,22 @@ export default function RewardManagement() {
       setNewRewardId(null);
       setOriginalReward(null);
       setHasChanges(false);
+      setAlertTitle("Success");
+      setAlertMessage(
+        isNewReward
+          ? "Reward added successfully"
+          : "Reward updated successfully",
+      );
+      setShowSuccessAlert(true);
     } catch (error) {
       console.error("Error saving reward:", error);
-      toast.error("Failed to save reward");
+      setAlertTitle("Error");
+      setAlertMessage("Failed to save reward");
+      setShowSuccessAlert(true);
     } finally {
       setIsAdding(false);
       setIsUpdating(false);
+      setPendingAction(null);
     }
   };
 
@@ -248,12 +281,13 @@ export default function RewardManagement() {
   const isEditingOrAdding = editId !== null;
   const isPerformingAction = isAdding || isUpdating || isDeleting;
 
-  // Handler to show toast if restricted
+  // Handler to show alert if restricted
   const showEditWarning = () => {
-    toast.error(
+    setAlertTitle("Action Not Allowed");
+    setAlertMessage(
       "Finish adding or editing the current reward before proceeding.",
-      { position: "bottom-right" },
     );
+    setShowSuccessAlert(true);
   };
 
   useEffect(() => {
@@ -515,7 +549,7 @@ export default function RewardManagement() {
                             type={reward.id === newRewardId ? "save" : "update"}
                             size="small"
                             className="reward-table-btn"
-                            onClick={handleUpdate}
+                            onClick={handleUpdateClick}
                             disabled={
                               (reward.id === newRewardId &&
                                 (!isAddFormComplete() || isAdding)) ||
@@ -548,7 +582,7 @@ export default function RewardManagement() {
                                 type="remove"
                                 size="small"
                                 className="reward-table-btn"
-                                onClick={() => handleRemove(reward.id)}
+                                onClick={() => handleRemoveClick(reward.id)}
                                 disabled={
                                   (isDeleting && deletingId === reward.id) ||
                                   isUpdating ||
@@ -652,6 +686,41 @@ export default function RewardManagement() {
             </button>
           </div>
         </div>
+
+        <Alert
+          type="confirm"
+          title="Confirm Action"
+          message={
+            pendingAction?.type === "remove"
+              ? "Are you sure you want to delete this reward?"
+              : pendingAction?.isNew
+                ? "Are you sure you want to add this new reward?"
+                : "Are you sure you want to update this reward?"
+          }
+          isOpen={showConfirmAlert}
+          onConfirm={
+            pendingAction?.type === "remove" ? handleRemove : handleUpdate
+          }
+          onCancel={() => {
+            setShowConfirmAlert(false);
+            setPendingAction(null);
+          }}
+          confirmText="Confirm"
+          cancelText="Cancel"
+        />
+
+        <Alert
+          type="alert"
+          title={alertTitle}
+          message={alertMessage}
+          isOpen={showSuccessAlert}
+          onConfirm={() => {
+            setShowSuccessAlert(false);
+            setAlertTitle("");
+            setAlertMessage("");
+          }}
+          okText="OK"
+        />
       </div>
     </div>
   );

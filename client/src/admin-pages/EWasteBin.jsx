@@ -5,6 +5,7 @@ import imgPlaceholder from "../assets/icons/mrcpu.png";
 import React, { useState, useRef, useEffect } from "react";
 import BinTable from "../admin-components/BinTable";
 import AdminButton from "../admin-components/AdminButton";
+import Alert from "../admin-components/Alert";
 import { binsAPI } from "../api/bins";
 import { activityLogAPI } from "../api/activityLog";
 
@@ -37,6 +38,13 @@ export default function EWasteBin() {
   const [showStatusSubmenu, setShowStatusSubmenu] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
+  const [showSaveConfirmAlert, setShowSaveConfirmAlert] = useState(false);
+  const [showUpdateConfirmAlert, setShowUpdateConfirmAlert] = useState(false);
+  const [showRemoveConfirmAlert, setShowRemoveConfirmAlert] = useState(false);
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [successTitle, setSuccessTitle] = useState("");
+  const [binToRemove, setBinToRemove] = useState(null);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -186,21 +194,25 @@ export default function EWasteBin() {
     setBinImg(null);
   };
 
-  const handleRemoveBin = async (binToRemove) => {
+  const handleRemoveBin = async (binToRemoveItem) => {
     setIsRemoving(true);
     try {
-      await binsAPI.deleteBin(binToRemove.binId);
-      const updatedBins = bins.filter((bin) => bin.binId !== binToRemove.binId);
+      await binsAPI.deleteBin(binToRemoveItem.binId);
+      const updatedBins = bins.filter((bin) => bin.binId !== binToRemoveItem.binId);
       setBins(updatedBins);
-      if (selectedBin?.binId === binToRemove.binId) {
+      if (selectedBin?.binId === binToRemoveItem.binId) {
         handleClosePanel();
       }
       await fetchRecentActivities();
-      alert(`Bin "${binToRemove.binId}" removed!`);
+      setSuccessTitle("Bin Removed");
+      setSuccessMessage(`Bin at "${binToRemoveItem.location}" has been removed successfully.`);
+      setShowSuccessAlert(true);
+      setShowRemoveConfirmAlert(false);
     } catch (err) {
       alert("Failed to remove bin.");
     } finally {
       setIsRemoving(false);
+      setBinToRemove(null);
     }
   };
 
@@ -241,7 +253,10 @@ export default function EWasteBin() {
       );
       await fetchRecentActivities();
       handleClosePanel();
-      alert(`Bin "${selectedBin.binId}" updated!`);
+      setSuccessTitle("Bin Updated");
+      setSuccessMessage(`Bin at "${selectedBin.location}" has been updated successfully.`);
+      setShowSuccessAlert(true);
+      setShowUpdateConfirmAlert(false);
     } catch (err) {
       alert("Failed to update bin.");
     } finally {
@@ -281,7 +296,10 @@ export default function EWasteBin() {
       ]);
       await fetchRecentActivities();
       handleClosePanel();
-      alert(`New bin "${bin._id}" added!`);
+      setSuccessTitle("Bin Added");
+      setSuccessMessage(`New bin "${bin.location}" has been added successfully.`);
+      setShowSuccessAlert(true);
+      setShowSaveConfirmAlert(false);
     } catch (err) {
       alert("Failed to add bin.");
     } finally {
@@ -291,9 +309,9 @@ export default function EWasteBin() {
 
   const handleSubmitBin = () => {
     if (selectedBin?.binId === "new") {
-      handleAddSubmitBin();
+      setShowSaveConfirmAlert(true);
     } else {
-      handleUpdateBin();
+      setShowUpdateConfirmAlert(true);
     }
   };
 
@@ -442,7 +460,10 @@ export default function EWasteBin() {
                         <AdminButton
                           type="remove"
                           size="medium"
-                          onClick={() => handleRemoveBin(selectedBin)}
+                          onClick={() => {
+                            setBinToRemove(selectedBin);
+                            setShowRemoveConfirmAlert(true);
+                          }}
                           disabled={isSaving || isRemoving}
                         >
                           {isRemoving ? "REMOVING..." : "REMOVE"}
@@ -613,6 +634,59 @@ export default function EWasteBin() {
             </div>
           </div>
         </div>
+
+        {/* Save Confirmation Alert */}
+        <Alert
+          type="confirm"
+          title="Add New Bin"
+          message="Are you sure you want to add this new bin? Please review the details before confirming."
+          confirmText="Confirm"
+          cancelText="Cancel"
+          onConfirm={() => handleAddSubmitBin()}
+          onCancel={() => setShowSaveConfirmAlert(false)}
+          isOpen={showSaveConfirmAlert}
+        />
+
+        {/* Update Confirmation Alert */}
+        <Alert
+          type="confirm"
+          title="Update Bin"
+          message={`Are you sure you want to update bin at "${selectedBin?.location}"? This will save all changes you made.`}
+          confirmText="Confirm"
+          cancelText="Cancel"
+          onConfirm={() => handleUpdateBin()}
+          onCancel={() => setShowUpdateConfirmAlert(false)}
+          isOpen={showUpdateConfirmAlert}
+        />
+
+        {/* Remove Confirmation Alert */}
+        <Alert
+          type="confirm"
+          title="Remove Bin"
+          message={`Are you sure you want to remove bin at "${binToRemove?.location}"? This action cannot be undone.`}
+          confirmText="Confirm"
+          cancelText="Cancel"
+          onConfirm={() => {
+            if (binToRemove) {
+              handleRemoveBin(binToRemove);
+            }
+          }}
+          onCancel={() => {
+            setShowRemoveConfirmAlert(false);
+            setBinToRemove(null);
+          }}
+          isOpen={showRemoveConfirmAlert}
+        />
+
+        {/* Success Alert */}
+        <Alert
+          type="alert"
+          title={successTitle}
+          message={successMessage}
+          okText="OK"
+          onConfirm={() => setShowSuccessAlert(false)}
+          isOpen={showSuccessAlert}
+        />
       </div>
     </>
   );

@@ -13,7 +13,7 @@ import {
 } from "react-icons/ai";
 import { IoRibbonOutline } from "react-icons/io5";
 import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 import { useContext } from "react";
 import { UserContext } from "../context/userContext";
 
@@ -26,7 +26,7 @@ export default function AdminSidebar() {
     // Clear session on server, then immediately clear local state and navigate
     logout()
       .then(() => {
-        toast.success("User logged Out");
+        // toast.success("User logged Out");
         navigate("/admin/login");
       });
   }

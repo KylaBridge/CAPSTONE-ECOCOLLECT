@@ -6,6 +6,7 @@ import { AiOutlineUpload, AiOutlineDelete } from "react-icons/ai";
 import placeholderBadge from "../assets/icons/mrcpu.png";
 import AdminButton from "../admin-components/AdminButton";
 import { badgesAPI } from "../api/badges";
+import Alert from "../admin-components/Alert";
 
 export default function BadgeManagement() {
   const [badgeName, setBadgeName] = useState("");
@@ -27,6 +28,11 @@ export default function BadgeManagement() {
   const [showStatusSubmenu, setShowStatusSubmenu] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
+  const [showConfirmAlert, setShowConfirmAlert] = useState(false);
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertTitle, setAlertTitle] = useState("");
+  const [pendingAction, setPendingAction] = useState(null);
   const dropdownRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -176,32 +182,55 @@ export default function BadgeManagement() {
     }
   };
 
-  const handleRemoveBadge = async (badgeToRemove) => {
+  const handleRemoveClick = (badgeToRemove) => {
+    setPendingAction({ type: "remove", badge: badgeToRemove });
+    setShowConfirmAlert(true);
+  };
+
+  const handleRemoveBadge = async () => {
+    const badgeToRemove = pendingAction.badge;
     setIsRemoving(true);
+    setShowConfirmAlert(false);
+
     try {
       await badgesAPI.deleteBadge(badgeToRemove._id);
       setBadges(badges.filter((badge) => badge._id !== badgeToRemove._id));
       if (selectedBadge?._id === badgeToRemove._id) {
         handleClosePanel();
       }
-      alert(`Badge "${badgeToRemove.name}" removed!`);
+      setAlertTitle("Success");
+      setAlertMessage(`Badge "${badgeToRemove.name}" removed!`);
+      setShowSuccessAlert(true);
     } catch (err) {
       console.error("Error deleting badge:", err);
-      alert("Failed to delete badge");
+      setAlertTitle("Error");
+      setAlertMessage("Failed to delete badge");
+      setShowSuccessAlert(true);
     } finally {
       setIsRemoving(false);
+      setPendingAction(null);
     }
   };
 
-  const handleSubmitBadge = async (e) => {
+  const handleSubmitClick = (e) => {
     e.preventDefault();
     // Prevent negative points
     if (isNaN(pointsRequired) || Number(pointsRequired) < 0) {
-      alert("Points Required must be a non-negative number.");
+      setAlertTitle("Validation Error");
+      setAlertMessage("Points Required must be a non-negative number.");
+      setShowSuccessAlert(true);
       return;
     }
 
+    const isNewBadge = selectedBadge?.id === "new";
+    setPendingAction({ type: "submit", isNew: isNewBadge });
+    setShowConfirmAlert(true);
+  };
+
+  const handleSubmitBadge = async () => {
+    setShowConfirmAlert(false);
     setIsSaving(true);
+
     try {
       const formData = new FormData();
       formData.append("name", badgeName);
@@ -212,7 +241,9 @@ export default function BadgeManagement() {
         formData.append("image", badgeIcon);
       }
 
-      if (selectedBadge?.id === "new") {
+      const isNewBadge = selectedBadge?.id === "new";
+
+      if (isNewBadge) {
         const response = await badgesAPI.addBadge(formData);
         // Transform image path for immediate preview
         const newBadge = {
@@ -224,7 +255,9 @@ export default function BadgeManagement() {
         };
         setBadges([...badges, newBadge]);
         handleClosePanel();
-        alert("New badge added!");
+        setAlertTitle("Success");
+        setAlertMessage("New badge added!");
+        setShowSuccessAlert(true);
       } else {
         const response = await badgesAPI.updateBadge(
           selectedBadge._id,
@@ -244,13 +277,18 @@ export default function BadgeManagement() {
           ),
         );
         handleClosePanel();
-        alert("Badge updated!");
+        setAlertTitle("Success");
+        setAlertMessage("Badge updated!");
+        setShowSuccessAlert(true);
       }
     } catch (err) {
       console.error("Error saving badge:", err);
-      alert("Failed to save badge");
+      setAlertTitle("Error");
+      setAlertMessage("Failed to save badge");
+      setShowSuccessAlert(true);
     } finally {
       setIsSaving(false);
+      setPendingAction(null);
     }
   };
 
@@ -574,7 +612,7 @@ export default function BadgeManagement() {
                         <AdminButton
                           type={selectedBadge?.id === "new" ? "save" : "update"}
                           size="medium"
-                          onClick={handleSubmitBadge}
+                          onClick={handleSubmitClick}
                           disabled={!isFormValid || isSaving || isRemoving}
                         >
                           {isSaving
@@ -589,7 +627,7 @@ export default function BadgeManagement() {
                           <AdminButton
                             type="remove"
                             size="medium"
-                            onClick={() => handleRemoveBadge(selectedBadge)}
+                            onClick={() => handleRemoveClick(selectedBadge)}
                             disabled={isSaving || isRemoving}
                           >
                             {isRemoving ? "REMOVING..." : "REMOVE"}
@@ -616,6 +654,41 @@ export default function BadgeManagement() {
             </div>
           </div>
         </div>
+
+        <Alert
+          type="confirm"
+          title="Confirm Action"
+          message={
+            pendingAction?.type === "remove"
+              ? `Are you sure you want to delete this badge?"`
+              : pendingAction?.isNew
+                ? "Are you sure you want to add this new badge?"
+                : "Are you sure you want to update this badge?"
+          }
+          isOpen={showConfirmAlert}
+          onConfirm={
+            pendingAction?.type === "remove" ? handleRemoveBadge : handleSubmitBadge
+          }
+          onCancel={() => {
+            setShowConfirmAlert(false);
+            setPendingAction(null);
+          }}
+          confirmText="Confirm"
+          cancelText="Cancel"
+        />
+
+        <Alert
+          type="alert"
+          title={alertTitle}
+          message={alertMessage}
+          isOpen={showSuccessAlert}
+          onConfirm={() => {
+            setShowSuccessAlert(false);
+            setAlertTitle("");
+            setAlertMessage("");
+          }}
+          okText="OK"
+        />
       </div>
     </>
   );

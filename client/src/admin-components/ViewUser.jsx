@@ -1,7 +1,7 @@
 import "./styles/ViewUser.css";
-import { toast } from "react-hot-toast";
 import { useState, useEffect, useContext } from "react";
 import AdminButton from "./AdminButton";
+import Alert from "./Alert";
 import { UserContext } from "../context/userContext";
 import { ewasteAPI } from "../api/ewaste";
 import { redemptionAPI } from "../api/redemption";
@@ -20,6 +20,11 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isChangingRole, setIsChangingRole] = useState(false);
   const [modalError, setModalError] = useState("");
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [showErrorAlert, setShowErrorAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertTitle, setAlertTitle] = useState("");
+  const [pendingRefresh, setPendingRefresh] = useState(false);
   const { user: currentUser } = useContext(UserContext);
 
   useEffect(() => {
@@ -78,7 +83,9 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
         setLoadingRewards(false);
       } catch (error) {
         console.error("Error fetching user data:", error);
-        toast.error("Failed to load user data");
+        setAlertTitle("Error");
+        setAlertMessage("Failed to load user data");
+        setShowErrorAlert(true);
         setLoadingContributions(false);
         setLoadingRewards(false);
       }
@@ -99,11 +106,13 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
 
       if (response.data.success) {
         await userAPI.deleteUser(user._id);
-        toast.success("User deleted successfully");
+        setAlertTitle("Success");
+        setAlertMessage("User deleted successfully");
+        setShowSuccessAlert(true);
         setShowDeleteModal(false);
         setPasswordConfirmation("");
         setModalError("");
-        onUserDeleted();
+        setPendingRefresh(true); // Mark that we need to refresh after alert is dismissed
       }
     } catch (error) {
       console.error("Error deleting user:", error);
@@ -131,12 +140,14 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
 
       if (response.data.success) {
         await userAPI.changeUserRole(user._id, { role: newRole });
-        toast.success(`User role changed to ${newRole} successfully`);
+        setAlertTitle("Success");
+        setAlertMessage(`User role changed to ${newRole} successfully`);
+        setShowSuccessAlert(true);
         setShowChangeRoleModal(false);
         setPasswordConfirmation("");
         setNewRole("");
         setModalError("");
-        onUserDeleted(); // Refresh the user data
+        setPendingRefresh(true); // Mark that we need to refresh after alert is dismissed
       }
     } catch (error) {
       console.error("Error changing user role:", error);
@@ -481,6 +492,32 @@ export default function ViewUser({ user, onUserDeleted, currentUserRole }) {
           </div>
         </div>
       )}
+
+      {/* Success Alert */}
+      <Alert
+        type="alert"
+        title={alertTitle}
+        message={alertMessage}
+        okText="OK"
+        onConfirm={() => {
+          setShowSuccessAlert(false);
+          if (pendingRefresh) {
+            setPendingRefresh(false);
+            onUserDeleted();
+          }
+        }}
+        isOpen={showSuccessAlert}
+      />
+
+      {/* Error Alert */}
+      <Alert
+        type="alert"
+        title="Error"
+        message={alertMessage}
+        okText="OK"
+        onConfirm={() => setShowErrorAlert(false)}
+        isOpen={showErrorAlert}
+      />
     </div>
   );
 }
