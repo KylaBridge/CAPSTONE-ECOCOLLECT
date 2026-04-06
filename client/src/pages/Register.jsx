@@ -23,7 +23,17 @@ const passwordRequirements = [
   { label: "At least one number", test: (pw) => /\d/.test(pw) },
 ];
 
-// Name validation - allow letters, numbers, spaces, hyphens, apostrophes, and underscores
+  // Email validation function
+  function isValidEmail(email) {
+    if (!email) return false;
+    // Local part: 64 chars max, domain part: 255 chars max
+    // local-part@domain.tld format
+    const emailRegex =
+      /^[a-zA-Z0-9._-]{1,64}@[a-zA-Z0-9.-]{1,255}\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+  }
+
+  // Name validation - allow letters, numbers, spaces, hyphens, apostrophes, and underscores
 const isValidName = (name) => {
   return /^[a-zA-Z0-9\s\-'_]+$/.test(name);
 };
@@ -108,8 +118,8 @@ export default function Register() {
   function handleChange(e) {
     const { name, value } = e.target;
 
-    // For name field, filter out invalid characters in real-time
     if (name === "name") {
+      // For name field, filter out invalid characters in real-time
       // Remove any characters that don't match our allowed pattern
       const filteredValue = value.replace(/[^a-zA-Z0-9\s\-'_]/g, "");
       setForm({ ...form, [name]: filteredValue });
@@ -147,6 +157,20 @@ export default function Register() {
     e.preventDefault();
     if (!form.email || !form.name) {
       toast.error("Please fill in all fields.");
+      return;
+    }
+    if (!isValidEmail(form.email)) {
+      toast.error("Invalid email format", {
+        duration: 4000,
+        position: "top-center",
+        style: {
+          background: "#f44336",
+          color: "white",
+          fontSize: "0.9rem",
+          fontWeight: "600",
+          padding: "16px",
+        },
+      });
       return;
     }
     if (!isValidName(form.name)) {
@@ -249,7 +273,7 @@ export default function Register() {
             <input
               id="email"
               name="email"
-              type="email"
+              type="text"
               value={form.email}
               onChange={handleChange}
               required

@@ -191,8 +191,16 @@
     border-color: #284c42;
 }
 
+.register-btn2:hover:not(:disabled) {
+    background-color: #1e3830;
+    border-color: #1e3830;
+}
+
 .register-btn2:disabled {
-    opacity: 0.7;
+    background-color: #999999;
+    color: #cccccc;
+    border-color: #999999;
+    opacity: 0.6;
     cursor: not-allowed;
 }
 
@@ -285,8 +293,16 @@
     transition: background 0.2s;
 }
 
-.google-btn:hover {
+.google-btn:hover:not(:disabled) {
     background: #f7f7f7;
+}
+
+.google-btn:disabled {
+    background-color: #e0e0e0;
+    color: #999999;
+    border-color: #cccccc;
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .google-icon {

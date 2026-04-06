@@ -42,7 +42,14 @@ export default function Login() {
   const [newResetToken, setNewResetToken] = useState(null);
 
   function handleResetFormChange(e) {
-    setResetForm({ ...resetForm, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    // Only allow numeric values for the verification code
+    if (name === "code") {
+      const numericValue = value.replace(/[^0-9]/g, "");
+      setResetForm({ ...resetForm, [name]: numericValue });
+    } else {
+      setResetForm({ ...resetForm, [name]: value });
+    }
   }
 
   function isValidEmail(email) {
@@ -322,6 +329,8 @@ export default function Login() {
                 id="reset-code"
                 name="code"
                 type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 value={resetForm.code}
                 onChange={handleResetFormChange}
                 required
