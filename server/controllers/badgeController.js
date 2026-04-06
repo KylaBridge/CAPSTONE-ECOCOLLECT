@@ -195,6 +195,25 @@ const deleteBadge = async (req, res) => {
 
     await Badge.findByIdAndDelete(id);
 
+    // Remove this badge from users' badgeHistory entries
+    const usersWithBadge = await User.find(
+      { "badgeHistory.badgeId": badge._id },
+      { _id: 1 },
+    );
+
+    if (usersWithBadge.length) {
+      const userIds = usersWithBadge.map((u) => u._id);
+
+      await User.updateMany(
+        { _id: { $in: userIds } },
+        { $pull: { badgeHistory: { badgeId: badge._id } } },
+      );
+
+      for (const uid of userIds) {
+        await updateUserRank(uid);
+      }
+    }
+
     // Log activity
     await ActivityLog.create({
       userId: req.user?._id || null,
