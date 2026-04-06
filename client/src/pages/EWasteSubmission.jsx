@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from "react";
+import { toast } from "react-hot-toast";
 import { UserContext } from "../context/userContext";
 import { ewasteAPI } from "../api/ewaste";
 import "./styles/EWasteSubmission.css";
@@ -29,18 +30,18 @@ export default function EWasteSubmission() {
 
     // Check if adding new files would exceed the limit
     if (attachments.length + files.length > maxImages) {
-      alert(`You can only upload a maximum of ${maxImages} images.`);
+      toast.error(`You can only upload a maximum of ${maxImages} images.`);
       return;
     }
 
     files.forEach((file) => {
       if (!allowedTypes.includes(file.type)) {
-        alert(`Invalid file type: ${file.name}`);
+        toast.error(`Invalid file type: ${file.name}`);
         return;
       }
 
       if (file.size > maxSize) {
-        alert(`File too large: ${file.name}`);
+        toast.error(`File too large: ${file.name}`);
         return;
       }
 
@@ -73,7 +74,7 @@ export default function EWasteSubmission() {
 
   const handleSubmit = async () => {
     if (!user?._id) {
-      alert("User not found. Please log in again.");
+      toast.error("User not found. Please log in again.");
       return;
     }
 
@@ -88,14 +89,14 @@ export default function EWasteSubmission() {
       const response = await ewasteAPI.submitEWaste(formData);
 
       if (response.status === 201) {
-        alert("E-Waste submitted successfully!");
+        toast.success("E-Waste submitted successfully!");
         setAttachments([]);
         setSelectedCategory("");
         fetchSubmissionLogs();
       }
     } catch (err) {
       console.error(err);
-      alert("An error occurred while submitting.");
+      toast.error("An error occurred while submitting.");
     } finally {
       setIsSubmitting(false);
     }
