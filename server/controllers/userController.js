@@ -49,6 +49,15 @@ const updateUserRank = async (userId) => {
       modified = true;
     }
 
+    // If the user has no effective badge, clear rank since rank is badge-based.
+    if (!highestBadge || user.badgeHistory.length === 0) {
+      if (user.rank !== null || user.rankEarnedAt !== null) {
+        user.rank = "Unranked";
+        user.rankEarnedAt = null;
+        modified = true;
+      }
+    }
+
     if (modified) {
       await user.save();
     }
