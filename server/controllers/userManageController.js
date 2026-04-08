@@ -311,8 +311,8 @@ const addUser = async (req, res) => {
         role === "admin"
           ? "Admin Created"
           : role === "superadmin"
-          ? "Superadmin Created"
-          : "User Created";
+            ? "Superadmin Created"
+            : "User Created";
       await ActivityLog.create({
         userId: logUserId,
         userEmail: logUserEmail,
@@ -329,8 +329,8 @@ const addUser = async (req, res) => {
       role === "admin"
         ? "Admin"
         : role === "superadmin"
-        ? "Superadmin"
-        : "User";
+          ? "Superadmin"
+          : "User";
     res.status(201).json({
       message: `${roleText} Created Successfully`,
       user: userResponse,
@@ -347,14 +347,29 @@ const changeUserRole = async (req, res) => {
     const { id } = req.params;
     const { role } = req.body;
 
+    const existingUser = await User.findById(id).select("_id email role");
+
+    if (!existingUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     const user = await User.findByIdAndUpdate(
       id,
       { role },
-      { new: true, select: "_id name email role" }
+      { new: true, select: "_id name email role" },
     );
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    const logUserId = req.user?._id;
+    const logUserEmail = req.user?.email || "Unknown";
+
+    if (logUserId) {
+      await ActivityLog.create({
+        userId: logUserId,
+        userEmail: logUserEmail,
+        userRole: req.user?.role,
+        action: "User Role Change",
+        details: `Changed ${existingUser.email} role from ${existingUser.role} to ${role}`,
+      });
     }
 
     res.status(200).json({

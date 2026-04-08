@@ -39,6 +39,7 @@ const activityLogSchema = new Schema({
       "User Created",
       "User Deleted",
       "Admin Created",
+      "User Role Change",
     ],
   },
   details: {
