@@ -54,7 +54,7 @@ const getEwastes = async (req, res) => {
       status: "Approved",
     });
     const othersCount = await EWaste.countDocuments({
-      category: "Others",
+      category: "others",
       status: "Approved",
     });
 
