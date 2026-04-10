@@ -149,8 +149,7 @@ export default function EWasteSubmission() {
                 us what kind of e-waste you're sending.
               </li>
               <li>
-                <IoMdArrowDroprightCircle className="instruction-icon" /> Add
-                pics at least 1 to 5. Only upload 5 pics.
+                <IoMdArrowDroprightCircle className="instruction-icon" /> Upload a minimum of 1 and a maximum of 5 images.
               </li>
               <li>
                 <IoMdArrowDroprightCircle className="instruction-icon" /> We'll
