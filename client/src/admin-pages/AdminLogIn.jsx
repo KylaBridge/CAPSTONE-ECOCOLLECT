@@ -27,7 +27,7 @@ export default function AdminLogIn() {
       } else if (response.role === "admin" || response.role === "superadmin") {
         const roleText =
           response.role === "superadmin" ? "Super Admin" : "Admin";
-        toast.success(`${roleText} logged in`);
+        // toast.success(`${roleText} logged in`);
         navigate("/admin/dashboard");
       } else {
         toast.error("Invalid user role");

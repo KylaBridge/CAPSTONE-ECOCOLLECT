@@ -76,7 +76,7 @@ export default function Login() {
           toast.error(response.error);
         }
       } else {
-        toast.success("User logged in");
+        // toast.success("User logged in");
         navigate("/home");
       }
     } catch (error) {
