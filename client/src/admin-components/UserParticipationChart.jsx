@@ -67,6 +67,7 @@ export default function UserParticipationChart() {
   });
   const [totalUsers, setTotalUsers] = useState(0);
   const [showExportDropdown, setShowExportDropdown] = useState(false);
+  const [loading, setLoading] = useState(false);
   const exportDropdownRef = useRef(null);
 
   // Handle click outside for export dropdown
@@ -152,6 +153,7 @@ export default function UserParticipationChart() {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         // Fetch participation data
         const response = await userAPI.getUserParticipationData({
@@ -242,6 +244,8 @@ export default function UserParticipationChart() {
         });
       } catch (error) {
         console.error("Error fetching participation data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -368,7 +372,48 @@ export default function UserParticipationChart() {
         </div>
       </div>
 
-      <Line data={chartData} options={chartOptions} />
+      <div style={{ position: "relative" }}>
+        {loading && (
+          <div style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(184, 204, 179, 0.8)",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 100,
+            borderRadius: "8px",
+          }}>
+            <div style={{
+              border: "4px solid #f3f3f3",
+              borderTop: "4px solid #118653",
+              borderRadius: "50%",
+              width: "40px",
+              height: "40px",
+              animation: "spin 1s linear infinite",
+              marginBottom: "12px",
+            }}></div>
+            <p style={{
+              color: "#118653",
+              fontWeight: "600",
+              margin: "0",
+              fontSize: "0.9rem",
+            }}>Loading data...</p>
+          </div>
+        )}
+        <Line data={chartData} options={chartOptions} />
+      </div>
+
+      <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
 
       <p className="card-note">
         This chart shows the percentage of users actively participating in the
