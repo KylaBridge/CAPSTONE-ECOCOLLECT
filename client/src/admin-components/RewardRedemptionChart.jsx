@@ -10,7 +10,7 @@ import {
 } from "chart.js";
 import { useState, useEffect, useRef } from "react";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import { rewardsAPI } from "../api/rewards";
+import { redemptionAPI } from "../api/redemption";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
@@ -241,26 +241,51 @@ export default function RewardRedemptionChart() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const params = new URLSearchParams({
-          period: view,
-          year: selectedYear.toString(),
-          ...(view === "weekly" && {
-            month: selectedMonth.toString(),
-            ...(selectedWeek > 0 && { week: selectedWeek.toString() }),
-          }),
-          ...(view === "monthly" &&
-            selectedMonthForMonthlyView > 0 && {
-              month: selectedMonthForMonthlyView.toString(),
-            }),
+        const response = await redemptionAPI.getAllRedemptions();
+        const data = Array.isArray(response.data) ? response.data : [];
+
+        const filtered = data.filter((item) => {
+          if (!item?.redemptionDate) return false;
+          const redemptionDate = new Date(item.redemptionDate);
+          if (Number.isNaN(redemptionDate.getTime())) return false;
+          if (redemptionDate.getFullYear() !== selectedYear) return false;
+
+          if (view === "weekly") {
+            if (redemptionDate.getMonth() + 1 !== selectedMonth) return false;
+            if (selectedWeek > 0) {
+              const week = generateWeekRanges().find(
+                (range) => range.value === selectedWeek,
+              );
+              if (!week?.startDate || !week?.endDate) return false;
+              return (
+                redemptionDate >= week.startDate &&
+                redemptionDate <= week.endDate
+              );
+            }
+          }
+
+          if (view === "monthly" && selectedMonthForMonthlyView > 0) {
+            if (redemptionDate.getMonth() + 1 !== selectedMonthForMonthlyView) {
+              return false;
+            }
+          }
+
+          return true;
         });
 
-        const response = await rewardsAPI.getRewardRedemptionStats(
-          Object.fromEntries(params),
-        );
-        const data = response.data;
+        const countsByReward = filtered.reduce((acc, item) => {
+          const rewardName = item?.rewardName || item?.rewardId?.name;
+          if (!rewardName) return acc;
+          acc[rewardName] = (acc[rewardName] || 0) + 1;
+          return acc;
+        }, {});
 
-        const labels = data.map((item) => item._id);
-        const counts = data.map((item) => item.count);
+        const sortedEntries = Object.entries(countsByReward).sort(
+          (a, b) => b[1] - a[1],
+        );
+
+        const labels = sortedEntries.map(([label]) => label);
+        const counts = sortedEntries.map(([, count]) => count);
 
         setChartData({
           labels,
