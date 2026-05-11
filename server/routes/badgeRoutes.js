@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
 const {
   sanitizeFilePaths,
   validateUrlParameters,
@@ -17,23 +15,9 @@ const {
   getBadgeCount,
   getBadgeById,
 } = require("../controllers/badgeController");
+const { signUrlForPath } = require("../helpers/s3");
 
-// Ensure badges images folder exists
-const badgesDirectory = path.join(__dirname, "..", "uploads", "badges");
-if (!fs.existsSync(badgesDirectory)) {
-  fs.mkdirSync(badgesDirectory, { recursive: true });
-}
-
-const badgesStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/badges/");
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, "badge-" + uniqueSuffix + path.extname(file.originalname));
-  },
-});
-
+const badgesStorage = multer.memoryStorage();
 const badgesUpload = multer({ storage: badgesStorage });
 
 // Apply security middleware (except for public routes)
@@ -83,6 +67,11 @@ router.get("/public/:id", async (req, res) => {
     // If user information is provided in query params, include it
     let badgeWithUser = { ...badge.toObject() };
 
+    if (badgeWithUser.image && badgeWithUser.image.path) {
+      const signedPath = await signUrlForPath(badgeWithUser.image.path);
+      badgeWithUser.image.path = signedPath || badgeWithUser.image.path;
+    }
+
     if (userId || userName || userEmail) {
       badgeWithUser.earnedBy = {
         name: userName || "EcoCollect Champion",
@@ -119,7 +108,10 @@ router.get("/public/:id", async (req, res) => {
           const user = await User.findOne({ email: userEmail });
           actualEarnedDate = findBadgeEarnedDateFromUser(user);
         } catch (userError) {
-          console.warn("Could not fetch user badge history by email:", userError);
+          console.warn(
+            "Could not fetch user badge history by email:",
+            userError,
+          );
         }
       }
 
@@ -128,7 +120,10 @@ router.get("/public/:id", async (req, res) => {
           const user = await User.findOne({ name: userName });
           actualEarnedDate = findBadgeEarnedDateFromUser(user);
         } catch (userError) {
-          console.warn("Could not fetch user badge history by name:", userError);
+          console.warn(
+            "Could not fetch user badge history by name:",
+            userError,
+          );
         }
       }
 

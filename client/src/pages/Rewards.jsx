@@ -9,6 +9,7 @@ import RewardsHeader from "../assets/headers/rewards-header.png";
 import Sidebar from "../components/Sidebar";
 import { toast } from "react-hot-toast";
 import Logs from "../components/Logs";
+import resolveImageUrl from "../utils/resolveImageUrl";
 
 export default function Rewards() {
   const [showNavbar, setShowNavbar] = useState(false);
@@ -53,9 +54,7 @@ export default function Rewards() {
         name: reward.name,
         price: reward.points,
         description: reward.description,
-        img: reward.image
-          ? `${import.meta.env.VITE_API_URL}/${reward.image.path}`
-          : null,
+        img: reward.image ? resolveImageUrl(reward.image.path) : null,
       }));
       setRewards(formattedRewards);
       setLoading(false);

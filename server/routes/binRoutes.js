@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
 const {
   sanitizeFilePaths,
   validateUrlParameters,
@@ -18,22 +16,7 @@ const {
   getBinById,
 } = require("../controllers/binController");
 
-// Ensure bins images folder exists
-const binsDirectory = path.join(__dirname, "..", "uploads", "bins");
-if (!fs.existsSync(binsDirectory)) {
-  fs.mkdirSync(binsDirectory, { recursive: true });
-}
-
-const binsStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/bins/");
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, "bin-" + uniqueSuffix + path.extname(file.originalname));
-  },
-});
-
+const binsStorage = multer.memoryStorage();
 const binsUpload = multer({ storage: binsStorage });
 
 // Apply security middleware

@@ -6,6 +6,7 @@ import { MdOutlineZoomOutMap } from "react-icons/md";
 import Alert from "../admin-components/Alert";
 import "./styles/EWasteSubmit.css";
 import AdminButton from "../admin-components/AdminButton";
+import resolveImageUrl from "../utils/resolveImageUrl";
 
 export default function EWasteSubmit() {
   const [submissions, setSubmissions] = useState([]);
@@ -39,9 +40,9 @@ export default function EWasteSubmit() {
             submissionDate: new Date(sub.createdAt).toLocaleDateString(),
             status: sub.status || "Pending",
             category: sub.category,
-            images: sub.attachments.map(
-              (img) => `${import.meta.env.VITE_API_URL}/${img.path}`,
-            ),
+            images: sub.attachments
+              .map((img) => resolveImageUrl(img.path))
+              .filter(Boolean),
           }));
         setSubmissions(formattedData);
       })
@@ -299,25 +300,31 @@ export default function EWasteSubmit() {
                         {"<"}
                       </button>
                     )}
-                    <div
-                      className="zoomable-image-wrapper"
-                      onClick={() => {
-                        setModalImageIndex(currentImageIndex);
-                        setImageModalOpen(true);
-                      }}
-                    >
-                      <img
-                        src={selectedSubmission.images[currentImageIndex]}
-                        alt="Submission"
-                        onError={(e) => {
-                          e.target.src = "/assets/fallback.png";
+                    {selectedSubmission?.images?.length ? (
+                      <div
+                        className="zoomable-image-wrapper"
+                        onClick={() => {
+                          setModalImageIndex(currentImageIndex);
+                          setImageModalOpen(true);
                         }}
-                        className="zoomable-image"
-                      />
-                      <div className="zoom-icon">
-                        <MdOutlineZoomOutMap size={24} />
+                      >
+                        <img
+                          src={selectedSubmission.images[currentImageIndex]}
+                          alt="Submission"
+                          onError={(e) => {
+                            e.target.src = "/assets/fallback.png";
+                          }}
+                          className="zoomable-image"
+                        />
+                        <div className="zoom-icon">
+                          <MdOutlineZoomOutMap size={24} />
+                        </div>
                       </div>
-                    </div>
+                    ) : (
+                      <div className="no-image-placeholder">
+                        No images uploaded for this submission.
+                      </div>
+                    )}
                     {selectedSubmission?.images?.length > 1 && (
                       <button
                         className="nav-button next"

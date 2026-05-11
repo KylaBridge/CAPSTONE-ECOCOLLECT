@@ -8,15 +8,10 @@ import AdminButton from "../admin-components/AdminButton";
 import Alert from "../admin-components/Alert";
 import { binsAPI } from "../api/bins";
 import { activityLogAPI } from "../api/activityLog";
+import resolveImageUrl from "../utils/resolveImageUrl";
 
 // Helper to get full image URL
-const getImageUrl = (imagePath) => {
-  if (!imagePath) return null;
-  if (imagePath.startsWith("/uploads")) {
-    return `${import.meta.env.VITE_API_URL}${imagePath}`;
-  }
-  return imagePath;
-};
+const getImageUrl = (imagePath) => resolveImageUrl(imagePath);
 
 export default function EWasteBin() {
   const binColumns = ["binId", "location", "status", "lastUpdated", "action"];
@@ -198,14 +193,18 @@ export default function EWasteBin() {
     setIsRemoving(true);
     try {
       await binsAPI.deleteBin(binToRemoveItem.binId);
-      const updatedBins = bins.filter((bin) => bin.binId !== binToRemoveItem.binId);
+      const updatedBins = bins.filter(
+        (bin) => bin.binId !== binToRemoveItem.binId,
+      );
       setBins(updatedBins);
       if (selectedBin?.binId === binToRemoveItem.binId) {
         handleClosePanel();
       }
       await fetchRecentActivities();
       setSuccessTitle("Bin Removed");
-      setSuccessMessage(`Bin at "${binToRemoveItem.location}" has been removed successfully.`);
+      setSuccessMessage(
+        `Bin at "${binToRemoveItem.location}" has been removed successfully.`,
+      );
       setShowSuccessAlert(true);
       setShowRemoveConfirmAlert(false);
     } catch (err) {
@@ -254,7 +253,9 @@ export default function EWasteBin() {
       await fetchRecentActivities();
       handleClosePanel();
       setSuccessTitle("Bin Updated");
-      setSuccessMessage(`Bin at "${selectedBin.location}" has been updated successfully.`);
+      setSuccessMessage(
+        `Bin at "${selectedBin.location}" has been updated successfully.`,
+      );
       setShowSuccessAlert(true);
       setShowUpdateConfirmAlert(false);
     } catch (err) {
@@ -297,7 +298,9 @@ export default function EWasteBin() {
       await fetchRecentActivities();
       handleClosePanel();
       setSuccessTitle("Bin Added");
-      setSuccessMessage(`New bin "${bin.location}" has been added successfully.`);
+      setSuccessMessage(
+        `New bin "${bin.location}" has been added successfully.`,
+      );
       setShowSuccessAlert(true);
       setShowSaveConfirmAlert(false);
     } catch (err) {

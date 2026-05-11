@@ -7,6 +7,7 @@ import BadgeShareCard from "./BadgeShareCard";
 import { FaDownload } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import downloadBadge from "../utils/downloadBadge";
+import resolveImageUrl from "../utils/resolveImageUrl";
 import "./styles/ShareableBadge.css";
 
 const ShareableBadge = ({ badgeId }) => {
@@ -75,7 +76,11 @@ const ShareableBadge = ({ badgeId }) => {
     if (!shareCardRef.current) return;
     try {
       const fileName = `${badge?.name || "badge"}-badge-certificate.png`;
-      await downloadBadge(shareCardRef.current, { width: 1200, height: 800, fileName });
+      await downloadBadge(shareCardRef.current, {
+        width: 1200,
+        height: 800,
+        fileName,
+      });
       toast.success("Badge certificate downloaded successfully!");
     } catch (err) {
       console.error("Download failed:", err);
@@ -138,7 +143,7 @@ const ShareableBadge = ({ badgeId }) => {
         if (!userName || !userEmail) {
           const urlParams = new URLSearchParams(window.location.search);
           const hashParams = new URLSearchParams(
-            window.location.hash.substring(1)
+            window.location.hash.substring(1),
           );
 
           // Also try regex extraction for encoded URLs
@@ -203,10 +208,10 @@ const ShareableBadge = ({ badgeId }) => {
         const formattedBadge = {
           ...response.data,
           image: response.data.image
-            ? `${apiUrl}/${response.data.image.path}`
+            ? resolveImageUrl(response.data.image.path)
             : Badge1,
           img: response.data.image
-            ? `${apiUrl}/${response.data.image.path}`
+            ? resolveImageUrl(response.data.image.path)
             : Badge1,
           // Ensure user data is properly formatted
           earnedBy: response.data.earnedBy || {
@@ -239,7 +244,7 @@ const ShareableBadge = ({ badgeId }) => {
         console.log("Final formatted badge with user data:", formattedBadge); // Debug log
         console.log(
           "User data being passed to BadgeShareCard:",
-          formattedBadge.earnedBy
+          formattedBadge.earnedBy,
         ); // Debug log
       } catch (err) {
         console.error("Fetch error:", err);
@@ -399,7 +404,7 @@ const ShareableBadge = ({ badgeId }) => {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
-                  }
+                  },
                 )}
               </div>
 

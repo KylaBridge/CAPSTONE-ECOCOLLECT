@@ -16,6 +16,7 @@ import LeaderboardPage from "../components/LeaderboardPage";
 import { ewasteAPI } from "../api/ewaste";
 import { badgesAPI } from "../api/badges";
 import { userAPI } from "../api/user";
+import resolveImageUrl from "../utils/resolveImageUrl";
 
 export default function Home() {
   const [showNavbar, setShowNavbar] = useState(false);
@@ -53,7 +54,7 @@ export default function Home() {
             setCurrentBadge({
               ...current,
               image: current.image
-                ? `${import.meta.env.VITE_API_URL}/${current.image.path}`
+                ? resolveImageUrl(current.image.path)
                 : Badge,
             });
           }
@@ -68,9 +69,7 @@ export default function Home() {
           if (next) {
             setNextBadge({
               ...next,
-              image: next.image
-                ? `${import.meta.env.VITE_API_URL}/${next.image.path}`
-                : NextBadge,
+              image: next.image ? resolveImageUrl(next.image.path) : NextBadge,
             });
           }
         })
@@ -113,9 +112,17 @@ export default function Home() {
             <h1 className="rank-title">Rank</h1>
             <div className="rank-container">
               <div className="merit">
-                <h2>{(user?.rank && user.rank !== "Unranked") ? user.rank : "No badge yet!"}</h2>
+                <h2>
+                  {user?.rank && user.rank !== "Unranked"
+                    ? user.rank
+                    : "No badge yet!"}
+                </h2>
               </div>
-              <div className="leaderboard-rank" onClick={() => navigate("/leaderboard")} style={{ cursor: "pointer" }}>
+              <div
+                className="leaderboard-rank"
+                onClick={() => navigate("/leaderboard")}
+                style={{ cursor: "pointer" }}
+              >
                 <h2 className="rank-number-container">
                   <span className="rank-label">Leaderboards</span>
                   <div className="rank-icon-container">
@@ -185,7 +192,8 @@ export default function Home() {
                           margin: 0,
                         }}
                       >
-                        No badge yet! Submit your first e-waste to start earning.
+                        No badge yet! Submit your first e-waste to start
+                        earning.
                       </p>
                       <button
                         onClick={() => navigate("/ewastesubmission")}
@@ -210,7 +218,11 @@ export default function Home() {
                   )}
                 </div>
               </div>
-              <div className="next-reward-item" onClick={() => navigate("/achievements")} style={{ cursor: "pointer" }}>
+              <div
+                className="next-reward-item"
+                onClick={() => navigate("/achievements")}
+                style={{ cursor: "pointer" }}
+              >
                 <h1>Next Badge</h1>
                 <div className="next-reward-image-container">
                   <img
@@ -233,7 +245,11 @@ export default function Home() {
 
             <div className="home-divider"></div>
 
-            <div className="rewards-preview-container" onClick={() => navigate("/rewards")} style={{ cursor: "pointer" }}>
+            <div
+              className="rewards-preview-container"
+              onClick={() => navigate("/rewards")}
+              style={{ cursor: "pointer" }}
+            >
               <img
                 src={SmartDevicesIcon}
                 alt="Reward Mascot"
@@ -247,8 +263,6 @@ export default function Home() {
               </div>
             </div>
           </div>
-
-       
         </div>
       </div>
     </>

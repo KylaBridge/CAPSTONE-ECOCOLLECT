@@ -28,10 +28,7 @@ app.use(
   }),
 );
 
-// Serve static uploads BEFORE security middleware to avoid CSP blocking
-app.use("/uploads", express.static("uploads"));
-
-// Security middleware (after uploads to avoid blocking static files)
+// Security middleware
 app.use(securityHeaders);
 app.use(additionalHSTS);
 app.use(blockSensitiveFiles);

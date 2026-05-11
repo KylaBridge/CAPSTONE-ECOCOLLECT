@@ -1,6 +1,11 @@
 const Badge = require("../models/badge");
-const path = require("path");
-const fs = require("fs");
+const {
+  buildObjectKey,
+  uploadToS3,
+  deleteFromS3,
+  getKeyFromUrl,
+  signUrlForPath,
+} = require("../helpers/s3");
 const ActivityLog = require("../models/activityLog");
 const User = require("../models/user");
 const { updateUserRank } = require("./userController");
@@ -12,8 +17,21 @@ const { updateUserRank } = require("./userController");
 // Get all badges
 const getAllBadges = async (req, res) => {
   try {
-    const badges = await Badge.find().sort({ createdAt: -1 });
-    res.status(200).json(badges);
+    const badges = await Badge.find().sort({ createdAt: -1 }).lean();
+    const signedBadges = await Promise.all(
+      badges.map(async (badge) => {
+        if (!badge.image || !badge.image.path) return badge;
+        const signedPath = await signUrlForPath(badge.image.path);
+        return {
+          ...badge,
+          image: {
+            ...badge.image,
+            path: signedPath || badge.image.path,
+          },
+        };
+      }),
+    );
+    res.status(200).json(signedBadges);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to fetch badges" });
@@ -24,12 +42,20 @@ const getAllBadges = async (req, res) => {
 const addBadge = async (req, res) => {
   try {
     const { name, description, milestoneCondition, pointsRequired } = req.body;
-    const image = req.file
-      ? {
-          name: req.file.originalname,
-          path: req.file.path,
-        }
-      : null;
+    let image = null;
+
+    if (req.file) {
+      const key = buildObjectKey("badges", req.file.originalname);
+      const uploaded = await uploadToS3({
+        buffer: req.file.buffer,
+        contentType: req.file.mimetype,
+        key,
+      });
+      image = {
+        name: req.file.originalname,
+        path: uploaded.url,
+      };
+    }
 
     const newBadge = new Badge({
       name,
@@ -50,9 +76,15 @@ const addBadge = async (req, res) => {
       details: `Added badge ${name}`,
     });
 
+    const badgeData = newBadge.toObject();
+    if (badgeData.image?.path) {
+      const signedPath = await signUrlForPath(badgeData.image.path);
+      badgeData.image.path = signedPath || badgeData.image.path;
+    }
+
     res
       .status(201)
-      .json({ message: "Badge added successfully", badge: newBadge });
+      .json({ message: "Badge added successfully", badge: badgeData });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to add badge" });
@@ -72,17 +104,23 @@ const updateBadge = async (req, res) => {
 
     // If there's a new image file, update it
     if (req.file) {
-      // Delete old image if it exists
+      const key = buildObjectKey("badges", req.file.originalname);
+      const uploaded = await uploadToS3({
+        buffer: req.file.buffer,
+        contentType: req.file.mimetype,
+        key,
+      });
+
       if (badge.image && badge.image.path) {
-        const oldImagePath = path.join(__dirname, "..", badge.image.path);
-        if (fs.existsSync(oldImagePath)) {
-          fs.unlinkSync(oldImagePath);
+        const oldKey = getKeyFromUrl(badge.image.path);
+        if (oldKey) {
+          await deleteFromS3(oldKey);
         }
       }
 
       badge.image = {
         name: req.file.originalname,
-        path: req.file.path,
+        path: uploaded.url,
       };
     }
 
@@ -168,7 +206,15 @@ const updateBadge = async (req, res) => {
       details: `Updated badge ${name}`,
     });
 
-    res.status(200).json({ message: "Badge updated successfully", badge });
+    const badgeData = badge.toObject();
+    if (badgeData.image?.path) {
+      const signedPath = await signUrlForPath(badgeData.image.path);
+      badgeData.image.path = signedPath || badgeData.image.path;
+    }
+
+    res
+      .status(200)
+      .json({ message: "Badge updated successfully", badge: badgeData });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to update badge" });
@@ -187,9 +233,9 @@ const deleteBadge = async (req, res) => {
 
     // Delete the image file if it exists
     if (badge.image && badge.image.path) {
-      const imagePath = path.join(__dirname, "..", badge.image.path);
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
+      const key = getKeyFromUrl(badge.image.path);
+      if (key) {
+        await deleteFromS3(key);
       }
     }
 
@@ -245,10 +291,15 @@ const getBadgeCount = async (req, res) => {
 const getBadgeById = async (req, res) => {
   try {
     const { id } = req.params;
-    const badge = await Badge.findById(id);
+    const badge = await Badge.findById(id).lean();
 
     if (!badge) {
       return res.status(404).json({ message: "Badge not found" });
+    }
+
+    if (badge.image?.path) {
+      const signedPath = await signUrlForPath(badge.image.path);
+      badge.image.path = signedPath || badge.image.path;
     }
 
     res.status(200).json(badge);

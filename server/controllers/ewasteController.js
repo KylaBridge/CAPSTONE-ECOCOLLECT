@@ -1,10 +1,22 @@
 const User = require("../models/user");
 const EWaste = require("../models/ewaste");
-const path = require("path");
-const fs = require("fs");
 const { updateUserRank } = require("./userController");
 const ActivityLog = require("../models/activityLog");
 const { sendEwasteStatusEmail } = require("../helpers/mail");
+const {
+  deleteFromS3,
+  getKeyFromUrl,
+  signUrlForPath,
+} = require("../helpers/s3");
+
+const deleteAttachment = async (attachment) => {
+  if (!attachment || !attachment.path) return;
+
+  const key = getKeyFromUrl(attachment.path);
+  if (key) {
+    await deleteFromS3(key);
+  }
+};
 
 //
 // ------------------ E-WASTE SUBMISSIONS ------------------
@@ -80,8 +92,31 @@ const getEwastes = async (req, res) => {
 // Get all e-waste submissions with user details populated
 const getAllSubmissions = async (req, res) => {
   try {
-    const submissions = await EWaste.find().populate("user");
-    res.status(200).json(submissions);
+    const submissions = await EWaste.find().populate("user").lean();
+    const signedSubmissions = await Promise.all(
+      submissions.map(async (submission) => {
+        if (!Array.isArray(submission.attachments)) {
+          return submission;
+        }
+
+        const attachments = await Promise.all(
+          submission.attachments.map(async (file) => {
+            const signedPath = await signUrlForPath(file.path);
+            return {
+              ...file,
+              path: signedPath || file.path,
+            };
+          }),
+        );
+
+        return {
+          ...submission,
+          attachments,
+        };
+      }),
+    );
+
+    res.status(200).json(signedSubmissions);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error fetching submissions" });
@@ -106,10 +141,9 @@ const updateSubmissionStatus = async (req, res) => {
         submission.originalAttachmentCount = submission.attachments.length;
       }
 
-      submission.attachments.forEach((file) => {
-        const filePath = path.join(__dirname, "..", file.path);
-        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-      });
+      for (const file of submission.attachments) {
+        await deleteAttachment(file);
+      }
       submission.attachments = [];
     }
 
@@ -210,8 +244,7 @@ const deleteEWaste = async (req, res) => {
     }
 
     for (const file of submission.attachments) {
-      const filePath = path.join(__dirname, "..", file.path);
-      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      await deleteAttachment(file);
     }
 
     await EWaste.findByIdAndDelete(id);

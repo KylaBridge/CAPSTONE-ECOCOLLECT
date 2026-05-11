@@ -1,12 +1,6 @@
 import { useState, useEffect, useContext, useRef } from "react";
 import "./styles/Achievements.css";
-import {
-  FiShare2,
-  FiX,
-  FiZoomIn,
-  FiDownload,
-  FiLink,
-} from "react-icons/fi";
+import { FiShare2, FiX, FiZoomIn, FiDownload, FiLink } from "react-icons/fi";
 import {
   FaFacebook,
   FaTwitter,
@@ -20,6 +14,7 @@ import downloadBadge from "../utils/downloadBadge";
 import { badgesAPI } from "../api/badges";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import resolveImageUrl from "../utils/resolveImageUrl";
 
 // Components and Pages
 import Sidebar from "../components/Sidebar";
@@ -48,9 +43,7 @@ export default function Achievements() {
         const response = await badgesAPI.getAllBadges();
         const badgesWithImages = response.data.map((badge) => ({
           ...badge,
-          img: badge.image
-            ? `${import.meta.env.VITE_API_URL}/${badge.image.path}`
-            : Badge1,
+          img: badge.image ? resolveImageUrl(badge.image.path) : Badge1,
           requiredPoints: badge.pointsRequired,
         }));
         badgesWithImages.sort((a, b) => a.requiredPoints - b.requiredPoints);
@@ -73,7 +66,10 @@ export default function Achievements() {
         if (resp.ok) {
           const data = await resp.json();
           const dateEarned =
-            data.dateEarned || data.earnedAt || data.earnedDate || data.createdAt;
+            data.dateEarned ||
+            data.earnedAt ||
+            data.earnedDate ||
+            data.createdAt;
           if (dateEarned) {
             setSelectedBadge((prev) => ({ ...prev, dateEarned }));
           }
@@ -89,7 +85,8 @@ export default function Achievements() {
 
     setIsGeneratingShareCard(true);
     try {
-      const badgeImage = shareCardRef.current.querySelector(".share-card-badge");
+      const badgeImage =
+        shareCardRef.current.querySelector(".share-card-badge");
       if (badgeImage) {
         await new Promise((resolve, reject) => {
           if (badgeImage.complete) resolve();
@@ -132,13 +129,19 @@ export default function Achievements() {
 
     if (navigator.share) {
       try {
-        const shareData = { title: `EcoCollect Badge: ${selectedBadge.name}`, text: shareText, url: shareUrl };
+        const shareData = {
+          title: `EcoCollect Badge: ${selectedBadge.name}`,
+          text: shareText,
+          url: shareUrl,
+        };
         if (shareCardRef.current) {
           const shareCardImage = await generateShareCard();
           if (shareCardImage) {
             try {
               const blob = await (await fetch(shareCardImage)).blob();
-              const file = new File([blob], "badge-share.png", { type: "image/png" });
+              const file = new File([blob], "badge-share.png", {
+                type: "image/png",
+              });
               shareData.files = [file];
             } catch (error) {
               console.error("Error creating share file:", error);
@@ -162,7 +165,11 @@ export default function Achievements() {
       const fileName = `eco-collect-badge-certificate-${selectedBadge.name
         .toLowerCase()
         .replace(/\s+/g, "-")}.png`;
-      await downloadBadge(shareCardRef.current, { width: 1200, height: 800, fileName });
+      await downloadBadge(shareCardRef.current, {
+        width: 1200,
+        height: 800,
+        fileName,
+      });
       toast.success("Badge certificate downloaded successfully!");
     } catch (error) {
       console.error("Error downloading badge certificate:", error);
@@ -307,7 +314,7 @@ export default function Achievements() {
                 <p>No badges yet.</p>
               </div>
             ) : (
-                badges.map((badge, index) => (
+              badges.map((badge, index) => (
                 <div
                   key={badge._id || index}
                   className="badge-card"
@@ -368,13 +375,13 @@ export default function Achievements() {
           }}
         >
           <div className="badge-modal" onClick={(e) => e.stopPropagation()}>
-              <button
-                className="modal-close-btn"
-                onClick={() => {
-                  setSelectedBadge(null);
-                  setShowShareOptions(false);
-                }}
-              >
+            <button
+              className="modal-close-btn"
+              onClick={() => {
+                setSelectedBadge(null);
+                setShowShareOptions(false);
+              }}
+            >
               <FiX size={24} />
             </button>
             <img

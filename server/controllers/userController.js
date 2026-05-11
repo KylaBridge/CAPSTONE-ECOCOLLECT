@@ -6,6 +6,7 @@ const Badge = require("../models/badge");
 const ActivityLog = require("../models/activityLog");
 const { sendRedemptionEmail } = require("../helpers/mail");
 const crypto = require("crypto");
+const { buildObjectKey, uploadToS3, signUrlForPath } = require("../helpers/s3");
 
 // Update user rank based on badges
 const updateUserRank = async (userId) => {
@@ -73,10 +74,21 @@ const updateUserRank = async (userId) => {
 const submitEWaste = async (req, res) => {
   try {
     const { userId, category } = req.body;
-    const attachments = req.files.map((file) => ({
-      name: file.originalname,
-      path: file.path,
-    }));
+    const files = Array.isArray(req.files) ? req.files : [];
+    const attachments = await Promise.all(
+      files.map(async (file) => {
+        const key = buildObjectKey("ewaste", file.originalname);
+        const uploaded = await uploadToS3({
+          buffer: file.buffer,
+          contentType: file.mimetype,
+          key,
+        });
+        return {
+          name: file.originalname,
+          path: uploaded.url,
+        };
+      }),
+    );
 
     const newSubmission = new EWaste({
       user: userId,
@@ -121,10 +133,36 @@ const userSubmitCount = async (req, res) => {
 const getUserSubmissions = async (req, res) => {
   try {
     const { userId } = req.params;
-    const submissions = await EWaste.find({ user: userId }).sort({
-      createdAt: -1,
-    });
-    res.status(200).json(submissions);
+    const submissions = await EWaste.find({ user: userId })
+      .sort({
+        createdAt: -1,
+      })
+      .lean();
+
+    const signedSubmissions = await Promise.all(
+      submissions.map(async (submission) => {
+        if (!Array.isArray(submission.attachments)) {
+          return submission;
+        }
+
+        const attachments = await Promise.all(
+          submission.attachments.map(async (file) => {
+            const signedPath = await signUrlForPath(file.path);
+            return {
+              ...file,
+              path: signedPath || file.path,
+            };
+          }),
+        );
+
+        return {
+          ...submission,
+          attachments,
+        };
+      }),
+    );
+
+    res.status(200).json(signedSubmissions);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Failed to fetch submissions" });
@@ -251,10 +289,32 @@ const getUserBadgeHistory = async (req, res) => {
       (a, b) => new Date(b.earnedAt) - new Date(a.earnedAt),
     );
 
+    const signedHistory = await Promise.all(
+      sortedHistory.map(async (entry) => {
+        if (!entry.badgeId?.image?.path) return entry;
+        const signedPath = await signUrlForPath(entry.badgeId.image.path);
+        const entryData = entry.toObject ? entry.toObject() : entry;
+        const badgeData = entry.badgeId.toObject
+          ? entry.badgeId.toObject()
+          : entry.badgeId;
+
+        return {
+          ...entryData,
+          badgeId: {
+            ...badgeData,
+            image: {
+              ...badgeData.image,
+              path: signedPath || badgeData.image.path,
+            },
+          },
+        };
+      }),
+    );
+
     res.status(200).json({
       currentRank: user.rank,
       currentRankEarnedAt: user.rankEarnedAt,
-      badgeHistory: sortedHistory,
+      badgeHistory: signedHistory,
     });
   } catch (error) {
     console.error(error);

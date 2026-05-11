@@ -10,6 +10,7 @@ import {
   TbPlayerTrackNextFilled,
 } from "react-icons/tb";
 import AdminButton from "../admin-components/AdminButton";
+import resolveImageUrl from "../utils/resolveImageUrl";
 
 export default function RewardManagement() {
   const [rewards, setRewards] = useState([]);
@@ -45,9 +46,7 @@ export default function RewardManagement() {
       const rewardsWithImageUrls = response.data.map((reward) => ({
         ...reward,
         id: reward._id,
-        image: reward.image
-          ? `${import.meta.env.VITE_API_URL}/${reward.image.path}`
-          : null,
+        image: reward.image ? resolveImageUrl(reward.image.path) : null,
       }));
       setRewards(rewardsWithImageUrls);
       setLoading(false);

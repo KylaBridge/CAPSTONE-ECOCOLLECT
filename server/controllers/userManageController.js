@@ -3,8 +3,7 @@ const EWaste = require("../models/ewaste");
 const Redemption = require("../models/redemption");
 const ActivityLog = require("../models/activityLog");
 const { hashPassword } = require("../helpers/auth");
-const path = require("path");
-const fs = require("fs");
+const { deleteFromS3, getKeyFromUrl } = require("../helpers/s3");
 
 //
 // ------------------ USER MANAGEMENT ------------------
@@ -54,12 +53,12 @@ const deleteUser = async (req, res) => {
     // Delete associated image files for pending submissions
     for (const submission of pendingSubmissions) {
       if (submission.attachments && submission.attachments.length > 0) {
-        submission.attachments.forEach((file) => {
-          const filePath = path.join(__dirname, "..", file.path);
-          if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
+        for (const file of submission.attachments) {
+          const key = getKeyFromUrl(file.path);
+          if (key) {
+            await deleteFromS3(key);
           }
-        });
+        }
       }
     }
 

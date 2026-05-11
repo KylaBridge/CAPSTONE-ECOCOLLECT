@@ -1,6 +1,11 @@
 const Reward = require("../models/rewards");
-const path = require("path");
-const fs = require("fs");
+const {
+  buildObjectKey,
+  uploadToS3,
+  deleteFromS3,
+  getKeyFromUrl,
+  signUrlForPath,
+} = require("../helpers/s3");
 const Redemption = require("../models/redemption");
 const ActivityLog = require("../models/activityLog");
 
@@ -11,8 +16,21 @@ const ActivityLog = require("../models/activityLog");
 // Get all rewards
 const getAllRewards = async (req, res) => {
   try {
-    const rewards = await Reward.find().sort({ createdAt: -1 });
-    res.status(200).json(rewards);
+    const rewards = await Reward.find().sort({ createdAt: -1 }).lean();
+    const signedRewards = await Promise.all(
+      rewards.map(async (reward) => {
+        if (!reward.image || !reward.image.path) return reward;
+        const signedPath = await signUrlForPath(reward.image.path);
+        return {
+          ...reward,
+          image: {
+            ...reward.image,
+            path: signedPath || reward.image.path,
+          },
+        };
+      }),
+    );
+    res.status(200).json(signedRewards);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to fetch rewards" });
@@ -23,12 +41,20 @@ const getAllRewards = async (req, res) => {
 const addReward = async (req, res) => {
   try {
     const { name, category, points, description } = req.body;
-    const image = req.file
-      ? {
-          name: req.file.originalname,
-          path: req.file.path,
-        }
-      : null;
+    let image = null;
+
+    if (req.file) {
+      const key = buildObjectKey("rewards", req.file.originalname);
+      const uploaded = await uploadToS3({
+        buffer: req.file.buffer,
+        contentType: req.file.mimetype,
+        key,
+      });
+      image = {
+        name: req.file.originalname,
+        path: uploaded.url,
+      };
+    }
 
     const newReward = new Reward({
       name,
@@ -49,9 +75,15 @@ const addReward = async (req, res) => {
       details: `Added reward ${name}`,
     });
 
+    const rewardData = newReward.toObject();
+    if (rewardData.image?.path) {
+      const signedPath = await signUrlForPath(rewardData.image.path);
+      rewardData.image.path = signedPath || rewardData.image.path;
+    }
+
     res
       .status(201)
-      .json({ message: "Reward added successfully", reward: newReward });
+      .json({ message: "Reward added successfully", reward: rewardData });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to add reward" });
@@ -71,17 +103,23 @@ const updateReward = async (req, res) => {
 
     // If there's a new image file, update it
     if (req.file) {
-      // Delete old image if it exists
+      const key = buildObjectKey("rewards", req.file.originalname);
+      const uploaded = await uploadToS3({
+        buffer: req.file.buffer,
+        contentType: req.file.mimetype,
+        key,
+      });
+
       if (reward.image && reward.image.path) {
-        const oldImagePath = path.join(__dirname, "..", reward.image.path);
-        if (fs.existsSync(oldImagePath)) {
-          fs.unlinkSync(oldImagePath);
+        const oldKey = getKeyFromUrl(reward.image.path);
+        if (oldKey) {
+          await deleteFromS3(oldKey);
         }
       }
 
       reward.image = {
         name: req.file.originalname,
-        path: req.file.path,
+        path: uploaded.url,
       };
     }
 
@@ -102,7 +140,15 @@ const updateReward = async (req, res) => {
       details: `Updated reward ${name}`,
     });
 
-    res.status(200).json({ message: "Reward updated successfully", reward });
+    const rewardData = reward.toObject();
+    if (rewardData.image?.path) {
+      const signedPath = await signUrlForPath(rewardData.image.path);
+      rewardData.image.path = signedPath || rewardData.image.path;
+    }
+
+    res
+      .status(200)
+      .json({ message: "Reward updated successfully", reward: rewardData });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to update reward" });
@@ -121,9 +167,9 @@ const deleteReward = async (req, res) => {
 
     // Delete the image file if it exists
     if (reward.image && reward.image.path) {
-      const imagePath = path.join(__dirname, "..", reward.image.path);
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
+      const key = getKeyFromUrl(reward.image.path);
+      if (key) {
+        await deleteFromS3(key);
       }
     }
 

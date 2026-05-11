@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { redemptionAPI } from "../api/redemption";
 import "./styles/ValidateRedeem.css";
+import resolveImageUrl from "../utils/resolveImageUrl";
 
 export default function ValidateRedeem() {
   const { id } = useParams();
@@ -245,22 +246,12 @@ export default function ValidateRedeem() {
               <img
                 src={(() => {
                   const image = redemptionData.rewardImage;
-
-                  // Handle if image is an object with path property
                   if (typeof image === "object" && image.path) {
-                    return image.path.startsWith("http")
-                      ? image.path
-                      : `${import.meta.env.VITE_API_URL}/${image.path}`;
+                    return resolveImageUrl(image.path);
                   }
-
-                  // Handle if image is a string
                   if (typeof image === "string") {
-                    return image.startsWith("http")
-                      ? image
-                      : `${import.meta.env.VITE_API_URL}/${image}`;
+                    return resolveImageUrl(image);
                   }
-
-                  // Fallback - return empty to hide image
                   return "";
                 })()}
                 alt={redemptionData.rewardName}

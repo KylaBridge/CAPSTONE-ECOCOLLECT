@@ -7,6 +7,7 @@ import placeholderBadge from "../assets/icons/mrcpu.png";
 import AdminButton from "../admin-components/AdminButton";
 import { badgesAPI } from "../api/badges";
 import Alert from "../admin-components/Alert";
+import resolveImageUrl from "../utils/resolveImageUrl";
 
 export default function BadgeManagement() {
   const [badgeName, setBadgeName] = useState("");
@@ -63,9 +64,7 @@ export default function BadgeManagement() {
       const badgesWithImageUrls = response.data.map((badge) => ({
         ...badge,
         id: badge._id,
-        image: badge.image
-          ? `${import.meta.env.VITE_API_URL}/${badge.image.path}`
-          : null,
+        image: badge.image ? resolveImageUrl(badge.image.path) : null,
       }));
       setBadges(badgesWithImageUrls);
       setError(null);
@@ -250,7 +249,7 @@ export default function BadgeManagement() {
           ...response.data.badge,
           id: response.data.badge._id,
           image: response.data.badge.image
-            ? `${import.meta.env.VITE_API_URL}/${response.data.badge.image.path}`
+            ? resolveImageUrl(response.data.badge.image.path)
             : null,
         };
         setBadges([...badges, newBadge]);
@@ -268,7 +267,7 @@ export default function BadgeManagement() {
           ...response.data.badge,
           id: response.data.badge._id,
           image: response.data.badge.image
-            ? `${import.meta.env.VITE_API_URL}/${response.data.badge.image.path}`
+            ? resolveImageUrl(response.data.badge.image.path)
             : null,
         };
         setBadges(
@@ -667,7 +666,9 @@ export default function BadgeManagement() {
           }
           isOpen={showConfirmAlert}
           onConfirm={
-            pendingAction?.type === "remove" ? handleRemoveBadge : handleSubmitBadge
+            pendingAction?.type === "remove"
+              ? handleRemoveBadge
+              : handleSubmitBadge
           }
           onCancel={() => {
             setShowConfirmAlert(false);
