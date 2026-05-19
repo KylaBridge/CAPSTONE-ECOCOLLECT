@@ -92,7 +92,9 @@ const getEwastes = async (req, res) => {
 // Get all e-waste submissions with user details populated
 const getAllSubmissions = async (req, res) => {
   try {
-    const submissions = await EWaste.find().populate("user").lean();
+    const submissions = await EWaste.find()
+      .populate("user", "name email")
+      .lean();
     const signedSubmissions = await Promise.all(
       submissions.map(async (submission) => {
         if (!Array.isArray(submission.attachments)) {
@@ -110,8 +112,21 @@ const getAllSubmissions = async (req, res) => {
         );
 
         return {
-          ...submission,
+          _id: submission._id,
+          user: submission.user
+            ? {
+                _id: submission.user._id,
+                name: submission.user.name,
+                email: submission.user.email,
+              }
+            : null,
+          category: submission.category,
           attachments,
+          originalAttachmentCount: submission.originalAttachmentCount,
+          status: submission.status,
+          createdAt: submission.createdAt,
+          updatedAt: submission.updatedAt,
+          autoId: submission.autoId,
         };
       }),
     );

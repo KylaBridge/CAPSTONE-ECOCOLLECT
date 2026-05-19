@@ -10,11 +10,12 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from "expo-image-manipulator";
 import { Picker } from "@react-native-picker/picker";
 import axios from "axios";
 import { UserContext } from "../../contexts/userContext";
 import Colors from "../../constants/colors";
-import { API_BASE_URL } from '@env';
+import { API_BASE_URL } from "@env";
 
 // Themed Components
 import Spacer from "../../components/Spacer";
@@ -36,22 +37,35 @@ const Add = () => {
 
   const API_BASE = API_BASE_URL;
 
+  const convertToJpeg = async (asset, index = 0) => {
+    const result = await ImageManipulator.manipulateAsync(asset.uri, [], {
+      compress: 0.8,
+      format: ImageManipulator.SaveFormat.JPEG,
+    });
+
+    return {
+      uri: result.uri,
+      type: "image/jpeg",
+      name: `image_${Date.now()}_${index}.jpg`,
+    };
+  };
+
   // Helper function to get status color
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
-      case 'approved':
-      case 'completed':
-        return '#4CAF50'; // Green
-      case 'pending':
-      case 'under review':
-        return '#FFC107'; // Amber
-      case 'rejected':
-      case 'declined':
-        return '#E53935'; // Red
-      case 'processing':
-        return '#29B6F6'; // Blue
+      case "approved":
+      case "completed":
+        return "#4CAF50"; // Green
+      case "pending":
+      case "under review":
+        return "#FFC107"; // Amber
+      case "rejected":
+      case "declined":
+        return "#E53935"; // Red
+      case "processing":
+        return "#29B6F6"; // Blue
       default:
-        return '#FFC107'; // Default to amber for pending
+        return "#FFC107"; // Default to amber for pending
     }
   };
 
@@ -63,7 +77,7 @@ const Add = () => {
       if (status !== "granted") {
         Alert.alert(
           "Permission needed",
-          "Gallery permission is required to select images"
+          "Gallery permission is required to select images",
         );
         return;
       }
@@ -76,12 +90,10 @@ const Add = () => {
       });
 
       if (!result.canceled) {
-        const newImages = result.assets.map((asset) => ({
-          uri: asset.uri,
-          type: "image/jpeg",
-          name: `image_${Date.now()}.jpg`,
-        }));
-        setAttachments((prev) => [...prev, ...newImages]);
+        const converted = await Promise.all(
+          result.assets.map((asset, index) => convertToJpeg(asset, index)),
+        );
+        setAttachments((prev) => [...prev, ...converted]);
       }
     } catch (error) {
       console.error("Image picker error:", error);
@@ -95,7 +107,7 @@ const Add = () => {
       if (status !== "granted") {
         Alert.alert(
           "Permission needed",
-          "Camera permission is required to take photos"
+          "Camera permission is required to take photos",
         );
         return;
       }
@@ -107,12 +119,8 @@ const Add = () => {
       });
 
       if (!result.canceled) {
-        const newImage = {
-          uri: result.assets[0].uri,
-          type: "image/jpeg",
-          name: `camera_${Date.now()}.jpg`,
-        };
-        setAttachments((prev) => [...prev, newImage]);
+        const converted = await convertToJpeg(result.assets[0], 0);
+        setAttachments((prev) => [...prev, converted]);
       }
     } catch (error) {
       console.error("Camera error:", error);
@@ -149,7 +157,7 @@ const Add = () => {
     if (!attachments.length || !selectedCategory) {
       Alert.alert(
         "Error",
-        "Please select a category and add at least one image"
+        "Please select a category and add at least one image",
       );
       return;
     }
@@ -178,7 +186,7 @@ const Add = () => {
 
       if (response.status === 201) {
         Alert.alert(
-          "Success", 
+          "Success",
           "E-Waste submitted successfully! Your submission is now under review.",
           [
             {
@@ -187,14 +195,15 @@ const Add = () => {
                 setAttachments([]);
                 setSelectedCategory(null);
                 fetchSubmissionLogs();
-              }
-            }
-          ]
+              },
+            },
+          ],
         );
       }
     } catch (err) {
       console.error(err);
-      const errorMessage = err.response?.data?.message || "An error occurred while submitting.";
+      const errorMessage =
+        err.response?.data?.message || "An error occurred while submitting.";
       Alert.alert("Submission Failed", errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -245,25 +254,41 @@ const Add = () => {
           </ThemedText>
           <View style={styles.instructionList}>
             <View style={styles.instructionItem}>
-              <Ionicons name="checkmark-circle" size={16} color={theme.iconColor} />
+              <Ionicons
+                name="checkmark-circle"
+                size={16}
+                color={theme.iconColor}
+              />
               <ThemedText style={styles.instructionText}>
                 Let's focus on one e-waste item per submission.
               </ThemedText>
             </View>
             <View style={styles.instructionItem}>
-              <Ionicons name="checkmark-circle" size={16} color={theme.iconColor} />
+              <Ionicons
+                name="checkmark-circle"
+                size={16}
+                color={theme.iconColor}
+              />
               <ThemedText style={styles.instructionText}>
                 Tell us what kind of e-waste you're sending.
               </ThemedText>
             </View>
             <View style={styles.instructionItem}>
-              <Ionicons name="checkmark-circle" size={16} color={theme.iconColor} />
+              <Ionicons
+                name="checkmark-circle"
+                size={16}
+                color={theme.iconColor}
+              />
               <ThemedText style={styles.instructionText}>
                 Add as many pics as you need.
               </ThemedText>
             </View>
             <View style={styles.instructionItem}>
-              <Ionicons name="checkmark-circle" size={16} color={theme.iconColor} />
+              <Ionicons
+                name="checkmark-circle"
+                size={16}
+                color={theme.iconColor}
+              />
               <ThemedText style={styles.instructionText}>
                 We'll give it a once-over and let you know it's good to go!
               </ThemedText>
@@ -288,10 +313,14 @@ const Add = () => {
                     disabled={isSubmitting}
                     style={[
                       styles.removeButton,
-                      isSubmitting && styles.disabledRemoveButton
+                      isSubmitting && styles.disabledRemoveButton,
                     ]}
                   >
-                    <Ionicons name="trash-outline" size={20} color={Colors.warning} />
+                    <Ionicons
+                      name="trash-outline"
+                      size={20}
+                      color={Colors.warning}
+                    />
                   </TouchableOpacity>
                 </View>
               ))}
@@ -352,20 +381,25 @@ const Add = () => {
           style={[
             styles.submitButton,
             { backgroundColor: theme.buttonColorBg },
-            (!attachments.length || !selectedCategory || isSubmitting) && styles.disabledButton,
+            (!attachments.length || !selectedCategory || isSubmitting) &&
+              styles.disabledButton,
           ]}
         >
           {isSubmitting ? (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator 
-                size="small" 
-                color="#FFFFFF" 
+              <ActivityIndicator
+                size="small"
+                color="#FFFFFF"
                 style={styles.loadingSpinner}
               />
-              <ThemedText title style={styles.submitButtonText}>SUBMITTING...</ThemedText>
+              <ThemedText title style={styles.submitButtonText}>
+                SUBMITTING...
+              </ThemedText>
             </View>
           ) : (
-            <ThemedText title style={styles.submitButtonText}>SUBMIT</ThemedText>
+            <ThemedText title style={styles.submitButtonText}>
+              SUBMIT
+            </ThemedText>
           )}
         </ThemedButton>
 
@@ -384,17 +418,19 @@ const Add = () => {
                     {log.category}
                   </ThemedText>
                   <View style={styles.statusContainer}>
-                    <View 
+                    <View
                       style={[
-                        styles.statusIndicator, 
-                        { backgroundColor: getStatusColor(log.status) }
-                      ]} 
+                        styles.statusIndicator,
+                        { backgroundColor: getStatusColor(log.status) },
+                      ]}
                     />
-                    <ThemedText style={[
-                      styles.logStatus,
-                      { color: getStatusColor(log.status) }
-                    ]}>
-                      {log.status || 'Pending'}
+                    <ThemedText
+                      style={[
+                        styles.logStatus,
+                        { color: getStatusColor(log.status) },
+                      ]}
+                    >
+                      {log.status || "Pending"}
                     </ThemedText>
                   </View>
                 </View>

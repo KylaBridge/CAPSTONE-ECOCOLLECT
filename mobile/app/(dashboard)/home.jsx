@@ -1,11 +1,11 @@
 import { StyleSheet, View, Image } from "react-native";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef, useCallback } from "react";
 import { UserContext } from "../../contexts/userContext";
 import { useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import React from "react";
 import axios from "axios";
-import { SERVER_BASE_URL, API_BASE_URL } from '@env';
+import { SERVER_BASE_URL, API_BASE_URL } from "@env";
 
 // Images
 import Header from "../../assets/images/home_header.png";
@@ -19,6 +19,7 @@ import ThemedButton from "../../components/ThemedButton";
 import ThemedCard from "../../components/ThemedCard";
 import ProfileAvatar from "../../components/ProfileAvatar";
 import ExperienceBar from "../../components/ExperienceBar";
+import LoadingImage from "../../components/LoadingImage";
 
 const Home = () => {
   const { user, loading, token, refreshUser } = useContext(UserContext);
@@ -28,9 +29,63 @@ const Home = () => {
   const [levelEnd, setLevelEnd] = useState(100);
   const [levelStart, setLevelStart] = useState(0);
   const router = useRouter();
+  const lastBadgeFetchRef = useRef(0);
+  const hasNextBadge = Boolean(nextBadgeUri);
 
   const SERVER_BASE = SERVER_BASE_URL;
   const API_BASE = API_BASE_URL;
+  const BADGE_REFRESH_MS = 50 * 60 * 1000;
+
+  const resolveBadgeImageUrl = useCallback(
+    (path) => {
+      if (!path) return null;
+      const normalized = path.replace(/\\/g, "/");
+      if (/^https?:\/\//i.test(normalized)) {
+        return normalized;
+      }
+      if (!SERVER_BASE) return normalized;
+      const trimmedBase = SERVER_BASE.replace(/\/+$/, "");
+      const trimmedPath = normalized.replace(/^\/+/, "");
+      return `${trimmedBase}/${trimmedPath}`;
+    },
+    [SERVER_BASE],
+  );
+
+  const fetchBadges = useCallback(
+    async (force = false) => {
+      if (!user || !token) return;
+      const now = Date.now();
+      if (!force && now - lastBadgeFetchRef.current < BADGE_REFRESH_MS) {
+        return;
+      }
+
+      try {
+        const response = await axios.get(`${API_BASE}/badges`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        });
+        lastBadgeFetchRef.current = now;
+        const badges = response.data;
+
+        const current = badges.find((badge) => badge.name === user.rank);
+        setCurrentBadgeUri(resolveBadgeImageUrl(current?.image?.path));
+
+        const sortedBadges = badges.sort(
+          (a, b) => a.pointsRequired - b.pointsRequired,
+        );
+        const next = sortedBadges.find(
+          (badge) => badge.pointsRequired > user.exp,
+        );
+        setNextBadgeUri(resolveBadgeImageUrl(next?.image?.path));
+      } catch (error) {
+        console.error("Error fetching badges:", error);
+        if (error.response?.status === 401) {
+          console.log("Token expired, redirecting to login");
+          router.replace("/");
+        }
+      }
+    },
+    [API_BASE, token, user, router, resolveBadgeImageUrl],
+  );
 
   // Refresh user data when screen comes into focus
   useFocusEffect(
@@ -38,7 +93,8 @@ const Home = () => {
       if (token) {
         refreshUser();
       }
-    }, [token, refreshUser])
+      fetchBadges(false);
+    }, [token, refreshUser, fetchBadges]),
   );
 
   useEffect(() => {
@@ -52,52 +108,9 @@ const Home = () => {
       const level = Math.floor(currentPoints / 100);
       setLevelStart(level * 100);
       setLevelEnd((level + 1) * 100);
-
-      // Fetch User Badge and Next Badge
-      axios
-        .get(`${API_BASE}/badges`, {
-          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-        })
-        .then((response) => {
-          const badges = response.data;
-
-          const current = badges.find((badge) => badge.name === user.rank);
-
-          if (current?.image?.path) {
-            // Fix: Replace backslashes with forward slashes for URL
-            const imagePath = current.image.path.replace(/\\/g, "/");
-            const imageUrl = `${SERVER_BASE}/${imagePath}`;
-            setCurrentBadgeUri(imageUrl);
-          } else {
-            setCurrentBadgeUri(null);
-          }
-
-          const sortedBadges = badges.sort(
-            (a, b) => a.pointsRequired - b.pointsRequired
-          );
-          const next = sortedBadges.find(
-            (badge) => badge.pointsRequired > user.exp
-          );
-
-          if (next?.image?.path) {
-            // Fix: Replace backslashes with forward slashes for URL
-            const imagePath = next.image.path.replace(/\\/g, "/");
-            const imageUrl = `${SERVER_BASE}/${imagePath}`;
-            setNextBadgeUri(imageUrl);
-          } else {
-            setNextBadgeUri(null);
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching badges:", error);
-          // Handle 401 Unauthorized error (token expired)
-          if (error.response?.status === 401) {
-            console.log("Token expired, redirecting to login");
-            router.replace("/");
-          }
-        });
+      fetchBadges(true);
     }
-  }, [user, loading, token]);
+  }, [user, loading, fetchBadges, router]);
 
   const handleLogout = async () => {
     try {
@@ -162,13 +175,17 @@ const Home = () => {
       <Spacer />
 
       <View style={{ flexDirection: "row", gap: 17 }}>
-        <ThemedCard width={"43%"} style={{ alignItems: "center" }}>
+        <ThemedCard
+          width={hasNextBadge ? "43%" : "90%"}
+          style={{ alignItems: "center" }}
+        >
           <ThemedText>Current Badge</ThemedText>
           {currentBadgeUri ? (
-            <Image
-              source={{ uri: currentBadgeUri }}
+            <LoadingImage
+              uri={currentBadgeUri}
               style={styles.currentBadgeImage}
               accessibilityLabel="Current Badge"
+              resizeMode="contain"
             />
           ) : (
             <>
@@ -177,19 +194,17 @@ const Home = () => {
             </>
           )}
         </ThemedCard>
-
-        <ThemedCard width={"43%"} style={{ alignItems: "center" }}>
-          <ThemedText>Next Badge</ThemedText>
-          {nextBadgeUri ? (
-            <Image
-              source={{ uri: nextBadgeUri }}
+        {hasNextBadge ? (
+          <ThemedCard width={"43%"} style={{ alignItems: "center" }}>
+            <ThemedText>Next Badge</ThemedText>
+            <LoadingImage
+              uri={nextBadgeUri}
               style={styles.nextBadgeImage}
               accessibilityLabel="Next Badge"
+              resizeMode="contain"
             />
-          ) : (
-            <ThemedText>—</ThemedText>
-          )}
-        </ThemedCard>
+          </ThemedCard>
+        ) : null}
       </View>
 
       <View style={styles.logoutContainer}>

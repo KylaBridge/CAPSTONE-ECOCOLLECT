@@ -4,13 +4,22 @@ import {
   ScrollView,
   View,
   TouchableOpacity,
+  Modal,
 } from "react-native";
-import { useContext, useEffect, useState, useMemo, useCallback } from "react";
+import {
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+  useRef,
+} from "react";
 import { UserContext } from "../../contexts/userContext";
 import { useRouter } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
 import React from "react";
 import axios from "axios";
-import { SERVER_BASE_URL, API_BASE_URL } from '@env';
+import { SERVER_BASE_URL, API_BASE_URL } from "@env";
 
 // Images
 import LockIcon from "../../assets/images/lockicon.png";
@@ -20,15 +29,35 @@ import Spacer from "../../components/Spacer";
 import ThemedView from "../../components/ThemedView";
 import ThemedText from "../../components/ThemedText";
 import ThemedCard from "../../components/ThemedCard";
+import LoadingImage from "../../components/LoadingImage";
 
 const Achievements = () => {
   const { user, loading, token, refreshUser } = useContext(UserContext);
   const [badges, setBadges] = useState([]);
+  const [selectedBadge, setSelectedBadge] = useState(null);
+  const [isBadgeModalOpen, setIsBadgeModalOpen] = useState(false);
+  const lastBadgeFetchRef = useRef(0);
 
   const router = useRouter();
 
   const SERVER_BASE = SERVER_BASE_URL;
   const API_BASE = API_BASE_URL;
+  const BADGE_REFRESH_MS = 50 * 60 * 1000;
+
+  const resolveBadgeImageUrl = useCallback(
+    (path) => {
+      if (!path) return null;
+      const normalized = path.replace(/\\/g, "/");
+      if (/^https?:\/\//i.test(normalized)) {
+        return normalized;
+      }
+      if (!SERVER_BASE) return normalized;
+      const trimmedBase = SERVER_BASE.replace(/\/+$/, "");
+      const trimmedPath = normalized.replace(/^\/+/, "");
+      return `${trimmedBase}/${trimmedPath}`;
+    },
+    [SERVER_BASE],
+  );
 
   useEffect(() => {
     if (!user && !loading) {
@@ -36,51 +65,72 @@ const Achievements = () => {
     }
   }, [user, loading]);
 
+  const fetchBadges = useCallback(
+    async (force = false) => {
+      if (!user || !token) return;
+      const now = Date.now();
+      if (!force && now - lastBadgeFetchRef.current < BADGE_REFRESH_MS) {
+        return;
+      }
+
+      try {
+        const response = await axios.get(`${API_BASE}/badges`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        });
+        lastBadgeFetchRef.current = now;
+
+        const sortedBadges = response.data.sort(
+          (a, b) => a.pointsRequired - b.pointsRequired,
+        );
+        setBadges(sortedBadges);
+      } catch (error) {
+        console.error("Error fetching badges:", error);
+        if (error.response?.status === 401) {
+          console.log("Token expired, redirecting to login");
+          router.replace("/");
+        }
+      }
+    },
+    [token, API_BASE, router, user],
+  );
+
   useEffect(() => {
     if (user && token) {
-      fetchBadges();
+      fetchBadges(true);
     }
-  }, [user, token]);
+  }, [user, token, fetchBadges]);
 
-  const fetchBadges = useCallback(async () => {
-    try {
-      const response = await axios.get(`${API_BASE}/badges`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-      });
-
-      // Sort badges by points required (ascending)
-      const sortedBadges = response.data.sort(
-        (a, b) => a.pointsRequired - b.pointsRequired
-      );
-      setBadges(sortedBadges);
-    } catch (error) {
-      console.error("Error fetching badges:", error);
-
-      // Handle 401 Unauthorized error (token expired)
-      if (error.response?.status === 401) {
-        console.log("Token expired, redirecting to login");
-        router.replace("/");
-      }
-    }
-  }, [token, API_BASE, router]);
+  useFocusEffect(
+    React.useCallback(() => {
+      refreshUser();
+      fetchBadges(false);
+    }, [refreshUser, fetchBadges]),
+  );
 
   const isBadgeUnlocked = useCallback(
     (badge) => {
       return user?.exp >= badge.pointsRequired;
     },
-    [user?.exp]
+    [user?.exp],
   );
 
   const getBadgeImageUri = useCallback(
     (badge) => {
-      if (badge?.image?.path) {
-        const imagePath = badge.image.path.replace(/\\/g, "/");
-        return `${SERVER_BASE}/${imagePath}`;
-      }
-      return null;
+      return resolveBadgeImageUrl(badge?.image?.path);
     },
-    [SERVER_BASE]
+    [resolveBadgeImageUrl],
   );
+
+  const openBadgeModal = useCallback((badge) => {
+    setSelectedBadge(badge);
+    setIsBadgeModalOpen(true);
+  }, []);
+
+  const closeBadgeModal = useCallback(() => {
+    setIsBadgeModalOpen(false);
+    // Delay clearing until after the fade-out animation (~300ms)
+    setTimeout(() => setSelectedBadge(null), 300);
+  }, []);
 
   const renderBadge = useCallback(
     (badge, index) => {
@@ -88,7 +138,7 @@ const Achievements = () => {
       const badgeImageUri = getBadgeImageUri(badge);
       const progressPercentage = Math.min(
         ((user?.exp || 0) / badge.pointsRequired) * 100,
-        100
+        100,
       );
 
       return (
@@ -97,13 +147,17 @@ const Achievements = () => {
           width={"45%"}
           style={[styles.badgeCard, !isUnlocked && styles.lockedBadgeCard]}
         >
-          <View style={styles.badgeContainer}>
+          <TouchableOpacity
+            style={styles.badgeContainer}
+            onPress={() => openBadgeModal(badge)}
+            activeOpacity={0.8}
+          >
             {/* Badge Image */}
             <View style={styles.badgeImageContainer}>
               {isUnlocked ? (
                 badgeImageUri ? (
-                  <Image
-                    source={{ uri: badgeImageUri }}
+                  <LoadingImage
+                    uri={badgeImageUri}
                     style={styles.badgeImage}
                     accessibilityLabel={`${badge.name} badge`}
                     resizeMode="contain"
@@ -131,14 +185,6 @@ const Achievements = () => {
                 style={[styles.badgeName, !isUnlocked && styles.lockedText]}
               >
                 {badge.name}
-              </ThemedText>
-              <ThemedText
-                style={[
-                  styles.badgeDescription,
-                  !isUnlocked && styles.lockedText,
-                ]}
-              >
-                {badge.description}
               </ThemedText>
               <ThemedText
                 style={[
@@ -172,11 +218,11 @@ const Achievements = () => {
                 </ThemedText>
               </View>
             </View>
-          </View>
+          </TouchableOpacity>
         </ThemedCard>
       );
     },
-    [isBadgeUnlocked, getBadgeImageUri, user?.exp]
+    [isBadgeUnlocked, getBadgeImageUri, openBadgeModal, user?.exp],
   );
 
   const memoizedBadges = useMemo(() => {
@@ -204,6 +250,57 @@ const Achievements = () => {
           <Spacer height={20} />
         </ScrollView>
       </View>
+      <Modal
+        transparent
+        visible={isBadgeModalOpen}
+        animationType="fade"
+        onRequestClose={closeBadgeModal}
+      >
+        <TouchableOpacity
+          style={styles.modalBackdrop}
+          activeOpacity={1}
+          onPress={closeBadgeModal}
+        >
+          <View style={styles.modalContent}>
+            <ThemedText style={styles.modalTitle}>
+              {selectedBadge?.name || "Badge"}
+            </ThemedText>
+            <View style={styles.modalImageContainer}>
+              {selectedBadge && isBadgeUnlocked(selectedBadge) ? (
+                getBadgeImageUri(selectedBadge) ? (
+                  <LoadingImage
+                    uri={getBadgeImageUri(selectedBadge)}
+                    style={styles.modalBadgeImage}
+                    accessibilityLabel={`${selectedBadge.name} badge`}
+                    resizeMode="contain"
+                  />
+                ) : (
+                  <View style={styles.placeholderBadge}>
+                    <ThemedText style={styles.placeholderText}>?</ThemedText>
+                  </View>
+                )
+              ) : (
+                <View style={styles.lockedContainer}>
+                  <Image
+                    source={LockIcon}
+                    style={styles.lockIcon}
+                    accessibilityLabel="Locked badge"
+                    resizeMode="contain"
+                  />
+                </View>
+              )}
+            </View>
+            <ThemedText style={styles.modalDescription}>
+              {selectedBadge?.description || ""}
+            </ThemedText>
+            {selectedBadge ? (
+              <ThemedText style={styles.modalPoints}>
+                {selectedBadge.pointsRequired} points required
+              </ThemedText>
+            ) : null}
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </ThemedView>
   );
 };
@@ -301,12 +398,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 5,
   },
-  badgeDescription: {
-    fontSize: 12,
-    textAlign: "center",
-    marginBottom: 5,
-    opacity: 0.8,
-  },
   pointsRequired: {
     fontSize: 12,
     fontWeight: 500,
@@ -333,6 +424,49 @@ const styles = StyleSheet.create({
   progressText: {
     fontSize: 10,
     opacity: 0.8,
+  },
+
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
+  },
+  modalContent: {
+    width: "100%",
+    maxWidth: 320,
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 20,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontWeight: 700,
+    fontSize: 18,
+    marginBottom: 12,
+    textAlign: "center",
+  },
+  modalImageContainer: {
+    width: 140,
+    height: 140,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  modalBadgeImage: {
+    width: 140,
+    height: 140,
+  },
+  modalDescription: {
+    fontSize: 14,
+    textAlign: "center",
+    marginBottom: 8,
+    opacity: 0.85,
+  },
+  modalPoints: {
+    fontSize: 12,
+    opacity: 0.7,
   },
 
   headerText: {
