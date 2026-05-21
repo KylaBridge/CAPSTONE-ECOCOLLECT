@@ -1,6 +1,6 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { AUTH_API_URL } from '@env';
+import { AUTH_API_URL } from "@env";
 
 export const UserContext = createContext();
 
@@ -21,7 +21,7 @@ export const UserProvider = ({ children }) => {
           setToken(null);
         }
         return Promise.reject(error);
-      }
+      },
     );
 
     return () => {
@@ -30,7 +30,7 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   // Fetch profile function
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     try {
       const config = { withCredentials: true };
       if (token) {
@@ -52,10 +52,10 @@ export const UserProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [API_BASE, token]);
 
   // Refresh user data function
-  const refreshUser = async () => {
+  const refreshUser = useCallback(async () => {
     if (token) {
       try {
         await fetchProfile();
@@ -63,12 +63,12 @@ export const UserProvider = ({ children }) => {
         console.error("Failed to refresh user data:", err);
       }
     }
-  };
+  }, [fetchProfile, token]);
 
   // Fetch profile on mount
   useEffect(() => {
     fetchProfile();
-  }, [token]);
+  }, [fetchProfile]);
 
   // Login function
   const login = async (email, password) => {
@@ -76,7 +76,7 @@ export const UserProvider = ({ children }) => {
       const res = await axios.post(
         `${API_BASE}/login`,
         { email, password },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       if (res.data.error) throw new Error(res.data.error);
       if (res.data.token) setToken(res.data.token);
@@ -93,7 +93,7 @@ export const UserProvider = ({ children }) => {
       const res = await axios.post(
         `${API_BASE}/register`,
         { email, password },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       if (res.data.error) throw new Error(res.data.error);
       setUser(res.data);
@@ -109,7 +109,7 @@ export const UserProvider = ({ children }) => {
       const { data } = await axios.post(
         `${API_BASE}/register/email`,
         { email, name },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       if (data.error) throw new Error(data.error);
       // Returns tempToken (do not set user yet)
@@ -124,7 +124,7 @@ export const UserProvider = ({ children }) => {
       const { data } = await axios.post(
         `${API_BASE}/register/password`,
         { password, tempToken },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       if (data.error) throw new Error(data.error);
       // Returns newTempToken for code verification
@@ -139,7 +139,7 @@ export const UserProvider = ({ children }) => {
       const { data } = await axios.post(
         `${API_BASE}/register`,
         { code, newTempToken },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       if (data.error) throw new Error(data.error);
       // Optionally set user & token if backend returns them (depends on API spec)

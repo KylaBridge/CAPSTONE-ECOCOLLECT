@@ -14,12 +14,14 @@ import {
   useCallback,
   useRef,
 } from "react";
+import { useColorScheme } from "react-native";
 import { UserContext } from "../../contexts/userContext";
 import { useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import React from "react";
 import axios from "axios";
 import { SERVER_BASE_URL, API_BASE_URL } from "@env";
+import Colors from "../../constants/colors";
 
 // Images
 import LockIcon from "../../assets/images/lockicon.png";
@@ -33,6 +35,8 @@ import LoadingImage from "../../components/LoadingImage";
 
 const Achievements = () => {
   const { user, loading, token, refreshUser } = useContext(UserContext);
+  const colorScheme = useColorScheme();
+  const theme = Colors[colorScheme] ?? Colors.light;
   const [badges, setBadges] = useState([]);
   const [selectedBadge, setSelectedBadge] = useState(null);
   const [isBadgeModalOpen, setIsBadgeModalOpen] = useState(false);
@@ -102,9 +106,10 @@ const Achievements = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      refreshUser();
-      fetchBadges(false);
-    }, [refreshUser, fetchBadges]),
+      if (token) {
+        refreshUser();
+      }
+    }, [token, refreshUser]),
   );
 
   const isBadgeUnlocked = useCallback(
@@ -261,7 +266,15 @@ const Achievements = () => {
           activeOpacity={1}
           onPress={closeBadgeModal}
         >
-          <View style={styles.modalContent}>
+          <View
+            style={[
+              styles.modalContent,
+              {
+                backgroundColor: theme.cardBackground,
+                borderColor: theme.borderColor,
+              },
+            ]}
+          >
             <ThemedText style={styles.modalTitle}>
               {selectedBadge?.name || "Badge"}
             </ThemedText>
@@ -290,11 +303,13 @@ const Achievements = () => {
                 </View>
               )}
             </View>
-            <ThemedText style={styles.modalDescription}>
+            <ThemedText
+              style={[styles.modalDescription, { color: theme.text }]}
+            >
               {selectedBadge?.description || ""}
             </ThemedText>
             {selectedBadge ? (
-              <ThemedText style={styles.modalPoints}>
+              <ThemedText style={[styles.modalPoints, { color: theme.text }]}>
                 {selectedBadge.pointsRequired} points required
               </ThemedText>
             ) : null}
@@ -436,10 +451,10 @@ const styles = StyleSheet.create({
   modalContent: {
     width: "100%",
     maxWidth: 320,
-    backgroundColor: "#fff",
     borderRadius: 16,
     padding: 20,
     alignItems: "center",
+    borderWidth: 1,
   },
   modalTitle: {
     fontWeight: 700,

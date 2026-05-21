@@ -93,8 +93,7 @@ const Home = () => {
       if (token) {
         refreshUser();
       }
-      fetchBadges(false);
-    }, [token, refreshUser, fetchBadges]),
+    }, [token, refreshUser]),
   );
 
   useEffect(() => {
