@@ -3,6 +3,7 @@ const User = require('../models/user');
 const Reward = require('../models/rewards');
 const { comparePassword } = require('../helpers/auth');
 const { sendRewardClaimConfirmationEmail } = require('../helpers/mail');
+const { signUrlForPath } = require('../helpers/s3');
 
 //
 // ------------------ REDEMPTION MANAGEMENT ------------------
@@ -69,11 +70,22 @@ const getRedemptionForValidation = async (req, res) => {
       });
     }
 
+    let rewardImage = redemption.rewardId?.image || null;
+    if (rewardImage?.path) {
+      const signedPath = await signUrlForPath(rewardImage.path);
+      rewardImage = {
+        ...rewardImage,
+        path: signedPath || rewardImage.path,
+      };
+    } else if (typeof rewardImage === 'string') {
+      rewardImage = (await signUrlForPath(rewardImage)) || rewardImage;
+    }
+
     // Return redemption data for validation page
     const validationData = {
       redemptionId: redemption.redemptionId,
       rewardName: redemption.rewardName,
-      rewardImage: redemption.rewardId?.image,
+      rewardImage,
       rewardDescription: redemption.rewardId?.description,
       pointsSpent: redemption.pointsSpent,
       status: redemption.status,

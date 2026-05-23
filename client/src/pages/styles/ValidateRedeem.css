@@ -114,6 +114,15 @@
   margin-bottom: 16px;
 }
 
+.validate-redeem-error-text {
+  margin: 0 0 20px;
+  padding: 14px 16px;
+  color: #842029;
+  font-weight: 500;
+  line-height: 1.6;
+  font-size: medium;
+}
+
 /* Details Section */
 .validate-redeem-details {
   padding: 24px;

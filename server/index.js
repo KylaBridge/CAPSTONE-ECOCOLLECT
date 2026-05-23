@@ -47,6 +47,7 @@ app.use("/api/ecocollect/badges", require("./routes/badgeRoutes"));
 app.use("/api/ecocollect/bins", require("./routes/binRoutes"));
 app.use("/api/ecocollect/activity-logs", require("./routes/activityLogRoutes"));
 app.use("/api/ecocollect/contact", require("./routes/contactRoutes"));
+app.use("/api/ecocollect/download-apk", require("./routes/downloadApkRoutes"));
 
 // Catch-all: serve index.html for SPA (after API routes)
 app.get("*", (req, res) => {

@@ -1,8 +1,12 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 import { UserContext } from "../context/userContext";
+import { downloadApkAPI } from "../api/downloadApk";
 import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
 import "./styles/Navbar.css";
+
+const APK_FILE_NAME = "EcoCollect_Mobile.apk";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -17,18 +21,32 @@ export default function Navbar() {
     }
   }
 
-  function handleAppDownload() {
-    // Placeholder for APK download - replace with actual download logic when APK is ready
-    alert(
-      "Android APK download will be available soon! Stay tuned for updates."
-    );
+  async function handleAppDownload(event) {
+    event.preventDefault();
 
-    // Uncomment and update this when APK is ready:
-    // const apkUrl = '/downloads/ecocollect.apk';
-    // const link = document.createElement('a');
-    // link.href = apkUrl;
-    // link.download = 'EcoCollect.apk';
-    // link.click();
+    try {
+      const response = await downloadApkAPI.getSignedApkUrl();
+      const signedUrl = response?.data?.signedUrl;
+      const downloadName = response?.data?.fileName || APK_FILE_NAME;
+
+      if (!signedUrl) {
+        throw new Error("Missing signed APK URL.");
+      }
+
+      const link = document.createElement("a");
+      link.href = signedUrl;
+      link.download = downloadName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setMenuOpen(false);
+    } catch (error) {
+      console.error("APK download failed:", error);
+      toast.error(
+        error?.response?.data?.message ||
+          "APK is not available right now. Please try again later.",
+      );
+    }
   }
 
   return (
@@ -45,7 +63,12 @@ export default function Navbar() {
         <a href="/about">About</a>
         <a href="/contact">Contact</a>
         <a onClick={checkUser}>Log In</a>
-        <a onClick={handleAppDownload} className="get-app-btn">
+        <a
+          href="#"
+          download={APK_FILE_NAME}
+          onClick={handleAppDownload}
+          className="get-app-btn"
+        >
           Get App
         </a>
       </nav>

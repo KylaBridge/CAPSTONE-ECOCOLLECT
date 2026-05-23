@@ -35,7 +35,7 @@ export default function ValidateRedeem() {
       if (error.response?.status === 404) {
         setError("Redemption not found or invalid QR code.");
       } else if (error.response?.status === 410) {
-        setError("This redemption has expired.");
+        setError(error.response?.data?.message || "This redemption has expired.");
       } else {
         setError("Failed to load redemption details.");
       }
@@ -193,7 +193,7 @@ export default function ValidateRedeem() {
         <div className="validate-redeem-card">
           <div className="validate-redeem-error">
             <h2>❌ Validation Error</h2>
-            <p>{error}</p>
+            <p className="validate-redeem-error-text">{error}</p>
             <button
               className="validate-redeem-btn validate-redeem-btn-secondary"
               onClick={() => navigate("/")}
