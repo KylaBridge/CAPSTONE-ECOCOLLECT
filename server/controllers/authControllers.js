@@ -201,7 +201,7 @@ const loginUser = async (req, res) => {
     if (!user.password && user.googleId) {
       return res.status(400).json({
         error:
-          "This account was created with Google. Please use 'Continue with Google' to sign in.",
+          "This account does not support password sign-in, please try another sign-in method.",
       });
     }
 
