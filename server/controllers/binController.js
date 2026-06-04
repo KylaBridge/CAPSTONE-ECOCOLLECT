@@ -90,6 +90,7 @@ exports.addBin = async (req, res) => {
 exports.updateBin = async (req, res) => {
   try {
     const { location, status, remarks } = req.body;
+    const removeImageFlag = req.body.removeImage === "true";
     let updateData = { location, status, remarks, lastUpdated: new Date() };
 
     if (req.file) {
@@ -108,6 +109,17 @@ exports.updateBin = async (req, res) => {
           await deleteFromS3(oldKey);
         }
       }
+    }
+
+    if (!req.file && removeImageFlag) {
+      const oldBin = await Bin.findById(req.params.id);
+      if (oldBin && oldBin.image) {
+        const oldKey = getKeyFromUrl(oldBin.image);
+        if (oldKey) {
+          await deleteFromS3(oldKey);
+        }
+      }
+      updateData.image = null;
     }
 
     const bin = await Bin.findByIdAndUpdate(req.params.id, updateData, {

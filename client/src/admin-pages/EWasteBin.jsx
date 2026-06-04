@@ -26,6 +26,7 @@ export default function EWasteBin() {
   const [status, setStatus] = useState("Full");
   const [remarks, setRemarks] = useState("");
   const [binImg, setBinImg] = useState(null);
+  const [isImageMarkedForRemoval, setIsImageMarkedForRemoval] = useState(false);
   const [initialBinValues, setInitialBinValues] = useState(null);
   const [recentActivities, setRecentActivities] = useState([]);
   const [sortOption, setSortOption] = useState("");
@@ -119,10 +120,12 @@ export default function EWasteBin() {
       setBinImg(file);
       setImagePreview(URL.createObjectURL(file));
       setIsImageSelected(true);
+      setIsImageMarkedForRemoval(false);
     } else {
       setBinImg(null);
       setImagePreview(selectedBin?.image || null);
       setIsImageSelected(false);
+      setIsImageMarkedForRemoval(false);
     }
   };
 
@@ -130,6 +133,14 @@ export default function EWasteBin() {
     setBinImg(null);
     setImagePreview(null);
     setIsImageSelected(false);
+    if (
+      selectedBin?.binId !== "new" &&
+      (selectedBin?.image || initialBinValues?.image)
+    ) {
+      setIsImageMarkedForRemoval(true);
+    } else {
+      setIsImageMarkedForRemoval(false);
+    }
   };
 
   const handleViewBin = (bin, fromTable = true) => {
@@ -141,6 +152,7 @@ export default function EWasteBin() {
     setRemarks(bin.remarks);
     setImagePreview(bin.image);
     setIsImageSelected(!!bin.image);
+    setIsImageMarkedForRemoval(false);
     setViewedFromTable(fromTable);
     setInitialBinValues({
       location: bin.location,
@@ -167,6 +179,7 @@ export default function EWasteBin() {
     setImagePreview(null);
     setIsImageSelected(false);
     setBinImg(null);
+    setIsImageMarkedForRemoval(false);
     setViewedFromTable(false);
     setInitialBinValues({
       location: "",
@@ -187,6 +200,7 @@ export default function EWasteBin() {
     setImagePreview(null);
     setIsImageSelected(false);
     setBinImg(null);
+    setIsImageMarkedForRemoval(false);
   };
 
   const handleRemoveBin = async (binToRemoveItem) => {
@@ -228,28 +242,34 @@ export default function EWasteBin() {
       formData.append("status", status);
       formData.append("remarks", remarks);
       if (binImg) formData.append("image", binImg);
+      if (isImageMarkedForRemoval && !binImg) {
+        formData.append("removeImage", "true");
+      }
 
       const res = await binsAPI.updateBin(selectedBin.binId, formData);
 
       const updatedBin = res.data;
+      const updatedBinState = {
+        binId: updatedBin._id,
+        location: updatedBin.location,
+        status: updatedBin.status,
+        lastUpdated: timeAgo(
+          updatedBin.updatedAt ||
+            updatedBin.lastUpdated ||
+            updatedBin.createdAt,
+        ),
+        image: updatedBin.image,
+        remarks: updatedBin.remarks,
+      };
+
       setBins(
         bins.map((bin) =>
-          bin.binId === selectedBin.binId
-            ? {
-                binId: updatedBin._id,
-                location: updatedBin.location,
-                status: updatedBin.status,
-                lastUpdated: timeAgo(
-                  updatedBin.updatedAt ||
-                    updatedBin.lastUpdated ||
-                    updatedBin.createdAt,
-                ),
-                image: updatedBin.image,
-                remarks: updatedBin.remarks,
-              }
-            : bin,
+          bin.binId === selectedBin.binId ? updatedBinState : bin,
         ),
       );
+      setSelectedBin(updatedBinState);
+      setImagePreview(updatedBinState.image || null);
+      setIsImageMarkedForRemoval(false);
       await fetchRecentActivities();
       handleClosePanel();
       setSuccessTitle("Bin Updated");
