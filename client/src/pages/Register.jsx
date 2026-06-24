@@ -12,6 +12,8 @@ import EcoCollectLogo from "../assets/EcoCollect-Logo.png";
 import PartnershipLogos from "../assets/partnershiplogos.png";
 import GoogleIcon from "../assets/google-icon.svg";
 import { initiateGoogleAuth } from "../utils/googleAuth";
+import PrivacyPolicyModal from "../components/PrivacyPolicyModal";
+import TermsOfUseModal from "../components/TermsOfUseModal";
 
 const passwordRequirements = [
   { label: "At least 10 characters", test: (pw) => pw.length >= 10 },
@@ -23,17 +25,17 @@ const passwordRequirements = [
   { label: "At least one number", test: (pw) => /\d/.test(pw) },
 ];
 
-  // Email validation function
-  function isValidEmail(email) {
-    if (!email) return false;
-    // Local part: 64 chars max, domain part: 255 chars max
-    // local-part@domain.tld format
-    const emailRegex =
-      /^[a-zA-Z0-9._-]{1,64}@[a-zA-Z0-9.-]{1,255}\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(email);
-  }
+// Email validation function
+function isValidEmail(email) {
+  if (!email) return false;
+  // Local part: 64 chars max, domain part: 255 chars max
+  // local-part@domain.tld format
+  const emailRegex =
+    /^[a-zA-Z0-9._-]{1,64}@[a-zA-Z0-9.-]{1,255}\.[a-zA-Z]{2,}$/;
+  return emailRegex.test(email);
+}
 
-  // Name validation - allow letters, numbers, spaces, hyphens, apostrophes, and underscores
+// Name validation - allow letters, numbers, spaces, hyphens, apostrophes, and underscores
 const isValidName = (name) => {
   return /^[a-zA-Z0-9\s\-'_]+$/.test(name);
 };
@@ -56,6 +58,9 @@ export default function Register() {
     password: "",
     code: "",
   });
+  const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
+  const [isTermsOpen, setIsTermsOpen] = useState(false);
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [usernameStatus, setUsernameStatus] = useState({
@@ -258,8 +263,8 @@ export default function Register() {
           step === 1
             ? handleNextStep1
             : step === 2
-            ? handleNextStep2
-            : handleRegister
+              ? handleNextStep2
+              : handleRegister
         }
       >
         <h1>Register</h1>
@@ -290,15 +295,14 @@ export default function Register() {
             {/* Username availability status */}
             {usernameStatus.message && (
               <div
-                className={`username-status ${
-                  usernameStatus.isChecking
+                className={`username-status ${usernameStatus.isChecking
                     ? "checking"
                     : usernameStatus.isAvailable === true
-                    ? "available"
-                    : usernameStatus.isAvailable === false
-                    ? "unavailable"
-                    : "error"
-                }`}
+                      ? "available"
+                      : usernameStatus.isAvailable === false
+                        ? "unavailable"
+                        : "error"
+                  }`}
               >
                 {usernameStatus.isChecking && (
                   <span className="spinner">⏳</span>
@@ -410,10 +414,32 @@ export default function Register() {
               onChange={handleChange}
               required
             />
+            <div className="registration-agreement">
+              <div className="agreement-checkbox-container">
+                <input
+                  type="checkbox"
+                  id="agreeToTerms"
+                  checked={agreeToTerms}
+                  onChange={(e) => setAgreeToTerms(e.target.checked)}
+                  required
+                />
+                <label htmlFor="agreeToTerms" className="agreement-checkbox-label">
+                  I have read and agree to the{" "}
+                  <button type="button" onClick={() => setIsPrivacyOpen(true)} className="agreement-link-btn">
+                    Privacy Policy
+                  </button>{" "}
+                  and{" "}
+                  <button type="button" onClick={() => setIsTermsOpen(true)} className="agreement-link-btn">
+                    Terms of Use
+                  </button>
+                  .
+                </label>
+              </div>
+            </div>
             <button
               className="register-btn2"
               type="submit"
-              disabled={loading || !form.code}
+              disabled={loading || !form.code || !agreeToTerms}
             >
               {loading ? "Registering..." : "Register"}
             </button>
@@ -436,11 +462,14 @@ export default function Register() {
           </Link>
         </p>
       </form>
-      <img
+      {/* <img
         className="partnership-logo"
         src={PartnershipLogos}
         alt="NU x SM Cares Partnership"
-      />
+      /> */}
+
+      <PrivacyPolicyModal isOpen={isPrivacyOpen} onClose={() => setIsPrivacyOpen(false)} />
+      <TermsOfUseModal isOpen={isTermsOpen} onClose={() => setIsTermsOpen(false)} />
     </div>
   );
 }

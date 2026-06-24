@@ -425,3 +425,59 @@ input[type="password"]::-ms-clear {
 @media (prefers-reduced-motion: reduce) {
   .register-form, .form-container .EcoCollect-logo { animation: none; opacity: 1; transform: none; }
 }
+
+.registration-agreement {
+  margin-top: 15px;
+  margin-bottom: 5px;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  text-align: left;
+}
+
+.agreement-acknowledgement {
+  color: white;
+  font-size: 0.65rem !important;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+.agreement-checkbox-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.agreement-checkbox-container input[type="checkbox"] {
+  margin-top: 2px;
+  margin-bottom: 0;
+  width: auto;
+  cursor: pointer;
+}
+
+.agreement-checkbox-label {
+  color: white;
+  font-size: 0.65rem !important;
+  line-height: 1.4;
+  cursor: pointer;
+  margin: 0 !important;
+}
+
+.agreement-link-btn {
+  background: none;
+  border: none;
+  color: #a5e1a0;
+  font-size: inherit;
+  font-family: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  display: inline;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.agreement-link-btn:hover {
+  color: white;
+}

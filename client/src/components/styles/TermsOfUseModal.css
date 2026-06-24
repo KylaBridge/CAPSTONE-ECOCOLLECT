@@ -1,0 +1,182 @@
+/* Terms of Use Modal Styles with tou- prefix to isolate styles */
+
+.tou-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  animation: touFadeIn 0.2s ease-out;
+}
+
+.tou-modal-container {
+  background: #ffffff;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 580px;
+  max-height: 75vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  animation: touSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(112, 172, 64, 0.1);
+}
+
+/* Header */
+.tou-modal-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #edf2f7;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fcfdfe;
+}
+
+.tou-modal-title-group h2 {
+  font-family: 'Quicksand', sans-serif;
+  color: #284c42; /* --green-dark */
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.tou-modal-subtitle {
+  color: #70ac40; /* --green */
+  font-size: 0.8rem;
+  margin: 0.15rem 0 0 0;
+  font-weight: 500;
+}
+
+.tou-modal-close-x {
+  background: none;
+  border: none;
+  font-size: 1.6rem;
+  color: #a0aec0;
+  cursor: pointer;
+  padding: 0.2rem;
+  line-height: 1;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.tou-modal-close-x:hover {
+  color: #284c42; /* --green-dark */
+  transform: scale(1.1);
+}
+
+.tou-modal-close-x:focus {
+  outline: 2px solid #70ac40;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Body */
+.tou-modal-body {
+  padding: 1.25rem;
+  overflow-y: auto;
+  flex-grow: 1;
+  scrollbar-width: thin;
+  scrollbar-color: #a5d6a7 #f7fafc; /* --green-light */
+}
+
+.tou-modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tou-modal-body::-webkit-scrollbar-track {
+  background: #f7fafc;
+}
+
+.tou-modal-body::-webkit-scrollbar-thumb {
+  background-color: #a5d6a7;
+  border-radius: 3px;
+}
+
+.tou-modal-section {
+  padding: 0 !important; /* Override global section padding */
+  margin: 0 0 1rem 0 !important; /* Compact section layout */
+}
+
+.tou-modal-section h3 {
+  font-family: 'Quicksand', sans-serif;
+  color: #284c42; /* --green-dark */
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 0.3rem 0 !important;
+  padding: 0 !important;
+  display: flex;
+  align-items: center;
+}
+
+.tou-modal-section h3::before {
+  content: "";
+  width: 3px;
+  height: 1rem;
+  background: #70ac40; /* --green */
+  margin-right: 0.4rem;
+  border-radius: 1.5px;
+}
+
+.tou-modal-section p {
+  color: #2d3748; /* Darker for formal document look */
+  line-height: 1.5;
+  font-size: 0.95rem; /* Larger, readable size */
+  margin: 0 0 0.4rem 0 !important;
+  padding: 0 !important;
+}
+
+.tou-modal-section ul {
+  padding-left: 1.25rem !important;
+  margin: 0 0 0.4rem 0 !important;
+}
+
+.tou-modal-section li {
+  color: #2d3748;
+  line-height: 1.5;
+  font-size: 0.95rem; /* Match paragraph text size */
+  margin-bottom: 0.2rem;
+  padding: 0 !important;
+}
+
+/* Animations */
+@keyframes touFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes touSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .tou-modal-container {
+    width: 95%;
+    max-height: 80vh;
+  }
+  
+  .tou-modal-header {
+    padding: 0.75rem 1rem;
+  }
+  
+  .tou-modal-body {
+    padding: 1rem;
+  }
+  
+  .tou-modal-title-group h2 {
+    font-size: 1.25rem;
+  }
+}

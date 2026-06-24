@@ -8,9 +8,9 @@ export default function Footer() {
   return (
     <footer className="footer">
       <div className="footer-left">
-        <div className="footer-logo">
+        {/* <div className="footer-logo">
           <img src={NULogo} alt="NU Logo" />
-        </div>
+        </div> */}
         <div className="footer-links">
           <a href="/privacy">Privacy Policy</a>
           <span className="separator">|</span>

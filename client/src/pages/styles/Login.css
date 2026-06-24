@@ -393,3 +393,34 @@ input[type="password"]::-ms-clear {
 .password-checklist div.valid {
   color: #51cf66;
 }
+
+.login-policy-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+  gap: 8px;
+}
+
+.policy-link-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 0.7rem;
+  font-family: 'Quicksand', sans-serif;
+  cursor: pointer;
+  opacity: 0.8;
+  padding: 0;
+  transition: opacity 0.2s ease, text-decoration 0.2s ease;
+}
+
+.policy-link-btn:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.policy-separator {
+  color: white;
+  opacity: 0.5;
+  font-size: 0.7rem;
+}

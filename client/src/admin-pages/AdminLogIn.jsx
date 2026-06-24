@@ -85,11 +85,11 @@ export default function AdminLogIn() {
               Go to Home
             </Link>
           </form>
-          <img
+          {/* <img
             className="partnership-logos"
             src={PartnershipLogos}
             alt="Partnership Logos"
-          />
+          /> */}
         </div>
       </div>
     </div>

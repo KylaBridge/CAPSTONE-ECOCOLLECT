@@ -14,6 +14,8 @@ import {
 import PartnershipLogos from "../assets/partnershiplogos.png";
 import GoogleIcon from "../assets/google-icon.svg";
 import { initiateGoogleAuth } from "../utils/googleAuth";
+import PrivacyPolicyModal from "../components/PrivacyPolicyModal";
+import TermsOfUseModal from "../components/TermsOfUseModal";
 
 const passwordRequirements = [
   { label: "At least 10 characters", test: (pw) => pw.length >= 10 },
@@ -40,6 +42,8 @@ export default function Login() {
   });
   const [resetToken, setResetToken] = useState(null);
   const [newResetToken, setNewResetToken] = useState(null);
+  const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
+  const [isTermsOpen, setIsTermsOpen] = useState(false);
 
   function handleResetFormChange(e) {
     const { name, value } = e.target;
@@ -268,6 +272,15 @@ export default function Login() {
           <Link className="go-back-btn" to={"/"}>
             Go Back to Main
           </Link>
+          <div className="login-policy-links">
+            <button type="button" onClick={() => setIsPrivacyOpen(true)} className="policy-link-btn">
+              Privacy Policy
+            </button>
+            <span className="policy-separator">•</span>
+            <button type="button" onClick={() => setIsTermsOpen(true)} className="policy-link-btn">
+              Terms of Use
+            </button>
+          </div>
         </form>
       ) : (
         // Password Reset Form
@@ -415,11 +428,14 @@ export default function Login() {
         </form>
       )}
 
-      <img
+      {/* <img
         className="partnership-logo"
         src={PartnershipLogos}
         alt="NU x SM Cares Partnership"
-      />
+      /> */}
+
+      <PrivacyPolicyModal isOpen={isPrivacyOpen} onClose={() => setIsPrivacyOpen(false)} />
+      <TermsOfUseModal isOpen={isTermsOpen} onClose={() => setIsTermsOpen(false)} />
     </div>
   );
 }
